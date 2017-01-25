@@ -1,8 +1,3 @@
-/*
+/* @file Utility file that gives access to prototype functions.
 
 */
-
-// Filesystem access
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
