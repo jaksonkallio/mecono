@@ -9,9 +9,16 @@
 * **Neighbor**: A node with hop count 1... directly connected to self-node.
 * **Self-Node**: The node the host software is running on, with an independent database and functionality.
 * **Remote-Node** or **Node**: A node that isn't a self-node.
+* **Community**: Nodes that are within a user-defined hop count are part of community. Larger values make for more stability, but O(n^2) ping operations.
+
+## Configuration
+* `community_hop_radius`: What number of hops is considered a "community".
 
 ## Functions
 ### Node Birth
 The birth of a node is when it is introduced to the network with no knowledge. This could be a fresh install or the user cleared the database. Several things will happen:
 1. Generate private/public key.
 2. Advertise existence to all neighbors.
+3. Go about normal "Going Online" procedure.
+
+###
