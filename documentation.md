@@ -12,13 +12,14 @@
 * **Community**: Nodes that are within a user-defined hop count are part of community. Larger values make for more stability, but O(n^2) ping operations.
 
 ## Configuration
-* `community_hop_radius`: What number of hops is considered a "community".
+* `community_hop_radius: Integer`: What number of hops is considered a "community".
+* `int hop_forward_limit_ping: Integer`: Don't forward ping chunks that have travelled more than X hops.
 
 ## Functions
 ### Node Birth
 The birth of a node is when it is introduced to the network with no knowledge. This could be a fresh install or the user cleared the database. Several things will happen:
 1. Generate private/public key.
-2. Advertise existence to all neighbors.
+2. Advertise existence to community.
 3. Go about normal "Going Online" procedure.
 
 ###
