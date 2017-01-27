@@ -14,6 +14,7 @@
 ## Configuration
 * `community_hop_radius: Integer`: What number of hops is considered a "community".
 * `int hop_forward_limit_ping: Integer`: Don't forward ping chunks that have travelled more than X hops.
+* `int hop_forward_limit_data: Integer`: Don't forward data chunks that have travelled more than X hops.
 
 ## Functions
 ### Node Birth
