@@ -6,10 +6,11 @@
 * DataChunk: A chunk of data that can be sent through the network.
 
 ## Terms
-* **Neighbor**: A node with hop count 1... directly connected to self-node.
+* **Neighbor**: A node with hop count 1 (directly connected to self-node) is a neighbor.
 * **Self-Node**: The node the host software is running on, with an independent database and functionality.
 * **Remote-Node** or **Node**: A node that isn't a self-node.
 * **Community**: Nodes that are within a user-defined hop count are part of community. Larger values make for more stability, but O(n^2) ping operations.
+* **Hop**: Distance between two nodes, measured in nodes.
 
 ## Configuration
 * `community_hop_radius: Integer`: What number of hops is considered a "community".
