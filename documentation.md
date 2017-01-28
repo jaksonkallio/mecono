@@ -1,10 +1,5 @@
 # Mecono Documentation
 
-## Classes
-* SelfNode: The node representing the single host node on a machine, or in a simulated environment, each simulated node.
-* Node: A remote node in the network.
-* DataChunk: A chunk of data that can be sent through the network.
-
 ## Terms
 * **Neighbor**: A node with hop count 1 (directly connected to self-node) is a neighbor.
 * **Ping**: Time, in milliseconds, between a sent ping chunk and a ping response.
@@ -18,6 +13,13 @@
 * **Path**: A path between two nodes, made up of path segment objects.
 * **Pinned Node**: A remote node that should always have a known, and tested, path to the self-node to allow for quick communication. More pinned nodes means more load to test paths constantly.
 * **Inbound Queue**: A thread that checks for new inbound chunks and holds them in a FIFO queue for processing/forwarding.
+
+## Classes
+* `SelfNode`: The node representing the single host node on a machine, or in a simulated environment, each simulated node.
+* `RemoteNode`: A remote node that is not the self-node.
+* `Chunk`: A chunk of data that can be sent through the network.
+* `Path`: A collection of path segments with various statistics about each segment.
+* `PathSegment`: A connection between two nodes.
 
 ## Configuration
 * `community_hop_radius: Integer`: What number of hops is considered a "community".
