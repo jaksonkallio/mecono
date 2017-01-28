@@ -8,9 +8,12 @@
 ## Terms
 * **Neighbor**: A node with hop count 1 (directly connected to self-node) is a neighbor.
 * **Self-Node**: The node the host software is running on, with an independent database and functionality.
+* **Chunk**: A piece of data. Can be either a "ping" or "data" type.
 * **Remote-Node** or **Node**: A node that isn't a self-node.
-* **Community**: Nodes that are within a user-defined hop count are part of community. Larger values make for more stability, but O(n^2) ping operations.
-* **Hop**: Distance between two nodes, measured in nodes.
+* **Community**: Nodes that are within a user-defined hop count are part of community. Larger values make for more local stability, but O(n^2) ping operations. Communities are used to orient nodes when they come online and to allow for a larger net to catch inbound connections.
+* **Hop**: Distance between two nodes, measured in number of nodes between the two plus one.
+* **Path Segment**: A connection between two nodes that has a unique ID that is the hash of the two node addresses concatenated.
+* **Path**: A path between two nodes, made up of path segment objects.
 
 ## Configuration
 * `community_hop_radius: Integer`: What number of hops is considered a "community".
