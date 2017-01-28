@@ -37,3 +37,6 @@ The birth of a node is when it is introduced to the network with no knowledge. T
 When a self-node goes online, it must do some things to reorient itself into the network.
 1. Ping nodes in the community by sending out a ping chunk with a `die_after` set to `community_hop_radius`.
 2. Test paths to pinned nodes.
+
+## Data Structures
+### Paths
