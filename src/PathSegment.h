@@ -11,7 +11,8 @@
 class PathSegment {
 private:
   // The two nodes acting as endpoints for the segment.	
-  Node endpoints[2];
+  RemoteNode* endpoint_a;
+  RemoteNode* endpoint_b;
   
   // Last time, in epoch seconds, checked
   unsigned int last_check;
@@ -25,10 +26,10 @@ private:
   // Successful attempts to send chunks across this PathSegment
   unsigned int success_attempts;
 public:
-  PathSegment(Node endpoints[2]);  
+  PathSegment(RemoteNode* endpoints[2]);  
 
   // Get the two endpoint nodes
-  Node* getEndpointNodes() const;
+  RemoteNode* getEndpointNodes() const;
   
   // Total times this PathSegment was used
   unsigned int getTotalUsage() const;

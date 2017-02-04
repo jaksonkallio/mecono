@@ -14,11 +14,11 @@ private:
   std::string privateKey;
   
   // -- Configuration Variables -- See https://github.com/jaksonkallio/mecono/blob/master/documentation.md#configuration
-  const int community_hop_radius;
-  const std::string node_label;
-  const int hop_forward_limit_ping;
-  const int hop_forward_limit_chunk;
-  const int max_inbound_queue_time;
+  unsigned int community_hop_radius = 3;
+  std::string node_label = "My Node";
+  unsigned int hop_forward_limit_ping = 30;
+  unsigned int hop_forward_limit_chunk = 10;
+  unsigned int max_inbound_queue_time = 30000;
   // ^^ END ^^
 public:
   // The public key credential
