@@ -13,8 +13,14 @@ private:
 	// All of the nodes in the network
 	std::vector<SimNode> all_nodes;
 
+	// Row/columns of simulated network for proximity and also determines total count of nodes
+	const unsigned int rows = 5;
+	const unsigned int columns = 5;
+
+	const unsigned int node_count = rows * columns;
 public:
 	void drawNetworkGrid() const;
+	unsigned int nodeCount() const;
 };
 
 #endif
