@@ -12,3 +12,9 @@ void SimNetwork::drawNetworkGrid() const{
 unsigned int SimNetwork::nodeCount() const{
 	return node_count;
 }
+
+bool isNeighbor(unsigned int node_id, unsigned int port) const{
+	assert(port >= 0 && port <= 7);
+
+	return true;
+}
