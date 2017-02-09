@@ -19,3 +19,5 @@ private:
 	// Simulated latency in milliseconds
 	unsigned int latency = 0;
 };
+
+#endif
