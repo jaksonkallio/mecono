@@ -1,5 +1,5 @@
 /*
-@description A remote node
+@description The entire simulated network
 @author Jakson R. Kallio
 */
 
