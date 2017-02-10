@@ -5,22 +5,13 @@
 
 void SimNetwork::drawNetworkGrid() const{
 	unsigned short int symbol_row[columns];
-	unsigned int column = 0;
-	unsigned int row = 0;
-	unsigned short int row_type = 0;
 
-	for(unsigned int i = 0; i < nodeCount(); i++){
-		column = i % columns;
-		if((int)(i / columns) != row){
-			++row_type;
-			row = (int)(i / columns);
-		}
-
-		if(row_type % 2 == 0){
+	for(unsigned int r = 0; r < ((rows * 2) - 1); r++){
+		if(r % 2 == 0){
 			// Row of nodes
-			for(unsigned int q = 0; q < ((columns * 2) - 1); q++){
+			for(unsigned int c = 0; c < ((columns * 2) - 1); c++){
 				// Each vertical line
-				if(q % 2 == 0){
+				if(c % 2 == 0){
 					std::cout << "O";
 				}else{
 					std::cout << " ";
@@ -29,6 +20,8 @@ void SimNetwork::drawNetworkGrid() const{
 		}else{
 			// Symbol row
 		}
+
+		std::cout << "\n";
 	}
 }
 
