@@ -6,6 +6,10 @@
 void SimNetwork::drawNetworkGrid() const{
 	char symbol_row[columns];
 
+	for(unsigned int cai = 0; cai < ((columns * 2) - 1); cai++){
+		symbol_row[cai] = ' ';
+	}
+
 	for(unsigned int r = 0; r < ((rows * 2) - 1); r++){
 		if(r % 2 == 0){
 			// Row of nodes
@@ -20,11 +24,14 @@ void SimNetwork::drawNetworkGrid() const{
 				}
 
 				if(isNeighbor(rcToIth(r, c), rcToIth(r + 1, c))){
-					symbol_row[c] = '|';
+					symbol_row[c * 2] = '|';
 				}
 			}
 		}else{
-			// Symbol row
+			for(unsigned int ca = 0; ca < ((columns * 2) - 1); ca++){
+				std::cout << symbol_row[ca];
+				symbol_row[ca] = ' ';
+			}
 		}
 
 		std::cout << "\n";
