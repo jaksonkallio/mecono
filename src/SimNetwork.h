@@ -23,7 +23,7 @@ private:
 public:
 	void drawNetworkGrid() const;
 	unsigned int nodeCount() const;
-	bool isNeighbor(unsigned int node_id, unsigned int port) const;
+	bool isNeighbor(unsigned int node_id, unsigned short int port) const;
 	unsigned int sumBytesTransferred() const;
 };
 
