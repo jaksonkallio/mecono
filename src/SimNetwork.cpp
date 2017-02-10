@@ -19,6 +19,11 @@ void SimNetwork::drawNetworkGrid() const{
 			// Row of nodes
 			for(unsigned int q = 0; q < ((columns * 2) - 1)); q++){
 				// Each vertical line
+				if(q % 2 == 0){
+					std::cout << "O";
+				}else{
+					std::cout << " ";
+				}
 			}
 		}else{
 			// Symbol row
