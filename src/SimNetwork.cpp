@@ -26,6 +26,10 @@ void SimNetwork::drawNetworkGrid() const{
 				if(isNeighbor(rcToIth(r, c), rcToIth(r + 1, c))){
 					symbol_row[c * 2] = '|';
 				}
+
+				if(isNeighbor(rcToIth(r, c), rcToIth(r + 1, c + 1)) && isNeighbor(rcToIth(r, c + 1), rcToIth(r + 1, c))){
+					symbol_row[c * 2] = '|';
+				}
 			}
 		}else{
 			for(unsigned int ca = 0; ca < ((columns * 2) - 1); ca++){
