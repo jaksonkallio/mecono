@@ -4,8 +4,8 @@
 
 void SimNetwork::drawNetworkGrid() const{
 	unsigned short int symbol_row[columns];
-	unsigned int column = i % columns;
-	unsigned int row = (int)(i / columns);
+	unsigned int column = 0;
+	unsigned int row = 0;
 	unsigned short int row_type = 0;
 
 	for(unsigned int i = 0; i < nodeCount(); i++){
@@ -14,7 +14,7 @@ void SimNetwork::drawNetworkGrid() const{
 			++row_type;
 			row = (int)(i / columns);
 		}
-		
+
 		if(row_type % 2 == 0){
 			// Row of nodes
 		}else{
