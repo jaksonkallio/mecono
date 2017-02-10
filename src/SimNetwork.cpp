@@ -3,6 +3,8 @@
 #include "SimNetwork.h"
 
 void SimNetwork::drawNetworkGrid() const{
+	unsigned short int symbol_row[columns];
+
 	for(unsigned int i = 0; i < nodeCount(); i++){
 		unsigned int column = i % columns;
 		unsigned int row = (int)(i / columns);
