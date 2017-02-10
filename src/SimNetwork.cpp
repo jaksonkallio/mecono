@@ -13,8 +13,8 @@ unsigned int SimNetwork::nodeCount() const{
 	return node_count;
 }
 
-bool SimNetwork::isNeighbor(unsigned int node_id, unsigned int port) const{
-	assert(port >= 0 && port <= 7);
+bool SimNetwork::isNeighbor(unsigned int node_id, unsigned short int port) const{
+	assert(port >= 0 && port <= 3);
 
 	return true;
 }
