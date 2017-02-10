@@ -12,7 +12,7 @@ void SimNetwork::drawNetworkGrid() const{
 			for(unsigned int c = 0; c < ((columns * 2) - 1); c++){
 				// Each vertical line
 				if(c % 2 == 0){
-					std::cout << "O";
+					std::cout << "#";
 				}else{
 					std::cout << " ";
 				}
