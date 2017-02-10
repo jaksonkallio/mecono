@@ -27,8 +27,12 @@ void SimNetwork::drawNetworkGrid() const{
 					symbol_row[c * 2] = '|';
 				}
 
-				if(isNeighbor(rcToIth(r, c), rcToIth(r + 1, c + 1)) && isNeighbor(rcToIth(r, c + 1), rcToIth(r + 1, c))){
-					symbol_row[c * 2] = '|';
+				if(isNeighbor(rcToIth(r, c), rcToIth(r + 1, c + 1))){
+					if(isNeighbor(rcToIth(r, c + 1), rcToIth(r + 1, c))){
+						symbol_row[(c * 2) + 1] = 'X';
+					}else{
+						symbol_row[(c * 2) + 1] = '`';
+					}
 				}
 			}
 		}else{
