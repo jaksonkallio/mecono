@@ -25,6 +25,10 @@ void SimNetwork::drawNetworkGrid() const{
 	}
 }
 
+unsigned int SimNetwork::rcToIth(unsigned int row, unsigned int column) const{
+	return (row * columns) + column;
+}
+
 unsigned int SimNetwork::nodeCount() const{
 	return node_count;
 }

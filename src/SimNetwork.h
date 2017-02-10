@@ -25,6 +25,9 @@ public:
 	unsigned int nodeCount() const;
 	bool isNeighbor(unsigned int node_id, unsigned short int port) const;
 	unsigned int sumBytesTransferred() const;
+
+	// Given a row and column, returns the array ID of the node.
+	unsigned int rcToIth(unsigned int row, unsigned int column) const;
 };
 
 #endif
