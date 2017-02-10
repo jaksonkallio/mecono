@@ -17,6 +17,9 @@ void SimNetwork::drawNetworkGrid() const{
 
 		if(row_type % 2 == 0){
 			// Row of nodes
+			for(unsigned int q = 0; q < ((columns * 2) - 1)); q++){
+				// Each vertical line
+			}
 		}else{
 			// Symbol row
 		}
