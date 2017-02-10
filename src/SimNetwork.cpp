@@ -9,10 +9,12 @@ void SimNetwork::drawNetworkGrid() const{
 	for(unsigned int r = 0; r < ((rows * 2) - 1); r++){
 		if(r % 2 == 0){
 			// Row of nodes
-			for(unsigned int c = 0; c < ((columns * 2) - 1); c++){
+			for(unsigned int c = 0; c < columns; c++){
 				// Each vertical line
-				if(c % 2 == 0){
-					std::cout << "#";
+				std::cout << "#";
+
+				if(isNeighbor(rcToIth(r, c), rcToIth(r, c + 1)){
+					std::cout << "-"
 				}else{
 					std::cout << " ";
 				}
