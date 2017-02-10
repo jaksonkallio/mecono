@@ -10,15 +10,16 @@ void SimNetwork::drawNetworkGrid() const{
 
 	for(unsigned int i = 0; i < nodeCount(); i++){
 		column = i % columns;
-		row = (int)(i / columns);
-
+		if((int)(i / columns) != row){
+			++row_type;
+			row = (int)(i / columns);
+		}
+		
 		if(row_type % 2 == 0){
 			// Row of nodes
 		}else{
 			// Symbol row
 		}
-
-		++row_type;
 	}
 }
 
