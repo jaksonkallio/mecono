@@ -8,6 +8,8 @@
 
 #include <vector>
 
+#include "SimNode.h"
+
 class SimNetwork {
 private:
 	// All of the nodes in the network
