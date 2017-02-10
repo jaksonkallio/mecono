@@ -8,6 +8,8 @@
 
 #include <vector>
 
+#include "RemoteNode.h"
+
 class SimNode: public RemoteNode {
 private:
 	// If the node will only process ping chunks, but no other kind of chunks
