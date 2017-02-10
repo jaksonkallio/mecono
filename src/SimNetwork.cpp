@@ -4,7 +4,7 @@
 #include "SimNetwork.h"
 
 void SimNetwork::drawNetworkGrid() const{
-	unsigned short int symbol_row[columns];
+	char symbol_row[columns];
 
 	for(unsigned int r = 0; r < ((rows * 2) - 1); r++){
 		if(r % 2 == 0){
@@ -17,6 +17,10 @@ void SimNetwork::drawNetworkGrid() const{
 					std::cout << "-";
 				}else{
 					std::cout << " ";
+				}
+
+				if(isNeighbor(rcToIth(r, c), rcToIth(r + 1, c))){
+					symbol_row[c] = '|';
 				}
 			}
 		}else{
