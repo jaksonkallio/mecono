@@ -1,3 +1,5 @@
+#include "SimNode.h"
+
 unsigned short int SimNode::neighborCount() const{
 	return neighbors.size();
 }
@@ -6,7 +8,7 @@ bool SimNode::hasNeighbor(SimNode* neighbor) const{
 	bool neighborship(false);
 
 	for(unsigned short int i = 0; i < neighborCount(); ++i){
-		if(neighbors[i] == neighbor->getAddress()){
+		if(neighbors[i]->getAddress() == neighbor->getAddress()){
 			neighborship = true;
 		}
 	}
