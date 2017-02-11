@@ -11,12 +11,13 @@
 
 class RemoteNode {
 private:
-	std::string privateKey;
-	int known_path_count;
+	std::string address;
+	unsigned int known_path_count;
 
 public:
 	std::string getPublicKey() const;
-	int getKnownPathCount() const;
+	unsigned int getKnownPathCount() const;
+	std::string getAddress() const;
 };
 
 #endif
