@@ -24,7 +24,8 @@ private:
 	std::vector<RemoteNode*> neighbors;
 public:
 	bool hasNeighbor(SimNode* neighbor) const;
-	unsigned short int neighborCount() const;;
+	unsigned short int neighborCount() const;
+	void addNeighbor(SimNode* neighbor);
 };
 
 #endif

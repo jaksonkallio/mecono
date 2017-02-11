@@ -13,3 +13,7 @@ bool SimNode::hasNeighbor(SimNode* neighbor) const{
 
 	return neighborship;
 }
+
+void SimNode::addNeighbor(SimNode* neighbor){
+	neighbors.push_back(neighbor);
+}
