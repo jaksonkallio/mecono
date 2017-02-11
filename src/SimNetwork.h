@@ -21,10 +21,19 @@ private:
 	const unsigned int node_count = rows * columns;
 
 public:
+	// Constructor
 	SimNetwork();
+
+	// Draw the network grid graphically on the console
 	void drawNetworkGrid() const;
+
+	// Get the count of nodes being tracked
 	unsigned int nodeCount() const;
+
+	// Check if two nodes are neighbors
 	bool isNeighbor(unsigned int node_id_a, unsigned int node_id_b) const;
+
+	// Sum of all bytes transferred over the network
 	unsigned int sumBytesTransferred() const;
 
 	// Given a row and column, returns the array ID of the node.
