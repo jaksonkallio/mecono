@@ -2,6 +2,15 @@
 #include <time.h>
 #include "SimNode.h"
 
+bool SimNode::rnum_seeded = false;
+
+SimNode::SimNode(){
+	if(!rnum_seeded){
+		srand(time(NULL));
+		rnum_seeded = true;
+	}
+}
+
 unsigned short int SimNode::neighborCount() const{
 	return neighbors.size();
 }
@@ -28,8 +37,6 @@ void SimNode::genAddress(){
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	"abcdefghijklmnopqrstuvwxyz";
 	address = "";
-
-	srand(time(NULL));
 
 	for (int i = 0; i < address_length; ++i) {
 		address += alphanum[rand() % (sizeof(alphanum) - 1)];
