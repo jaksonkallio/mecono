@@ -6,12 +6,15 @@
 #include <iostream>
 
 #include "SimNetwork.h"
-
+#include "SimNode.h"
 
 int main(){
-	SimNetwork* sim = new SimNetwork();
+	// SimNetwork* sim = new SimNetwork();
+	// sim->drawNetworkGrid();
 
-	sim->drawNetworkGrid();
-
-  return EXIT_SUCCESS;
+	SimNode* testnode = new SimNode();
+	testnode->genAddress();
+	std::cout << testnode->getAddress() << "\n";
+	
+	return EXIT_SUCCESS;
 }
