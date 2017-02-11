@@ -7,13 +7,14 @@
 #define PATHSEGMENT_
 
 #include <vector>
+#include "RemoteNode.h"
 
 class PathSegment {
 private:
-  // The two nodes acting as endpoints for the segment.	
+  // The two nodes acting as endpoints for the segment.
   RemoteNode* endpoint_a;
   RemoteNode* endpoint_b;
-  
+
   // Last time, in epoch seconds, checked
   unsigned int last_check;
 
@@ -26,11 +27,11 @@ private:
   // Successful attempts to send chunks across this PathSegment
   unsigned int success_attempts;
 public:
-  PathSegment(RemoteNode* endpoints[2]);  
+  PathSegment(RemoteNode* endpoints[2]);
 
   // Get the two endpoint nodes
   RemoteNode* getEndpointNodes() const;
-  
+
   // Total times this PathSegment was used
   unsigned int getTotalUsage() const;
 
