@@ -3,6 +3,13 @@
 
 #include "SimNetwork.h"
 
+SimNetwork::SimNetwork() {
+	for(unsigned int i = 0; i < node_count; ++i){
+		SimNode* new_node = new SimNode();
+		all_nodes.push_back(new_node);
+	}
+}
+
 void SimNetwork::drawNetworkGrid() const{
 	char symbol_row[columns];
 

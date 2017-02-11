@@ -21,6 +21,7 @@ private:
 	const unsigned int node_count = rows * columns;
 
 public:
+	SimNetwork();
 	void drawNetworkGrid() const;
 	unsigned int nodeCount() const;
 	bool isNeighbor(unsigned int node_id_a, unsigned int node_id_b) const;
