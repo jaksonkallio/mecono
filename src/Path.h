@@ -7,6 +7,7 @@
 #define PATH_
 
 #include <vector>
+#include "PathSegment.h"
 
 class Path {
 private:
