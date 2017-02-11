@@ -13,7 +13,7 @@
 class SimNetwork {
 private:
 	// All of the nodes in the network
-	std::vector<SimNode> all_nodes;
+	std::vector<SimNode*> all_nodes;
 
 	// Row/columns of simulated network for proximity and also determines total count of nodes
 	const unsigned int rows = 5;
