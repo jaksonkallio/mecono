@@ -38,6 +38,9 @@ public:
 
 	// Given a row and column, returns the array ID of the node.
 	unsigned int rcToIth(unsigned int row, unsigned int column) const;
+
+	// List all nodes
+	void listNodes() const;
 };
 
 #endif

@@ -7,6 +7,7 @@
 SimNetwork::SimNetwork() {
 	for(unsigned int i = 0; i < node_count; ++i){
 		SimNode* new_node = new SimNode();
+		new_node->genAddress();
 		all_nodes.push_back(new_node);
 	}
 }
@@ -68,4 +69,10 @@ bool SimNetwork::isNeighbor(unsigned int node_id_a, unsigned int node_id_b) cons
 
 unsigned int SimNetwork::sumBytesTransferred() const{
 	return 0;
+}
+
+void SimNetwork::listNodes() const{
+	for(unsigned int i = 0; i < node_count; ++i){
+		std::cout << "Node #" << i << " - " << all_nodes[i]->getAddress() << "\n";
+	}
 }
