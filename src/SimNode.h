@@ -26,6 +26,7 @@ public:
 	bool hasNeighbor(SimNode* neighbor) const;
 	unsigned short int neighborCount() const;
 	void addNeighbor(SimNode* neighbor);
+	void genAddress();
 };
 
 #endif
