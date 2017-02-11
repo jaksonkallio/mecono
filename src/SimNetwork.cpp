@@ -15,7 +15,7 @@ void SimNetwork::drawNetworkGrid() const{
 			// Row of nodes
 			for(unsigned int c = 0; c < columns; c++){
 				// Each vertical line
-				std::cout << "#";
+				std::cout << "O";
 
 				if(isNeighbor(rcToIth(r, c), rcToIth(r, c + 1)) && c != (columns - 1)){
 					std::cout << "-";
