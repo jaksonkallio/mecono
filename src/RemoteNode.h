@@ -15,7 +15,7 @@ private:
 
 protected:
 	static const short int address_length = 5;
-	char address[address_length];
+	std::string address;
 
 public:
 	unsigned int getKnownPathCount() const;

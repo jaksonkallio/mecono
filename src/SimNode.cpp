@@ -27,12 +27,11 @@ void SimNode::genAddress(){
 	"0123456789"
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	"abcdefghijklmnopqrstuvwxyz";
+	address = "";
 
 	srand(time(NULL));
 
 	for (int i = 0; i < address_length; ++i) {
-		address[i] = alphanum[rand() % (sizeof(alphanum) - 1)];
+		address += alphanum[rand() % (sizeof(alphanum) - 1)];
 	}
-
-	address[address_length] = 0;
 }
