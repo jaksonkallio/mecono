@@ -7,7 +7,6 @@
 #define SIMNODE_
 
 #include <vector>
-
 #include "RemoteNode.h"
 
 class SimNode: public RemoteNode {
@@ -20,6 +19,12 @@ private:
 
 	// Simulated latency in milliseconds
 	unsigned int latency = 0;
+
+	// A list of neighbors this node is connected to
+	std::vector<RemoteNode*> neighbors;
+public:
+	bool hasNeighbor(SimNode* neighbor) const;
+	unsigned short int neighborCount() const;;
 };
 
 #endif
