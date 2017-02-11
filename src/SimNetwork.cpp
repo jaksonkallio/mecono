@@ -15,7 +15,7 @@ void SimNetwork::drawNetworkGrid() const{
 			// Row of nodes
 			for(unsigned int c = 0; c < columns; c++){
 				// Each vertical line
-				std::cout << "O";
+				std::cout << "o";
 
 				if(isNeighbor(rcToIth(r, c), rcToIth(r, c + 1)) && c != (columns - 1)){
 					std::cout << "-";
@@ -55,7 +55,7 @@ unsigned int SimNetwork::nodeCount() const{
 }
 
 bool SimNetwork::isNeighbor(unsigned int node_id_a, unsigned int node_id_b) const{
-	return true;
+	return all_nodes[node_id_a]->hasNeighbor(all_nodes[node_id_b]);
 }
 
 unsigned int SimNetwork::sumBytesTransferred() const{
