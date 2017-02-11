@@ -5,11 +5,6 @@
 
 #include <iostream>
 
-#include "RemoteNode.h"
-#include "SimNode.h"
-#include "PathSegment.h"
-#include "Path.h"
-#include "SelfNode.h"
 #include "SimNetwork.h"
 
 
