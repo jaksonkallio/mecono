@@ -10,8 +10,8 @@
 
 int main(){
 	SimNetwork* sim = new SimNetwork();
-	//sim->drawNetworkGrid();
-	sim->listNodes();
+	sim->drawNetworkGrid();
+	//sim->listNodes();
 
 	/*
 	SimNode* testnode = new SimNode();

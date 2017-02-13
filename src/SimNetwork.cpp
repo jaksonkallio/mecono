@@ -76,3 +76,15 @@ void SimNetwork::listNodes() const{
 		std::cout << "Node #" << i << " - " << all_nodes[i]->getAddress() << "\n";
 	}
 }
+
+void SimNetwork::genNeighborship(){
+	/*unsigned short int ports[3];
+	ports[0] = i + 1;*/
+
+	for(unsigned int i = 0; i < node_count; ++i){
+		unsigned short int chance_thresh = (rand() % 101);
+		if(chance_thresh >= neighbor_connectivity){
+			//all_nodes[i]->addNeighbor(all_nodes[i + 1]);
+		}
+	}
+}
