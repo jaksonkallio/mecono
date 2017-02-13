@@ -65,6 +65,7 @@ unsigned int SimNetwork::nodeCount() const{
 
 bool SimNetwork::isNeighbor(unsigned int node_id_a, unsigned int node_id_b) const{
 	return all_nodes[node_id_a]->hasNeighbor(all_nodes[node_id_b]);
+	//return true;
 }
 
 unsigned int SimNetwork::sumBytesTransferred() const{
