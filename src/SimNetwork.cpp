@@ -79,13 +79,27 @@ void SimNetwork::listNodes() const{
 }
 
 void SimNetwork::genNeighborship(){
-	/*unsigned short int ports[3];
-	ports[0] = i + 1;*/
-
 	for(unsigned int i = 0; i < node_count; ++i){
-		unsigned short int chance_thresh = (rand() % 101);
-		if(chance_thresh >= neighbor_connectivity){
-			//all_nodes[i]->addNeighbor(all_nodes[i + 1]);
+		for(unsigned short int j = 0; j < 3; ++j){
+			unsigned short int chance_thresh = (rand() % 101);
+			if(chance_thresh >= neighbor_connectivity){
+				switch(j){
+					case 0:
+						// Hori, right
+						if(((i + 1) % columns) && (i < (node_count - 1))){
+							all_nodes[i]->addNeighbor(all_nodes[i + 1]);
+						}
+						break;
+
+					case 1:
+						// Diag, bottom right
+						break;
+
+					case 2:
+						// Vert, bottom
+						break;
+				}
+			}
 		}
 	}
 }
