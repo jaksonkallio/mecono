@@ -11,7 +11,7 @@
 int main(){
 	SimNetwork* sim = new SimNetwork();
 	sim->drawNetworkGrid();
-	//sim->listNodes();
+	sim->listNodes();
 
 	/*
 	SimNode* testnode = new SimNode();
