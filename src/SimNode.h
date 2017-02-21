@@ -27,9 +27,9 @@ private:
 	static bool rnum_seeded;
 public:
 	SimNode();
-	bool hasNeighbor(SimNode* neighbor) const;
+	bool hasNeighbor(const SimNode& neighbor) const;
 	unsigned short int neighborCount() const;
-	void addNeighbor(SimNode* neighbor);
+	void addNeighbor(const SimNode& neighbor);
 	void genAddress();
 };
 

@@ -15,11 +15,11 @@ unsigned short int SimNode::neighborCount() const{
 	return neighbors.size();
 }
 
-bool SimNode::hasNeighbor(SimNode* neighbor) const{
+bool SimNode::hasNeighbor(const SimNode& neighbor) const{
 	bool neighborship(false);
 
 	for(unsigned short int i = 0; i < neighborCount(); ++i){
-		if(neighbors[i]->getAddress() == neighbor->getAddress()){
+		if(neighbors[i]->getAddress() == neighbor.getAddress()){
 			neighborship = true;
 		}
 	}
@@ -27,7 +27,7 @@ bool SimNode::hasNeighbor(SimNode* neighbor) const{
 	return neighborship;
 }
 
-void SimNode::addNeighbor(SimNode* neighbor){
+void SimNode::addNeighbor(const SimNode& neighbor){
 	neighbors.push_back(neighbor);
 }
 

@@ -65,6 +65,7 @@ unsigned int SimNetwork::nodeCount() const{
 
 bool SimNetwork::isNeighbor(unsigned int node_id_a, unsigned int node_id_b) const{
 	return all_nodes[node_id_a]->hasNeighbor(all_nodes[node_id_b]);
+	//return true;
 }
 
 unsigned int SimNetwork::sumBytesTransferred() const{
@@ -74,5 +75,31 @@ unsigned int SimNetwork::sumBytesTransferred() const{
 void SimNetwork::listNodes() const{
 	for(unsigned int i = 0; i < node_count; ++i){
 		std::cout << "Node #" << i << " - " << all_nodes[i]->getAddress() << "\n";
+	}
+}
+
+void SimNetwork::genNeighborship(){
+	for(unsigned int i = 0; i < node_count; ++i){
+		for(unsigned short int j = 0; j < 3; ++j){
+			unsigned short int chance_thresh = (rand() % 101);
+			if(chance_thresh >= neighbor_connectivity){
+				switch(j){
+					case 0:
+						// Hori, right
+						if(((i + 1) % columns) && (i < (node_count - 1))){
+							all_nodes[i]->addNeighbor(all_nodes[i + 1]);
+						}
+						break;
+
+					case 1:
+						// Diag, bottom right
+						break;
+
+					case 2:
+						// Vert, bottom
+						break;
+				}
+			}
+		}
 	}
 }
