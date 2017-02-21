@@ -39,6 +39,9 @@ public:
 	// Sum of all bytes transferred over the network
 	unsigned int sumBytesTransferred() const;
 
+	// Count of neighbor connections
+	unsigned int neighborConnectionCount() const;
+
 	// Given a row and column, returns the array ID of the node.
 	unsigned int rcToIth(unsigned int row, unsigned int column) const;
 

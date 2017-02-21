@@ -3,13 +3,7 @@
 #include <vector>
 #include "SimNode.h"
 
-bool SimNode::rnum_seeded = false;
-
 SimNode::SimNode(){
-	if(!rnum_seeded){
-		srand(time(NULL));
-		rnum_seeded = true;
-	}
 }
 
 unsigned short int SimNode::neighborCount() const{

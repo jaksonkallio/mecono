@@ -12,6 +12,10 @@ SimNetwork::SimNetwork() {
 	}
 }
 
+unsigned int SimNetwork::neighborConnectionCount() const{
+	return neighbor_connections;
+}
+
 void SimNetwork::drawNetworkGrid() const{
 	char symbol_row[columns];
 
@@ -26,18 +30,18 @@ void SimNetwork::drawNetworkGrid() const{
 				// Each vertical line
 				std::cout << "o";
 
-				if(isNeighbor(rcToIth(r, c), rcToIth(r, c + 1)) && c != (columns - 1)){
+				if(isNeighbor(rcToIth(r / 2, c), rcToIth(r / 2, c + 1)) && c != (columns - 1)){
 					std::cout << "-";
 				}else{
 					std::cout << " ";
 				}
 
-				if(isNeighbor(rcToIth(r, c), rcToIth(r + 1, c))){
+				if(isNeighbor(rcToIth(r / 2, c), rcToIth((r / 2) + 1, c))){
 					symbol_row[c * 2] = '|';
 				}
 
-				if(isNeighbor(rcToIth(r, c), rcToIth(r + 1, c + 1))){
-					if(isNeighbor(rcToIth(r, c + 1), rcToIth(r + 1, c))){
+				if(isNeighbor(rcToIth(r / 2, c), rcToIth((r / 2) + 1, c + 1))){
+					if(isNeighbor(rcToIth(r / 2, c + 1), rcToIth((r / 2) + 1, c))){
 						symbol_row[(c * 2) + 1] = 'X';
 					}else{
 						symbol_row[(c * 2) + 1] = '\\';
@@ -83,13 +87,13 @@ void SimNetwork::listNodes() const{
 
 void SimNetwork::genNeighborship(){
 	for(unsigned int i = 0; i < node_count; ++i){
-		for(unsigned short int j = 0; j < 3; ++j){
-			unsigned short int chance_thresh = (rand() % 101);
-			if(chance_thresh >= neighbor_connectivity){
+		for(unsigned short int j = 0; j <= 3; ++j){
+			if((rand() % 101) <= neighbor_connectivity){
 				switch(j){
 					case 0:
 						// Hori, right
-						if(((i + 1) % columns) && (i < (node_count - 1))){
+						if(((i + 1) % columns > 0) && (i < (node_count - 1))){
+							++neighbor_connections;
 							all_nodes[i]->addNeighbor(all_nodes[i + 1]);
 						}
 						break;
@@ -105,4 +109,6 @@ void SimNetwork::genNeighborship(){
 			}
 		}
 	}
+
+	std::cout << neighbor_connections << " neighbor connections in the network.\n";
 }

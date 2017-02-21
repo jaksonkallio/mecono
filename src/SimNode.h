@@ -22,9 +22,7 @@ private:
 
 	// A list of neighbors this node is connected to
 	std::vector<RemoteNode*> neighbors;
-
-	// Whether the RNG was seeded
-	static bool rnum_seeded;
+	
 public:
 	SimNode();
 	bool hasNeighbor(SimNode* neighbor) const;

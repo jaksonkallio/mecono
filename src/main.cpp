@@ -9,6 +9,7 @@
 #include "SimNode.h"
 
 int main(){
+	srand(time(NULL));
 	SimNetwork* sim = new SimNetwork();
 	sim->genNeighborship();
 	sim->drawNetworkGrid();
