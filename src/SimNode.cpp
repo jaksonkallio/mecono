@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <time.h>
+#include <vector>
 #include "SimNode.h"
 
 bool SimNode::rnum_seeded = false;
@@ -15,11 +16,11 @@ unsigned short int SimNode::neighborCount() const{
 	return neighbors.size();
 }
 
-bool SimNode::hasNeighbor(const SimNode& neighbor) const{
+bool SimNode::hasNeighbor(SimNode* neighbor) const{
 	bool neighborship(false);
 
 	for(unsigned short int i = 0; i < neighborCount(); ++i){
-		if(neighbors[i]->getAddress() == neighbor.getAddress()){
+		if(neighbors[i]->getAddress() == neighbor->getAddress()){
 			neighborship = true;
 		}
 	}
@@ -27,7 +28,7 @@ bool SimNode::hasNeighbor(const SimNode& neighbor) const{
 	return neighborship;
 }
 
-void SimNode::addNeighbor(const SimNode& neighbor){
+void SimNode::addNeighbor(SimNode* neighbor){
 	neighbors.push_back(neighbor);
 }
 

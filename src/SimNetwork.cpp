@@ -40,7 +40,7 @@ void SimNetwork::drawNetworkGrid() const{
 					if(isNeighbor(rcToIth(r, c + 1), rcToIth(r + 1, c))){
 						symbol_row[(c * 2) + 1] = 'X';
 					}else{
-						symbol_row[(c * 2) + 1] = '`';
+						symbol_row[(c * 2) + 1] = '\\';
 					}
 				}
 			}
@@ -64,8 +64,11 @@ unsigned int SimNetwork::nodeCount() const{
 }
 
 bool SimNetwork::isNeighbor(unsigned int node_id_a, unsigned int node_id_b) const{
-	return all_nodes[node_id_a]->hasNeighbor(all_nodes[node_id_b]);
-	//return true;
+	if(node_id_a >= node_count || node_id_b >= node_count){
+		return false;
+	}else{
+		return all_nodes[node_id_a]->hasNeighbor(all_nodes[node_id_b]);
+	}
 }
 
 unsigned int SimNetwork::sumBytesTransferred() const{
