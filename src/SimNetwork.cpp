@@ -109,6 +109,10 @@ void SimNetwork::genNeighborship(){
 					case 2:
 						// Vert, bottom
 						break;
+
+					case 3:
+						// Diag, bottom left
+						break;
 				}
 			}
 		}
