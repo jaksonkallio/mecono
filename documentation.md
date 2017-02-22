@@ -22,11 +22,15 @@
 * `PathSegment`: A connection between two nodes.
 
 ## Configuration
+### General
 * `community_hop_radius: Integer`: What number of hops is considered a "community".
 * `node_label: String`: Customizable, unregulated, string that represents the self-node in human readable form.
 * `int hop_forward_limit_ping: Integer`: Don't forward ping chunks that have travelled more than X hops.
 * `int hop_forward_limit_data: Integer`: Don't forward data chunks that have travelled more than X hops.
 * `max_inbound_queue_time: Integer`: Max time, in milliseconds, to keep a chunk in the inbound queue.
+
+### `SimNetwork.h` Simulation Variables
+* `neighbor_connectivity: Integer`: The percent chance for a neighborship between adjacent nodes to be generated.
 
 ## Functions
 ### Node Birth
