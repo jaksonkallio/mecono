@@ -10,11 +10,11 @@
 
 class SelfNode {
 private:
-  // Private key credentials	
+  // Private key credentials
   std::string privateKey;
-  
+
   // -- Configuration Variables -- See https://github.com/jaksonkallio/mecono/blob/master/documentation.md#configuration
-  unsigned int community_hop_radius = 3;
+  unsigned short int community_hop_radius = 3;
   std::string node_label = "My Node";
   unsigned int hop_forward_limit_ping = 30;
   unsigned int hop_forward_limit_chunk = 10;
@@ -23,7 +23,7 @@ private:
 public:
   // The public key credential
 	std::string getPublicKey() const;
-  
+
   // Count of known path segments
   unsigned int getKnownPathCount() const;
 
