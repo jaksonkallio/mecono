@@ -15,14 +15,14 @@ private:
 	bool only_process_pings = false;
 
 	// Chance of node to flat out silently ignore chunks
-	double chance_ignore = 0.00;
+	short int ignorance = 10;
 
 	// Simulated latency in milliseconds
 	unsigned int latency = 0;
 
 	// A list of neighbors this node is connected to
 	std::vector<RemoteNode*> neighbors;
-	
+
 public:
 	SimNode();
 	bool hasNeighbor(SimNode* neighbor) const;
