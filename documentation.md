@@ -31,6 +31,8 @@
 
 ### `SimNetwork.h` Simulation Variables
 * `neighbor_connectivity: Integer`: The percent chance for a neighborship between adjacent nodes to be generated.
+* `rows: Integer`: Number of rows to be created in the simulated grid.
+* `columns: Integer`: Number of columns to be created in the simulated grid.
 
 ## Functions
 ### Node Birth
