@@ -37,3 +37,24 @@ void SimNode::genAddress(){
 		address += alphanum[rand() % (sizeof(alphanum) - 1)];
 	}
 }
+
+Path* SimNode::getPathToNode(const SimNode& node_target) const{
+	Path* path_to_target = nullptr;
+	int i(0);
+	bool path_found(false);
+
+	while(i < knownNodeCount() && !path_found){
+		if(known_nodes[i].the_node->getAddress() == node_target.getAddress()){
+			path_found = true;
+			path_to_target = known_nodes[i].path_to;
+		}
+
+		++i;
+	}
+
+	return path_to_target;
+}
+
+unsigned int SimNode::knownNodeCount() const{
+	return known_nodes.size();
+}

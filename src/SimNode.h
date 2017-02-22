@@ -23,12 +23,22 @@ private:
 	// A list of neighbors this node is connected to
 	std::vector<RemoteNode*> neighbors;
 
+	// Known remote nodes
+	struct RemoteNodeInfo {
+		RemoteNode* the_node;
+		bool is_neighbor;
+		unsigned int last_latency;
+		Path* path_to;
+	};
+	std::vector<RemoteNodeInfo> known_nodes;
 public:
 	SimNode();
 	bool hasNeighbor(SimNode* neighbor) const;
 	unsigned short int neighborCount() const;
 	void addNeighbor(SimNode* neighbor);
+	Path* getPathToNode(const SimNode& node_target) const;
 	void genAddress();
+	unsigned int knownNodeCount() const;
 };
 
 #endif
