@@ -4,7 +4,7 @@
 
 **Me**sh-**Co**nnected **No**des
 
-Mecono enables P2P internet access using trustless discovery of how isolated nodes are connected.
+Mecono is a hardware/protocol level project that enables P2P internet access using trustless discovery of how isolated nodes are connected and the indirect paths through the mesh between nodes.
 
 ## Project Status
 Currently building the simulated environment, known as SimNetwork. This software is in extremely early development, and basic features (even simulations of basic features) are not yet implemented.
