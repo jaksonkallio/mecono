@@ -10,6 +10,5 @@ add_executable(
 	SimNode.cpp
 	PathSegment.cpp
 	Path.cpp
-	SelfNode.cpp
 	SimNetwork.cpp
 )
