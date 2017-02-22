@@ -7,23 +7,44 @@ SimNode::SimNode(){
 }
 
 unsigned short int SimNode::neighborCount() const{
-	return neighbors.size();
+	unsigned int neighbor_count(0);
+	unsigned int i(0);
+
+	while(i < knownNodeCount()){
+		if(known_nodes[i].is_neighbor){
+			++neighbor_count;
+		}
+
+		++i;
+	}
+
+	return neighbor_count;
 }
 
 bool SimNode::hasNeighbor(SimNode* neighbor) const{
 	bool neighborship(false);
+	unsigned int i(0);
 
-	for(unsigned short int i = 0; i < neighborCount(); ++i){
-		if(neighbors[i]->getAddress() == neighbor->getAddress()){
+	while(i < knownNodeCount() && !neighborship){
+		if(known_nodes[i].the_node->getAddress() == neighbor->getAddress()){
 			neighborship = true;
 		}
+
+		++i;
 	}
 
 	return neighborship;
 }
 
 void SimNode::addNeighbor(SimNode* neighbor){
-	neighbors.push_back(neighbor);
+	Path* new_path = new Path();
+	RemoteNodeInfo new_neighbor {
+		neighbor,
+		true,
+		0,
+		new_path
+	};
+	known_nodes.push_back(new_neighbor);
 }
 
 void SimNode::genAddress(){
