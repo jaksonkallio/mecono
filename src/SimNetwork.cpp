@@ -95,6 +95,7 @@ void SimNetwork::genNeighborship(){
 						if(((i + 1) % columns > 0) && (i < (node_count - 1))){
 							++neighbor_connections;
 							all_nodes[i]->addNeighbor(all_nodes[i + 1]);
+							all_nodes[i + 1]->addNeighbor(all_nodes[i]);
 						}
 						break;
 
@@ -103,6 +104,7 @@ void SimNetwork::genNeighborship(){
 						if(((i + 1) % columns > 0) && ((i + columns) < (node_count - 1))){
 							++neighbor_connections;
 							all_nodes[i]->addNeighbor(all_nodes[i + columns + 1]);
+							all_nodes[i + columns + 1]->addNeighbor(all_nodes[i]);
 						}
 						break;
 
@@ -111,6 +113,7 @@ void SimNetwork::genNeighborship(){
 						if((i + columns) <= (node_count - 1)){
 							++neighbor_connections;
 							all_nodes[i]->addNeighbor(all_nodes[i + columns]);
+							all_nodes[i + columns]->addNeighbor(all_nodes[i]);
 						}
 						break;
 
@@ -119,12 +122,11 @@ void SimNetwork::genNeighborship(){
 						if((((i + columns) - 1) <= (node_count - 1)) && ((i % columns) != 0)){
 							++neighbor_connections;
 							all_nodes[i]->addNeighbor(all_nodes[(i + columns) - 1]);
+							all_nodes[(i + columns) - 1]->addNeighbor(all_nodes[i]);
 						}
 						break;
 				}
 			}
 		}
 	}
-
-	std::cout << neighbor_connections << " neighbor connections in the network.\n";
 }
