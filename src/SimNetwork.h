@@ -18,7 +18,7 @@ private:
 	// -- Simulation Configuration --
 	static const unsigned short int neighbor_connectivity = 50;
 	const unsigned int rows = 5;
-	const unsigned int columns = 5;
+	const unsigned int columns = 8;
 	// ^^ END ^^
 
 	const unsigned int node_count = rows * columns;
