@@ -10,16 +10,25 @@
 
 class SelfNode {
 private:
-  // Private key credentials
-  std::string privateKey;
+	// Private key credentials
+	std::string privateKey;
 
-  // -- Configuration Variables -- See https://github.com/jaksonkallio/mecono/blob/master/documentation.md#configuration
-  unsigned short int community_hop_radius = 3;
-  std::string node_label = "My Node";
-  unsigned int hop_forward_limit_ping = 30;
-  unsigned int hop_forward_limit_chunk = 10;
-  unsigned int max_inbound_queue_time = 30000;
-  // ^^ END ^^
+	// -- Configuration Variables -- See https://github.com/jaksonkallio/mecono/blob/master/documentation.md#configuration
+	unsigned short int community_hop_radius = 3;
+	std::string node_label = "My Node";
+	unsigned int hop_forward_limit_ping = 30;
+	unsigned int hop_forward_limit_chunk = 10;
+	unsigned int max_inbound_queue_time = 30000;
+	// ^^ END ^^
+
+	// Known remote nodes
+	struct RemoteNodeInfo {
+		RemoteNode* theNode;
+		bool is_neighbor;
+		unsigned int last_latency;
+		Path* pathTo;
+	};
+	std::vector<RemoteNodeInfo> known_nodes;
 public:
   // The public key credential
 	std::string getPublicKey() const;
