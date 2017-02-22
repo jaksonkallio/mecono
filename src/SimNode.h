@@ -17,6 +17,14 @@ private:
 	// Chance of node to flat out silently ignore chunks
 	short int ignorance = 10;
 
+	// -- Configuration Variables -- See https://github.com/jaksonkallio/mecono/blob/master/documentation.md#configuration
+	unsigned short int community_hop_radius = 3;
+	std::string node_label = "My Node";
+	unsigned int hop_forward_limit_ping = 30;
+	unsigned int hop_forward_limit_chunk = 10;
+	unsigned int max_inbound_queue_time = 30000;
+	// ^^ END ^^
+
 	// Simulated latency in milliseconds
 	unsigned int latency = 0;
 
