@@ -1,7 +1,7 @@
 # Mecono Documentation
 
 ## Terms
-* **Neighbor**: A node with hop count 1 (directly connected to self-node) is a neighbor.
+* **Neighbor**: A node with hop count 1 (directly connected to self-node) is a neighbor. A connection between two nodes is called a *neighborship*.
 * **Ping**: Time, in milliseconds, between a sent ping chunk and a ping response.
 * **Self-Node**: The node the host software is running on, with an independent database and functionality.
 * **Chunk**: A piece of data. Can be either a "ping", "data", or "receipt" type.
@@ -39,6 +39,3 @@ The birth of a node is when it is introduced to the network with no knowledge. T
 When a self-node goes online, it must do some things to reorient itself into the network.
 1. Ping nodes in the community by sending out a ping chunk with a `die_after` set to `community_hop_radius`.
 2. Test paths to pinned nodes.
-
-## Data Structures
-### Paths
