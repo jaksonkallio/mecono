@@ -50,6 +50,9 @@ public:
 
 	// Generate neighbor connections
 	void genNeighborship();
+
+	// Write network stats
+	void writeStats() const;
 };
 
 #endif

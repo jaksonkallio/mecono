@@ -130,3 +130,8 @@ void SimNetwork::genNeighborship(){
 		}
 	}
 }
+
+void SimNetwork::writeStats() const{
+	std::cout << nodeCount() << " nodes.\n";
+	std::cout << (neighborConnectionCount() / 2) << " neighborships.\n";
+}

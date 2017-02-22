@@ -13,6 +13,7 @@ int main(){
 	SimNetwork* sim = new SimNetwork();
 	sim->genNeighborship();
 	sim->drawNetworkGrid();
+	sim->writeStats();
 	//sim->listNodes();
 
 	/*
