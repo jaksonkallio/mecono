@@ -16,12 +16,15 @@ private:
 	std::vector<SimNode*> all_nodes;
 
 	// Row/columns of simulated network for proximity and also determines total count of nodes
+
+
+	// -- Simulation Configuration --
+	static const unsigned short int neighbor_connectivity = 50;
 	const unsigned int rows = 5;
 	const unsigned int columns = 5;
-	const unsigned int node_count = rows * columns;
+	// ^^ END ^^
 
-	// Simulation Configuration
-	static const unsigned short int neighbor_connectivity = 50;
+	const unsigned int node_count = rows * columns;
 
 	unsigned int neighbor_connections = 0;
 public:
