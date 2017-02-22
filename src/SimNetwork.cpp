@@ -116,6 +116,10 @@ void SimNetwork::genNeighborship(){
 
 					case 3:
 						// Diag, bottom left
+						if((((i + columns) - 1) <= (node_count - 1)) && ((i % columns) != 0)){
+							++neighbor_connections;
+							all_nodes[i]->addNeighbor(all_nodes[(i + columns) - 1]);
+						}
 						break;
 				}
 			}
