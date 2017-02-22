@@ -20,7 +20,7 @@ private:
 	const unsigned int columns = 5;
 	const unsigned int node_count = rows * columns;
 
-	static const unsigned short int neighbor_connectivity = 80;
+	static const unsigned short int neighbor_connectivity = 50;
 
 	unsigned int neighbor_connections = 0;
 public:
