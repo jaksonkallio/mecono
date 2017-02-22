@@ -6,6 +6,9 @@
 
 Mecono enables P2P internet access using trustless discovery of how isolated nodes are connected.
 
+## Project Status
+Currently building the simulated environment, known as SimNetwork. This software is in extremely early development, and basic features (even simulations of basic features) are not yet implemented.
+
 ## Build
 Mecono uses CMake. In the root directory of Mecono folder:
 ```
