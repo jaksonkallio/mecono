@@ -37,11 +37,13 @@
 ## Functions
 ### Node Birth
 The birth of a node is when it is introduced to the network with no knowledge. This could be a fresh install or the user cleared the database. Several things will happen:
+
 1. Generate private/public key.
 2. Advertise existence to community.
 3. Go about normal "Going Online" procedure.
 
 ### Going Online/Refreshing Community
 When a self-node goes online, it must do some things to reorient itself into the network.
+
 1. Ping nodes in the community by sending out a ping chunk with a `die_after` set to `community_hop_radius`.
 2. Test paths to pinned nodes.
