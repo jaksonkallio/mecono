@@ -47,3 +47,13 @@ When a self-node goes online, it must do some things to reorient itself into the
 
 1. Ping nodes in the community by sending out a ping chunk with a `die_after` set to `community_hop_radius`.
 2. Test paths to pinned nodes.
+
+### Incentive Structure
+What's stopping a node from responding to ping chunks but not forwarding data? Incentives alleviates a lot of trust issues with the network. It also encourages nodes to pop up and help the network in congested areas, much like how the incentives to mine bitcoin make the network's security increase. It's a way of allowing people to be selfish, yet also vitally help the network at the same time. Incentives are given to forward data chunks in the form of cryptocurrency.
+
+1. A node will only receive a data chunk from another node for two reasons: it is an intermediate hop in path to final destination OR it is the final destination.
+2. This means that the path a data chunk must travel to get to destination must be known before sending it out.
+3. In the content of the message is a transaction hash that sends cryptocurrency to all hops in the node path. This transaction hash is encrypted with the public key of the final destination, with the final destination being another node that is rewarded. Most likely, this amount will be so incredibly small that it
+4. When the message (and therefore the transaction as well) gets to the destination of the path, the destination will decrypt the transaction hash and verify that both they, and the other nodes in the path, will get rewarded.
+5. They'll broadcast the message, and the transaction will reward all hops in the path, incentivizing future connnections.
+6. If hops in the path don't receive their payment, they might blacklist the connection between the target and the destination and refuse to service the path when these two are at either end. This means that both target and SelfNode are encouraged to play nice and fulfill the operation contract with the hops.
