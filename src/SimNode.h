@@ -8,6 +8,7 @@
 
 #include <vector>
 #include "RemoteNode.h"
+#include "Chunk.h"
 
 class SimNode: public RemoteNode {
 private:
@@ -47,6 +48,7 @@ public:
 	Path* getPathToNode(const SimNode& node_target) const;
 	void genAddress();
 	unsigned int knownNodeCount() const;
+	void receiveChunk(Chunk chunk) const;
 };
 
 #endif
