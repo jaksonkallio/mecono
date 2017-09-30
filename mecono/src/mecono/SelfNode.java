@@ -4,6 +4,6 @@ package mecono;
  *
  * @author jak
  */
-public class SelfNode {
+public class SelfNode implements Node {
     
 }

@@ -4,6 +4,6 @@ package mecono;
  *
  * @author jak
  */
-public class RemoteNode {
+public class RemoteNode implements Node {
     
 }
