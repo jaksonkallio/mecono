@@ -35,5 +35,6 @@ public class SelfNode implements Node {
 	
     private String address;
 	private String label;
+	
 	private static Set<RemoteNode> nodes_memory;
 }

@@ -6,6 +6,10 @@ package mecono;
  */
 public class SimNode extends RemoteNode {
 	
+	public SimNode() {
+		super(Protocol.generateAddress());
+	}
+	
 	public SimNode(String address) {
 		super(address);
 	}
