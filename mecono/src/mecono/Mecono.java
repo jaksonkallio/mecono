@@ -12,5 +12,4 @@ public class Mecono {
     public static void main(String[] args) {
         
     }
-    
 }
