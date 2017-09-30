@@ -32,7 +32,7 @@ public class SimNetwork {
 		// Only initialize if there are no members yet
 		if (members.isEmpty()) {
 			for (int i = 0; i < member_count; i++) {
-				members.add(new SimNode());
+				//members.add(new SimNode());
 			}
 		}
 	}
