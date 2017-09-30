@@ -15,8 +15,11 @@ public class SimNetwork {
 	}
 	
 	public SimNetwork(int member_count) {
-		// Maximum members for the simulation network
-		member_count = Math.min(member_count, 1000);
+		// Maximum/minimum members for the simulation network
+		if (member_count < 2 || member_count > 1000) {
+			member_count = 10;
+		}
+		
 		this.member_count = member_count;
 		
 		initializeMembers();
@@ -26,7 +29,10 @@ public class SimNetwork {
 	 * Creates all member nodes.
 	 */
 	public void initializeMembers() {
-	
+		// Only initialize if there are no members yet
+		if (members.isEmpty()) {
+			members.add(new SimNode());
+		}
 	}
 	
 	private final int member_count;
