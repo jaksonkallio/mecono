@@ -4,6 +4,6 @@ package mecono;
  *
  * @author jak
  */
-public class SimNode implements Node {
+public class SimNode extends SelfNode {
 	
 }
