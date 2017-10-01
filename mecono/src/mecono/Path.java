@@ -8,15 +8,20 @@ import java.util.ArrayList;
  */
 public class Path {
 	
-	public Path(ArrayList<PathSegment> segments) {
-		this.segments = segments;
+	public Path(ArrayList<RemoteNode> stops) {
+		this.stops = stops;
 	}
 	
 	public Path(String[] addresses) {
 		for (String address : addresses) {
-			segments.add(new PathSegment(address, this));
+			stops.add(SelfNode.getRemoteNode(address));
 		}
 	}
 	
-    private ArrayList<PathSegment> segments;
+	public double getAssuranceLevel() {
+		// TODO: measure all nodes in path, and multiple their chances of success, return final assurance level.
+		return 0.0;
+	}
+	
+    private ArrayList<RemoteNode> stops;
 }

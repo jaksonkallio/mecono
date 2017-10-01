@@ -16,6 +16,10 @@ public class SelfNode implements Node {
 		return label;
 	}
 	
+	public boolean sendMessage(NuggetStreamType stream_type, RemoteNode destination, String message) {
+		return true;
+	}
+	
 	public static RemoteNode getRemoteNode(String address) {
 		// Check if node is loaded into memory
 		for (RemoteNode node : nodes_memory) {
@@ -33,8 +37,15 @@ public class SelfNode implements Node {
 		return new_node;
 	}
 	
+	private boolean sendNuggetStream(NuggetStream stream) {
+		return true;
+	}
+	
     private String address;
 	private String label;
+	private boolean optimize_foreign_nuggetstream_paths = true; // If we receive a NuggetStream and know a better path than what is given, use our own path.
+	private double optimize_foreign_nuggetstream_threshold = 0.95; // The threshold before we optimize their path.
+	private boolean request_no_foreign_optimization = false; // We can ask nodes that receive our nugget streams to not optimize our streams.
 	
 	private static Set<RemoteNode> nodes_memory;
 }

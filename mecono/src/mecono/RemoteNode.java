@@ -55,5 +55,7 @@ public class RemoteNode implements Node {
 	private int received_chunks; // Number of chunks received from this node.
 	private boolean cooperative; // This node can usually be trusted to adhere to good practices in the network.
 	private boolean blacklisted; // This node shouldn't be used, unless as a last resort.
-	private Set<RemoteNode> neighbors; // This node's neighbors
+	private boolean discovered; // If we know any successful paths to this node.
+	private Set<RemoteNode> neighbors; // This node's neighbors.
+	
 }
