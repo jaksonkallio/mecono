@@ -13,7 +13,6 @@ public class Mecono {
         for (String s: args) {
             if (s.equals("--sim")) {
                 SimNetwork sim = new SimNetwork();
-                break;
             }
         }
     }

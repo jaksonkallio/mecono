@@ -8,16 +8,16 @@ import java.util.Set;
  */
 public class SelfNode implements Node {
 	
+	public SelfNode(){
+		mailbox = new Mailbox(this);
+	}
+	
 	public String getAddress() {
 		return address;
 	}
 	
 	public String getLabel() {
 		return label;
-	}
-	
-	public boolean sendMessage(NuggetStreamType stream_type, RemoteNode destination, String message) {
-		return true;
 	}
 	
 	public static RemoteNode getRemoteNode(String address) {
@@ -43,6 +43,7 @@ public class SelfNode implements Node {
 	
     private String address;
 	private String label;
+	private Mailbox mailbox;
 	private boolean optimize_foreign_nuggetstream_paths = true; // If we receive a NuggetStream and know a better path than what is given, use our own path.
 	private double optimize_foreign_nuggetstream_threshold = 0.95; // The threshold before we optimize their path.
 	private boolean request_no_foreign_optimization = false; // We can ask nodes that receive our nugget streams to not optimize our streams.

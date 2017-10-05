@@ -5,5 +5,16 @@ package mecono;
  * @author jak
  */
 public class Mailbox {
+	public Mailbox(SelfNode owner){
+		this.owner = owner;
+	}
 	
+	public boolean sendMessage(NuggetStreamType stream_type, RemoteNode destination, String message_text) {
+		NuggetStream message = new NuggetStream(this);
+		message.createNewMessage(stream_type, destination, message_text);
+		
+		return true;
+	}
+	
+	private SelfNode owner;
 }
