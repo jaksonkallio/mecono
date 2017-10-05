@@ -18,6 +18,31 @@ public class NuggetStream {
 		this.message_text = message_text;
 	}
 	
+	private void createNuggetsFromString(String message_text){
+		nuggets.clear();
+		int start_index = 0;
+		
+		while(start_index < message_text.length()){
+			int end_index = start_index + 8;
+			
+			if(end_index > message_text.length()){
+				end_index = message_text.length();
+			}
+			
+			nuggets.add(new Nugget(this, message_text.substring(start_index, end_index)));
+			
+			start_index += 8;
+		}
+		
+	}
+	
+	private void buildMessage(){
+		message_text = "";
+		for(Nugget nugget : nuggets){
+			message_text += nugget.getMessagePiece();
+		}
+	}
+	
 	private ArrayList<Nugget> nuggets; // The nuggets in the stream
 	private int time_sent; // Not trustworthy, but may be helpful
 	private int expected_count; // The expected number of nuggets total
