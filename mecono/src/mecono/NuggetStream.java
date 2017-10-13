@@ -12,14 +12,23 @@ public class NuggetStream {
 		this.mailbox = mailbox;
 	}
 	
+	public NuggetStream(Mailbox mailbox, String stream_id){
+		try{
+			Protocol.validateNStreamID(stream_id);
+		} catch(BadProtocolException ex) {
+			
+		}
+		this.stream_id = stream_id;
+	}
+	
 	public void createNewMessage(NuggetStreamType stream_type, RemoteNode destination, String message_text){
-		this.stream_type = stream_type;
+		this.nstream_type = stream_type;
 		this.destination = destination;
 		this.message_text = message_text;
 	}
 	
 	private void createNuggetsFromString(String message_text){
-		nuggets.clear();
+		/*nuggets.clear();
 		int start_index = 0;
 		
 		while(start_index < message_text.length()){
@@ -32,8 +41,7 @@ public class NuggetStream {
 			nuggets.add(new Nugget(this, message_text.substring(start_index, end_index)));
 			
 			start_index += 8;
-		}
-		
+		}*/
 	}
 	
 	public boolean hasNugget(Nugget target){
@@ -44,6 +52,18 @@ public class NuggetStream {
 		}
 		
 		return false;
+	}
+	
+	public String getStreamID(){
+		return stream_id;
+	}
+	
+	public NuggetStreamType getNStreamType(){
+		return nstream_type;
+	}
+	
+	public void setNStreamType(NuggetStreamType nstream_type){
+		this.nstream_type = nstream_type;
 	}
 	
 	private void buildMessage(){
@@ -59,8 +79,8 @@ public class NuggetStream {
 	private String message_text;
 	private RemoteNode originator; // Node of the originator
 	private RemoteNode destination; // Node of the destination
-	private String identifier; // The string used to associate nuggets into one nugget stream.
+	private String stream_id; // The string used to associate nuggets into one nugget stream.
 	private Path path;
-	private NuggetStreamType stream_type;
+	private NuggetStreamType nstream_type = NuggetStreamType.UNKNOWN;
 	private Mailbox mailbox;
 }

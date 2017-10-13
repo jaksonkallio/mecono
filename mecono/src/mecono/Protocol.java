@@ -8,6 +8,7 @@ import java.util.Random;
  */
 public class Protocol {
 	public static final int max_nuggets_per_stream = 100;
+	public static final int nstream_id_length = 5;
 	
 	public static String generateAddress() {
 		char[] text = new char[address_length];
@@ -18,6 +19,12 @@ public class Protocol {
 		}
 		
 		return new String(text);
+	}
+	
+	public static void validateNStreamID(String stream_id) throws BadProtocolException{
+		if(stream_id.length() != nstream_id_length){
+			throw new BadProtocolException("Invalid nugget stream ID.");
+		}
 	}
 	
 	private static Random rng = new Random();
