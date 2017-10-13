@@ -7,53 +7,53 @@ import java.util.Set;
  * @author jak
  */
 public class RemoteNode implements Node {
-    
-	public RemoteNode(String address){
+
+	public RemoteNode(String address) {
 		this.address = address;
 	}
-	
+
 	public String getAddress() {
 		return address;
 	}
-	
+
 	public String getLabel() {
 		return label;
 	}
-	
+
 	public int countSuccessfulChunks() {
 		return successful_chunks;
 	}
-	
+
 	public int countFailedChunks() {
 		return failed_chunks;
 	}
-	
+
 	public int countReceivedChunks() {
 		return received_chunks;
 	}
-	
+
 	public boolean isCooperative() {
 		return cooperative;
 	}
-	
+
 	public boolean isBlacklisted() {
 		return blacklisted;
 	}
-	
+
 	public Set<RemoteNode> getNeighbors() {
 		return neighbors;
 	}
-	
-	public boolean equals(Object o){
+
+	public boolean equals(Object o) {
 		Node other = (Node) o;
 		return other.getAddress() == this.getAddress();
 	}
-	
+
 	public int getNeighborCount() {
 		return neighbors.size();
 	}
-	
-    private String address;
+
+	private String address;
 	private String label;
 	private int successful_chunks; // Number of successful chunks sent to this node.
 	private int failed_chunks; // Number of chunks that were sent to this node, but didn't receive a receipt within the time allotted.
@@ -62,5 +62,5 @@ public class RemoteNode implements Node {
 	private boolean blacklisted; // This node shouldn't be used, unless as a last resort.
 	private boolean discovered; // If we know any successful paths to this node.
 	private Set<RemoteNode> neighbors; // This node's neighbors.
-	
+
 }

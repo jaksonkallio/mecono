@@ -7,27 +7,27 @@ import java.util.ArrayList;
  * @author jak
  */
 public class NuggetStream {
-	
-	public NuggetStream(Mailbox mailbox){
+
+	public NuggetStream(Mailbox mailbox) {
 		this.mailbox = mailbox;
 	}
-	
-	public NuggetStream(Mailbox mailbox, String stream_id){
-		try{
+
+	public NuggetStream(Mailbox mailbox, String stream_id) {
+		try {
 			Protocol.validateNStreamID(stream_id);
-		} catch(BadProtocolException ex) {
-			
+		} catch (BadProtocolException ex) {
+
 		}
 		this.stream_id = stream_id;
 	}
-	
-	public void createNewMessage(NuggetStreamType stream_type, RemoteNode destination, String message_text){
+
+	public void createNewMessage(NuggetStreamType stream_type, RemoteNode destination, String message_text) {
 		this.nstream_type = stream_type;
 		this.destination = destination;
 		this.message_text = message_text;
 	}
-	
-	private void createNuggetsFromString(String message_text){
+
+	private void createNuggetsFromString(String message_text) {
 		/*nuggets.clear();
 		int start_index = 0;
 		
@@ -43,36 +43,36 @@ public class NuggetStream {
 			start_index += 8;
 		}*/
 	}
-	
-	public boolean hasNugget(Nugget target){
-		for(Nugget nugget : nuggets){
-			if(target.equals(nugget)){
+
+	public boolean hasNugget(Nugget target) {
+		for (Nugget nugget : nuggets) {
+			if (target.equals(nugget)) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
-	public String getStreamID(){
+
+	public String getStreamID() {
 		return stream_id;
 	}
-	
-	public NuggetStreamType getNStreamType(){
+
+	public NuggetStreamType getNStreamType() {
 		return nstream_type;
 	}
-	
-	public void setNStreamType(NuggetStreamType nstream_type){
+
+	public void setNStreamType(NuggetStreamType nstream_type) {
 		this.nstream_type = nstream_type;
 	}
-	
-	private void buildMessage(){
+
+	private void buildMessage() {
 		message_text = "";
-		for(Nugget nugget : nuggets){
+		for (Nugget nugget : nuggets) {
 			message_text += nugget.getMessagePiece();
 		}
 	}
-	
+
 	private ArrayList<Nugget> nuggets; // The nuggets in the stream
 	private int time_sent; // Not trustworthy, but may be helpful
 	private int expected_count; // The expected number of nuggets total
