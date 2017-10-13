@@ -7,6 +7,7 @@ import java.util.Random;
  * @author jak
  */
 public class Protocol {
+	public static final int max_nuggets_per_stream = 100;
 	
 	public static String generateAddress() {
 		char[] text = new char[address_length];
@@ -18,7 +19,6 @@ public class Protocol {
 		
 		return new String(text);
 	}
-	
 	
 	private static Random rng = new Random();
 	private static final int address_length = 10;

@@ -44,6 +44,11 @@ public class RemoteNode implements Node {
 		return neighbors;
 	}
 	
+	public boolean equals(Object o){
+		Node other = (Node) o;
+		return other.getAddress() == this.getAddress();
+	}
+	
 	public int getNeighborCount() {
 		return neighbors.size();
 	}

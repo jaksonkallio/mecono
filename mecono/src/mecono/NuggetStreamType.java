@@ -5,8 +5,7 @@ package mecono;
  * @author jak
  */
 public enum NuggetStreamType {
-	PING, // Pings a node to discover a path, see if it exists/online, or check speed/lag.
-	REPORT, // Report misbehavior to community
-	DISCOVER,
-	DATA // Normal data 
+	PING, // Check for a nodes online status and latency to the node
+	FIND, // Ask community nodes if they know about a path to a specific node
+	DATA // Normal data
 }

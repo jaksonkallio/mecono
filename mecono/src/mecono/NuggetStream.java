@@ -36,6 +36,16 @@ public class NuggetStream {
 		
 	}
 	
+	public boolean hasNugget(Nugget target){
+		for(Nugget nugget : nuggets){
+			if(target.equals(nugget)){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	private void buildMessage(){
 		message_text = "";
 		for(Nugget nugget : nuggets){
