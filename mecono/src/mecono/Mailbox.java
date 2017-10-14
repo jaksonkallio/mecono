@@ -57,7 +57,7 @@ public class Mailbox {
 	 * @param ser_nugget
 	 * @return Nugget
 	 */
-	private Nugget unserializeNugget(String ser_nugget) throws UnknownResponsibilityException, BadProtocolException {
+	private Nugget unserializeNugget(String ser_nugget) throws BadProtocolException, UnknownResponsibilityException {
 		/*
 		`[...]` denotes encrypted payload that only destination may access.
 		
@@ -76,20 +76,7 @@ public class Mailbox {
 
 			NuggetStream nstream_parent = getNStreamByID(pieces.get(3));
 			if (nstream_parent.getNStreamType() == NuggetStreamType.UNKNOWN) {
-				switch (pieces.get(2)) {
-					case "p":
-						nstream_parent.setNStreamType(NuggetStreamType.PING);
-						break;
-					case "d":
-						nstream_parent.setNStreamType(NuggetStreamType.DATA);
-						break;
-					case "f":
-						nstream_parent.setNStreamType(NuggetStreamType.FIND);
-						break;
-					default:
-						throw new BadProtocolException("Unknown nugget stream type.");
-				}
-
+				nstream_parent.setNStreamType(Protocol.unserializeNStreamType(pieces.get(2)));
 			}
 
 			RemoteNode originator = SelfNode.getRemoteNode(pieces.get(4));

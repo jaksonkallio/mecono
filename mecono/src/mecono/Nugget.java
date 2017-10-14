@@ -22,13 +22,13 @@ public class Nugget {
 	 * @param message_piece 
 	 */
 	//pathhistory,[destination,nstreamtype,streamid,originator,nuggetcount,nuggetid,content,signature(destination+originator+streamid+nuggetcount+content)]
-	public Nugget(NuggetStream nstream_parent, Path path_history, RemoteNode originator, int id, String message_piece, String signature){
+	public Nugget(NuggetStream nstream_parent, Path path_history, RemoteNode originator, int id, String message_piece, String signature) throws BadProtocolException {
 		this.final_dest = true;
 		this.nstream_parent = nstream_parent;
 		this.path_history = path_history;
-		setMessagePiece(message_piece);
 		
 		try {
+			setMessagePiece(message_piece);
 			setID(id);
 		} catch(BadProtocolException ex){
 			
@@ -64,7 +64,7 @@ public class Nugget {
 		return nstream_parent;
 	}
 	
-	private void setID(int id) throws BadProtocolException{
+	private void setID(int id) throws BadProtocolException {
 		if(id >= 1 && id <= Protocol.max_nuggets_per_stream){
 			this.id = id;
 		}else{

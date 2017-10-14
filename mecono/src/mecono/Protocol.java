@@ -26,6 +26,19 @@ public class Protocol {
 			throw new BadProtocolException("Invalid nugget stream ID.");
 		}
 	}
+	
+	public static NuggetStreamType unserializeNStreamType(String representation) throws BadProtocolException {
+		switch (representation) {
+			case "p":
+				return NuggetStreamType.PING;
+			case "d":
+				return NuggetStreamType.DATA;
+			case "f":
+				return NuggetStreamType.FIND;
+			default:
+				throw new BadProtocolException("Unknown nugget stream type.");
+		}
+	}
 
 	private static Random rng = new Random();
 	private static final int address_length = 10;
