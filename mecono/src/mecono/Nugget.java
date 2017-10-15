@@ -14,6 +14,8 @@ public class Nugget {
 	public Nugget(Path path_history, String payload){
 		this.final_dest = false;
 		this.payload = payload;
+		
+		updateReceivedTime();
 	}
 	
 	/**
@@ -24,15 +26,21 @@ public class Nugget {
 	//pathhistory,[destination,nstreamtype,streamid,originator,nuggetcount,nuggetid,content,signature(destination+originator+streamid+nuggetcount+content)]
 	public Nugget(NuggetStream nstream_parent, Path path_history, RemoteNode originator, int id, String message_piece, String signature) throws BadProtocolException {
 		this.final_dest = true;
-		this.nstream_parent = nstream_parent;
-		this.path_history = path_history;
 		
 		try {
+			this.nstream_parent = nstream_parent;
+			this.path_history = path_history;
 			setMessagePiece(message_piece);
 			setID(id);
 		} catch(BadProtocolException ex){
 			
 		}
+		
+		updateReceivedTime();
+	}
+	
+	public void updateReceivedTime(){
+		time_received = (int) (System.currentTimeMillis() / 60000L);
 	}
 	
 	public boolean equals(Object o){
@@ -78,5 +86,6 @@ public class Nugget {
 	private Path path_history;
 	private final boolean final_dest;
 	private NuggetStream nstream_parent;
+	private int time_received = 0;
 	private Mailbox mailbox;
 }

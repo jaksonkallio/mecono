@@ -35,7 +35,7 @@ public class Mailbox {
 				forward_queue.offer(nugget);
 			}
 		} catch (UnknownResponsibilityException | BadProtocolException ex) {
-
+			owner.nodeLog(2, "Bad nugget received.");
 		}
 	}
 
