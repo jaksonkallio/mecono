@@ -40,6 +40,14 @@ public class SelfNode implements Node {
 		return true;
 	}
 
+	public void nodeLog(int importance, String message){
+		String[] importance_levels = {"INFO", "NOTE", "WARN", "CRIT"};
+		
+		if(importance <= (importance_levels.length - 1)){
+			System.out.println("["+importance_levels[importance]+"] "+message);
+		}
+	}
+	
 	private String address;
 	private String label;
 	private Mailbox mailbox;
