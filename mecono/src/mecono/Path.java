@@ -23,5 +23,9 @@ public class Path {
 		return 0.0;
 	}
 	
+	public Node getStop(int i) {
+		return stops.get(i);
+	}
+	
     private ArrayList<RemoteNode> stops;
 }

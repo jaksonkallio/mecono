@@ -66,6 +66,14 @@ public class NuggetStream {
 		this.nstream_type = nstream_type;
 	}
 
+	public Nugget getNuggetByIndex(int i){
+		return nuggets.get(i);
+	}
+	
+	public int getNuggetCount(){
+		return nuggets.size();
+	}
+	
 	private void buildMessage() {
 		message_text = "";
 		for (Nugget nugget : nuggets) {

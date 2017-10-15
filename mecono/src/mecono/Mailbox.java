@@ -32,10 +32,22 @@ public class Mailbox {
 			if (nugget.isFinalDest()) {
 				partial_nstreams.add(nugget.getNStreamParent());
 			} else {
-				forward_queue.offer(nugget);
+				outbound_queue.offer(nugget);
 			}
 		} catch (UnknownResponsibilityException | BadProtocolException ex) {
 			owner.nodeLog(2, "Bad nugget received.");
+		}
+	}
+	
+	private void enqueueOutbound(NuggetStream nstream){
+		for(int i = 0; i < nstream.getNuggetCount(); i++){
+			enqueueOutbound(nstream.getNuggetByIndex(i));
+		}
+	}
+	
+	private void enqueueOutbound(Nugget nugget){
+		if(!nugget.isFinalDest()){
+			outbound_queue.offer(nugget);
 		}
 	}
 
@@ -49,6 +61,14 @@ public class Mailbox {
 
 		// Stream ID not found
 		return new NuggetStream(this, stream_id);
+	}
+	
+	/**
+	 * Gets the owner of the mailbox.
+	 * @return 
+	 */
+	public SelfNode getOwner() {
+		return owner;
 	}
 
 	/**
@@ -94,7 +114,7 @@ public class Mailbox {
 		}
 	}
 
-	private SelfNode owner;
-	private Set<NuggetStream> partial_nstreams;
-	private Queue<Nugget> forward_queue;
+	private final SelfNode owner; // The selfnode that runs the mailbox
+	private Set<NuggetStream> partial_nstreams; // Inbound, for building up nugget streams
+	private Queue<Nugget> outbound_queue; // Outbound queue
 }

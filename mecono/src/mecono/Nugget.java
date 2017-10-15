@@ -9,8 +9,8 @@ public class Nugget {
 	/**
 	 * Constructor for when the self is NOT destination.
 	 *
-	 * @param past_history
-	 * @param message_piece
+	 * @param path_history
+	 * @param payload
 	 */
 	public Nugget(Path path_history, String payload) {
 		this.final_dest = false;
@@ -22,8 +22,13 @@ public class Nugget {
 	/**
 	 * Constructor for when the self is the destination.
 	 *
-	 * @param past_history
+	 * @param nstream_parent
+	 * @param path_history
+	 * @param originator
+	 * @param id
 	 * @param message_piece
+	 * @param signature
+	 * @throws mecono.BadProtocolException
 	 */
 	//pathhistory,[destination,nstreamtype,streamid,originator,nuggetcount,nuggetid,content,signature(destination+originator+streamid+nuggetcount+content)]
 	public Nugget(NuggetStream nstream_parent, Path path_history, RemoteNode originator, int id, String message_piece, String signature) throws BadProtocolException {
@@ -53,6 +58,7 @@ public class Nugget {
 		return Math.max(Protocol.getEpochMinute() - time_received, 0);
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		Nugget other = (Nugget) o;
 		return (other.getNStreamParent() == this.getNStreamParent() && other.getID() == this.getID());
@@ -81,7 +87,11 @@ public class Nugget {
 	public NuggetStream getNStreamParent() {
 		return nstream_parent;
 	}
-
+	
+	public boolean originatorIsSelf() {
+		return path_history.getStop(1).equals(mailbox.getOwner());
+	}
+	
 	private void setID(int id) throws BadProtocolException {
 		if (id >= 1 && id <= Protocol.max_nuggets_per_stream) {
 			this.id = id;
