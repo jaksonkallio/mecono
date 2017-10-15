@@ -12,10 +12,12 @@ public class SelfNode implements Node {
 		mailbox = new Mailbox(this);
 	}
 
+	@Override
 	public String getAddress() {
 		return address;
 	}
 
+	@Override
 	public String getLabel() {
 		return label;
 	}
@@ -23,7 +25,7 @@ public class SelfNode implements Node {
 	public static RemoteNode getRemoteNode(String address) {
 		// Check if node is loaded into memory
 		for (RemoteNode node : nodes_memory) {
-			if (node.getAddress() == address) {
+			if (node.getAddress().equals(address)) {
 				return node;
 			}
 		}
@@ -50,7 +52,7 @@ public class SelfNode implements Node {
 	
 	private String address;
 	private String label;
-	private Mailbox mailbox;
+	private final Mailbox mailbox;
 	private boolean request_no_foreign_optimization = false; // We can ask nodes that receive our nugget streams to not optimize our streams.
 	private int nstream_build_expiry = 30; // Time, in minutes, where an incomplete nstream will be deleted along with contained nuggets.
 
