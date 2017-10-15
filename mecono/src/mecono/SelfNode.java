@@ -51,9 +51,8 @@ public class SelfNode implements Node {
 	private String address;
 	private String label;
 	private Mailbox mailbox;
-	private boolean optimize_foreign_nuggetstream_paths = true; // If we receive a NuggetStream and know a better path than what is given, use our own path.
-	private double optimize_foreign_nuggetstream_threshold = 0.95; // The threshold before we optimize their path.
 	private boolean request_no_foreign_optimization = false; // We can ask nodes that receive our nugget streams to not optimize our streams.
+	private int nstream_build_expiry = 30; // Time, in minutes, where an incomplete nstream will be deleted along with contained nuggets.
 
 	private static Set<RemoteNode> nodes_memory;
 }
