@@ -39,6 +39,10 @@ public class Protocol {
 				throw new BadProtocolException("Unknown nugget stream type.");
 		}
 	}
+	
+	public static int getEpochMinute(){
+		return (int) (System.currentTimeMillis() / 60000L);
+	}
 
 	private static Random rng = new Random();
 	private static final int address_length = 10;
