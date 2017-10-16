@@ -8,8 +8,14 @@ import java.util.Set;
  */
 public class SelfNode implements Node {
 
-	public SelfNode() {
+	public SelfNode(String label) {
+		this.label = label;
 		mailbox = new Mailbox(this);
+		nodeLog(0, "SelfNode \""+this.label+"\" started.");
+	}
+	
+	public SelfNode() {
+		this("Unnamed");
 	}
 
 	@Override
@@ -46,8 +52,12 @@ public class SelfNode implements Node {
 		String[] importance_levels = {"INFO", "NOTE", "WARN", "CRIT"};
 		
 		if(importance <= (importance_levels.length - 1)){
-			System.out.println("["+importance_levels[importance]+"] "+message);
+			System.out.println("["+label.substring(0,3)+"]["+importance_levels[importance]+"] "+message);
 		}
+	}
+	
+	public Mailbox getMailbox(){
+		return mailbox;
 	}
 	
 	private boolean sendNuggetStream(NuggetStream stream) {
@@ -56,7 +66,7 @@ public class SelfNode implements Node {
 	
 	private String address;
 	private String label;
-	private final Mailbox mailbox;
+	protected final Mailbox mailbox;
 	private boolean request_no_foreign_optimization = false; // We can ask nodes that receive our nugget streams to not optimize our streams.
 	private int nstream_build_expiry = 30; // Time, in minutes, where an incomplete nstream will be deleted along with contained nuggets.
 

@@ -8,35 +8,19 @@ import java.util.ArrayList;
  */
 public class SimNetwork {
 	
-	public SimNetwork() {
-		this.member_count = 10;
+	public void begin(){
+		SimSelfNode a = new SimSelfNode("Annie");
+		SimSelfNode b = new SimSelfNode("Bob");
+		SimSelfNode c = new SimSelfNode("Charlie");
 		
-		initializeMembers();
+		a.getMailbox().listPartialStreams();
+		b.getMailbox().listPartialStreams();
+		c.getMailbox().listPartialStreams();
+		
+		a.receiveRawString("111-222-333,encrypteddata");
+		
+		a.getMailbox().listPartialStreams();
 	}
 	
-	public SimNetwork(int member_count) {
-		// Maximum/minimum members for the simulation network
-		if (member_count < 2 || member_count > 1000) {
-			member_count = 10;
-		}
-		
-		this.member_count = member_count;
-		
-		initializeMembers();
-	}
-	
-	/**
-	 * Creates all member nodes.
-	 */
-	public void initializeMembers() {
-		// Only initialize if there are no members yet
-		if (members.isEmpty()) {
-			for (int i = 0; i < member_count; i++) {
-				members.add(new SimNode());
-			}
-		}
-	}
-	
-	private final int member_count;
-	private ArrayList<SimNode> members;
+	private ArrayList<SimSelfNode> members;
 }

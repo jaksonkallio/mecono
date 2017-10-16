@@ -17,6 +17,7 @@ public class Mailbox {
 
 	public Mailbox(SelfNode owner) {
 		this.owner = owner;
+		this.network_controller = new NetworkController();
 	}
 
 	public boolean sendMessage(NuggetStreamType stream_type, RemoteNode destination, String message_text) {
@@ -81,6 +82,25 @@ public class Mailbox {
 	public SelfNode getOwner() {
 		return owner;
 	}
+	
+	public NetworkController getNetworkController() {
+		return network_controller;
+	}
+	
+	public void listPartialStreams(){
+		String str = "";
+		
+		if(partial_nstreams.size() > 0){
+			for(NuggetStream nstream : partial_nstreams){
+				str += "  "+nstream.toString()+"\n";
+			}
+		}else{
+			str = "Mailbox has no partial nugget streams.";
+		}
+		
+		
+		owner.nodeLog(0, str);
+	}
 
 	/**
 	 * Convert an unencrypted serialized nugget into a Nugget object.
@@ -126,6 +146,7 @@ public class Mailbox {
 	}
 
 	private final SelfNode owner; // The selfnode that runs the mailbox
-	private ArrayList<NuggetStream> partial_nstreams; // Inbound, for building up nugget streams
+	private ArrayList<NuggetStream> partial_nstreams = new ArrayList<NuggetStream>(); // Inbound, for building up nugget streams
+	private final NetworkController network_controller;
 	private Queue<Nugget> outbound_queue; // Outbound queue
 }

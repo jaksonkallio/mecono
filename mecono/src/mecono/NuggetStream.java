@@ -32,6 +32,16 @@ public class NuggetStream {
 		this.destination = destination;
 		this.message_text = message_text;
 	}
+	
+	@Override
+	public String toString(){
+		String str = "";
+		str += "Stream ID 0x"+stream_id+"\n";
+		str += "- Type: "+nstream_type+"\n";
+		str += "- Count: "+getNuggetCount()+" of "+expected_count+"\n";
+		str += "- Message: "+buildMessage()+"\n";
+		return str;
+	}
 
 	private void createNuggetsFromString(String message_text) {
 		/*nuggets.clear();
