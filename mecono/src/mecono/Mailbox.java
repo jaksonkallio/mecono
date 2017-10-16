@@ -29,13 +29,24 @@ public class Mailbox {
 	public void receiveNugget(String ser_nugget) {
 		try {
 			Nugget nugget = unserializeNugget(ser_nugget);
+			
 			if (nugget.isFinalDest()) {
 				partial_nstreams.add(nugget.getNStreamParent());
+				checkForCompletedNStreams();
 			} else {
 				outbound_queue.offer(nugget);
 			}
 		} catch (UnknownResponsibilityException | BadProtocolException ex) {
 			owner.nodeLog(2, "Bad nugget received.");
+		}
+	}
+	
+	private void checkForCompletedNStreams(){
+		for (int i = 0; i < partial_nstreams.size(); i++) {
+			if (partial_nstreams.get(i).allNuggetsReceived()) {
+				owner.receiveCompleteNStream(partial_nstreams.get(i));
+				partial_nstreams.remove(i);
+			}
 		}
 	}
 	
@@ -115,6 +126,6 @@ public class Mailbox {
 	}
 
 	private final SelfNode owner; // The selfnode that runs the mailbox
-	private Set<NuggetStream> partial_nstreams; // Inbound, for building up nugget streams
+	private ArrayList<NuggetStream> partial_nstreams; // Inbound, for building up nugget streams
 	private Queue<Nugget> outbound_queue; // Outbound queue
 }

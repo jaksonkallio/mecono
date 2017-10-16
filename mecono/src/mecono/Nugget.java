@@ -36,6 +36,7 @@ public class Nugget {
 
 		try {
 			this.nstream_parent = nstream_parent;
+			(this.nstream_parent).importNugget(this);
 			this.path_history = path_history;
 			setMessagePiece(message_piece);
 			setID(id);

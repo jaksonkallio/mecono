@@ -20,6 +20,12 @@ public class NuggetStream {
 		}
 		this.stream_id = stream_id;
 	}
+	
+	public void importNugget(Nugget nugget){
+		if(!hasNugget(nugget)){
+			nuggets.add(nugget.getID(), nugget);
+		}
+	}
 
 	public void createNewMessage(NuggetStreamType stream_type, RemoteNode destination, String message_text) {
 		this.nstream_type = stream_type;
@@ -94,11 +100,14 @@ public class NuggetStream {
 		return all_received;
 	}
 	
-	private void buildMessage() {
+	public String buildMessage() {
 		message_text = "";
+		
 		for (Nugget nugget : nuggets) {
 			message_text += nugget.getMessagePiece();
 		}
+		
+		return message_text;
 	}
 
 	private ArrayList<Nugget> nuggets; // The nuggets in the stream

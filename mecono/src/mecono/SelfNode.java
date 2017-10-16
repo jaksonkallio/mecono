@@ -38,16 +38,20 @@ public class SelfNode implements Node {
 		return new_node;
 	}
 
-	private boolean sendNuggetStream(NuggetStream stream) {
-		return true;
+	public void receiveCompleteNStream(NuggetStream nstream) {
+		nodeLog(1, "Data received via mecono network: "+nstream.buildMessage());
 	}
-
+	
 	public void nodeLog(int importance, String message){
 		String[] importance_levels = {"INFO", "NOTE", "WARN", "CRIT"};
 		
 		if(importance <= (importance_levels.length - 1)){
 			System.out.println("["+importance_levels[importance]+"] "+message);
 		}
+	}
+	
+	private boolean sendNuggetStream(NuggetStream stream) {
+		return true;
 	}
 	
 	private String address;
