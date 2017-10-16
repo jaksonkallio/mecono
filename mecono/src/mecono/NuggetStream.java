@@ -74,6 +74,26 @@ public class NuggetStream {
 		return nuggets.size();
 	}
 	
+	public boolean allNuggetsReceived(){
+		boolean all_received = true;
+		
+		for(int i = 0; all_received && i < expected_count; i++){
+			boolean found = true;
+			
+			for(Nugget nugget : nuggets){
+				if(nugget.getID() == i){
+					found = true;
+				}
+			}
+			
+			if(!found){
+				all_received = false;
+			}
+		}
+		
+		return all_received;
+	}
+	
 	private void buildMessage() {
 		message_text = "";
 		for (Nugget nugget : nuggets) {
