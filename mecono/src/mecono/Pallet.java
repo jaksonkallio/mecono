@@ -18,7 +18,7 @@ public class Pallet {
 		} catch (BadProtocolException ex) {
 
 		}
-		this.stream_id = stream_id;
+		this.pallet_id = stream_id;
 	}
 	
 	public void importParcel(Parcel parcel){
@@ -36,7 +36,7 @@ public class Pallet {
 	@Override
 	public String toString(){
 		String str = "";
-		str += "Stream ID 0x"+stream_id+"\n";
+		str += "Stream ID 0x"+pallet_id+"\n";
 		str += "- Type: "+pallet_type+"\n";
 		str += "- Count: "+getParcelCount()+" of "+expected_count+"\n";
 		str += "- Message: "+buildMessage()+"\n";
@@ -70,8 +70,8 @@ public class Pallet {
 		return false;
 	}
 
-	public String getStreamID() {
-		return stream_id;
+	public String getPalletID() {
+		return pallet_id;
 	}
 
 	public PalletType getPalletType() {
@@ -126,7 +126,7 @@ public class Pallet {
 	private String message_text;
 	private RemoteNode originator; // Node of the originator
 	private RemoteNode destination; // Node of the destination
-	private String stream_id; // The string used to associate parcels into one parcel stream.
+	private String pallet_id; // The string used to associate parcels into one parcel stream.
 	private Path path;
 	private PalletType pallet_type = PalletType.UNKNOWN;
 	private Mailbox mailbox;

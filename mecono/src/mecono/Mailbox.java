@@ -65,7 +65,7 @@ public class Mailbox {
 	public Pallet getPalletByID(String stream_id) {
 		// Search known streams for the Stream ID.
 		for (Pallet pallet : partial_pallets) {
-			if (pallet.getStreamID() == stream_id) {
+			if (pallet.getPalletID() == stream_id) {
 				return pallet;
 			}
 		}
@@ -96,7 +96,6 @@ public class Mailbox {
 		}else{
 			str = "Mailbox has no partially built pallets.";
 		}
-		
 		
 		owner.nodeLog(0, str);
 	}
@@ -146,6 +145,7 @@ public class Mailbox {
 
 	private final SelfNode owner; // The selfnode that runs the mailbox
 	private ArrayList<Pallet> partial_pallets = new ArrayList<Pallet>(); // Inbound, for building up parcel streams
+	private ArrayList<UponResponseAction> upon_response_actions;
 	private final NetworkController network_controller;
 	private Queue<Parcel> outbound_queue; // Outbound queue
 }

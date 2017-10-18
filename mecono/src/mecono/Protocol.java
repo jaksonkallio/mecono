@@ -32,12 +32,16 @@ public class Protocol {
 			case "fr":
 				return PalletType.FIND_RESPONSE;
 			default:
-				throw new BadProtocolException("Unknown nugget stream type.");
+				throw new BadProtocolException("Unknown pallet type.");
 		}
 	}
 	
 	public static int getEpochMinute(){
 		return (int) (System.currentTimeMillis() / 60000L);
+	}
+	
+	public static long getEpochSecond(){
+		return (int) (System.currentTimeMillis() / 1000L);
 	}
 
 	public static final Random rng = new Random();
