@@ -17,7 +17,7 @@ public class Mailbox {
 
 	public Mailbox(SelfNode owner) {
 		this.owner = owner;
-		this.network_controller = new NetworkController();
+		this.network_controller = new NetworkController(this);
 	}
 
 	public boolean sendMessage(NuggetStreamType stream_type, RemoteNode destination, String message_text) {

@@ -1,5 +1,6 @@
 package mecono;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 /**
@@ -11,11 +12,16 @@ public class SelfNode implements Node {
 	public SelfNode(String label) {
 		this.label = label;
 		mailbox = new Mailbox(this);
-		nodeLog(0, "SelfNode \""+this.label+"\" started.");
+		nodeLog(0, "SelfNode \""+getLabel()+"\" started.");
 	}
 	
 	public SelfNode() {
 		this("Unnamed");
+	}
+	
+	public void generateNewAddress(){
+		address = Protocol.generateAddress();
+		nodeLog(0, "SelfNode \""+getLabel()+"\" now uses address \""+getAddress()+"\".");
 	}
 
 	@Override
@@ -70,5 +76,5 @@ public class SelfNode implements Node {
 	private boolean request_no_foreign_optimization = false; // We can ask nodes that receive our nugget streams to not optimize our streams.
 	private int nstream_build_expiry = 30; // Time, in minutes, where an incomplete nstream will be deleted along with contained nuggets.
 
-	private static Set<RemoteNode> nodes_memory;
+	private static ArrayList<RemoteNode> nodes_memory = new ArrayList<>();
 }

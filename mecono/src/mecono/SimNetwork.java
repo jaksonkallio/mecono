@@ -9,9 +9,13 @@ import java.util.ArrayList;
 public class SimNetwork {
 	
 	public void begin(){
-		SimSelfNode a = new SimSelfNode("Annie");
+		SimSelfNode a = new SimSelfNode("Ann");
 		SimSelfNode b = new SimSelfNode("Bob");
-		SimSelfNode c = new SimSelfNode("Charlie");
+		SimSelfNode c = new SimSelfNode("Cal");
+		
+		a.generateNewAddress();
+		b.generateNewAddress();
+		c.generateNewAddress();
 		
 		a.getMailbox().listPartialStreams();
 		b.getMailbox().listPartialStreams();
