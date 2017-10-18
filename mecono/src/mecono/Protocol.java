@@ -21,10 +21,16 @@ public class Protocol {
 		switch (representation) {
 			case "p":
 				return PalletType.PING;
+			case "pr":
+				return PalletType.PING_RESPONSE;
 			case "d":
 				return PalletType.DATA;
+			case "dr":
+				return PalletType.DATA_RECEIPT;
 			case "f":
 				return PalletType.FIND;
+			case "fr":
+				return PalletType.FIND_RESPONSE;
 			default:
 				throw new BadProtocolException("Unknown nugget stream type.");
 		}
