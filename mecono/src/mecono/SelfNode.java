@@ -9,10 +9,15 @@ import java.util.Set;
  */
 public class SelfNode implements Node {
 
-	public SelfNode(String label) {
+	public SelfNode(String label, NodeAddress address) {
 		this.label = label;
+		this.address = address;
 		mailbox = new Mailbox(this);
-		nodeLog(0, "SelfNode \""+getLabel()+"\" started.");
+		nodeLog(0, "SelfNode \""+getAddressLabel()+"\" started.");
+	}
+	
+	public SelfNode(String label) {
+		this(label, new NodeAddress());
 	}
 	
 	public SelfNode() {
@@ -20,13 +25,17 @@ public class SelfNode implements Node {
 	}
 	
 	public void generateNewAddress(){
-		address = Protocol.generateAddress();
-		nodeLog(0, "SelfNode \""+getLabel()+"\" now uses address \""+getAddress()+"\".");
+		address = new NodeAddress();
+		nodeLog(0, "SelfNode \""+getAddressLabel()+"\" now uses address \""+getAddress()+"\".");
 	}
 
 	@Override
 	public String getAddress() {
-		return address;
+		return address.getAddressString();
+	}
+	
+	public String getAddressLabel() {
+		return getAddress().substring(0, 3);
 	}
 
 	@Override
@@ -58,7 +67,7 @@ public class SelfNode implements Node {
 		String[] importance_levels = {"INFO", "NOTE", "WARN", "CRIT"};
 		
 		if(importance <= (importance_levels.length - 1)){
-			System.out.println("["+label.substring(0,3)+"]["+importance_levels[importance]+"] "+message);
+			System.out.println("["+getAddressLabel()+"]["+importance_levels[importance]+"] "+message);
 		}
 	}
 	
@@ -70,7 +79,7 @@ public class SelfNode implements Node {
 		return true;
 	}
 	
-	private String address;
+	private NodeAddress address;
 	private String label;
 	protected final Mailbox mailbox;
 	private boolean request_no_foreign_optimization = false; // We can ask nodes that receive our nugget streams to not optimize our streams.
