@@ -2,37 +2,25 @@
 
 ## Terms
 * **Neighbor**: A node with hop count 1 (directly connected to self-node) is a neighbor. A connection between two nodes is called a *neighborship*.
-* **Ping**: Time, in milliseconds, between a sent ping chunk and a ping response.
+* **Ping**: Time, in milliseconds, between a sent ping and a ping response.
 * **Self-Node**: The node the host software is running on, with an independent database and functionality.
-* **Chunk**: A piece of data. Can be either a "ping", "data", or "receipt" type.
-* **Receipt Chunk**: A response that a node received a specific chunk.
+* **Parcel**: A piece of data.
+* **Pallet**: A group of parcels that make up a large piece of data, built on the receiving node.
+* **Signal**: A high-level way of referring to a complete pallet made up of parcels, assuming everything is working properly.
 * **Remote-Node** or **Node**: A node that isn't a self-node.
-* **Community**: Nodes that are within a user-defined hop count are part of community. Larger values make for more local stability, but O(n^2) ping operations. Communities are used to orient nodes when they come online and to allow for a larger net to catch inbound connections.
-* **Hop**: Distance between two nodes, measured in number of nodes between the two plus one.
-* **Path Segment**: A connection between two nodes that has a unique ID that is the hash of the two node addresses concatenated.
-* **Path**: A path between two nodes, made up of path segment objects.
-* **Pinned Node**: A remote node that should always have a known, and tested, path to the self-node to allow for quick communication. More pinned nodes means more load to test paths constantly.
-* **Inbound Queue**: A thread that checks for new inbound chunks and holds them in a FIFO queue for processing/forwarding.
-
-## Classes
-* `SelfNode`: The node representing the single host node on a machine, or in a simulated environment, each simulated node.
-* `RemoteNode`: A remote node that is not the self-node.
-* `Chunk`: A chunk of data that can be sent through the network.
-* `Path`: A collection of path segments with various statistics about each segment.
-* `PathSegment`: A connection between two nodes.
-
-## Configuration
-### General
-* `community_hop_radius: Integer`: What number of hops is considered a "community".
-* `node_label: String`: Customizable, unregulated, string that represents the self-node in human readable form.
-* `int hop_forward_limit_ping: Integer`: Don't forward ping chunks that have travelled more than X hops.
-* `int hop_forward_limit_data: Integer`: Don't forward data chunks that have travelled more than X hops.
-* `max_inbound_queue_time: Integer`: Max time, in milliseconds, to keep a chunk in the inbound queue.
-
-### `SimNetwork.h` Simulation Variables
-* `neighbor_connectivity: Integer`: The percent chance for a neighborship between adjacent nodes to be generated.
-* `rows: Integer`: Number of rows to be created in the simulated grid.
-* `columns: Integer`: Number of columns to be created in the simulated grid.
+* **Community**: Nodes that are within a user-defined hop count are part of community. Communities share paths and announce existence to eachother.
+* **Hops**: Distance between two nodes, measured in number of connections traversed. Hop-0 is self node, hop-1 is neighbor, etc.
+* **Stop**: A single node in a path.
+* **Path**: A path between two nodes, made up of stops.
+* **Pinned Node**: A remote node that should always have a known, and tested, path to the self-node to allow for quick communication.
+* **Trusted Node**: A remote node that the self node has given "trusted status" to. Path information is requested from trusted nodes. All trusted nodes also automatically act like pinned nodes.
+* **Mailbox**: The inbound/outbound coordinator for parcels. Builds pallets and hands them off to the self node when done.
+* **Ping (Pallet Type)**: Quick 1-parcel request sent to a node to check online status or latency.
+* **Ping Response (Pallet Type)**: Response to a ping.
+* **Discover (Pallet Type)**: Request for path information from a specific node.
+* **Discover Response (Pallet Type)**: Response to a discover request.
+* **Data (Pallet Type)**: Standard parcel that contains a normal data transfer.
+* **Data Receipt (Pallet Type)**: After the receiving node fully builds a pallet, it sends a receipt to originator.
 
 ## Functions
 ### Node Birth
@@ -40,15 +28,30 @@ The birth of a node is when it is introduced to the network with no knowledge. T
 
 1. Generate private/public key.
 2. Advertise existence to community.
-3. Go about normal "Going Online" procedure.
 
-### Going Online/Refreshing Community
-When a self-node goes online, it must do some things to reorient itself into the network.
+### Asking for a Path
+When a path to a node is unknown, ask some helpful nodes for help.
 
-1. Ping nodes in the community by sending out a ping chunk with a `die_after` set to `community_hop_radius`.
-2. Test paths to pinned nodes.
+1. Send discover signal to each community member, with requested node address.
+2. Await discover responses.
+3. Add each returned path to the node's "known paths" variable.
+4. Tell node object to update outdated paths. (Since no paths were ever pinged, all will be updated.)
+5. Since paths have a "recommended by" variable to see where the path knowledge came from, we can determine which community members are being honest in the long run.
 
-### Incentive Structure
+## UI
+### Dashboard
+* Online status/ping of community
+* Online status/ping of pinned nodes (which includes trusted nodes, trusted nodes listed first)
+
+### Active Pallets
+* Lists data parcels awaiting receipt.
+
+### Node Profile
+* Relationship setting ("None", "Pinned", "Trusted and Pinned")
+* Success rates
+* Volume statistics
+
+## Future Incentive Structure
 What's stopping a node from responding to ping chunks but not forwarding data? Incentives alleviates a lot of trust issues with the network. It also encourages nodes to pop up and help the network in congested areas, much like how the incentives to mine bitcoin make the network's security increase. It's a way of allowing people to be selfish, yet also vitally help the network at the same time. Incentives are given to forward data chunks in the form of cryptocurrency.
 
 1. A node will only receive a data chunk from another node for two reasons: it is an intermediate hop in path to final destination OR it is the final destination.
