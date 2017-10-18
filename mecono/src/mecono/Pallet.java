@@ -9,16 +9,21 @@ import java.util.ArrayList;
 public class Pallet {
 
 	public Pallet(Mailbox mailbox) {
-		this.mailbox = mailbox;
+		this.pallet_id = generatePalletID();
 	}
-
-	public Pallet(Mailbox mailbox, String stream_id) {
+	
+	public Pallet(Mailbox mailbox, String pallet_id) {
+		this.pallet_id = pallet_id;
+		
 		try {
-			Protocol.validatePalletID(stream_id);
+			Protocol.validatePalletID(pallet_id);
 		} catch (BadProtocolException ex) {
 
 		}
-		this.pallet_id = stream_id;
+	}
+
+	public void updateTimeSent() {
+		time_sent = Protocol.getEpochSecond();
 	}
 	
 	public void importParcel(Parcel parcel){
@@ -36,7 +41,7 @@ public class Pallet {
 	@Override
 	public String toString(){
 		String str = "";
-		str += "Stream ID 0x"+pallet_id+"\n";
+		str += "Pallet ID "+pallet_id+"\n";
 		str += "- Type: "+pallet_type+"\n";
 		str += "- Count: "+getParcelCount()+" of "+expected_count+"\n";
 		str += "- Message: "+buildMessage()+"\n";
@@ -119,9 +124,19 @@ public class Pallet {
 		
 		return message_text;
 	}
+	
+	private String generatePalletID() {
+		char[] text = new char[pallet_id_length];
+
+		for (int i = 0; i < pallet_id_length; i++) {
+			text[i] = Protocol.hex_chars[Protocol.rng.nextInt(Protocol.hex_chars.length)];
+		}
+
+		return new String(text);
+	}
 
 	private ArrayList<Parcel> parcels; // The parcels in the stream
-	private int time_sent; // Not trustworthy, but may be helpful
+	private long time_sent; // For self use only, the time sent
 	private int expected_count; // The expected number of parcels total
 	private String message_text;
 	private RemoteNode originator; // Node of the originator
@@ -130,4 +145,5 @@ public class Pallet {
 	private Path path;
 	private PalletType pallet_type = PalletType.UNKNOWN;
 	private Mailbox mailbox;
+	public static final int pallet_id_length = 4;
 }

@@ -5,6 +5,13 @@ package mecono;
  * @author jak
  */
 public class Parcel {
+	
+	/**
+	 * Constructor for when we are just creating a parcel from scratch.
+	 */
+	public Parcel() {
+		this.final_dest = false;
+	}
 
 	/**
 	 * Constructor for when the self is NOT destination.

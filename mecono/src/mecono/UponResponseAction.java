@@ -51,11 +51,16 @@ public class UponResponseAction {
 	}
 	
 	public PalletType getResponseType(){
-		return response_type;
+		if(responded){
+			return response_pallet.getPalletType();
+		}else{
+			return response_type;
+		}
 	}
 	
 	private void actionFromPing(){
 		// TODO: What to do after a ping is responded to
+		
 	}
 	
 	private void actionFromFind(){
