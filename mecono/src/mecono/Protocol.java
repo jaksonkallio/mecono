@@ -9,22 +9,22 @@ import java.util.Random;
 public class Protocol {
 
 	public static final int max_nuggets_per_stream = 100;
-	public static final int nstream_id_length = 5;
+	public static final int pallet_id_length = 5;
 
-	public static void validateNStreamID(String stream_id) throws BadProtocolException {
-		if (stream_id.length() != nstream_id_length) {
+	public static void validatePalletID(String stream_id) throws BadProtocolException {
+		if (stream_id.length() != pallet_id_length) {
 			throw new BadProtocolException("Invalid nugget stream ID.");
 		}
 	}
 	
-	public static NuggetStreamType unserializeNStreamType(String representation) throws BadProtocolException {
+	public static PalletType unserializePalletType(String representation) throws BadProtocolException {
 		switch (representation) {
 			case "p":
-				return NuggetStreamType.PING;
+				return PalletType.PING;
 			case "d":
-				return NuggetStreamType.DATA;
+				return PalletType.DATA;
 			case "f":
-				return NuggetStreamType.FIND;
+				return PalletType.FIND;
 			default:
 				throw new BadProtocolException("Unknown nugget stream type.");
 		}

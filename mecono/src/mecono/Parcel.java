@@ -4,7 +4,7 @@ package mecono;
  *
  * @author jak
  */
-public class Nugget {
+public class Parcel {
 
 	/**
 	 * Constructor for when the self is NOT destination.
@@ -12,7 +12,7 @@ public class Nugget {
 	 * @param path_history
 	 * @param payload
 	 */
-	public Nugget(Path path_history, String payload) {
+	public Parcel(Path path_history, String payload) {
 		this.final_dest = false;
 		this.payload = payload;
 
@@ -22,7 +22,7 @@ public class Nugget {
 	/**
 	 * Constructor for when the self is the destination.
 	 *
-	 * @param nstream_parent
+	 * @param pallet_parent
 	 * @param path_history
 	 * @param originator
 	 * @param id
@@ -30,13 +30,13 @@ public class Nugget {
 	 * @param signature
 	 * @throws mecono.BadProtocolException
 	 */
-	//pathhistory,[destination,nstreamtype,streamid,originator,nuggetcount,nuggetid,content,signature(destination+originator+streamid+nuggetcount+content)]
-	public Nugget(NuggetStream nstream_parent, Path path_history, RemoteNode originator, int id, String message_piece, String signature) throws BadProtocolException {
+	//pathhistory,[destination,pallettype,streamid,originator,nuggetcount,nuggetid,content,signature(destination+originator+streamid+nuggetcount+content)]
+	public Parcel(Pallet pallet_parent, Path path_history, RemoteNode originator, int id, String message_piece, String signature) throws BadProtocolException {
 		this.final_dest = true;
 
 		try {
-			this.nstream_parent = nstream_parent;
-			(this.nstream_parent).importNugget(this);
+			this.pallet_parent = pallet_parent;
+			(this.pallet_parent).importParcel(this);
 			this.path_history = path_history;
 			setMessagePiece(message_piece);
 			setID(id);
@@ -61,8 +61,8 @@ public class Nugget {
 
 	@Override
 	public boolean equals(Object o) {
-		Nugget other = (Nugget) o;
-		return (other.getNStreamParent() == this.getNStreamParent() && other.getID() == this.getID());
+		Parcel other = (Parcel) o;
+		return (other.getPalletParent() == this.getPalletParent() && other.getID() == this.getID());
 	}
 
 	public String getMessagePiece() {
@@ -85,8 +85,8 @@ public class Nugget {
 		}
 	}
 
-	public NuggetStream getNStreamParent() {
-		return nstream_parent;
+	public Pallet getPalletParent() {
+		return pallet_parent;
 	}
 	
 	public boolean originatorIsSelf() {
@@ -106,7 +106,7 @@ public class Nugget {
 	private int id;
 	private Path path_history;
 	private final boolean final_dest;
-	private NuggetStream nstream_parent;
+	private Pallet pallet_parent;
 	private int time_received = 0;
 	private Mailbox mailbox;
 }

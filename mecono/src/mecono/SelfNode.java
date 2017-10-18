@@ -59,8 +59,8 @@ public class SelfNode implements Node {
 		return new_node;
 	}
 
-	public void receiveCompleteNStream(NuggetStream nstream) {
-		nodeLog(1, "Data received via mecono network: "+nstream.buildMessage());
+	public void receiveCompletePallet(Pallet pallet) {
+		nodeLog(1, "Data received via mecono network: "+pallet.buildMessage());
 	}
 	
 	public void nodeLog(int importance, String message){
@@ -75,7 +75,7 @@ public class SelfNode implements Node {
 		return mailbox;
 	}
 	
-	private boolean sendNuggetStream(NuggetStream stream) {
+	private boolean sendNuggetStream(Pallet stream) {
 		return true;
 	}
 	
@@ -83,7 +83,7 @@ public class SelfNode implements Node {
 	private String label;
 	protected final Mailbox mailbox;
 	private boolean request_no_foreign_optimization = false; // We can ask nodes that receive our nugget streams to not optimize our streams.
-	private int nstream_build_expiry = 30; // Time, in minutes, where an incomplete nstream will be deleted along with contained nuggets.
+	private int pallet_build_expiry = 30; // Time, in minutes, where an incomplete pallet will be deleted along with contained nuggets.
 
 	private static ArrayList<RemoteNode> nodes_memory = new ArrayList<>();
 }

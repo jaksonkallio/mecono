@@ -11,7 +11,7 @@ public class NetworkController {
 	}
 	
 	public void receiveData(String raw_data){
-		mailbox.receiveNugget(raw_data);
+		mailbox.receiveParcel(raw_data);
 	}
 	
 	private Mailbox mailbox;

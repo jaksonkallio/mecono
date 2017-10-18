@@ -4,11 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Queue;
-import java.util.Set;
 
 /**
- * The mailbox is responsible for managing nugget sending/receiving, queuing
- * nuggets, and piecing together nugget streams and notifying the SelfNode with
+ * The mailbox is responsible for managing parcel sending/receiving, queuing
+ * parcels, and piecing together parcel streams and notifying the SelfNode with
  * complete streams.
  *
  * @author jak
@@ -20,59 +19,59 @@ public class Mailbox {
 		this.network_controller = new NetworkController(this);
 	}
 
-	public boolean sendMessage(NuggetStreamType stream_type, RemoteNode destination, String message_text) {
-		NuggetStream message = new NuggetStream(this);
+	public boolean sendMessage(PalletType stream_type, RemoteNode destination, String message_text) {
+		Pallet message = new Pallet(this);
 		message.createNewMessage(stream_type, destination, message_text);
 
 		return true;
 	}
 
-	public void receiveNugget(String ser_nugget) {
+	public void receiveParcel(String ser_parcel) {
 		try {
-			Nugget nugget = unserializeNugget(ser_nugget);
+			Parcel parcel = unserializeParcel(ser_parcel);
 			
-			if (nugget.isFinalDest()) {
-				partial_nstreams.add(nugget.getNStreamParent());
-				checkForCompletedNStreams();
+			if (parcel.isFinalDest()) {
+				partial_pallets.add(parcel.getPalletParent());
+				checkForCompletedPallets();
 			} else {
-				outbound_queue.offer(nugget);
+				outbound_queue.offer(parcel);
 			}
 		} catch (UnknownResponsibilityException | BadProtocolException ex) {
-			owner.nodeLog(2, "Bad nugget received.");
+			owner.nodeLog(2, "Bad parcel received.");
 		}
 	}
 	
-	private void checkForCompletedNStreams(){
-		for (int i = 0; i < partial_nstreams.size(); i++) {
-			if (partial_nstreams.get(i).allNuggetsReceived()) {
-				owner.receiveCompleteNStream(partial_nstreams.get(i));
-				partial_nstreams.remove(i);
+	private void checkForCompletedPallets(){
+		for (int i = 0; i < partial_pallets.size(); i++) {
+			if (partial_pallets.get(i).allParcelsReceived()) {
+				owner.receiveCompletePallet(partial_pallets.get(i));
+				partial_pallets.remove(i);
 			}
 		}
 	}
 	
-	private void enqueueOutbound(NuggetStream nstream){
-		for(int i = 0; i < nstream.getNuggetCount(); i++){
-			enqueueOutbound(nstream.getNuggetByIndex(i));
+	private void enqueueOutbound(Pallet pallet){
+		for(int i = 0; i < pallet.getParcelCount(); i++){
+			enqueueOutbound(pallet.getParcelByIndex(i));
 		}
 	}
 	
-	private void enqueueOutbound(Nugget nugget){
-		if(!nugget.isFinalDest()){
-			outbound_queue.offer(nugget);
+	private void enqueueOutbound(Parcel parcel){
+		if(!parcel.isFinalDest()){
+			outbound_queue.offer(parcel);
 		}
 	}
 
-	public NuggetStream getNStreamByID(String stream_id) {
+	public Pallet getPalletByID(String stream_id) {
 		// Search known streams for the Stream ID.
-		for (NuggetStream nstream : partial_nstreams) {
-			if (nstream.getStreamID() == stream_id) {
-				return nstream;
+		for (Pallet pallet : partial_pallets) {
+			if (pallet.getStreamID() == stream_id) {
+				return pallet;
 			}
 		}
 
 		// Stream ID not found
-		return new NuggetStream(this, stream_id);
+		return new Pallet(this, stream_id);
 	}
 	
 	/**
@@ -90,12 +89,12 @@ public class Mailbox {
 	public void listPartialStreams(){
 		String str = "";
 		
-		if(partial_nstreams.size() > 0){
-			for(NuggetStream nstream : partial_nstreams){
-				str += "  "+nstream.toString()+"\n";
+		if(partial_pallets.size() > 0){
+			for(Pallet pallet : partial_pallets){
+				str += "  "+pallet.toString()+"\n";
 			}
 		}else{
-			str = "Mailbox has no partial nugget streams.";
+			str = "Mailbox has no partially built pallets.";
 		}
 		
 		
@@ -103,19 +102,19 @@ public class Mailbox {
 	}
 
 	/**
-	 * Convert an unencrypted serialized nugget into a Nugget object.
+	 * Convert an unencrypted serialized parcel into a Parcel object.
 	 *
-	 * @param ser_nugget
-	 * @return Nugget
+	 * @param ser_parcel
+	 * @return Parcel
 	 */
-	private Nugget unserializeNugget(String ser_nugget) throws BadProtocolException, UnknownResponsibilityException {
+	private Parcel unserializeParcel(String ser_parcel) throws BadProtocolException, UnknownResponsibilityException {
 		/*
 		`[...]` denotes encrypted payload that only destination may access.
 		
-		pathhistory,[destination,nstreamtype,streamid,originator,nuggetcount,nuggetid,content,signature(destination+originator+streamid+nuggetcount+content)]
+		pathhistory,[destination,pallettype,streamid,originator,parcelcount,parcelid,content,signature(destination+originator+streamid+parcelcount+content)]
 		 */
 
-		List<String> pieces = Arrays.asList(ser_nugget.split(","));
+		List<String> pieces = Arrays.asList(ser_parcel.split(","));
 		ArrayList<RemoteNode> path_nodes = new ArrayList<>();
 		for (String remote_node_address : pieces.get(0).split("-")) {
 			path_nodes.add(SelfNode.getRemoteNode(remote_node_address));
@@ -125,28 +124,28 @@ public class Mailbox {
 		if (pieces.get(1).equals(owner.getAddress())) {
 			// We are the destination
 
-			NuggetStream nstream_parent = getNStreamByID(pieces.get(3));
-			if (nstream_parent.getNStreamType() == NuggetStreamType.UNKNOWN) {
-				nstream_parent.setNStreamType(Protocol.unserializeNStreamType(pieces.get(2)));
+			Pallet pallet_parent = getPalletByID(pieces.get(3));
+			if (pallet_parent.getPalletType() == PalletType.UNKNOWN) {
+				pallet_parent.setPalletType(Protocol.unserializePalletType(pieces.get(2)));
 			}
 
 			RemoteNode originator = SelfNode.getRemoteNode(pieces.get(4));
 
-			return new Nugget(nstream_parent, path_history, originator, Integer.parseInt(pieces.get(6)), pieces.get(7), pieces.get(8));
+			return new Parcel(pallet_parent, path_history, originator, Integer.parseInt(pieces.get(6)), pieces.get(7), pieces.get(8));
 		} else {
 			// We are not the destination
 
-			// If selfnode is the second to last node in the path history (last node in history would be the next node) then nugget is in the right place
+			// If selfnode is the second to last node in the path history (last node in history would be the next node) then parcel is in the right place
 			if (!path_nodes.get(path_nodes.size() - 2).equals(owner)) {
-				throw new UnknownResponsibilityException("SelfNode isn't meant to have this nugget at this point in the path.");
+				throw new UnknownResponsibilityException("SelfNode isn't meant to have this parcel at this point in the path.");
 			}
 
-			return new Nugget(path_history, pieces.get(1));
+			return new Parcel(path_history, pieces.get(1));
 		}
 	}
 
 	private final SelfNode owner; // The selfnode that runs the mailbox
-	private ArrayList<NuggetStream> partial_nstreams = new ArrayList<NuggetStream>(); // Inbound, for building up nugget streams
+	private ArrayList<Pallet> partial_pallets = new ArrayList<Pallet>(); // Inbound, for building up parcel streams
 	private final NetworkController network_controller;
-	private Queue<Nugget> outbound_queue; // Outbound queue
+	private Queue<Parcel> outbound_queue; // Outbound queue
 }
