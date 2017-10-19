@@ -58,9 +58,12 @@ public class UponResponseAction {
 		}
 	}
 	
+	/**
+	 * What do do when a ping is responded to.
+	 */
 	private void actionFromPing(){
-		// TODO: What to do after a ping is responded to
-		
+		// TODO: Verify that the destination signed the original pallet
+		original_pallet.getDestination().updateSuccessfulPing((int) (Protocol.getEpochSecond() - original_pallet.getTimeSent()));
 	}
 	
 	private void actionFromFind(){

@@ -125,6 +125,22 @@ public class Pallet {
 		return message_text;
 	}
 	
+	public RemoteNode getDestination() {
+		return destination;
+	}
+	
+	public boolean isOriginatedByOwner(){
+		return originator.equals(mailbox.getOwner());
+	}
+	
+	public long getTimeSent(){
+		if(isOriginatedByOwner()){
+			return time_sent;
+		}else{
+			return 0;
+		}
+	}
+	
 	private String generatePalletID() {
 		char[] text = new char[pallet_id_length];
 

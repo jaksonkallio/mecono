@@ -1,5 +1,6 @@
 package mecono;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 /**
@@ -32,8 +33,8 @@ public class RemoteNode implements Node {
 		return received_chunks;
 	}
 
-	public boolean isCooperative() {
-		return cooperative;
+	public boolean isTrusted() {
+		return trusted;
 	}
 
 	public boolean isBlacklisted() {
@@ -52,15 +53,29 @@ public class RemoteNode implements Node {
 	public int getNeighborCount() {
 		return neighbors.size();
 	}
+	
+	public void updateSuccessfulPing(int ping) {
+		if(ping > 60000){
+			// If ping is over 60 seconds, ping is shown as "60+ seconds"
+			ping = 60000;
+		}
+		
+		this.ping = ping;
+		successful_pings++;
+	}
 
 	private String address;
 	private String label;
+	private int successful_pings;
 	private int successful_chunks; // Number of successful chunks sent to this node.
 	private int failed_chunks; // Number of chunks that were sent to this node, but didn't receive a receipt within the time allotted.
 	private int received_chunks; // Number of chunks received from this node.
-	private boolean cooperative; // This node can usually be trusted to adhere to good practices in the network.
+	private boolean trusted; // This node can usually be trusted to adhere to good practices in the network.
+	private boolean pinned; // We should make sure we always have an online path to this ndoe.
 	private boolean blacklisted; // This node shouldn't be used, unless as a last resort.
 	private boolean discovered; // If we know any successful paths to this node.
+	private int ping;
+	private ArrayList<Path> paths_to;
 	private Set<RemoteNode> neighbors; // This node's neighbors.
 
 }
