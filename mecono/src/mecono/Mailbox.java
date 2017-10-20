@@ -30,11 +30,11 @@ public class Mailbox {
 		try {
 			Parcel parcel = unserializeParcel(ser_parcel);
 			
-			if (parcel.isFinalDest()) {
-				partial_pallets.add(parcel.getPalletParent());
+			if (parcel instanceof DestinationParcel) {
+				partial_pallets.add(((DestinationParcel) parcel).getPalletParent());
 				checkForCompletedPallets();
-			} else {
-				outbound_queue.offer(parcel);
+			} else if(parcel instanceof ForeignParcel) {
+				outbound_queue.offer((ForeignParcel) parcel);
 			}
 		} catch (UnknownResponsibilityException | BadProtocolException ex) {
 			owner.nodeLog(2, "Bad parcel received.");
@@ -52,14 +52,12 @@ public class Mailbox {
 	
 	private void enqueueOutbound(Pallet pallet){
 		for(int i = 0; i < pallet.getParcelCount(); i++){
-			enqueueOutbound(pallet.getParcelByIndex(i));
+			enqueueOutbound(pallet.getOutboundParcelByIndex(i));
 		}
 	}
 	
-	private void enqueueOutbound(Parcel parcel){
-		if(!parcel.isFinalDest()){
-			outbound_queue.offer(parcel);
-		}
+	private void enqueueOutbound(ForeignParcel parcel){
+		outbound_queue.offer(parcel);
 	}
 
 	public Pallet getPalletByID(String stream_id) {
@@ -130,7 +128,7 @@ public class Mailbox {
 
 			RemoteNode originator = SelfNode.getRemoteNode(pieces.get(4));
 
-			return new Parcel(pallet_parent, path_history, originator, Integer.parseInt(pieces.get(6)), pieces.get(7), pieces.get(8));
+			return new DestinationParcel(pallet_parent, path_history, originator, Integer.parseInt(pieces.get(6)), pieces.get(7), pieces.get(8));
 		} else {
 			// We are not the destination
 
@@ -139,7 +137,7 @@ public class Mailbox {
 				throw new UnknownResponsibilityException("SelfNode isn't meant to have this parcel at this point in the path.");
 			}
 
-			return new Parcel(path_history, pieces.get(1));
+			return new ForeignParcel(path_history, pieces.get(1));
 		}
 	}
 
@@ -147,5 +145,5 @@ public class Mailbox {
 	private ArrayList<Pallet> partial_pallets = new ArrayList<Pallet>(); // Inbound, for building up parcel streams
 	private ArrayList<UponResponseAction> upon_response_actions;
 	private final NetworkController network_controller;
-	private Queue<Parcel> outbound_queue; // Outbound queue
+	private Queue<ForeignParcel> outbound_queue; // Outbound queue
 }
