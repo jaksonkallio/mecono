@@ -26,7 +26,7 @@ public class Pallet {
 		time_sent = Protocol.getEpochSecond();
 	}
 	
-	public void importParcel(Parcel parcel){
+	public void importParcel(DestinationParcel parcel){
 		if(!hasParcel(parcel)){
 			parcels.add(parcel.getID(), parcel);
 		}
@@ -65,7 +65,7 @@ public class Pallet {
 		}*/
 	}
 
-	public boolean hasParcel(Parcel target) {
+	public boolean hasParcel(DestinationParcel target) {
 		for (Parcel parcel : parcels) {
 			if (target.equals(parcel)) {
 				return true;
@@ -101,7 +101,7 @@ public class Pallet {
 		for(int i = 0; all_received && i < expected_count; i++){
 			boolean found = true;
 			
-			for(Parcel parcel : parcels){
+			for(DestinationParcel parcel : parcels){
 				if(parcel.getID() == i){
 					found = true;
 				}
@@ -118,7 +118,7 @@ public class Pallet {
 	public String buildMessage() {
 		message_text = "";
 		
-		for (Parcel parcel : parcels) {
+		for (DestinationParcel parcel : parcels) {
 			message_text += parcel.getMessagePiece();
 		}
 		
@@ -151,7 +151,7 @@ public class Pallet {
 		return new String(text);
 	}
 
-	private ArrayList<Parcel> parcels; // The parcels in the stream
+	private ArrayList<DestinationParcel> parcels; // The parcels in the stream
 	private long time_sent; // For self use only, the time sent
 	private int expected_count; // The expected number of parcels total
 	private String message_text;

@@ -27,5 +27,9 @@ public class Path {
 		return stops.get(i);
 	}
 	
+	public int getPathLength() {
+		return stops.size();
+	}
+	
     private ArrayList<RemoteNode> stops;
 }
