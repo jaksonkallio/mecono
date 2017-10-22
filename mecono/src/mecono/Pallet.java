@@ -87,7 +87,7 @@ public class Pallet {
 		this.pallet_type = pallet_type;
 	}
 
-	public Parcel getParcelByIndex(int i){
+	public DestinationParcel getParcelByIndex(int i){
 		return parcels.get(i);
 	}
 	

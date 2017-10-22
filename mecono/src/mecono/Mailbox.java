@@ -52,7 +52,7 @@ public class Mailbox {
 	
 	private void enqueueOutbound(Pallet pallet){
 		for(int i = 0; i < pallet.getParcelCount(); i++){
-			enqueueOutbound(pallet.getOutboundParcelByIndex(i));
+			//enqueueOutbound(pallet.getParcelByIndex(i));
 		}
 	}
 	

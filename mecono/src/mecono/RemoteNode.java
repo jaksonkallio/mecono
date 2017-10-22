@@ -62,8 +62,13 @@ public class RemoteNode implements Node {
 		
 		this.ping = ping;
 		successful_pings++;
+		last_ping_time = Protocol.getEpochMinute();
 	}
 
+	public boolean isOnline(){
+		return ((Protocol.getEpochMinute() - last_ping_time) < offline_successful_ping_threshold);
+	}
+	
 	private String address;
 	private String label;
 	private int successful_pings;
@@ -75,7 +80,10 @@ public class RemoteNode implements Node {
 	private boolean blacklisted; // This node shouldn't be used, unless as a last resort.
 	private boolean discovered; // If we know any successful paths to this node.
 	private int ping;
+	private int last_ping_time; // Time of the last ping, in minutes.
 	private ArrayList<Path> paths_to;
 	private Set<RemoteNode> neighbors; // This node's neighbors.
-
+	
+	private static final int offline_successful_ping_threshold = 8; // A successful ping within the last x minutes means the node is online.
+	private static final int pinned_ping_interval = 4; // How many minutes between each ping to pinned nodes.
 }
