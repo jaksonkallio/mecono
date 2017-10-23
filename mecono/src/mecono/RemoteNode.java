@@ -9,8 +9,9 @@ import java.util.Set;
  */
 public class RemoteNode implements Node {
 
-	public RemoteNode(String address) {
+	public RemoteNode(String address, SelfNode indexer) {
 		this.address = address;
+		this.indexer = indexer;
 	}
 
 	public String getAddress() {
@@ -69,6 +70,20 @@ public class RemoteNode implements Node {
 		return ((Protocol.getEpochMinute() - last_ping_time) < offline_successful_ping_threshold);
 	}
 	
+	public boolean isReady(){
+		if(!ready_when_offline && !isOnline()){
+			return false;
+		}
+		
+		if(ready_when_offline){
+			//if(indexer.getPathTo(this)){
+			
+			//}
+		}
+		
+		return true;
+	}
+	
 	private String address;
 	private String label;
 	private int successful_pings;
@@ -83,7 +98,10 @@ public class RemoteNode implements Node {
 	private int last_ping_time; // Time of the last ping, in minutes.
 	private ArrayList<Path> paths_to;
 	private Set<RemoteNode> neighbors; // This node's neighbors.
+	private SelfNode indexer;
 	
 	private static final int offline_successful_ping_threshold = 8; // A successful ping within the last x minutes means the node is online.
 	private static final int pinned_ping_interval = 4; // How many minutes between each ping to pinned nodes.
+	private static final boolean ready_when_offline = true; // Should nodes be considered ready even when offline
+	
 }

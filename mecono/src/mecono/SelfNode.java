@@ -75,6 +75,10 @@ public class SelfNode implements Node {
 		return mailbox;
 	}
 	
+	//public Path getPathTo(){
+		//return new Path();
+	//}
+	
 	private boolean sendNuggetStream(Pallet stream) {
 		return true;
 	}
@@ -84,6 +88,6 @@ public class SelfNode implements Node {
 	protected final Mailbox mailbox;
 	private boolean request_no_foreign_optimization = false; // We can ask nodes that receive our nugget streams to not optimize our streams.
 	private int pallet_build_expiry = 30; // Time, in minutes, where an incomplete pallet will be deleted along with contained nuggets.
-
+	
 	private static ArrayList<RemoteNode> nodes_memory = new ArrayList<>();
 }

@@ -148,7 +148,7 @@ public class Mailbox {
 	}
 
 	private final SelfNode owner; // The selfnode that runs the mailbox
-	private ArrayList<Pallet> partial_pallets = new ArrayList<Pallet>(); // Inbound, for building up parcel streams
+	private ArrayList<Pallet> partial_pallets = new ArrayList<Pallet>(); // Inbound, for building up pallets
 	private ArrayList<UponResponseAction> upon_response_actions;
 	private final NetworkController network_controller;
 	private Queue<ForeignParcel> outbound_queue; // Outbound queue
