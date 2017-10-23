@@ -37,6 +37,11 @@ public class RemoteNode implements Node {
 	public boolean isTrusted() {
 		return trusted;
 	}
+	
+	public boolean isPinned() {
+		// All trusted nodes are inherently pinned as well.
+		return (isTrusted() || pinned);
+	}
 
 	public boolean isBlacklisted() {
 		return blacklisted;
@@ -46,9 +51,10 @@ public class RemoteNode implements Node {
 		return neighbors;
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		Node other = (Node) o;
-		return other.getAddress() == this.getAddress();
+		return other.getAddress().equals(this.getAddress());
 	}
 
 	public int getNeighborCount() {
@@ -88,10 +94,12 @@ public class RemoteNode implements Node {
 		return paths_to.size();
 	}
 	
-	public int getNodeImportance(){
-		if(){
-		
-		}
+	public int getLastUse(){
+		return last_use;
+	}
+	
+	public int getPing(){
+		return ping;
 	}
 	
 	private Path getPathTo(){
@@ -112,9 +120,9 @@ public class RemoteNode implements Node {
 	private boolean trusted; // This node can usually be trusted to adhere to good practices in the network.
 	private boolean pinned; // We should make sure we always have an online path to this ndoe.
 	private boolean blacklisted; // This node shouldn't be used, unless as a last resort.
-	private boolean discovered; // If we know any successful paths to this node.
 	private int ping;
 	private int last_ping_time; // Time of the last ping, in minutes.
+	private int last_use; // Gets the last time this node was used, despite if the signal succeeded or failed.
 	private ArrayList<Path> paths_to;
 	private Set<RemoteNode> neighbors; // This node's neighbors.
 	private SelfNode indexer;
