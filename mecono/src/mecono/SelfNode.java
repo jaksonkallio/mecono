@@ -12,6 +12,7 @@ public class SelfNode implements Node {
 	public SelfNode(String label, NodeAddress address) {
 		this.label = label;
 		this.address = address;
+		this.memory_controller = new MemoryController(this);
 		mailbox = new Mailbox(this);
 		nodeLog(0, "SelfNode \""+getAddressLabel()+"\" started.");
 	}
@@ -43,22 +44,6 @@ public class SelfNode implements Node {
 		return label;
 	}
 
-	public static RemoteNode getRemoteNode(String address) {
-		// Check if node is loaded into memory
-		for (RemoteNode node : nodes_memory) {
-			if (node.getAddress().equals(address)) {
-				return node;
-			}
-		}
-
-		// TODO: Check if node is in saved in the database
-		// Return a new blank node with address if none found anywhere else
-		RemoteNode new_node = new RemoteNode(address);
-		nodes_memory.add(new_node);
-
-		return new_node;
-	}
-
 	public void receiveCompletePallet(Pallet pallet) {
 		nodeLog(1, "Data received via mecono network: "+pallet.buildMessage());
 	}
@@ -75,9 +60,9 @@ public class SelfNode implements Node {
 		return mailbox;
 	}
 	
-	//public Path getPathTo(){
-		//return new Path();
-	//}
+	public MemoryController getMemoryController(){
+		return memory_controller;
+	}
 	
 	private boolean sendNuggetStream(Pallet stream) {
 		return true;
@@ -88,6 +73,5 @@ public class SelfNode implements Node {
 	protected final Mailbox mailbox;
 	private boolean request_no_foreign_optimization = false; // We can ask nodes that receive our nugget streams to not optimize our streams.
 	private int pallet_build_expiry = 30; // Time, in minutes, where an incomplete pallet will be deleted along with contained nuggets.
-	
-	private static ArrayList<RemoteNode> nodes_memory = new ArrayList<>();
+	private MemoryController memory_controller; // The memory controller to load/save different paths, nodes, etc.
 }

@@ -88,6 +88,12 @@ public class RemoteNode implements Node {
 		return paths_to.size();
 	}
 	
+	public int getNodeImportance(){
+		if(){
+		
+		}
+	}
+	
 	private Path getPathTo(){
 		if(countPathsTo() > 0){
 			// Return top path
@@ -112,6 +118,7 @@ public class RemoteNode implements Node {
 	private ArrayList<Path> paths_to;
 	private Set<RemoteNode> neighbors; // This node's neighbors.
 	private SelfNode indexer;
+	private int max_paths = 100; // Only keep the best x paths.
 	
 	private static final int offline_successful_ping_threshold = 8; // A successful ping within the last x minutes means the node is online.
 	private static final int pinned_ping_interval = 4; // How many minutes between each ping to pinned nodes.

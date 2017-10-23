@@ -120,7 +120,7 @@ public class Mailbox {
 		List<String> pieces = Arrays.asList(ser_parcel.split(","));
 		ArrayList<RemoteNode> path_nodes = new ArrayList<>();
 		for (String remote_node_address : pieces.get(0).split("-")) {
-			path_nodes.add(SelfNode.getRemoteNode(remote_node_address));
+			path_nodes.add(owner.getMemoryController().loadRemoteNode(remote_node_address));
 		}
 		Path path_history = new Path(path_nodes);
 
@@ -132,7 +132,7 @@ public class Mailbox {
 				pallet_parent.setPalletType(Protocol.unserializePalletType(pieces.get(2)));
 			}
 
-			RemoteNode originator = SelfNode.getRemoteNode(pieces.get(4));
+			RemoteNode originator = owner.getMemoryController().loadRemoteNode(pieces.get(4));
 
 			return new DestinationParcel(pallet_parent, path_history, originator, Integer.parseInt(pieces.get(6)), pieces.get(7), pieces.get(8));
 		} else {

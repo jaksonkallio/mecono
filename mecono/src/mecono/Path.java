@@ -8,14 +8,32 @@ import java.util.ArrayList;
  */
 public class Path {
 	
+	public Path(){
+		
+	}
+	
 	public Path(ArrayList<RemoteNode> stops) {
 		this.stops = stops;
 	}
 	
 	public Path(String[] addresses) {
-		for (String address : addresses) {
-			stops.add(SelfNode.getRemoteNode(address));
+		
+	}
+	
+	@Override
+	public boolean equals(Object o){
+		Path other = (Path) o;
+		boolean is_equal = true;
+		
+		for(int i = 0; i < getPathLength(); i++){
+			// If we find just one node out of place, paths are different
+			if(!this.getStop(i).equals(other.getStop(i))){
+				is_equal = false;
+				break;
+			}
 		}
+		
+		return is_equal;
 	}
 	
 	public double getAssuranceLevel() {
@@ -31,5 +49,28 @@ public class Path {
 		return stops.size();
 	}
 	
+	public String getIdentifier(){
+		regenerateIdentifier();
+		return identifier;
+	}
+	
+	private void regenerateIdentifier(){
+		// TODO: Use a proper hash of the address items instead.
+		
+		String new_identifier = "";
+		int count = 0;
+		
+		for(RemoteNode stop : stops){
+			if(count > 0){
+				new_identifier += ";";
+			}
+			new_identifier += count+"-"+stop.getAddress().substring(0, 4);
+			count++;
+		}
+		
+		identifier = new_identifier;
+	}
+	
     private ArrayList<RemoteNode> stops;
+	private String identifier;
 }
