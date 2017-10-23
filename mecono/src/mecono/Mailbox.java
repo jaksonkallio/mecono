@@ -8,7 +8,7 @@ import java.util.Queue;
 /**
  * The mailbox is responsible for managing parcel sending/receiving, queuing
  * parcels, and piecing together parcel streams and notifying the SelfNode with
- * complete streams.
+ * complete pallets.
  *
  * @author jak
  */
@@ -17,6 +17,12 @@ public class Mailbox {
 	public Mailbox(SelfNode owner) {
 		this.owner = owner;
 		this.network_controller = new NetworkController(this);
+	}
+	
+	public Pallet generatePallet(PalletType pallet_type){
+		Pallet new_pallet = new Pallet(this);
+		
+		return new_pallet;
 	}
 
 	public boolean sendMessage(PalletType stream_type, RemoteNode destination, String message_text) {
