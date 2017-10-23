@@ -76,12 +76,25 @@ public class RemoteNode implements Node {
 		}
 		
 		if(ready_when_offline){
-			//if(indexer.getPathTo(this)){
-			
-			//}
+			if(getPathTo() != null){
+				
+			}
 		}
 		
 		return true;
+	}
+	
+	public int countPathsTo(){
+		return paths_to.size();
+	}
+	
+	private Path getPathTo(){
+		if(countPathsTo() > 0){
+			// Return top path
+			return paths_to.get(0);
+		}else{
+			return null;
+		}
 	}
 	
 	private String address;
