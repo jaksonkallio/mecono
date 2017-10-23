@@ -73,15 +73,15 @@ public class RemoteNode implements Node {
 	}
 
 	public boolean isOnline(){
-		return ((Protocol.getEpochMinute() - last_ping_time) < offline_successful_ping_threshold);
+		return ((Protocol.getEpochMinute() - last_ping_time) < indexer.offline_successful_ping_threshold);
 	}
 	
 	public boolean isReady(){
-		if(!ready_when_offline && !isOnline()){
+		if(!indexer.ready_when_offline && !isOnline()){
 			return false;
 		}
 		
-		if(ready_when_offline){
+		if(indexer.ready_when_offline){
 			if(getPathTo() != null){
 				
 			}
@@ -127,9 +127,4 @@ public class RemoteNode implements Node {
 	private Set<RemoteNode> neighbors; // This node's neighbors.
 	private SelfNode indexer;
 	private int max_paths = 100; // Only keep the best x paths.
-	
-	private static final int offline_successful_ping_threshold = 8; // A successful ping within the last x minutes means the node is online.
-	private static final int pinned_ping_interval = 4; // How many minutes between each ping to pinned nodes.
-	private static final boolean ready_when_offline = true; // Should nodes be considered ready even when offline
-	
 }

@@ -74,4 +74,9 @@ public class SelfNode implements Node {
 	private boolean request_no_foreign_optimization = false; // We can ask nodes that receive our nugget streams to not optimize our streams.
 	private int pallet_build_expiry = 30; // Time, in minutes, where an incomplete pallet will be deleted along with contained nuggets.
 	private MemoryController memory_controller; // The memory controller to load/save different paths, nodes, etc.
+	
+	// Node preferences
+	public final int offline_successful_ping_threshold = 8; // A successful ping within the last x minutes means the node is online.
+	public final int pinned_ping_interval = 4; // How many minutes between each ping to pinned nodes.
+	public final boolean ready_when_offline = true; // Should nodes be considered ready even when offline
 }
