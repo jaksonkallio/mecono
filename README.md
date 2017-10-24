@@ -6,6 +6,8 @@
 
 Mecono is a hardware/protocol level project that enables P2P internet access using trustless discovery of how isolated nodes are connected and the indirect paths through the mesh between nodes.
 
+Designed and developed by [Jakson Kallio](https://jaksonkallio.github.io).
+
 ## What makes Mecono awesome?
 * Free communications.
 * Eliminates the need for ISPs, except in some conditions.
