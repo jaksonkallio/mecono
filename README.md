@@ -24,7 +24,7 @@ Designed and developed by [Jakson Kallio](https://jaksonkallio.github.io).
 * Asynchronous and non-"keep-alive" connections for data communication over very large (possibly interplanetary) distances.
 
 ## What shortcomings does Mecono have?
-* Uncertain how machine learning handles incredibly large swathes of data about the rest of the network.
+* Uncertain how to handle and process incredibly large swathes of data about the rest of the network.
 * New networks start slow and troubled while individual nodes learn optimizations.
 * Sole developer doesn't have much hardware development knowledge.
 
