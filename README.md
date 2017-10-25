@@ -1,3 +1,5 @@
+![Mecono logo](https://github.com/jaksonkallio/mecono/blob/master/brand/logo.png)
+
 # Mecono: Decenetralized Internet Access
 
 ## What is Mecono?
