@@ -28,6 +28,9 @@ Designed and developed by [Jakson Kallio](https://jaksonkallio.github.io).
 * New networks start slow and troubled while individual nodes learn optimizations.
 * Sole developer doesn't have much hardware development knowledge.
 
+## News and Progress
+Follow [@MeconoNetwork](https://twitter.com/mecononetwork) on Twitter!
+
 ## Project Status
 Currently building the simulated environment, known as SimNetwork. This software is in extremely early development, and basic features (even simulations of basic features) are not yet implemented.
 
