@@ -54,6 +54,21 @@ public class Path {
 		return identifier;
 	}
 	
+	public Path getSubpath(int start, int end){
+		ArrayList<RemoteNode> subpath_stops = new ArrayList<>();
+		
+		while(start <= end){
+			subpath_stops.add(stops.get(start));
+			start++;
+		}
+		
+		return new Path(subpath_stops);
+	}
+	
+	public Path getSubpath(int end){
+		return getSubpath(0, end);
+	}
+	
 	private void regenerateIdentifier(){
 		// TODO: Use a proper hash of the address items instead.
 		

@@ -64,6 +64,10 @@ public class SelfNode implements Node {
 		return memory_controller;
 	}
 	
+	public void learnPath(Path path){
+		
+	}
+	
 	private boolean sendNuggetStream(Pallet stream) {
 		return true;
 	}
