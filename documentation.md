@@ -21,6 +21,7 @@
 * **Discover Response (Pallet Type)**: Response to a discover request.
 * **Data (Pallet Type)**: Standard parcel that contains a normal data transfer.
 * **Data Receipt (Pallet Type)**: After the receiving node fully builds a pallet, it sends a receipt to originator.
+* **Adversarial Node**: A node that is connected to a Mecono network, yet doesn't follow either majority protocol or reasonable connection guidelines/obligations.
 
 ## Functions
 ### Node Birth
