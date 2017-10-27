@@ -85,8 +85,29 @@ public class Path {
 	 * Gets the ideality rating.
 	 * @return 
 	 */
-	public int getIdealityRating(){
-		return 0;
+	public double getIdealityRating(){
+		double cooperativity = getAverageCooperativity();
+		int trusted_nodes = 0;
+		int online_nodes = 0;
+		int path_length = 0;
+		
+		if((ideality_cooperativity_component + ideality_online_count_component + ideality_trusted_count_component) != 1){
+			// These must add up to 1 to be proper weights.
+			return 0;
+		}
+		
+		for(RemoteNode stop : stops){
+			path_length++;
+			
+			if(stop.isTrusted()){
+				trusted_nodes++;
+			}
+			if(stop.isOnline()){
+				online_nodes++;
+			}
+		}
+		
+		return ((ideality_cooperativity_component * cooperativity) + (ideality_online_count_component * (online_nodes / path_length)) + (ideality_trusted_count_component * (trusted_nodes / path_length)));
 	}
 	
 	/**
@@ -128,4 +149,8 @@ public class Path {
 	
     private ArrayList<RemoteNode> stops;
 	private String identifier;
+	
+	private final double ideality_cooperativity_component = 0.50; // The cooperativity weight for finding ideality rating of paths.
+	private final double ideality_online_count_component = 0.40; // The online count weight for finding ideality rating of paths.
+	private final double ideality_trusted_count_component = 0.10; // The trusted node count weight for finding ideality rating of paths.
 }

@@ -84,8 +84,6 @@ public class SelfNode implements Node {
 	private NodeAddress address;
 	private String label;
 	protected final Mailbox mailbox;
-	private boolean request_no_foreign_optimization = false; // We can ask nodes that receive our nugget streams to not optimize our streams.
-	private int pallet_build_expiry = 30; // Time, in minutes, where an incomplete pallet will be deleted along with contained nuggets.
 	private MemoryController memory_controller; // The memory controller to load/save different paths, nodes, etc.
 	private ArrayList<RemoteNode> neighbors;
 	
@@ -96,4 +94,7 @@ public class SelfNode implements Node {
 	public final int cooperativity_minimum_sample_size = 5; // Cooperativity will be calculated only after total uses is at least X.
 	public final double cooperativity_rating_bonus = 0.10;
 	public final boolean forward_signals_for_blacklisted_nodes = false;
+	public final int signal_attempts = 100; // Attempt to send a signal X times, retrying after each timeout failure.
+	public final int timeout_failure_time = 8; // X minutes before a signal is considered failure.
+	public final int timeout_failure_expiry = 60; // X minutes before a signal's upon response action is deleted. Must be greater than `timeout_failure_time`. 
 }
