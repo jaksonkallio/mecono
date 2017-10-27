@@ -65,7 +65,16 @@ public class SelfNode implements Node {
 	}
 	
 	public void learnPath(Path path){
-		
+		if(path.getStop(0).equals(this)){
+			// Verify that stop 0 is the self node
+			Path working_path = path;
+			
+			while(working_path.getPathLength() > 1){
+				((RemoteNode) working_path.getStop(working_path.getPathLength() - 1)).learnPath(working_path);
+				// Get the subpath, which is the same path but with the last node chopped off.
+				working_path = working_path.getSubpath(working_path.getPathLength() - 2);
+			}
+		}
 	}
 	
 	private boolean sendNuggetStream(Pallet stream) {

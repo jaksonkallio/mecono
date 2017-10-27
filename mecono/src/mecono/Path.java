@@ -45,6 +45,10 @@ public class Path {
 		return stops.get(i);
 	}
 	
+	public ArrayList<RemoteNode> getStops(){
+		return stops;
+	}
+	
 	public int getPathLength() {
 		return stops.size();
 	}
