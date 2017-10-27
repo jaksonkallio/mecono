@@ -73,6 +73,42 @@ public class Path {
 		return getSubpath(0, end);
 	}
 	
+	/**
+	 * Finds the intermediate path. Path excluding origin and destination.
+	 * @return 
+	 */
+	public Path getIntermediatePath(){
+		return this.getSubpath(1, this.getPathLength() - 2);
+	}
+	
+	/**
+	 * Gets the ideality rating.
+	 * @return 
+	 */
+	public int getIdealityRating(){
+		return 0;
+	}
+	
+	/**
+	 * Gets the average cooperativity of the nodes in the path.
+	 * @return 
+	 */
+	public double getAverageCooperativity(){
+		double total_cooperativity = 0.0;
+		int count = 0;
+		
+		for(RemoteNode node : getIntermediatePath().getStops()){
+			total_cooperativity += node.getCooperativity();
+			count++;
+		}
+		
+		if(count == 0){
+			return 0.0;
+		}else{
+			return total_cooperativity / count;
+		}
+	}
+	
 	private void regenerateIdentifier(){
 		// TODO: Use a proper hash of the address items instead.
 		
