@@ -36,28 +36,46 @@ public class Path {
 		return is_equal;
 	}
 	
-	public double getAssuranceLevel() {
-		// TODO: measure all nodes in path, and multiple their chances of success, return final assurance level.
-		return 0.0;
-	}
-	
+	/**
+	 * Gets a specific stop in the path.
+	 * @param i
+	 * @return 
+	 */
 	public Node getStop(int i) {
 		return stops.get(i);
 	}
 	
+	/**
+	 * Returns a list of the stops.
+	 * @return 
+	 */
 	public ArrayList<RemoteNode> getStops(){
 		return stops;
 	}
 	
+	/**
+	 * Gets the number of stops in a path.
+	 * @return 
+	 */
 	public int getPathLength() {
 		return stops.size();
 	}
 	
+	/**
+	 * Gets the serialized identifier
+	 * @return 
+	 */
 	public String getIdentifier(){
 		regenerateIdentifier();
 		return identifier;
 	}
 	
+	/**
+	 * Gets a subpath between two stops, inclusive.
+	 * @param start
+	 * @param end
+	 * @return Path Resulting subpath.
+	 */
 	public Path getSubpath(int start, int end){
 		ArrayList<RemoteNode> subpath_stops = new ArrayList<>();
 		
@@ -69,6 +87,11 @@ public class Path {
 		return new Path(subpath_stops);
 	}
 	
+	/**
+	 * More specific use of getSubpath to only get the start of the path up to the end value.
+	 * @param end
+	 * @return 
+	 */
 	public Path getSubpath(int end){
 		return getSubpath(0, end);
 	}
@@ -130,6 +153,9 @@ public class Path {
 		}
 	}
 	
+	/**
+	 * Regenerates the serialized identifier.
+	 */
 	private void regenerateIdentifier(){
 		// TODO: Use a proper hash of the address items instead.
 		
@@ -150,6 +176,7 @@ public class Path {
     private ArrayList<RemoteNode> stops;
 	private String identifier;
 	
+	// TODO: These values should probably be in the self node preferences list
 	private final double ideality_cooperativity_component = 0.50; // The cooperativity weight for finding ideality rating of paths.
 	private final double ideality_online_count_component = 0.40; // The online count weight for finding ideality rating of paths.
 	private final double ideality_trusted_count_component = 0.10; // The trusted node count weight for finding ideality rating of paths.
