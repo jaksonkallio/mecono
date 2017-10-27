@@ -22,18 +22,6 @@ public class RemoteNode implements Node {
 		return label;
 	}
 
-	public int countSuccessfulChunks() {
-		return successful_chunks;
-	}
-
-	public int countFailedChunks() {
-		return failed_chunks;
-	}
-
-	public int countReceivedChunks() {
-		return received_chunks;
-	}
-
 	public boolean isTrusted() {
 		return trusted;
 	}
@@ -78,7 +66,7 @@ public class RemoteNode implements Node {
 		}
 		
 		this.ping = ping;
-		successful_pings++;
+		successful_signal_dest[0]++;
 		last_ping_time = Protocol.getEpochMinute();
 	}
 
@@ -112,6 +100,40 @@ public class RemoteNode implements Node {
 		return ping;
 	}
 	
+	public Path getIdealPath(){
+		return paths_to.get(0);
+	}
+	
+	public int getTotalUses(){
+		return Math.abs(successes + strikes);
+	}
+	
+	/**
+	 * Cooperativity is a measure of cooperation a node shows with the self node. It only applies to non-destination nodes in the path.
+	 * @return 
+	 */
+	public double getCooperativity(){
+		double cooperativity = 0;
+		
+		if(getTotalUses() > 0 && getTotalUses() >= indexer.cooperativity_minimum_sample_size){
+			if(successes > 0){
+				// Cooperativity bonus favors nodes that have had a lot of signals sent over them. This gives frequently used nodes some slack, and also allows them to improve their cooperativity raiting over time (up to 100%).
+				cooperativity = (successes+(getTotalUses()*indexer.cooperativity_rating_bonus)) / getTotalUses();
+			}else{
+				// Only nodes that have had at least one successful signal sent over them get a cooperativity bonus.
+				cooperativity = 0;
+			}
+		}else {
+			// Until we get a good sample size, the cooperativity is constant.
+			cooperativity = 0.25;
+		}
+		
+		// Cooperativity may never be greater than 100%.
+		cooperativity = Math.min(cooperativity, 1.00);
+		
+		return cooperativity;
+	}
+	
 	private Path getPathTo(){
 		if(countPathsTo() > 0){
 			// Return top path
@@ -133,12 +155,11 @@ public class RemoteNode implements Node {
 	
 	private String address;
 	private String label;
-	private int successful_pings;
-	private int successful_chunks; // Number of successful chunks sent to this node.
-	private int failed_chunks; // Number of chunks that were sent to this node, but didn't receive a receipt within the time allotted.
-	private int received_chunks; // Number of chunks received from this node.
+	private int successes = 0; // Successful signals sent across this node.
+	private int strikes = 0; // Unsuccessful signals sent across this node.
+	private int[] successful_signal_dest = {0, 0, 0}; // Signals where valid response received.
 	private boolean trusted; // This node can usually be trusted to adhere to good practices in the network.
-	private boolean pinned; // We should make sure we always have an online path to this ndoe.
+	private boolean pinned; // We should make sure we always have an online path to this node.
 	private boolean blacklisted; // This node shouldn't be used, unless as a last resort.
 	private int ping;
 	private int last_ping_time; // Time of the last ping, in minutes.
