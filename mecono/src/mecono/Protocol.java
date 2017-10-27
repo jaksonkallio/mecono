@@ -17,25 +17,6 @@ public class Protocol {
 		}
 	}
 	
-	public static PalletType unserializePalletType(String representation) throws BadProtocolException {
-		switch (representation) {
-			case "p":
-				return PalletType.PING;
-			case "pr":
-				return PalletType.PING_RESPONSE;
-			case "d":
-				return PalletType.DATA;
-			case "dr":
-				return PalletType.DATA_RECEIPT;
-			case "f":
-				return PalletType.FIND;
-			case "fr":
-				return PalletType.FIND_RESPONSE;
-			default:
-				throw new BadProtocolException("Unknown pallet type.");
-		}
-	}
-	
 	public static int getEpochMinute(){
 		return (int) (System.currentTimeMillis() / 60000L);
 	}

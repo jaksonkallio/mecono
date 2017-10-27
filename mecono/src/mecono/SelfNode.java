@@ -44,8 +44,8 @@ public class SelfNode implements Node {
 		return label;
 	}
 
-	public void receiveCompletePallet(Pallet pallet) {
-		nodeLog(1, "Data received via mecono network: "+pallet.buildMessage());
+	public void receiveParcel(DestinationParcel parcel) {
+		nodeLog(1, "Data received via mecono network: "+parcel.toString());
 	}
 	
 	public void nodeLog(int importance, String message){
@@ -77,8 +77,23 @@ public class SelfNode implements Node {
 		}
 	}
 	
-	private boolean sendNuggetStream(Pallet stream) {
-		return true;
+	/**
+	 * Generalized form of send signal.
+	 * @param destination The remote node destination.
+	 * @param signal_type Signal type
+	 * @param content Content to attach, for data requests.
+	 */
+	public void sendSignal(RemoteNode destination, ParcelType signal_type, String content){
+		
+	}
+	
+	/**
+	 * Signal sending, non-data.
+	 * @param destination The remote node destination.
+	 * @param signal_type Signal type
+	 */
+	public void sendSignal(RemoteNode destination, ParcelType signal_type){
+		sendSignal(destination, signal_type, "");
 	}
 	
 	private NodeAddress address;

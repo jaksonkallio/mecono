@@ -11,8 +11,13 @@ public abstract class Parcel {
 	 * @return RemoteNode Originator node object.
 	 */
 	public RemoteNode getOriginator(){
-		return (RemoteNode) path_history.getStop(0);
+		return (RemoteNode) path.getStop(0);
+	}
+	
+	public void setPath(Path path){
+		this.path = path;
 	}
 	
 	protected Path path_history;
+	protected Path path;
 }

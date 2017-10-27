@@ -4,34 +4,23 @@ package mecono;
  * A destination parcel is a parcel that has reached the SelfNode and is at it's final destination.
  * @author jak
  */
-public class DestinationParcel extends Parcel {
+public class DestinationParcel extends Parcel implements MeconoSerializable{
 
 	/**
 	 * Constructor
 	 *
-	 * @param pallet_parent
 	 * @param path_history
 	 * @param originator
-	 * @param id
-	 * @param message_piece
 	 * @param signature
 	 * @throws mecono.BadProtocolException
 	 */
-	//pathhistory,[destination,pallettype,streamid,originator,nuggetcount,nuggetid,content,signature(destination+originator+streamid+nuggetcount+content)]
-	public DestinationParcel(Pallet pallet_parent, Path path_history, RemoteNode originator, int id, String message_piece, String signature) throws BadProtocolException {
-		this.final_dest = true;
+	//pathhistory,[destination,parceltype,originator,content,signature(destination+originator+content)]
+	public DestinationParcel() {
 
-		try {
-			this.pallet_parent = pallet_parent;
-			(this.pallet_parent).importParcel(this);
-			this.path_history = path_history;
-			setMessagePiece(message_piece);
-			setID(id);
-		} catch (BadProtocolException ex) {
-
-		}
-
-		updateReceivedTime();
+	}
+	
+	public void setContent(String content){
+		this.content = content;
 	}
 
 	public void updateReceivedTime() {
@@ -49,51 +38,65 @@ public class DestinationParcel extends Parcel {
 	@Override
 	public boolean equals(Object o) {
 		DestinationParcel other = (DestinationParcel) o;
-		return (other.getPalletParent() == this.getPalletParent() && other.getID() == this.getID());
+		return (other.getContent().equals(this.getContent()) && other.getDestination().equals(this.getDestination()) && other.getOriginator().equals(this.getOriginator()));
 	}
 
-	public String getMessagePiece() {
-		return message_piece;
+	public String getContent() {
+		return content;
 	}
-
-	public int getID() {
-		return id;
+	
+	public Node getDestination(){
+		return path_history.getStop(path_history.getPathLength() - 1);
 	}
 
 	public boolean isFinalDest() {
-		return final_dest;
+		return destination.equals(mailbox.getOwner());
 	}
 
 	public void setMessagePiece(String message_piece) {
 		if (message_piece.length() <= 140) {
-			this.message_piece = message_piece;
+			this.content = message_piece;
 		} else {
 			// TODO: Throw ProtocolException
 		}
 	}
-
-	public Pallet getPalletParent() {
-		return pallet_parent;
-	}
 	
 	public boolean originatorIsSelf() {
-		return path_history.getStop(1).equals(mailbox.getOwner());
-	}
-	
-	private void setID(int id) throws BadProtocolException {
-		if (id >= 1 && id <= Protocol.max_nuggets_per_stream) {
-			this.id = id;
-		} else {
-			throw new BadProtocolException("Invalid nugget ID.");
-		}
+		return getOriginator().equals(mailbox.getOwner());
 	}
 
-	private String message_piece;
+	public ParcelType getParcelType(){
+		return ParcelType.UNKNOWN;
+	}
+	
+	public void setParcelType(ParcelType parcel_type){
+		this.parcel_type = parcel_type;
+	}
+	
+	public static ParcelType unserializePalletType(String representation) throws BadProtocolException {
+		switch (representation) {
+			case "p":
+				return ParcelType.PING;
+			case "pr":
+				return ParcelType.PING_RESPONSE;
+			case "d":
+				return ParcelType.DATA;
+			case "dr":
+				return ParcelType.DATA_RECEIPT;
+			case "f":
+				return ParcelType.FIND;
+			case "fr":
+				return ParcelType.FIND_RESPONSE;
+			default:
+				throw new BadProtocolException("Unknown pallet type.");
+		}
+	}
+	
+	private String content;
 	private String payload;
-	private int id;
-	private Path path_history;
-	private final boolean final_dest;
-	private Pallet pallet_parent;
+	private Node destination;
+	private Node originator;
 	private int time_received = 0;
 	private Mailbox mailbox;
+	private ParcelType parcel_type = ParcelType.UNKNOWN;
 }

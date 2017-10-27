@@ -1,6 +1,8 @@
 package mecono;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -151,6 +153,14 @@ public class Path {
 		}else{
 			return total_cooperativity / count;
 		}
+	}
+	
+	public static Path unserialize(String ser_path, SelfNode owner){
+		ArrayList<RemoteNode> path_nodes = new ArrayList<>();
+		for (String remote_node_address : ser_path.split("-")) {
+			path_nodes.add(owner.getMemoryController().loadRemoteNode(remote_node_address));
+		}
+		return new Path(path_nodes);
 	}
 	
 	/**

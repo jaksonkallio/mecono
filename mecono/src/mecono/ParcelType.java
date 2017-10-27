@@ -4,7 +4,7 @@ package mecono;
  *
  * @author jak
  */
-public enum PalletType {
+public enum ParcelType {
 	PING, // Check for a nodes online status and latency to the node
 	PING_RESPONSE, // Responding to a particular node
 	FIND, // Ask community nodes if they know about a path to a specific node

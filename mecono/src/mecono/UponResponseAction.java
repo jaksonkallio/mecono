@@ -6,9 +6,8 @@ package mecono;
  */
 public class UponResponseAction {
 	
-	public UponResponseAction(Mailbox mailbox, Pallet original_pallet) {
+	public UponResponseAction(Mailbox mailbox, DestinationParcel original_parcel) {
 		this.mailbox = mailbox;
-		this.original_pallet = original_pallet;
 		this.response_type = determineResponseType();
 		this.original_time_sent = Protocol.getEpochSecond();
 	}
@@ -16,14 +15,15 @@ public class UponResponseAction {
 	@Override
 	public boolean equals(Object o){
 		UponResponseAction other = (UponResponseAction) o;
-		
-		return (other.getPalletID().equals(this.getPalletID()) && other.getResponseType() == this.getResponseType());
+		return (this.getOriginalParcel().equals(other.getOriginalParcel()));
 	}
 	
-	public void giveResponsePallet(Pallet response_pallet){
-		if(response_pallet.getPalletType() == response_type && response_pallet.getPalletID().equals(original_pallet.getPalletID())){
+	public void giveResponse(DestinationParcel response_parcel){
+		
+		if(determineResponseType() == response_parcel.getParcelType()){
 			// The response pallet is indeed the response to the original sent pallet
-			this.response_pallet = response_pallet;
+			// TODO: Verify parcel ID is the same
+			this.response_parcel = response_parcel;
 			responded = true;
 		}
 	}
@@ -46,13 +46,13 @@ public class UponResponseAction {
 		}
 	}
 	
-	public String getPalletID(){
-		return original_pallet.getPalletID();
+	public DestinationParcel getOriginalParcel(){
+		return original_parcel;
 	}
 	
-	public PalletType getResponseType(){
+	public ParcelType getResponseType(){
 		if(responded){
-			return response_pallet.getPalletType();
+			return response_parcel.getParcelType();
 		}else{
 			return response_type;
 		}
@@ -63,7 +63,7 @@ public class UponResponseAction {
 	 */
 	private void actionFromPing(){
 		// TODO: Verify that the destination signed the original pallet
-		original_pallet.getDestination().updateSuccessfulPing((int) (Protocol.getEpochSecond() - original_pallet.getTimeSent()));
+		//original_parcel.getDestination().updateSuccessfulPing((int) (Protocol.getEpochSecond() - response_parcel.getTimeSent()));
 	}
 	
 	private void actionFromFind(){
@@ -74,23 +74,23 @@ public class UponResponseAction {
 		// TODO: What to do after data was successfully received remotely
 	}
 	
-	private PalletType determineResponseType(){
-		switch(original_pallet.getPalletType()){
+	private ParcelType determineResponseType(){
+		switch(original_parcel.getParcelType()){
 			case PING:
-				return PalletType.PING_RESPONSE;
+				return ParcelType.PING_RESPONSE;
 			case FIND:
-				return PalletType.FIND_RESPONSE;
+				return ParcelType.FIND_RESPONSE;
 			case DATA:
-				return PalletType.DATA_RECEIPT;
+				return ParcelType.DATA_RECEIPT;
 			default:
-				return PalletType.UNKNOWN;
+				return ParcelType.UNKNOWN;
 		}
 	}
 	
 	private Mailbox mailbox;
-	private Pallet original_pallet;
-	private Pallet response_pallet;
+	private DestinationParcel original_parcel;
+	private DestinationParcel response_parcel;
 	private boolean responded = false;
 	private final long original_time_sent;
-	private final PalletType response_type;
+	private final ParcelType response_type;
 }

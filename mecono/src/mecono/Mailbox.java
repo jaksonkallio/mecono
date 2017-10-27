@@ -7,8 +7,7 @@ import java.util.Queue;
 
 /**
  * The mailbox is responsible for managing parcel sending/receiving, queuing
- * parcels, and piecing together parcel streams and notifying the SelfNode with
- * complete pallets.
+ * parcels, and giving received parcels to the self node.
  *
  * @author jak
  */
@@ -18,27 +17,20 @@ public class Mailbox {
 		this.owner = owner;
 		this.network_controller = new NetworkController(this);
 	}
-	
-	public Pallet generatePallet(PalletType pallet_type){
-		Pallet new_pallet = new Pallet(this);
-		
-		return new_pallet;
-	}
 
-	public boolean sendMessage(PalletType stream_type, RemoteNode destination, String message_text) {
+	/*public boolean sendMessage(ParcelType stream_type, RemoteNode destination, String message_text) {
 		Pallet message = new Pallet(this);
 		message.createNewMessage(stream_type, destination, message_text);
 
 		return true;
-	}
+	}*/
 
 	public void receiveParcel(String ser_parcel) {
 		try {
 			Parcel parcel = unserializeParcel(ser_parcel);
 			
 			if (parcel instanceof DestinationParcel) {
-				partial_pallets.add(((DestinationParcel) parcel).getPalletParent());
-				checkForCompletedPallets();
+				// TODO: Call self node received parcel method
 			} else if(parcel instanceof ForeignParcel) {
 				outbound_queue.offer((ForeignParcel) parcel);
 			}
@@ -47,26 +39,11 @@ public class Mailbox {
 		}
 	}
 	
-	private void checkForCompletedPallets(){
-		for (int i = 0; i < partial_pallets.size(); i++) {
-			if (partial_pallets.get(i).allParcelsReceived()) {
-				owner.receiveCompletePallet(partial_pallets.get(i));
-				partial_pallets.remove(i);
-			}
-		}
-	}
-	
-	private void enqueueOutbound(Pallet pallet){
-		for(int i = 0; i < pallet.getParcelCount(); i++){
-			//enqueueOutbound(pallet.getParcelByIndex(i));
-		}
-	}
-	
 	private void enqueueOutbound(ForeignParcel parcel){
 		outbound_queue.offer(parcel);
 	}
 
-	public Pallet getPalletByID(String stream_id) {
+	/*public Pallet getPalletByID(String stream_id) {
 		// Search known streams for the Stream ID.
 		for (Pallet pallet : partial_pallets) {
 			if (pallet.getPalletID() == stream_id) {
@@ -76,7 +53,7 @@ public class Mailbox {
 
 		// Stream ID not found
 		return new Pallet(this, stream_id);
-	}
+	}*/
 	
 	/**
 	 * Gets the owner of the mailbox.
@@ -89,20 +66,6 @@ public class Mailbox {
 	public NetworkController getNetworkController() {
 		return network_controller;
 	}
-	
-	public void listPartialStreams(){
-		String str = "";
-		
-		if(partial_pallets.size() > 0){
-			for(Pallet pallet : partial_pallets){
-				str += "  "+pallet.toString()+"\n";
-			}
-		}else{
-			str = "Mailbox has no partially built pallets.";
-		}
-		
-		owner.nodeLog(0, str);
-	}
 
 	/**
 	 * Convert an unencrypted serialized parcel into a Parcel object.
@@ -114,41 +77,50 @@ public class Mailbox {
 		/*
 		`[...]` denotes encrypted payload that only destination may access.
 		
-		pathhistory,[destination,pallettype,streamid,originator,parcelcount,parcelid,content,signature(destination+originator+streamid+parcelcount+content)]
+		pathhistory,[destination,parceltype,originator,content,signature(destination+originator+content)]
 		 */
-
+		Parcel received_parcel = null;
 		List<String> pieces = Arrays.asList(ser_parcel.split(","));
-		ArrayList<RemoteNode> path_nodes = new ArrayList<>();
-		for (String remote_node_address : pieces.get(0).split("-")) {
-			path_nodes.add(owner.getMemoryController().loadRemoteNode(remote_node_address));
-		}
-		Path path_history = new Path(path_nodes);
+		Path path = Path.unserialize(pieces.get(0), owner);
 
-		if (pieces.get(1).equals(owner.getAddress())) {
+		if (pieces.get(1).equals(owner.getAddress())) {			
 			// We are the destination
-
-			Pallet pallet_parent = getPalletByID(pieces.get(3));
-			if (pallet_parent.getPalletType() == PalletType.UNKNOWN) {
-				pallet_parent.setPalletType(Protocol.unserializePalletType(pieces.get(2)));
+			ParcelType parcel_type = DestinationParcel.unserializePalletType(pieces.get(2));
+			
+			switch(parcel_type){
+				case PING:
+					received_parcel = new PingParcel();
+				case PING_RESPONSE:
+					received_parcel = new PingResponseParcel();
+				case FIND:
+					received_parcel = new FindParcel();
+				case FIND_RESPONSE:
+					received_parcel = new FindResponseParcel();
+				case DATA:
+					received_parcel = new DataParcel();
+				case DATA_RECEIPT:
+					received_parcel = new DataReceiptParcel();
+				case UNKNOWN:
+					throw new UnknownResponsibilityException("Parcel type not recognized.");
 			}
-
-			RemoteNode originator = owner.getMemoryController().loadRemoteNode(pieces.get(4));
-
-			return new DestinationParcel(pallet_parent, path_history, originator, Integer.parseInt(pieces.get(6)), pieces.get(7), pieces.get(8));
+			
+			received_parcel.setPath(path);
 		} else {
 			// We are not the destination
 
 			// If selfnode is the second to last node in the path history (last node in history would be the next node) then parcel is in the right place
-			if (!path_nodes.get(path_nodes.size() - 2).equals(owner)) {
+			if (!path.getStop(path.getPathLength() - 2).equals(owner)) {
 				throw new UnknownResponsibilityException("SelfNode isn't meant to have this parcel at this point in the path.");
 			}
 
-			return new ForeignParcel(path_history, pieces.get(1));
+			//return new ForeignParcel(path_history, pieces.get(1));
 		}
+		
+		return received_parcel;
 	}
 
 	private final SelfNode owner; // The selfnode that runs the mailbox
-	private ArrayList<Pallet> partial_pallets = new ArrayList<Pallet>(); // Inbound, for building up pallets
+	//private ArrayList<Pallet> partial_pallets = new ArrayList<Pallet>(); // Inbound, for building up pallets
 	private ArrayList<UponResponseAction> upon_response_actions;
 	private final NetworkController network_controller;
 	private Queue<ForeignParcel> outbound_queue; // Outbound queue
