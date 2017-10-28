@@ -1,6 +1,8 @@
 package mecono;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Set;
 
 /**
@@ -80,7 +82,7 @@ public class RemoteNode implements Node {
 		}
 		
 		if(indexer.ready_when_offline){
-			if(getPathTo() != null){
+			if(getIdealPath() != null){
 				
 			}
 		}
@@ -98,10 +100,6 @@ public class RemoteNode implements Node {
 	
 	public int getPing(){
 		return ping;
-	}
-	
-	public Path getIdealPath(){
-		return paths_to.get(0);
 	}
 	
 	public int getTotalUses(){
@@ -141,7 +139,9 @@ public class RemoteNode implements Node {
 		return cooperativity;
 	}
 	
-	private Path getPathTo(){
+	public Path getIdealPath(){
+		sortPaths();
+		
 		if(countPathsTo() > 0){
 			// Return top path
 			return paths_to.get(0);
@@ -158,6 +158,17 @@ public class RemoteNode implements Node {
 		}
 		
 		return false;
+	}
+	
+	private void sortPaths(){
+		Collections.sort(paths_to, new Comparator<Path>() {
+			@Override
+			public int compare(Path path2, Path path1)
+			{
+
+				return (int) (1000 * (path2.getIdealityRating() - path1.getIdealityRating()));
+			}
+		});
 	}
 	
 	private String address;

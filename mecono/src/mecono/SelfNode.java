@@ -2,6 +2,8 @@ package mecono;
 
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -77,23 +79,15 @@ public class SelfNode implements Node {
 		}
 	}
 	
-	/**
-	 * Generalized form of send signal.
-	 * @param destination The remote node destination.
-	 * @param signal_type Signal type
-	 * @param content Content to attach, for data requests.
-	 */
-	public void sendSignal(RemoteNode destination, ParcelType signal_type, String content){
-		
-	}
-	
-	/**
-	 * Signal sending, non-data.
-	 * @param destination The remote node destination.
-	 * @param signal_type Signal type
-	 */
-	public void sendSignal(RemoteNode destination, ParcelType signal_type){
-		sendSignal(destination, signal_type, "");
+	public void sendDataParcel(RemoteNode destination, String content) throws UnknownResponsibilityException {
+		try{
+			DataParcel parcel = new DataParcel();
+			parcel.setDestination(destination);
+			parcel.setContent(content);
+			parcel.placeInOutbox();
+		} catch (BadProtocolException ex) {
+			nodeLog(2, "Cannot send data parcel: "+ex.getMessage());
+		}
 	}
 	
 	private NodeAddress address;

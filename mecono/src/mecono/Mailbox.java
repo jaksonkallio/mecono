@@ -66,6 +66,11 @@ public class Mailbox {
 	public NetworkController getNetworkController() {
 		return network_controller;
 	}
+	
+	public void placeInOutbox(DestinationParcel parcel){
+		parcel.setInOutbox();
+		outbox.add(parcel);
+	}
 
 	/**
 	 * Convert an unencrypted serialized parcel into a Parcel object.
@@ -124,4 +129,5 @@ public class Mailbox {
 	private ArrayList<UponResponseAction> upon_response_actions;
 	private final NetworkController network_controller;
 	private Queue<ForeignParcel> outbound_queue; // Outbound queue
+	private ArrayList<DestinationParcel> outbox = new ArrayList<>();
 }
