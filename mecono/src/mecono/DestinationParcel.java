@@ -11,7 +11,17 @@ public class DestinationParcel extends Parcel implements MeconoSerializable{
 	 */
 	//pathhistory,[destination,parceltype,originator,content,signature(destination+originator+content)]
 	public DestinationParcel() {
-		
+		generateUniqueID();
+	}
+	
+	public void generateUniqueID(){
+		char[] text = new char[Protocol.parcel_unique_id_length];
+
+		for (int i = 0; i < Protocol.parcel_unique_id_length; i++) {
+			text[i] = Protocol.hex_chars[Protocol.rng.nextInt(Protocol.hex_chars.length)];
+		}
+
+		this.unique_id = new String(text);
 	}
 	
 	public void setContent(String content){
@@ -60,14 +70,6 @@ public class DestinationParcel extends Parcel implements MeconoSerializable{
 
 	public boolean isFinalDest() {
 		return destination.equals(mailbox.getOwner());
-	}
-
-	public void setMessagePiece(String message_piece) {
-		if (message_piece.length() <= 140) {
-			this.content = message_piece;
-		} else {
-			// TODO: Throw ProtocolException
-		}
 	}
 	
 	public boolean originatorIsSelf() {
@@ -143,5 +145,6 @@ public class DestinationParcel extends Parcel implements MeconoSerializable{
 	private int time_received = 0;
 	private Mailbox mailbox;
 	private boolean in_outbox;
+	private String unique_id;
 	private ParcelType parcel_type = ParcelType.UNKNOWN;
 }
