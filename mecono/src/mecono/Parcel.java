@@ -18,6 +18,18 @@ public abstract class Parcel {
 		this.path = path;
 	}
 	
+	/**
+	 * Gets the next node in the path.
+	 * @return 
+	 */
+	public RemoteNode getNextNode(){
+		return null;
+	}
+	
+	public String serialize(){
+		return null;
+	}
+	
 	protected Path path_history;
 	protected Path path;
 }

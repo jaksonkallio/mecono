@@ -20,11 +20,19 @@ public class SimNetwork {
 		a.receiveRawString("111-222-333,encrypteddata");
 	}
 	
+	public SimSelfNode getSelfNodeFromRemoteNode(RemoteNode target){
+		for(SimSelfNode node : members){
+			if(target.equals(node)){
+				return node;
+			}
+		}
+		
+		return null;
+	}
+	
 	public static boolean simulatedEventChance(double rate){
 		return (rate >= 1 || Math.random() < rate);
 	}
-	
-	private ArrayList<SimSelfNode> members;
 	
 	// Simulation Preferences
 	public final boolean simulate_latency = true;
@@ -34,4 +42,5 @@ public class SimNetwork {
 	public final short minimum_neighbor_count = 1; // Minimum neighbors a node must have.
 	public final short maximum_neighbor_count = 8; // Maximum neighbors a node may have.
 	public final double chance_neighbor_count_outlier = 0.25; // Chance for a node to have a non-standard neighbor count. If true, finds a random value between min/max neighbor count.
+	private static ArrayList<SimSelfNode> members = new ArrayList<>();
 }

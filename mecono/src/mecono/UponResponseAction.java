@@ -8,6 +8,7 @@ public class UponResponseAction {
 	
 	public UponResponseAction(Mailbox mailbox, DestinationParcel original_parcel) {
 		this.mailbox = mailbox;
+		this.original_parcel = original_parcel;
 		this.response_type = determineResponseType();
 		this.original_time_sent = Protocol.getEpochSecond();
 	}
@@ -19,8 +20,7 @@ public class UponResponseAction {
 	}
 	
 	public void giveResponse(DestinationParcel response_parcel){
-		
-		if(determineResponseType() == response_parcel.getParcelType()){
+		if(response_type == response_parcel.getParcelType()){
 			// The response pallet is indeed the response to the original sent pallet
 			// TODO: Verify parcel ID is the same
 			this.response_parcel = response_parcel;
@@ -87,8 +87,8 @@ public class UponResponseAction {
 		}
 	}
 	
-	private Mailbox mailbox;
-	private DestinationParcel original_parcel;
+	private final Mailbox mailbox;
+	private final DestinationParcel original_parcel;
 	private DestinationParcel response_parcel;
 	private boolean responded = false;
 	private final long original_time_sent;

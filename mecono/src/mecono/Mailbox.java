@@ -74,8 +74,14 @@ public class Mailbox {
 	
 	private void processOutboxItem(int i){
 		DestinationParcel parcel = outbox.get(i);
-		if(((RemoteNode) parcel.getDestination()).isReady()){
+		if((((RemoteNode) parcel.getDestination()).isReady()) && parcel.hasCompletePath()){
+			// The remote node has at least one sufficient path to it, and the parcel has a complete path to the destination.
 			
+			// Create the response action/expectation
+			UponResponseAction response_action = new UponResponseAction(this, parcel);
+			
+			// Give to the network controller for sending
+			network_controller.sendParcel(parcel);
 		}
 	}
 

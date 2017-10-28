@@ -4,7 +4,7 @@ package mecono;
  * A destination parcel is a parcel that has reached the SelfNode and is at it's final destination.
  * @author jak
  */
-public class DestinationParcel extends Parcel implements MeconoSerializable{
+public class DestinationParcel extends Parcel {
 
 	/**
 	 * Constructor
@@ -116,6 +116,10 @@ public class DestinationParcel extends Parcel implements MeconoSerializable{
 		}
 	}
 	
+	public boolean hasCompletePath(){
+		return (path != null && path.getPathLength() > 2);
+	}
+	
 	/**
 	 * Place the parcel in the outbox. The mailbox will de
 	 * @throws UnknownResponsibilityException 
@@ -136,6 +140,17 @@ public class DestinationParcel extends Parcel implements MeconoSerializable{
 	
 	public void setInOutbox(){
 		in_outbox = true;
+	}
+	
+	@Override
+	public RemoteNode getNextNode(){
+		if(originatorIsSelf()){
+			// Originator -> neighbor -> node 2 -> node 3 -> ... -> destination
+			return (RemoteNode) path.getStop(1);
+		}else{
+			// There is no next node, if the self node is not the first node in the path. 
+			return null;
+		}
 	}
 	
 	private String content;
