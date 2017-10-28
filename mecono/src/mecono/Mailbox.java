@@ -71,6 +71,13 @@ public class Mailbox {
 		parcel.setInOutbox();
 		outbox.add(parcel);
 	}
+	
+	private void processOutboxItem(int i){
+		DestinationParcel parcel = outbox.get(i);
+		if(((RemoteNode) parcel.getDestination()).isReady()){
+			
+		}
+	}
 
 	/**
 	 * Convert an unencrypted serialized parcel into a Parcel object.
