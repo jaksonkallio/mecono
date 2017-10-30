@@ -10,18 +10,27 @@ public class Mecono {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        /*for (String s: args) {
-            if (s.equals("--sim")) {
-                SimNetwork sim = new SimNetwork();
-				sim.begin();
-            }
-        }*/
-		
+        boolean sandbox = false;
 		boolean simulated_network = true;
 		
-		if(simulated_network){
-			SimNetwork sim = new SimNetwork();
-			sim.begin();
-		}
+		if(sandbox){
+			sandbox();
+		}else{
+			/*for (String s: args) {
+				if (s.equals("--sim")) {
+					SimNetwork sim = new SimNetwork();
+					sim.begin();
+				}
+			}*/
+			
+			if(simulated_network){
+				SimNetwork sim = new SimNetwork();
+				sim.begin();
+			}
+        }
     }
+	
+	public static void sandbox(){
+		
+	}
 }
