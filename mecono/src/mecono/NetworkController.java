@@ -1,6 +1,8 @@
 package mecono;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -13,7 +15,13 @@ public class NetworkController {
 	}
 	
 	public void receiveData(String raw_data){
-		mailbox.receiveParcel(raw_data);
+		Parcel received_parcel;
+		try {
+			received_parcel = Parcel.unserialize(raw_data, mailbox.getOwner());
+			mailbox.receiveParcel(received_parcel);
+		} catch (BadProtocolException | UnknownResponsibilityException ex) {
+			mailbox.getOwner().nodeLog(2, "Bad parcel received.");
+		}
 	}
 	
 	public void sendParcel(Parcel parcel){
