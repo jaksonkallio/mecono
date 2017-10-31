@@ -11,7 +11,7 @@ public class Mecono {
      */
     public static void main(String[] args) {
         boolean sandbox = false;
-		boolean simulated_network = true;
+		
 		
 		if(sandbox){
 			sandbox();
@@ -33,4 +33,6 @@ public class Mecono {
 	public static void sandbox(){
 		
 	}
+	
+	public static boolean simulated_network = true;
 }

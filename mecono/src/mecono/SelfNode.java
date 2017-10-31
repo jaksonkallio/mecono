@@ -90,11 +90,32 @@ public class SelfNode implements Node {
 		}
 	}
 	
+	public boolean isNeighbor(RemoteNode node){
+		// Gets if the node is in the community list at hop 1. (index + 1 = hop)
+		return community.get(0).contains(node);
+	}
+	
+	public boolean isInCommunity(RemoteNode node){
+		// Gets if the node is in the community list at any hop.
+		for(ArrayList<RemoteNode> hop : community){
+			if(hop.contains(node)){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public void addNeighbor(RemoteNode node){
+		community.get(0).add(node);
+	}
+	
 	private NodeAddress address;
 	private String label;
 	protected final Mailbox mailbox;
 	private MemoryController memory_controller; // The memory controller to load/save different paths, nodes, etc.
 	private ArrayList<RemoteNode> neighbors;
+	private ArrayList<ArrayList<RemoteNode>> community;
 	
 	// Node preferences
 	public final int offline_successful_ping_threshold = 8; // A successful ping within the last x minutes means the node is online.
@@ -106,4 +127,5 @@ public class SelfNode implements Node {
 	public final int signal_attempts = 100; // Attempt to send a signal X times, retrying after each timeout failure.
 	public final int timeout_failure_time = 8; // X minutes before a signal is considered failure.
 	public final int timeout_failure_expiry = 60; // X minutes before a signal's upon response action is deleted. Must be greater than `timeout_failure_time`. 
+	public final int unauthorized_neighborship_expiry = 60; // Only keep unauthorized neighborship connections for the X minutes .
 }

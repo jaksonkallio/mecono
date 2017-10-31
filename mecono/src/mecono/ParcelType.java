@@ -11,5 +11,7 @@ public enum ParcelType {
 	FIND_RESPONSE, // A response with information about requested node.
 	DATA, // Normal data
 	DATA_RECEIPT, // Receipt that data was received.
+	NEIGHBORVERIFY, // Re-verify neighborships occasionally.
+	NEIGHBORVERIFY_RESPONSE, // Response with the signature.
 	UNKNOWN // Undefined or not known
 }
