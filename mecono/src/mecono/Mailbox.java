@@ -1,8 +1,6 @@
 package mecono;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Queue;
 
 /**
@@ -27,7 +25,7 @@ public class Mailbox {
 
 	public void receiveParcel(Parcel parcel) {
 		if (parcel instanceof DestinationParcel) {
-			// TODO: Call self node received parcel method
+			getOwner().receiveParcel((DestinationParcel) parcel);
 		} else if(parcel instanceof ForeignParcel) {
 			outbound_queue.offer((ForeignParcel) parcel);
 		}
@@ -36,18 +34,6 @@ public class Mailbox {
 	private void enqueueOutbound(ForeignParcel parcel){
 		outbound_queue.offer(parcel);
 	}
-
-	/*public Pallet getPalletByID(String stream_id) {
-		// Search known streams for the Stream ID.
-		for (Pallet pallet : partial_pallets) {
-			if (pallet.getPalletID() == stream_id) {
-				return pallet;
-			}
-		}
-
-		// Stream ID not found
-		return new Pallet(this, stream_id);
-	}*/
 	
 	/**
 	 * Gets the owner of the mailbox.
@@ -68,19 +54,77 @@ public class Mailbox {
 	
 	private void processOutboxItem(int i){
 		DestinationParcel parcel = outbox.get(i);
-		if((((RemoteNode) parcel.getDestination()).isReady()) && parcel.hasCompletePath()){
-			// The remote node has at least one sufficient path to it, and the parcel has a complete path to the destination.
-			
-			// Create the response action/expectation
-			UponResponseAction response_action = new UponResponseAction(this, parcel);
-			
-			// Give to the network controller for sending
-			network_controller.sendParcel(parcel);
+		if((((RemoteNode) parcel.getDestination()).isReady())){
+			if(parcel.hasCompletePath() || parcel instanceof PingParcel){
+				// The remote node has at least one sufficient path to it, and the parcel has a complete (tested) path to the destination. A tested path is needed for non-ping requests.
+
+				// Create the response action/expectation
+				UponResponseAction response_action = new UponResponseAction(this, parcel);
+
+				// Give to the network controller for sending
+				network_controller.sendParcel(parcel);
+			}else{
+				consultTrustedForPath((RemoteNode) parcel.getDestination());
+			}
 		}
 	}
+	
+	private void consultTrustedForPath(RemoteNode node){
+		if(node.getIdealPath() != null){
+			// We don't have an ideal path
+			ArrayList<RemoteNode> consult_list = new ArrayList<>();
 
+			for(ArrayList<RemoteNode> community_hop : getOwner().getCommunity()){
+				for(RemoteNode community_member : community_hop){
+					// Add every community member to the consult list.
+					if(!consult_list.contains(community_member)){
+						consult_list.add(community_member);
+					}
+				}
+			}
+
+			for(RemoteNode trusted_node : getOwner().getTrustedNodes()){
+				if(!consult_list.contains(trusted_node)){
+					// Add all trusted nodes to the consult list.
+					consult_list.add(trusted_node);
+				}
+			}
+
+			// Now consult the nodes
+			for(RemoteNode consultant : consult_list){
+				FindParcel find = new FindParcel();
+				find.setTarget(node);
+
+				try{
+					find.setDestination(consultant);
+				}
+				catch(BadProtocolException ex){
+
+				}
+
+				if(!expectingResponse(find)){
+					placeInOutbox(find);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Checks if there is an active signal out in the network that we are expecting a response to. Used to protect against spamming the network.
+	 */
+	private boolean expectingResponse(DestinationParcel parcel){
+		if(parcel instanceof FindParcel){
+			for(UponResponseAction existing_action : upon_response_actions){
+				if(existing_action.getOriginalParcel() instanceof FindParcel && existing_action.getOriginalParcel().equals(parcel)){
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
 	private final SelfNode owner; // The selfnode that runs the mailbox
-	//private ArrayList<Pallet> partial_pallets = new ArrayList<Pallet>(); // Inbound, for building up pallets
 	private ArrayList<UponResponseAction> upon_response_actions;
 	private final NetworkController network_controller;
 	private Queue<ForeignParcel> outbound_queue; // Outbound queue

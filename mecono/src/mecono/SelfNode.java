@@ -110,12 +110,21 @@ public class SelfNode implements Node {
 		community.get(0).add(node);
 	}
 	
+	public ArrayList<ArrayList<RemoteNode>> getCommunity(){
+		return community;
+	}
+	
+	public ArrayList<RemoteNode> getTrustedNodes(){
+		return trusted_nodes;
+	}
+	
 	private NodeAddress address;
 	private String label;
 	protected final Mailbox mailbox;
 	private MemoryController memory_controller; // The memory controller to load/save different paths, nodes, etc.
 	private ArrayList<RemoteNode> neighbors;
 	private ArrayList<ArrayList<RemoteNode>> community;
+	private ArrayList<RemoteNode> trusted_nodes;
 	
 	// Node preferences
 	public final int offline_successful_ping_threshold = 8; // A successful ping within the last x minutes means the node is online.
