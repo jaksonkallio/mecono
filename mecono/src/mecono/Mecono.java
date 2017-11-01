@@ -12,7 +12,6 @@ public class Mecono {
     public static void main(String[] args) {
         boolean sandbox = false;
 		
-		
 		if(sandbox){
 			sandbox();
 		}else{
