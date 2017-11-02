@@ -14,8 +14,9 @@ public class Path {
 		
 	}
 	
-	public Path(ArrayList<RemoteNode> stops) {
+	public Path(ArrayList<RemoteNode> stops, SelfNode relative_origin) {
 		this.stops = stops;
+		this.relative_origin = relative_origin;
 	}
 	
 	public Path(String[] addresses) {
@@ -64,15 +65,6 @@ public class Path {
 	}
 	
 	/**
-	 * Gets the serialized identifier
-	 * @return 
-	 */
-	public String getIdentifier(){
-		regenerateIdentifier();
-		return identifier;
-	}
-	
-	/**
 	 * Gets a subpath between two stops, inclusive.
 	 * @param start
 	 * @param end
@@ -86,7 +78,7 @@ public class Path {
 			start++;
 		}
 		
-		return new Path(subpath_stops);
+		return new Path(subpath_stops, relative_origin);
 	}
 	
 	/**
@@ -106,85 +98,69 @@ public class Path {
 		return this.getSubpath(1, this.getPathLength() - 2);
 	}
 	
-	/**
-	 * Gets the ideality rating.
-	 * @return 
-	 */
-	public double getIdealityRating(){
-		double cooperativity = getAverageCooperativity();
-		int trusted_nodes = 0;
-		int online_nodes = 0;
-		int path_length = 0;
-		
-		if((ideality_cooperativity_component + ideality_online_count_component + ideality_trusted_count_component) != 1){
-			// These must add up to 1 to be proper weights.
-			return 0;
-		}
-		
-		for(RemoteNode stop : stops){
-			path_length++;
-			
-			if(stop.isTrusted()){
-				trusted_nodes++;
-			}
-			if(stop.isOnline()){
-				online_nodes++;
-			}
-		}
-		
-		return ((ideality_cooperativity_component * cooperativity) + (ideality_online_count_component * (online_nodes / path_length)) + (ideality_trusted_count_component * (trusted_nodes / path_length)));
-	}
-	
-	/**
-	 * Gets the average cooperativity of the nodes in the path.
-	 * @return 
-	 */
-	public double getAverageCooperativity(){
-		double total_cooperativity = 0.0;
-		int count = 0;
-		
-		for(RemoteNode node : getIntermediatePath().getStops()){
-			total_cooperativity += node.getCooperativity();
-			count++;
-		}
-		
-		if(count == 0){
-			return 0.0;
-		}else{
-			return total_cooperativity / count;
-		}
-	}
-	
 	public static Path unserialize(String ser_path, SelfNode owner){
 		ArrayList<RemoteNode> path_nodes = new ArrayList<>();
 		for (String remote_node_address : ser_path.split("-")) {
 			path_nodes.add(owner.getMemoryController().loadRemoteNode(remote_node_address));
 		}
-		return new Path(path_nodes);
+		return new Path(path_nodes, owner);
+	}
+	
+	public int getTotalUses(){
+		return failures + successes;
+	}
+	
+	public double getReliability(){
+		double cooperativity = 0;
+		
+		if(getTotalUses() > 0){
+			if(successes > 0){
+				// Cooperativity bonus favors nodes that have had a lot of signals sent over them. This gives frequently used paths some slack, and also allows them to improve their reliability over time (up to 100%).
+				cooperativity = (successes+(getTotalUses()*relative_origin.path_reliability_rating_bonus)) / getTotalUses();
+			}else{
+				// Only nodes that have had at least one successful signal sent over them get a cooperativity bonus.
+				cooperativity = 0;
+			}
+		}else {
+			// Until we get a good sample size, the cooperativity is constant.
+			cooperativity = 0.25;
+		}
+		
+		// Cooperativity may never be greater than 100%.
+		cooperativity = Math.min(cooperativity, 1.00);
+		
+		return cooperativity;
+	}
+	
+	public int getLastUse(){
+		return last_use;
 	}
 	
 	/**
 	 * Regenerates the serialized identifier.
 	 */
-	private void regenerateIdentifier(){
+	public String getIdentifier(){
 		// TODO: Use a proper hash of the address items instead.
 		
-		String new_identifier = "";
+		String identifier = "";
 		int count = 0;
 		
 		for(RemoteNode stop : stops){
 			if(count > 0){
-				new_identifier += ";";
+				identifier += ";";
 			}
-			new_identifier += count+"-"+stop.getAddress().substring(0, 4);
+			identifier += count+"-"+stop.getAddress().substring(0, 4);
 			count++;
 		}
 		
-		identifier = new_identifier;
+		return identifier;
 	}
 	
     private ArrayList<RemoteNode> stops;
-	private String identifier;
+	private SelfNode relative_origin;
+	private int successes = 0;
+	private int failures = 0;
+	private int last_use = 0;
 	
 	// TODO: These values should probably be in the self node preferences list
 	private final double ideality_cooperativity_component = 0.50; // The cooperativity weight for finding ideality rating of paths.

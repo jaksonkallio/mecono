@@ -113,32 +113,6 @@ public class RemoteNode implements Node {
 		last_online = Protocol.getEpochMinute();
 	}
 	
-	/**
-	 * Cooperativity is a measure of cooperation a node shows with the self node. It only applies to non-destination nodes in the path.
-	 * @return 
-	 */
-	public double getCooperativity(){
-		double cooperativity = 0;
-		
-		if(getTotalUses() > 0 && getTotalUses() >= indexer.cooperativity_minimum_sample_size){
-			if(successes > 0){
-				// Cooperativity bonus favors nodes that have had a lot of signals sent over them. This gives frequently used nodes some slack, and also allows them to improve their cooperativity raiting over time (up to 100%).
-				cooperativity = (successes+(getTotalUses()*indexer.cooperativity_rating_bonus)) / getTotalUses();
-			}else{
-				// Only nodes that have had at least one successful signal sent over them get a cooperativity bonus.
-				cooperativity = 0;
-			}
-		}else {
-			// Until we get a good sample size, the cooperativity is constant.
-			cooperativity = 0.25;
-		}
-		
-		// Cooperativity may never be greater than 100%.
-		cooperativity = Math.min(cooperativity, 1.00);
-		
-		return cooperativity;
-	}
-	
 	public Path getIdealPath(){
 		sortPaths();
 		
@@ -166,7 +140,7 @@ public class RemoteNode implements Node {
 			public int compare(Path path2, Path path1)
 			{
 
-				return (int) (1000 * (path2.getIdealityRating() - path1.getIdealityRating()));
+				return (int) (1000 * (path2.getReliability() - path1.getReliability()));
 			}
 		});
 	}

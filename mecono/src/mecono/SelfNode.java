@@ -131,7 +131,7 @@ public class SelfNode implements Node {
 	public final int pinned_ping_interval = 4; // How many minutes between each ping to pinned nodes.
 	public final boolean ready_when_offline = true; // Should nodes be considered ready even when offline
 	public final int cooperativity_minimum_sample_size = 5; // Cooperativity will be calculated only after total uses is at least X.
-	public final double cooperativity_rating_bonus = 0.10;
+	public final double path_reliability_rating_bonus = 0.10;
 	public final boolean forward_signals_for_blacklisted_nodes = false;
 	public final int signal_attempts = 100; // Attempt to send a signal X times, retrying after each timeout failure.
 	public final int timeout_failure_time = 8; // X minutes before a signal is considered failure.
