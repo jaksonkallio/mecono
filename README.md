@@ -15,7 +15,7 @@ Designed and developed by [Jakson Kallio](https://jaksonkallio.github.io).
 * Eliminates the need for ISPs, except in some conditions.
 * Decentralized mesh of nodes; no regulation.
 * Open source, free, and permissionless to set up and use.
-* Encrypted communication is required by the protocol.
+* Encryption for communication is both the default and required by the protocol.
 * Permissionless server and file hosting.
 * Resilient to large-scale crises via learning and redundant pathing.
 * Very simple hardware required for easy and cheap connection setup in remote/undeveloped/volatile locations and environments.
