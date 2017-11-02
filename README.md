@@ -12,7 +12,7 @@ Designed and developed by [Jakson Kallio](https://jaksonkallio.github.io).
 
 ## What makes Mecono awesome?
 * Free communications.
-* Eliminates the need for ISPs, except in some conditions.
+* Largely eliminates the need for ISPs in most non-rural settings.
 * Decentralized mesh of nodes; no regulation.
 * Open source, free, and permissionless to set up and use.
 * Encryption for communication is both the default and required by the protocol.
