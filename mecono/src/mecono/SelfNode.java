@@ -107,6 +107,10 @@ public class SelfNode implements Node {
 	}
 	
 	public void addNeighbor(RemoteNode node){
+		if(community.isEmpty()){
+			community.add(new ArrayList<>());
+		}
+		
 		community.get(0).add(node);
 	}
 	
@@ -123,7 +127,7 @@ public class SelfNode implements Node {
 	protected final Mailbox mailbox;
 	private MemoryController memory_controller; // The memory controller to load/save different paths, nodes, etc.
 	private ArrayList<RemoteNode> neighbors;
-	private ArrayList<ArrayList<RemoteNode>> community;
+	private ArrayList<ArrayList<RemoteNode>> community = new ArrayList<ArrayList<RemoteNode>>();
 	private ArrayList<RemoteNode> trusted_nodes;
 	
 	// Node preferences
