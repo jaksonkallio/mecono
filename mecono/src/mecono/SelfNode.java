@@ -130,6 +130,7 @@ public class SelfNode implements Node {
 	public final int offline_successful_ping_threshold = 8; // A successful ping within the last x minutes means the node is online.
 	public final int pinned_ping_interval = 4; // How many minutes between each ping to pinned nodes.
 	public final boolean ready_when_offline = true; // Should nodes be considered ready even when offline
+	public final boolean require_tested_path_before_send = true; // For normal parcels, do we require a tested (path with >1 use) before sending?
 	public final int cooperativity_minimum_sample_size = 5; // Cooperativity will be calculated only after total uses is at least X.
 	public final double path_reliability_rating_bonus = 0.10;
 	public final boolean forward_signals_for_blacklisted_nodes = false;

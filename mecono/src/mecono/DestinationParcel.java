@@ -153,6 +153,14 @@ public class DestinationParcel extends Parcel {
 		}
 	}
 	
+	/**
+	 * Whether this kind of parcel can be sent without a valid/tested path.
+	 * @return 
+	 */
+	public boolean requiresTestedPath(){
+		return mailbox.getOwner().require_tested_path_before_send;
+	}
+	
 	private String content;
 	private String payload;
 	private Node destination;
