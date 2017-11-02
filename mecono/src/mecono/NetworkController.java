@@ -32,9 +32,15 @@ public class NetworkController {
 		RemoteNode remote_receiver = parcel.getNextNode();
 		
 		if(Mecono.simulated_network){
+			boolean neighbor_connection_exists = false;
 			
-			SimSelfNode receiver = SimNetwork.getSelfNodeFromRemoteNode(remote_receiver);
-			receiver.getMailbox().getNetworkController().receiveData(serialized_parcel);
+			for(NeighborConnection neighbor : neighbor_connections){
+				if(neighbor.getNeighbor().equals(remote_receiver)){
+					SimSelfNode receiver = SimNetwork.getSelfNodeFromRemoteNode(remote_receiver);
+					receiver.getMailbox().getNetworkController().receiveData(serialized_parcel);
+					break;
+				}
+			}
 		}else{
 			// TODO: Non-simulation sending routine
 		}
