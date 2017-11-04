@@ -27,6 +27,11 @@ public class SelfNode implements Node {
 		this("Unnamed");
 	}
 	
+	@Override
+	public String toString(){
+		return getAddressLabel();
+	}
+	
 	public void generateNewAddress(){
 		address = new NodeAddress();
 		nodeLog(0, "SelfNode \""+getAddressLabel()+"\" now uses address \""+getAddress()+"\".");
@@ -38,7 +43,7 @@ public class SelfNode implements Node {
 	}
 	
 	public String getAddressLabel() {
-		return getAddress().substring(0, 3);
+		return getAddress().substring(0, 4);
 	}
 
 	@Override

@@ -11,10 +11,6 @@ public class SimNetwork {
 	public void begin(){
 		generateSimSelfNodes(mesh_size);
 		generateNeighborships();
-		
-		for(SimSelfNode member : members){
-			System.out.println(member.getAddress());
-		}
 	}
 	
 	public void generateSimSelfNodes(int count){
@@ -31,6 +27,10 @@ public class SimNetwork {
 		}
 		
 		return null;
+	}
+	
+	public ArrayList<SimSelfNode> getMembers(){
+		return members;
 	}
 	
 	private void generateNeighborships(){
@@ -55,8 +55,12 @@ public class SimNetwork {
 		return (rate >= 1 || Math.random() < rate);
 	}
 	
+	public String getStats(){
+		return "";
+	}
+	
 	// Simulation Preferences
-	private static final int mesh_size = 5;
+	private static final int mesh_size = 20;
 	public static final boolean simulate_latency = true;
 	public static final double parcel_lost_rate = 0.02; // Chance that a parcel just gets thrown out, to simulate a sudden connection glitch.
 	public static final double adversarial_node_rate = 0.05; // Percent of nodes that don't follow the network protocol.
