@@ -186,7 +186,7 @@ public class SelfNode implements Node {
 			return successes;
 		}
 		
-		public int getFails(){
+		public int getFailures(){
 			return fails;
 		}
 		
