@@ -72,7 +72,11 @@ public class SimGUI {
 		active_node_area.setPadding(left_inset);
 		
 		get_node_info.setOnAction(event -> {
-			appendNodeConsole("");
+			appendNodeConsole(
+				"Address: "+selected_node.getAddress()+
+				"\nCommunity: "+selected_node.getCommunityCount()+" nodes ("+selected_node.getNeighborCount()+" neighbors)"+
+				"\n"
+			);
 		});
 		
 		active_node_actions.getChildren().addAll(get_node_info, send_from_node, toggle_online);
@@ -94,6 +98,7 @@ public class SimGUI {
 	private Button get_node_info = new Button("Node Info");
 	private Button send_from_node = new Button("Send From");
 	private Button toggle_online = new Button("Toggle Online");
+	private Button view_outbox = new Button("View Outbox");
 	private VBox active_node_actions = new VBox(10);
 	private VBox active_node_area = new VBox(10);
 	private Label attribution = new Label("Made by Jakson Kallio");

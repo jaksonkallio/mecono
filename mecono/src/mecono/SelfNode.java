@@ -1,6 +1,8 @@
 package mecono;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -100,6 +102,20 @@ public class SelfNode implements Node {
 		return community.get(0).contains(node);
 	}
 	
+	public int getNeighborCount(){
+		return community.get(0).size();
+	}
+	
+	public int getCommunityCount(){
+		int sum = 0;
+		
+		for(ArrayList<RemoteNode> hop : community){
+			sum += hop.size();
+		}
+		
+		return sum;
+	}
+	
 	public boolean isInCommunity(RemoteNode node){
 		// Gets if the node is in the community list at any hop.
 		for(ArrayList<RemoteNode> hop : community){
@@ -127,6 +143,26 @@ public class SelfNode implements Node {
 		return trusted_nodes;
 	}
 	
+	public int successfulParcelCount(){
+		int sum = 0;
+		
+		for(ParcelType parcel_type : ParcelType.values()){
+			sum += successfulParcelCount(parcel_type);
+		}
+		
+		return sum;
+	}
+	
+	public int successfulParcelCount(ParcelType parcel_type){
+		for(HistoricParcelType historic_parcel_type : parcel_type_history){
+			if(historic_parcel_type.getParcelType() == parcel_type){
+				return historic_parcel_type.getSuccesses();
+			}
+		}
+		
+		return 0;
+	}
+	
 	private NodeAddress address;
 	private String label;
 	protected final Mailbox mailbox;
@@ -134,6 +170,33 @@ public class SelfNode implements Node {
 	private ArrayList<RemoteNode> neighbors;
 	private ArrayList<ArrayList<RemoteNode>> community = new ArrayList<ArrayList<RemoteNode>>();
 	private ArrayList<RemoteNode> trusted_nodes;
+	private ArrayList<HistoricParcelType> parcel_type_history = new ArrayList<>();
+	
+	private class HistoricParcelType {
+		public HistoricParcelType(ParcelType parcel_type){
+			this.parcel_type = parcel_type;
+		}
+		
+		public int getSuccesses(){
+			return successes;
+		}
+		
+		public int getFails(){
+			return fails;
+		}
+		
+		public int getTotal(){
+			return getSuccesses()+getFails();
+		}
+		
+		public ParcelType getParcelType(){
+			return parcel_type;
+		}
+		
+		private int successes;
+		private int fails;
+		private ParcelType parcel_type;
+	}
 	
 	// Node preferences
 	public final int offline_successful_ping_threshold = 8; // A successful ping within the last x minutes means the node is online.
@@ -146,5 +209,5 @@ public class SelfNode implements Node {
 	public final int signal_attempts = 100; // Attempt to send a signal X times, retrying after each timeout failure.
 	public final int timeout_failure_time = 8; // X minutes before a signal is considered failure.
 	public final int timeout_failure_expiry = 60; // X minutes before a signal's upon response action is deleted. Must be greater than `timeout_failure_time`. 
-	public final int unauthorized_neighborship_expiry = 60; // Only keep unauthorized neighborship connections for the X minutes .
+	public final int unauthorized_neighborship_expiry = 60; // Only keep unauthorized neighborship connections for the X minutes.
 }
