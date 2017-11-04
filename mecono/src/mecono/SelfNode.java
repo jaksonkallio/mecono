@@ -191,7 +191,7 @@ public class SelfNode implements Node {
 		}
 		
 		public int getTotal(){
-			return getSuccesses()+getFails();
+			return getSuccesses()+getFailures();
 		}
 		
 		public ParcelType getParcelType(){
