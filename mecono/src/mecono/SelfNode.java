@@ -143,20 +143,25 @@ public class SelfNode implements Node {
 		return trusted_nodes;
 	}
 	
-	public int successfulParcelCount(){
+	public int parcelHistoryCount(boolean successful){
 		int sum = 0;
 		
 		for(ParcelType parcel_type : ParcelType.values()){
-			sum += successfulParcelCount(parcel_type);
+			sum += parcelHistoryCount(parcel_type, successful);
 		}
 		
 		return sum;
 	}
 	
-	public int successfulParcelCount(ParcelType parcel_type){
+	public int parcelHistoryCount(ParcelType parcel_type, boolean successful){
 		for(HistoricParcelType historic_parcel_type : parcel_type_history){
 			if(historic_parcel_type.getParcelType() == parcel_type){
-				return historic_parcel_type.getSuccesses();
+				if(successful){
+					return historic_parcel_type.getSuccesses();
+				}else{
+					return historic_parcel_type.getFailures();
+				}
+				
 			}
 		}
 		
