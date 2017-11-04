@@ -1,5 +1,6 @@
 package mecono;
 
+import java.util.ArrayList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
@@ -10,6 +11,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.Font;
 
 /**
  *
@@ -26,9 +28,14 @@ public class SimGUI {
 	}
 	
 	private void nodeSelected(){
-		SimSelfNode selected_node = node_list.getSelectionModel().getSelectedItem();
+		selected_node = node_list.getSelectionModel().getSelectedItem();
 		active_node_label.setText("Selected Node "+selected_node.getAddressLabel());
 		node_console.setText("");
+		appendNodeConsole("Selected node "+selected_node.getAddressLabel()+".");
+	}
+	
+	private void appendNodeConsole(String new_line){
+		node_console.appendText(new_line+"\n");
 	}
 	
 	private void buildMainContainer(){
@@ -58,9 +65,15 @@ public class SimGUI {
 	
 	private void buildActiveNodeArea(){
 		node_console.setPrefSize(300, 400);
-		node_console.setDisable(true);
+		node_console.setEditable(false);
+        node_console.setWrapText(true);
+        node_console.setFont(new Font("Monospaced Bold", 15));
 		active_node_area.setPrefWidth(400);
 		active_node_area.setPadding(left_inset);
+		
+		get_node_info.setOnAction(event -> {
+			appendNodeConsole("");
+		});
 		
 		active_node_actions.getChildren().addAll(get_node_info, send_from_node, toggle_online);
 		active_node_area.getChildren().addAll(active_node_label, node_console, active_node_actions);
@@ -88,4 +101,5 @@ public class SimGUI {
 	private HBox info_bar = new HBox(20);
 	private Insets top_inset = new Insets(10, 0, 0, 0);
 	private Insets left_inset = new Insets(0, 0, 0, 10);
+	private SimSelfNode selected_node;
 }
