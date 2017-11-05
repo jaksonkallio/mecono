@@ -64,8 +64,8 @@ public class SimNetwork {
 	public static final boolean simulate_latency = true;
 	public static final double parcel_lost_rate = 0.02; // Chance that a parcel just gets thrown out, to simulate a sudden connection glitch.
 	public static final double adversarial_node_rate = 0.05; // Percent of nodes that don't follow the network protocol.
-	public static final short minimum_neighbor_count = 1; // Minimum neighbors a node must have.
-	public static final short maximum_neighbor_count = 4; // Maximum neighbors a node may have.
+	public static final short minimum_neighbor_count = 1; // Minimum neighbors for random generation.
+	public static final short maximum_neighbor_count = 3; // Maximum neighbors for random generation. 
 	public static final double chance_neighbor_count_outlier = 0.25; // Chance for a node to have a non-standard neighbor count. If true, finds a random value between min/max neighbor count.
 	private static ArrayList<SimSelfNode> members = new ArrayList<>();
 }

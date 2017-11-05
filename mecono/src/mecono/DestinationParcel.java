@@ -161,6 +161,10 @@ public class DestinationParcel extends Parcel {
 		return mailbox.getOwner().require_tested_path_before_send;
 	}
 	
+	public String getUniqueID(){
+		return unique_id;
+	}
+	
 	private String content;
 	private String payload;
 	private Node destination;

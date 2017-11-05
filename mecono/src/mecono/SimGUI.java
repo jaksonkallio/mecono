@@ -67,7 +67,7 @@ public class SimGUI {
 		node_console.setPrefSize(300, 400);
 		node_console.setEditable(false);
         node_console.setWrapText(true);
-        node_console.setFont(new Font("Monospaced Bold", 15));
+        node_console.setFont(new Font("Monospaced Regular", 12));
 		active_node_area.setPrefWidth(400);
 		active_node_area.setPadding(left_inset);
 		
@@ -80,7 +80,11 @@ public class SimGUI {
 			);
 		});
 		
-		active_node_actions.getChildren().addAll(get_node_info, send_from_node, toggle_online);
+		view_outbox.setOnAction(event -> {
+			appendNodeConsole(selected_node.getMailbox().listOutbox());
+		});
+		
+		active_node_actions.getChildren().addAll(get_node_info, send_from_node, view_outbox, toggle_online);
 		active_node_area.getChildren().addAll(active_node_label, node_console, active_node_actions);
 	}
 	

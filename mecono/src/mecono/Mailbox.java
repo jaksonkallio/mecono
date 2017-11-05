@@ -51,6 +51,28 @@ public class Mailbox {
 		parcel.setInOutbox();
 		outbox.add(parcel);
 	}
+
+	public String listOutbox(){
+		String construct = "No parcels in outbox.";
+		
+		if(outbox.size() > 0){
+			construct = "Parcels in outbox:";
+			
+			for(DestinationParcel parcel: outbox){
+				construct += "\n--"+parcel.getUniqueID()+": "+parcel.getParcelType()+" to "+parcel.getDestination().getAddress()+" ";
+
+				if(!((RemoteNode) parcel.getDestination()).isReady()){
+					construct += "[Dest Not Ready]";
+				}
+
+				if(!parcel.hasCompletePath()){
+					construct += "[Missing Path]";
+				}
+			}
+		}
+		
+		return construct;
+	}
 	
 	private void processOutboxItem(int i){
 		DestinationParcel parcel = outbox.get(i);
