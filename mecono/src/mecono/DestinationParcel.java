@@ -1,5 +1,8 @@
 package mecono;
 
+import java.util.ArrayList;
+import org.json.JSONObject;
+
 /**
  * A destination parcel is a parcel that has reached the SelfNode and is at it's final destination.
  * @author jak
@@ -165,6 +168,31 @@ public class DestinationParcel extends Parcel {
 		return unique_id;
 	}
 	
+	public String getSignature(){
+		return signature;
+	}
+	
+	@Override
+	public JSONObject serialize(){
+		JSONObject serialized = new JSONObject();
+		
+		serialized = serialized.put("path_history", getPath());
+		serialized = serialized.put("destination", getDestination().getAddress());
+		serialized = serialized.put("parcel_type", Parcel.getParcelTypeCode(parcel_type));
+		serialized = serialized.put("unique_id", getUniqueID());
+		serialized = serialized.put("official_path", getPath());
+		serialized = serialized.put("content", getSerializedContent());
+		serialized = serialized.put("signature", getSignature());
+		
+		return serialized;
+	}
+	
+	public JSONObject getSerializedContent(){
+		JSONObject json_content = new JSONObject();
+		json_content = json_content.put("data", content);
+		return json_content;
+	}
+	
 	private String content;
 	private String payload;
 	private Node destination;
@@ -173,5 +201,6 @@ public class DestinationParcel extends Parcel {
 	private Mailbox mailbox;
 	private boolean in_outbox;
 	private String unique_id;
+	private String signature;
 	private ParcelType parcel_type = ParcelType.UNKNOWN;
 }

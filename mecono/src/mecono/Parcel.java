@@ -22,6 +22,10 @@ public abstract class Parcel {
 		this.path = path;
 	}
 	
+	public Path getPath(){
+		return path;
+	}
+	
 	/**
 	 * Gets the next node in the path.
 	 * @return 
@@ -30,7 +34,7 @@ public abstract class Parcel {
 		return null;
 	}
 	
-	public String serialize(){
+	public JSONObject serialize(){
 		return null;
 	}
 	
@@ -63,6 +67,15 @@ public abstract class Parcel {
 		}
 		
 		return received_parcel;
+	}
+	
+	public static int getParcelTypeCode(ParcelType target){
+		for(int i = 0; i < Protocol.parcel_type_codes.length; i++){
+			if(Protocol.parcel_type_codes[i] == target){
+				return i;
+			}
+		}
+		return -1;
 	}
 	
 	protected Path path_history;

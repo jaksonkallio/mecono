@@ -1,6 +1,7 @@
 package mecono;
 
 import java.util.ArrayList;
+import org.json.JSONObject;
 
 /**
  *
@@ -12,10 +13,11 @@ public class NetworkController {
 		this.mailbox = mailbox;
 	}
 
-	public void receiveData(String raw_data) {
+	public void receiveData(JSONObject json_parcel) {
 		Parcel received_parcel;
+		
 		try {
-			received_parcel = Parcel.unserialize(raw_data, mailbox.getOwner());
+			received_parcel = Parcel.unserialize(json_parcel, mailbox.getOwner());
 			mailbox.receiveParcel(received_parcel);
 		} catch (BadProtocolException | UnknownResponsibilityException ex) {
 			mailbox.getOwner().nodeLog(2, "Bad parcel received.");
@@ -24,7 +26,7 @@ public class NetworkController {
 
 	public void sendParcel(Parcel parcel) {
 		// Serialize the parcel. Serialization includes an encryption process.
-		String serialized_parcel = parcel.serialize();
+		JSONObject serialized_parcel = parcel.serialize();
 
 		// Simulation of the network controller means that we call the receive method on the next nodes network controller.
 		RemoteNode remote_receiver = parcel.getNextNode();
