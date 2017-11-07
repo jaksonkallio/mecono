@@ -1,0 +1,19 @@
+{
+	"path_history": [
+		"AAA",
+		"BBB",
+		"CCC",
+		"DDD"
+	],
+	"destination": "DDDD",
+	"parcel_type": 0,
+	"unique_id": "abc123",
+	"official_path": [
+		"AAA",
+		"BBB",
+		"CCC",
+		"DDD"
+	],
+	"content": "",
+	"signature": "cryptographic signature of (destination+originator+content+unique_id) here"
+}
