@@ -1,5 +1,7 @@
 package mecono;
 
+import org.json.JSONObject;
+
 /**
  *
  * @author jak
@@ -10,8 +12,8 @@ public class SimSelfNode extends SelfNode {
 		super(label);
 	}
 	
-	public void receiveRawString(String raw_string) {
-		mailbox.getNetworkController().receiveData(raw_string);
+	public void receiveRawString(JSONObject raw_parcel) {
+		mailbox.getNetworkController().receiveData(raw_parcel);
 	}
 	
 	private boolean adversarial_node = false;
