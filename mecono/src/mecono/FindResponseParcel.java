@@ -1,5 +1,7 @@
 package mecono;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author jak
@@ -7,6 +9,12 @@ package mecono;
 public class FindResponseParcel extends DestinationParcel {
 
 	public FindResponseParcel() {
+		
 	}
 	
+	public void unserializeContent(){
+		
+	}
+	
+	ArrayList<Path> path_results = new ArrayList<>();
 }
