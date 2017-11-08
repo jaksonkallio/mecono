@@ -8,5 +8,5 @@ public class PingResponseParcel extends DestinationParcel {
 
 	public PingResponseParcel() {
 	}
-	
+
 }

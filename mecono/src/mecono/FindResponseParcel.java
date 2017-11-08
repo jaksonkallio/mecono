@@ -9,12 +9,12 @@ import java.util.ArrayList;
 public class FindResponseParcel extends DestinationParcel {
 
 	public FindResponseParcel() {
-		
+
 	}
-	
-	public void unserializeContent(){
-		
+
+	public void unserializeContent() {
+
 	}
-	
+
 	ArrayList<Path> path_results = new ArrayList<>();
 }

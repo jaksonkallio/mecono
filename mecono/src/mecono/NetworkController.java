@@ -15,7 +15,7 @@ public class NetworkController {
 
 	public void receiveData(JSONObject json_parcel) {
 		Parcel received_parcel;
-		
+
 		try {
 			received_parcel = Parcel.unserialize(json_parcel, mailbox.getOwner());
 			mailbox.receiveParcel(received_parcel);

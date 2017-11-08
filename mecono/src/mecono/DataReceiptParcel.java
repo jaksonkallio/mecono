@@ -8,5 +8,5 @@ public class DataReceiptParcel extends DestinationParcel {
 
 	public DataReceiptParcel() {
 	}
-	
+
 }

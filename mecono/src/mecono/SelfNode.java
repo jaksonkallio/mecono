@@ -18,32 +18,32 @@ public class SelfNode implements Node {
 		this.address = address;
 		this.memory_controller = new MemoryController(this);
 		mailbox = new Mailbox(this);
-		nodeLog(0, "SelfNode \""+getAddressLabel()+"\" started.");
+		nodeLog(0, "SelfNode \"" + getAddressLabel() + "\" started.");
 	}
-	
+
 	public SelfNode(String label) {
 		this(label, new NodeAddress());
 	}
-	
+
 	public SelfNode() {
 		this("Unnamed");
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		return getAddressLabel();
 	}
-	
-	public void generateNewAddress(){
+
+	public void generateNewAddress() {
 		address = new NodeAddress();
-		nodeLog(0, "SelfNode \""+getAddressLabel()+"\" now uses address \""+getAddress()+"\".");
+		nodeLog(0, "SelfNode \"" + getAddressLabel() + "\" now uses address \"" + getAddress() + "\".");
 	}
 
 	@Override
 	public String getAddress() {
 		return address.getAddressString();
 	}
-	
+
 	public String getAddressLabel() {
 		return getAddress().substring(0, 4);
 	}
@@ -54,120 +54,120 @@ public class SelfNode implements Node {
 	}
 
 	public void receiveParcel(DestinationParcel parcel) {
-		nodeLog(1, "Data received via mecono network: "+parcel.toString());
+		nodeLog(1, "Data received via mecono network: " + parcel.toString());
 	}
-	
-	public void nodeLog(int importance, String message){
+
+	public void nodeLog(int importance, String message) {
 		String[] importance_levels = {"INFO", "NOTE", "WARN", "CRIT"};
-		
-		if(importance <= (importance_levels.length - 1)){
-			System.out.println("["+getAddressLabel()+"]["+importance_levels[importance]+"] "+message);
+
+		if (importance <= (importance_levels.length - 1)) {
+			System.out.println("[" + getAddressLabel() + "][" + importance_levels[importance] + "] " + message);
 		}
 	}
-	
-	public Mailbox getMailbox(){
+
+	public Mailbox getMailbox() {
 		return mailbox;
 	}
-	
-	public MemoryController getMemoryController(){
+
+	public MemoryController getMemoryController() {
 		return memory_controller;
 	}
-	
-	public void learnPath(Path path){
-		if(path.getStop(0).equals(this)){
+
+	public void learnPath(Path path) {
+		if (path.getStop(0).equals(this)) {
 			// Verify that stop 0 is the self node
 			Path working_path = path;
-			
-			while(working_path.getPathLength() > 1){
+
+			while (working_path.getPathLength() > 1) {
 				((RemoteNode) working_path.getStop(working_path.getPathLength() - 1)).learnPath(working_path);
 				// Get the subpath, which is the same path but with the last node chopped off.
 				working_path = working_path.getSubpath(working_path.getPathLength() - 2);
 			}
 		}
 	}
-	
+
 	public void sendDataParcel(RemoteNode destination, String message) throws UnknownResponsibilityException {
-		try{
+		try {
 			DataParcel parcel = new DataParcel();
 			parcel.setDestination(destination);
 			parcel.setMessage(message);
 			parcel.placeInOutbox();
 		} catch (BadProtocolException ex) {
-			nodeLog(2, "Cannot send data parcel: "+ex.getMessage());
+			nodeLog(2, "Cannot send data parcel: " + ex.getMessage());
 		}
 	}
-	
-	public boolean isNeighbor(RemoteNode node){
+
+	public boolean isNeighbor(RemoteNode node) {
 		// Gets if the node is in the community list at hop 1. (index + 1 = hop)
 		return community.get(0).contains(node);
 	}
-	
-	public int getNeighborCount(){
+
+	public int getNeighborCount() {
 		return community.get(0).size();
 	}
-	
-	public int getCommunityCount(){
+
+	public int getCommunityCount() {
 		int sum = 0;
-		
-		for(ArrayList<RemoteNode> hop : community){
+
+		for (ArrayList<RemoteNode> hop : community) {
 			sum += hop.size();
 		}
-		
+
 		return sum;
 	}
-	
-	public boolean isInCommunity(RemoteNode node){
+
+	public boolean isInCommunity(RemoteNode node) {
 		// Gets if the node is in the community list at any hop.
-		for(ArrayList<RemoteNode> hop : community){
-			if(hop.contains(node)){
+		for (ArrayList<RemoteNode> hop : community) {
+			if (hop.contains(node)) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
-	public void addNeighbor(RemoteNode node){
-		if(community.isEmpty()){
+
+	public void addNeighbor(RemoteNode node) {
+		if (community.isEmpty()) {
 			community.add(new ArrayList<>());
 		}
-		
+
 		community.get(0).add(node);
 	}
-	
-	public ArrayList<ArrayList<RemoteNode>> getCommunity(){
+
+	public ArrayList<ArrayList<RemoteNode>> getCommunity() {
 		return community;
 	}
-	
-	public ArrayList<RemoteNode> getTrustedNodes(){
+
+	public ArrayList<RemoteNode> getTrustedNodes() {
 		return trusted_nodes;
 	}
-	
-	public int parcelHistoryCount(boolean successful){
+
+	public int parcelHistoryCount(boolean successful) {
 		int sum = 0;
-		
-		for(ParcelType parcel_type : ParcelType.values()){
+
+		for (ParcelType parcel_type : ParcelType.values()) {
 			sum += parcelHistoryCount(parcel_type, successful);
 		}
-		
+
 		return sum;
 	}
-	
-	public int parcelHistoryCount(ParcelType parcel_type, boolean successful){
-		for(HistoricParcelType historic_parcel_type : parcel_type_history){
-			if(historic_parcel_type.getParcelType() == parcel_type){
-				if(successful){
+
+	public int parcelHistoryCount(ParcelType parcel_type, boolean successful) {
+		for (HistoricParcelType historic_parcel_type : parcel_type_history) {
+			if (historic_parcel_type.getParcelType() == parcel_type) {
+				if (successful) {
 					return historic_parcel_type.getSuccesses();
-				}else{
+				} else {
 					return historic_parcel_type.getFailures();
 				}
-				
+
 			}
 		}
-		
+
 		return 0;
 	}
-	
+
 	private NodeAddress address;
 	private String label;
 	protected final Mailbox mailbox;
@@ -176,33 +176,34 @@ public class SelfNode implements Node {
 	private ArrayList<ArrayList<RemoteNode>> community = new ArrayList<ArrayList<RemoteNode>>();
 	private ArrayList<RemoteNode> trusted_nodes;
 	private ArrayList<HistoricParcelType> parcel_type_history = new ArrayList<>();
-	
+
 	private class HistoricParcelType {
-		public HistoricParcelType(ParcelType parcel_type){
+
+		public HistoricParcelType(ParcelType parcel_type) {
 			this.parcel_type = parcel_type;
 		}
-		
-		public int getSuccesses(){
+
+		public int getSuccesses() {
 			return successes;
 		}
-		
-		public int getFailures(){
+
+		public int getFailures() {
 			return fails;
 		}
-		
-		public int getTotal(){
-			return getSuccesses()+getFailures();
+
+		public int getTotal() {
+			return getSuccesses() + getFailures();
 		}
-		
-		public ParcelType getParcelType(){
+
+		public ParcelType getParcelType() {
 			return parcel_type;
 		}
-		
+
 		private int successes;
 		private int fails;
 		private ParcelType parcel_type;
 	}
-	
+
 	// Node preferences
 	public final int offline_successful_ping_threshold = 8; // A successful ping within the last x minutes means the node is online.
 	public final int pinned_ping_interval = 4; // How many minutes between each ping to pinned nodes.

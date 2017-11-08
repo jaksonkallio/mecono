@@ -18,29 +18,30 @@ import javafx.scene.text.Font;
  * @author jak
  */
 public class SimGUI {
-	public SimGUI(SimNetwork sim){
+
+	public SimGUI(SimNetwork sim) {
 		this.sim = sim;
 		buildMainContainer();
 	}
-	
-	public BorderPane getMainContainer(){
+
+	public BorderPane getMainContainer() {
 		return main_container;
 	}
-	
-	private void nodeSelected(){
+
+	private void nodeSelected() {
 		selected_node = node_list.getSelectionModel().getSelectedItem();
-		active_node_label.setText("Selected Node "+selected_node.getAddressLabel());
+		active_node_label.setText("Selected Node " + selected_node.getAddressLabel());
 		node_console.setText("");
-		appendNodeConsole("Selected node "+selected_node.getAddressLabel()+".");
+		appendNodeConsole("Selected node " + selected_node.getAddressLabel() + ".");
 	}
-	
-	private void appendNodeConsole(String new_line){
-		node_console.appendText(new_line+"\n");
+
+	private void appendNodeConsole(String new_line) {
+		node_console.appendText(new_line + "\n");
 	}
-	
-	private void buildMainContainer(){
+
+	private void buildMainContainer() {
 		main_container.setPadding(new Insets(10));
-		
+
 		buildNodeList();
 		main_container.setLeft(node_list);
 		buildActiveNodeArea();
@@ -48,47 +49,47 @@ public class SimGUI {
 		buildInfoBar();
 		main_container.setBottom(info_bar);
 	}
-	
-	private void buildNodeList(){
-		for(SimSelfNode node : sim.getMembers()){
+
+	private void buildNodeList() {
+		for (SimSelfNode node : sim.getMembers()) {
 			node_items.add(node);
 		}
-		
+
 		node_list.setItems(node_items);
 		node_list.setPrefWidth(100);
 		node_list.setPrefHeight(400);
-		
+
 		node_list.getSelectionModel().selectedItemProperty().addListener(event -> {
 			nodeSelected();
 		});
 	}
-	
-	private void buildActiveNodeArea(){
+
+	private void buildActiveNodeArea() {
 		node_console.setPrefSize(300, 400);
 		node_console.setEditable(false);
-        node_console.setWrapText(true);
-        node_console.setFont(new Font("Monospaced Regular", 12));
+		node_console.setWrapText(true);
+		node_console.setFont(new Font("Monospaced Regular", 12));
 		active_node_area.setPrefWidth(400);
 		active_node_area.setPadding(left_inset);
-		
+
 		get_node_info.setOnAction(event -> {
 			appendNodeConsole(
-				"Address: "+selected_node.getAddress()+
-				"\nCommunity: "+selected_node.getCommunityCount()+" nodes ("+selected_node.getNeighborCount()+" neighbors)"+
-				"\nSuccesses: "+selected_node.parcelHistoryCount(true)+" successful parcels sent"+
-				"\nFailures: "+selected_node.parcelHistoryCount(false)+" failed parcels sent"
+					"Address: " + selected_node.getAddress()
+					+ "\nCommunity: " + selected_node.getCommunityCount() + " nodes (" + selected_node.getNeighborCount() + " neighbors)"
+					+ "\nSuccesses: " + selected_node.parcelHistoryCount(true) + " successful parcels sent"
+					+ "\nFailures: " + selected_node.parcelHistoryCount(false) + " failed parcels sent"
 			);
 		});
-		
+
 		view_outbox.setOnAction(event -> {
 			appendNodeConsole(selected_node.getMailbox().listOutbox());
 		});
-		
+
 		active_node_actions.getChildren().addAll(get_node_info, send_from_node, view_outbox, toggle_online);
 		active_node_area.getChildren().addAll(active_node_label, node_console, active_node_actions);
 	}
-	
-	private void buildInfoBar(){
+
+	private void buildInfoBar() {
 		sim_stats.setText(sim.getStats());
 		info_bar.getChildren().addAll(attribution, sim_stats);
 		info_bar.setPadding(top_inset);

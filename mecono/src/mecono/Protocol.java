@@ -16,16 +16,16 @@ public class Protocol {
 			throw new BadProtocolException("Invalid nugget stream ID.");
 		}
 	}
-	
-	public static int getEpochMinute(){
+
+	public static int getEpochMinute() {
 		return (int) (System.currentTimeMillis() / 60000L);
 	}
-	
-	public static long getEpochSecond(){
+
+	public static long getEpochSecond() {
 		return (int) (System.currentTimeMillis() / 1000L);
 	}
-	
-	public static int elapsedMinutes(int since){
+
+	public static int elapsedMinutes(int since) {
 		return getEpochMinute() - since;
 	}
 

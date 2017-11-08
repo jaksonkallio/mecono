@@ -9,40 +9,42 @@ import org.json.*;
  * @author jak
  */
 public abstract class Parcel {
-	
+
 	/**
 	 * Which node originated this parcel, supposedly.
+	 *
 	 * @return RemoteNode Originator node object.
 	 */
-	public RemoteNode getOriginator(){
+	public RemoteNode getOriginator() {
 		return (RemoteNode) path.getStop(0);
 	}
-	
-	public void setPath(Path path){
+
+	public void setPath(Path path) {
 		this.path = path;
 	}
-	
-	public Path getPath(){
+
+	public Path getPath() {
 		return path;
 	}
-	
+
 	/**
 	 * Gets the next node in the path.
-	 * @return 
+	 *
+	 * @return
 	 */
-	public RemoteNode getNextNode(){
+	public RemoteNode getNextNode() {
 		return null;
 	}
-	
-	public JSONObject serialize(){
+
+	public JSONObject serialize() {
 		return null;
 	}
-	
+
 	public static Parcel unserialize(JSONObject json_parcel, SelfNode relative_self) throws BadProtocolException, UnknownResponsibilityException {
 		Parcel received_parcel = null;
-		
-		if(json_parcel.getString("destination").equals(relative_self.getAddress())){
-			switch(Protocol.parcel_type_codes[json_parcel.getInt("parcel_type")]){
+
+		if (json_parcel.getString("destination").equals(relative_self.getAddress())) {
+			switch (Protocol.parcel_type_codes[json_parcel.getInt("parcel_type")]) {
 				case PING:
 					received_parcel = new PingParcel();
 					break;
@@ -65,19 +67,19 @@ public abstract class Parcel {
 					received_parcel = new DestinationParcel();
 			}
 		}
-		
+
 		return received_parcel;
 	}
-	
-	public static int getParcelTypeCode(ParcelType target){
-		for(int i = 0; i < Protocol.parcel_type_codes.length; i++){
-			if(Protocol.parcel_type_codes[i] == target){
+
+	public static int getParcelTypeCode(ParcelType target) {
+		for (int i = 0; i < Protocol.parcel_type_codes.length; i++) {
+			if (Protocol.parcel_type_codes[i] == target) {
 				return i;
 			}
 		}
 		return -1;
 	}
-	
+
 	protected Path path_history;
 	protected Path path;
 }

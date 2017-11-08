@@ -22,63 +22,63 @@ public class Mailbox {
 
 		return true;
 	}*/
-
 	public void receiveParcel(Parcel parcel) {
 		if (parcel instanceof DestinationParcel) {
 			getOwner().receiveParcel((DestinationParcel) parcel);
-		} else if(parcel instanceof ForeignParcel) {
+		} else if (parcel instanceof ForeignParcel) {
 			outbound_queue.offer((ForeignParcel) parcel);
 		}
 	}
-	
-	private void enqueueOutbound(ForeignParcel parcel){
+
+	private void enqueueOutbound(ForeignParcel parcel) {
 		outbound_queue.offer(parcel);
 	}
-	
+
 	/**
 	 * Gets the owner of the mailbox.
-	 * @return 
+	 *
+	 * @return
 	 */
 	public SelfNode getOwner() {
 		return owner;
 	}
-	
+
 	public NetworkController getNetworkController() {
 		return network_controller;
 	}
-	
-	public void placeInOutbox(DestinationParcel parcel){
+
+	public void placeInOutbox(DestinationParcel parcel) {
 		parcel.setInOutbox();
 		outbox.add(parcel);
 	}
 
-	public String listOutbox(){
+	public String listOutbox() {
 		String construct = "No parcels in outbox.";
-		
-		if(outbox.size() > 0){
-			construct = "Parcels in outbox:";
-			
-			for(DestinationParcel parcel: outbox){
-				construct += "\n--"+parcel.getUniqueID()+": "+parcel.getParcelType()+" to "+parcel.getDestination().getAddress()+" ";
 
-				if(!((RemoteNode) parcel.getDestination()).isReady()){
+		if (outbox.size() > 0) {
+			construct = "Parcels in outbox:";
+
+			for (DestinationParcel parcel : outbox) {
+				construct += "\n--" + parcel.getUniqueID() + ": " + parcel.getParcelType() + " to " + parcel.getDestination().getAddress() + " ";
+
+				if (!((RemoteNode) parcel.getDestination()).isReady()) {
 					construct += "[Dest Not Ready]";
 				}
 
-				if(!parcel.hasCompletePath()){
+				if (!parcel.hasCompletePath()) {
 					construct += "[Missing Path]";
 				}
 			}
 		}
-		
+
 		return construct;
 	}
-	
-	private void processOutboxItem(int i){
+
+	private void processOutboxItem(int i) {
 		DestinationParcel parcel = outbox.get(i);
-		if((((RemoteNode) parcel.getDestination()).isReady())){
+		if ((((RemoteNode) parcel.getDestination()).isReady())) {
 			parcel.findIdealPath();
-			if(parcel.hasCompletePath() || parcel instanceof PingParcel){
+			if (parcel.hasCompletePath() || parcel instanceof PingParcel) {
 				// The remote node has at least one sufficient path to it, and the parcel has a complete (tested) path to the destination. A tested path is needed for non-ping requests.
 
 				// Create the response action/expectation
@@ -86,67 +86,67 @@ public class Mailbox {
 
 				// Give to the network controller for sending
 				network_controller.sendParcel(parcel);
-			}else{
+			} else {
 				consultTrustedForPath((RemoteNode) parcel.getDestination());
 			}
 		}
 	}
-	
-	private void consultTrustedForPath(RemoteNode node){
-		if(node.getIdealPath() != null){
+
+	private void consultTrustedForPath(RemoteNode node) {
+		if (node.getIdealPath() != null) {
 			// We don't have an ideal path
 			ArrayList<RemoteNode> consult_list = new ArrayList<>();
 
-			for(ArrayList<RemoteNode> community_hop : getOwner().getCommunity()){
-				for(RemoteNode community_member : community_hop){
+			for (ArrayList<RemoteNode> community_hop : getOwner().getCommunity()) {
+				for (RemoteNode community_member : community_hop) {
 					// Add every community member to the consult list.
-					if(!consult_list.contains(community_member)){
+					if (!consult_list.contains(community_member)) {
 						consult_list.add(community_member);
 					}
 				}
 			}
 
-			for(RemoteNode trusted_node : getOwner().getTrustedNodes()){
-				if(!consult_list.contains(trusted_node)){
+			for (RemoteNode trusted_node : getOwner().getTrustedNodes()) {
+				if (!consult_list.contains(trusted_node)) {
 					// Add all trusted nodes to the consult list.
 					consult_list.add(trusted_node);
 				}
 			}
 
 			// Now consult the nodes
-			for(RemoteNode consultant : consult_list){
+			for (RemoteNode consultant : consult_list) {
 				FindParcel find = new FindParcel();
 				find.setTarget(node);
 
-				try{
+				try {
 					find.setDestination(consultant);
-				}
-				catch(BadProtocolException ex){
+				} catch (BadProtocolException ex) {
 
 				}
 
-				if(!expectingResponse(find)){
+				if (!expectingResponse(find)) {
 					placeInOutbox(find);
 				}
 			}
 		}
 	}
-	
+
 	/**
-	 * Checks if there is an active signal out in the network that we are expecting a response to. Used to protect against spamming the network.
+	 * Checks if there is an active signal out in the network that we are
+	 * expecting a response to. Used to protect against spamming the network.
 	 */
-	private boolean expectingResponse(DestinationParcel parcel){
-		if(parcel instanceof FindParcel){
-			for(UponResponseAction existing_action : upon_response_actions){
-				if(existing_action.getOriginalParcel() instanceof FindParcel && existing_action.getOriginalParcel().equals(parcel)){
+	private boolean expectingResponse(DestinationParcel parcel) {
+		if (parcel instanceof FindParcel) {
+			for (UponResponseAction existing_action : upon_response_actions) {
+				if (existing_action.getOriginalParcel() instanceof FindParcel && existing_action.getOriginalParcel().equals(parcel)) {
 					return true;
 				}
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	private final SelfNode owner; // The selfnode that runs the mailbox
 	private ArrayList<UponResponseAction> upon_response_actions;
 	private final NetworkController network_controller;

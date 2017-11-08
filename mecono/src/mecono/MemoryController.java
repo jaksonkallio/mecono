@@ -7,12 +7,12 @@ import java.util.ArrayList;
  * @author sabreok
  */
 public class MemoryController {
-	
+
 	public MemoryController(SelfNode owner) {
 		this.owner = owner;
 	}
-	
-	public RemoteNode loadRemoteNode(String address){
+
+	public RemoteNode loadRemoteNode(String address) {
 		// Check if node is loaded into memory
 		for (RemoteNode node : nodes_memory) {
 			if (node.getAddress().equals(address)) {
@@ -27,8 +27,8 @@ public class MemoryController {
 
 		return new_node;
 	}
-	
-	public Path loadPath(String path_identifier){
+
+	public Path loadPath(String path_identifier) {
 		// Check if node is loaded into memory
 		for (Path path : paths_memory) {
 			if (path.getIdentifier().equals(path_identifier)) {
@@ -43,7 +43,7 @@ public class MemoryController {
 
 		return new_path;
 	}
-	
+
 	private SelfNode owner;
 	private ArrayList<RemoteNode> nodes_memory = new ArrayList<>();
 	private ArrayList<Path> paths_memory = new ArrayList<>();
