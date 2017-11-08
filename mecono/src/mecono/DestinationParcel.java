@@ -1,6 +1,5 @@
 package mecono;
 
-import java.util.ArrayList;
 import org.json.JSONObject;
 
 /**
