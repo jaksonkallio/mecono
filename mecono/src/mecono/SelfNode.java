@@ -7,7 +7,12 @@ import java.util.ArrayList;
  * @author jak
  */
 public class SelfNode implements Node {
-
+	
+	/**
+	 * Build a self node using a label and the node address it shall use.
+	 * @param label
+	 * @param address 
+	 */
 	public SelfNode(String label, NodeAddress address) {
 		this.label = label;
 		this.address = address;
@@ -15,43 +20,74 @@ public class SelfNode implements Node {
 		mailbox = new Mailbox(this);
 		nodeLog(0, "SelfNode \"" + getAddressLabel() + "\" started.");
 	}
-
+	
+	/**
+	 * Build a self node using a label, and the node's address will be generated randomly.
+	 * @param label
+	 */
 	public SelfNode(String label) {
 		this(label, new NodeAddress());
 	}
 
+	/**
+	 * Build a self node using a default label and randomly generated address.
+	 */
 	public SelfNode() {
 		this("Unnamed");
 	}
 
+	/**
+	 * Convert the self node to a string representation.
+	 */
 	@Override
 	public String toString() {
 		return getAddressLabel();
 	}
 
+	/**
+	 * Generate a new node address and set it.
+	 */
 	public void generateNewAddress() {
 		address = new NodeAddress();
 		nodeLog(0, "SelfNode \"" + getAddressLabel() + "\" now uses address \"" + getAddress() + "\".");
 	}
 
+	/**
+	 * Get the node address.
+	 */
 	@Override
 	public String getAddress() {
 		return address.getAddressString();
 	}
 
+	/**
+	 * Get the shortened address label for quick reference.
+	 */
 	public String getAddressLabel() {
 		return getAddress().substring(0, 4);
 	}
 
+	/**
+	 * Get the label of the node.
+	 */
 	@Override
 	public String getLabel() {
 		return label;
 	}
-
+	
+	/**
+	 * Receive and process a destination parcel from the mecono network.
+	 * @param parcel The parcel received.
+	 */
 	public void receiveParcel(DestinationParcel parcel) {
 		nodeLog(1, "Data received via mecono network: " + parcel.toString());
 	}
 
+	/**
+	 * Log a message to the node's log.
+	 * @param importance
+	 * @param message
+	 */
 	public void nodeLog(int importance, String message) {
 		String[] importance_levels = {"INFO", "NOTE", "WARN", "CRIT"};
 
@@ -60,14 +96,26 @@ public class SelfNode implements Node {
 		}
 	}
 
+	/**
+	 * Get the node's mailbox.
+	 * @return The node's mailbox.
+	 */
 	public Mailbox getMailbox() {
 		return mailbox;
 	}
 
+	/**
+	 * Get the node's memory controller.
+	 * @return The node's memory controller.
+	 */
 	public MemoryController getMemoryController() {
 		return memory_controller;
 	}
 
+	/**
+	 * Takes in a path and updates all remote node's paths mentioned.
+	 * @param path 
+	 */
 	public void learnPath(Path path) {
 		if (path.getStop(0).equals(this)) {
 			// Verify that stop 0 is the self node
@@ -81,6 +129,12 @@ public class SelfNode implements Node {
 		}
 	}
 
+	/**
+	 * Sends a data parcel to a given node, containing the given message.
+	 * @param destination
+	 * @param message
+	 * @throws UnknownResponsibilityException 
+	 */
 	public void sendDataParcel(RemoteNode destination, String message) throws UnknownResponsibilityException {
 		try {
 			DataParcel parcel = new DataParcel();
@@ -92,15 +146,28 @@ public class SelfNode implements Node {
 		}
 	}
 
+	/**
+	 * Checks if the given node is a neighbor.
+	 * @param node
+	 * @return Neighborship status.
+	 */
 	public boolean isNeighbor(RemoteNode node) {
 		// Gets if the node is in the community list at hop 1. (index + 1 = hop)
 		return community.get(0).contains(node);
 	}
 
+	/**
+	 * Get the count of neighbors.
+	 * @return Count of neighbors.
+	 */
 	public int getNeighborCount() {
 		return community.get(0).size();
 	}
 
+	/**
+	 * Counts the nodes in the community.
+	 * @return Count of nodes.
+	 */
 	public int getCommunityCount() {
 		int sum = 0;
 
@@ -111,6 +178,11 @@ public class SelfNode implements Node {
 		return sum;
 	}
 
+	/**
+	 * Checks whether a given node is in this node's community.
+	 * @param node
+	 * @return Whether it is a community member.
+	 */
 	public boolean isInCommunity(RemoteNode node) {
 		// Gets if the node is in the community list at any hop.
 		for (ArrayList<RemoteNode> hop : community) {
@@ -122,6 +194,10 @@ public class SelfNode implements Node {
 		return false;
 	}
 
+	/**
+	 * Add a neighbor.
+	 * @param node
+	 */
 	public void addNeighbor(RemoteNode node) {
 		if (community.isEmpty()) {
 			community.add(new ArrayList<>());
@@ -129,15 +205,28 @@ public class SelfNode implements Node {
 
 		community.get(0).add(node);
 	}
-
+	
+	/**
+	 * Get the community list.
+	 * @return The community list.
+	 */
 	public ArrayList<ArrayList<RemoteNode>> getCommunity() {
 		return community;
 	}
 
+	/**
+	 * Get a list of trusted nodes.
+	 * @return List of trusted nodes.
+	 */
 	public ArrayList<RemoteNode> getTrustedNodes() {
 		return trusted_nodes;
 	}
 
+	/**
+	 * Parcel history statistics.
+	 * @param successful
+	 * @return The number of successful/failed parcels.
+	 */
 	public int parcelHistoryCount(boolean successful) {
 		int sum = 0;
 
@@ -148,6 +237,12 @@ public class SelfNode implements Node {
 		return sum;
 	}
 
+	/**
+	 * Parcel history statistics for a certain parcel type.
+	 * @param parcel_type
+	 * @param successful
+	 * @return The number of successful/failed parcels of this type.
+	 */
 	public int parcelHistoryCount(ParcelType parcel_type, boolean successful) {
 		for (HistoricParcelType historic_parcel_type : parcel_type_history) {
 			if (historic_parcel_type.getParcelType() == parcel_type) {
