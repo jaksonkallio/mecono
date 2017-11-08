@@ -26,12 +26,6 @@ public class DestinationParcel extends Parcel {
 
 		this.unique_id = new String(text);
 	}
-	
-	public void setContent(String content){
-		if(!isInOutbox()){
-			this.content = content;
-		}
-	}
 
 	public void updateReceivedTime() {
 		time_received = Protocol.getEpochMinute();
@@ -43,16 +37,6 @@ public class DestinationParcel extends Parcel {
 
 	public int age() {
 		return Math.max(Protocol.getEpochMinute() - time_received, 0);
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		DestinationParcel other = (DestinationParcel) o;
-		return (other.getContent().equals(this.getContent()) && other.getDestination().equals(this.getDestination()) && other.getOriginator().equals(this.getOriginator()));
-	}
-
-	public String getContent() {
-		return content;
 	}
 	
 	public Node getDestination(){
@@ -114,7 +98,7 @@ public class DestinationParcel extends Parcel {
 	}
 	
 	public void findIdealPath() {
-		if(!isFinalDest() && getDestination() instanceof DestinationParcel){
+		if(!isFinalDest() && (getDestination() instanceof RemoteNode)){
 			setPath(((RemoteNode) getDestination()).getIdealPath());
 		}
 	}
@@ -189,11 +173,10 @@ public class DestinationParcel extends Parcel {
 	
 	public JSONObject getSerializedContent(){
 		JSONObject json_content = new JSONObject();
-		json_content = json_content.put("data", content);
+		json_content = json_content.put("data", "empty");
 		return json_content;
 	}
 	
-	private String content;
 	private String payload;
 	private Node destination;
 	private Node originator;

@@ -86,11 +86,11 @@ public class SelfNode implements Node {
 		}
 	}
 	
-	public void sendDataParcel(RemoteNode destination, String content) throws UnknownResponsibilityException {
+	public void sendDataParcel(RemoteNode destination, String message) throws UnknownResponsibilityException {
 		try{
 			DataParcel parcel = new DataParcel();
 			parcel.setDestination(destination);
-			parcel.setContent(content);
+			parcel.setMessage(message);
 			parcel.placeInOutbox();
 		} catch (BadProtocolException ex) {
 			nodeLog(2, "Cannot send data parcel: "+ex.getMessage());

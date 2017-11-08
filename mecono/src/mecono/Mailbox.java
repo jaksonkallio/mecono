@@ -77,6 +77,7 @@ public class Mailbox {
 	private void processOutboxItem(int i){
 		DestinationParcel parcel = outbox.get(i);
 		if((((RemoteNode) parcel.getDestination()).isReady())){
+			parcel.findIdealPath();
 			if(parcel.hasCompletePath() || parcel instanceof PingParcel){
 				// The remote node has at least one sufficient path to it, and the parcel has a complete (tested) path to the destination. A tested path is needed for non-ping requests.
 

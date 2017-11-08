@@ -77,17 +77,8 @@ public class RemoteNode implements Node {
 	}
 	
 	public boolean isReady(){
-		if(!indexer.ready_when_offline && !isOnline()){
-			return false;
-		}
-		
-		if(indexer.ready_when_offline){
-			if(getIdealPath() != null){
-				
-			}
-		}
-		
-		return true;
+		// Node is ready when the ideal path exists, and the node is online/offline as per user settings.
+		return !((!indexer.ready_when_offline && !isOnline()) || getIdealPath() == null);
 	}
 	
 	public int countPathsTo(){
