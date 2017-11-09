@@ -26,7 +26,7 @@ public class Mecono extends Application {
 				sim = new SimNetwork();
 				sim.begin();
 				sim_gui = new SimGUI(sim);
-				root = sim_gui.getMainContainer();
+				root.getChildren().add(sim_gui.getMainContainer());
 			}
 		}
 

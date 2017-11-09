@@ -66,7 +66,7 @@ public class SimNetwork {
 	}
 
 	// Simulation Preferences
-	private static final int mesh_size = 20;
+	private static final int mesh_size = 8;
 	public static final boolean simulate_latency = true;
 	public static final double parcel_lost_rate = 0.02; // Chance that a parcel just gets thrown out, to simulate a sudden connection glitch.
 	public static final double adversarial_node_rate = 0.05; // Percent of nodes that don't follow the network protocol.

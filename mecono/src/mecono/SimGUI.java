@@ -65,11 +65,11 @@ public class SimGUI {
 	}
 
 	private void buildActiveNodeArea() {
-		node_console.setPrefSize(300, 400);
+		node_console.setPrefHeight(400);
 		node_console.setEditable(false);
 		node_console.setWrapText(true);
 		node_console.setFont(new Font("Monospaced Regular", 12));
-		active_node_area.setPrefWidth(400);
+		active_node_area.setPrefWidth(600);
 		active_node_area.setPadding(left_inset);
 
 		get_node_info.setOnAction(event -> {
