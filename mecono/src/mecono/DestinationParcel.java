@@ -14,8 +14,9 @@ public class DestinationParcel extends Parcel {
 	 * Constructor
 	 */
 	//pathhistory,[destination,parceltype,originator,content,signature(destination+originator+content)]
-	public DestinationParcel() {
+	public DestinationParcel(Mailbox mailbox) {
 		generateUniqueID();
+		this.mailbox = mailbox;
 	}
 
 	public void generateUniqueID() {
@@ -39,7 +40,13 @@ public class DestinationParcel extends Parcel {
 	public int age() {
 		return Math.max(Protocol.getEpochMinute() - time_received, 0);
 	}
-
+	
+	public void setOriginator(SelfNode originator){
+		if(!isInOutbox()){
+			this.originator = originator;
+		}
+	}
+	
 	public Node getDestination() {
 		if (path == null) {
 			return this.destination;
@@ -99,7 +106,7 @@ public class DestinationParcel extends Parcel {
 	}
 
 	public void findIdealPath() {
-		if (!isFinalDest() && (getDestination() instanceof RemoteNode)) {
+		if (!isFinalDest()) {
 			setPath(((RemoteNode) getDestination()).getIdealPath());
 		}
 	}
@@ -109,18 +116,22 @@ public class DestinationParcel extends Parcel {
 	}
 
 	/**
-	 * Place the parcel in the outbox. The mailbox will de
+	 * Place the parcel in the outbox. A destination parcel can only be in the outbox if (1) the originator is the self node and (2) the destination is not the self node.
 	 *
 	 * @throws UnknownResponsibilityException
 	 */
 	public void placeInOutbox() throws UnknownResponsibilityException {
 		if (!isInOutbox()) {
-			if (!getOriginator().equals(this)) {
+			if (!originatorIsSelf()) {
 				throw new UnknownResponsibilityException("The self node is not the originator of the parcel to send.");
 			}
 
-			if (getDestination().equals(this)) {
+			if (getDestination().equals(mailbox.getOwner())) {
 				throw new UnknownResponsibilityException("The destination of a parcel to send cannot be the self node.");
+			}
+			
+			if (getDestination().equals(originator)) {
+				throw new UnknownResponsibilityException("The destination cannot be the parcel's originator.");
 			}
 
 			mailbox.placeInOutbox(this);
@@ -144,8 +155,7 @@ public class DestinationParcel extends Parcel {
 
 	/**
 	 * Whether this kind of parcel can be sent without a valid/tested path.
-	 *
-	 * @return
+	 * @return 
 	 */
 	public boolean requiresTestedPath() {
 		return mailbox.getOwner().require_tested_path_before_send;
@@ -179,10 +189,18 @@ public class DestinationParcel extends Parcel {
 		json_content = json_content.put("data", "empty");
 		return json_content;
 	}
+	
+	public void setPath(RemoteNode destination, SelfNode originator){
+		if(!isInOutbox()){
+			this.destination = destination;
+			this.originator = originator;
+		}
+		
+		findIdealPath();
+	}
 
 	private String payload;
 	private Node destination;
-	private Node originator;
 	private int time_received = 0;
 	private Mailbox mailbox;
 	private boolean in_outbox;

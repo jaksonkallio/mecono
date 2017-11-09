@@ -11,6 +11,12 @@ public class SimNetwork {
 	public void begin() {
 		generateSimSelfNodes(mesh_size);
 		generateNeighborships();
+		
+		for(int i = 0; i < 3; i++){
+			SimSelfNode originator = members.get((int) (Math.random()*members.size()));
+			RemoteNode destination = originator.getMemoryController().loadRemoteNode(members.get((int) (Math.random()*members.size())).getAddress());
+			originator.sendDataParcel(destination, "test_message_"+i);
+		}
 	}
 
 	public void generateSimSelfNodes(int count) {

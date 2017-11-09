@@ -6,7 +6,8 @@ package mecono;
  */
 public class PingResponseParcel extends DestinationParcel {
 
-	public PingResponseParcel() {
+	public PingResponseParcel(Mailbox mailbox) {
+		super(mailbox);
 	}
 
 }

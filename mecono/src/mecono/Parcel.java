@@ -15,8 +15,12 @@ public abstract class Parcel {
 	 *
 	 * @return RemoteNode Originator node object.
 	 */
-	public RemoteNode getOriginator() {
-		return (RemoteNode) path.getStop(0);
+	public Node getOriginator() {
+		if(path != null){
+			return (RemoteNode) path.getStop(0);
+		}else{
+			return originator;
+		}
 	}
 
 	public void setPath(Path path) {
@@ -42,29 +46,30 @@ public abstract class Parcel {
 
 	public static Parcel unserialize(JSONObject json_parcel, SelfNode relative_self) throws BadProtocolException, UnknownResponsibilityException {
 		Parcel received_parcel = null;
+		Mailbox mailbox = relative_self.getMailbox();
 
 		if (json_parcel.getString("destination").equals(relative_self.getAddress())) {
 			switch (Protocol.parcel_type_codes[json_parcel.getInt("parcel_type")]) {
 				case PING:
-					received_parcel = new PingParcel();
+					received_parcel = new PingParcel(mailbox);
 					break;
 				case PING_RESPONSE:
-					received_parcel = new PingResponseParcel();
+					received_parcel = new PingResponseParcel(mailbox);
 					break;
 				case FIND:
-					received_parcel = new FindParcel();
+					received_parcel = new FindParcel(mailbox);
 					break;
 				case FIND_RESPONSE:
-					received_parcel = new FindResponseParcel();
+					received_parcel = new FindResponseParcel(mailbox);
 					break;
 				case DATA:
-					received_parcel = new DataParcel();
+					received_parcel = new DataParcel(mailbox);
 					break;
 				case DATA_RECEIPT:
-					received_parcel = new DataReceiptParcel();
+					received_parcel = new DataReceiptParcel(mailbox);
 					break;
 				default:
-					received_parcel = new DestinationParcel();
+					received_parcel = new DestinationParcel(mailbox);
 			}
 		}
 
@@ -79,7 +84,8 @@ public abstract class Parcel {
 		}
 		return -1;
 	}
-
+	
+	protected Node originator;
 	protected Path path_history;
 	protected Path path;
 }

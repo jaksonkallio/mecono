@@ -133,15 +133,14 @@ public class SelfNode implements Node {
 	 * Sends a data parcel to a given node, containing the given message.
 	 * @param destination
 	 * @param message
-	 * @throws UnknownResponsibilityException 
 	 */
-	public void sendDataParcel(RemoteNode destination, String message) throws UnknownResponsibilityException {
+	public void sendDataParcel(RemoteNode destination, String message){
 		try {
-			DataParcel parcel = new DataParcel();
-			parcel.setDestination(destination);
+			DataParcel parcel = new DataParcel(getMailbox());
+			parcel.setPath(destination, this);
 			parcel.setMessage(message);
 			parcel.placeInOutbox();
-		} catch (BadProtocolException ex) {
+		} catch (UnknownResponsibilityException ex) {
 			nodeLog(2, "Cannot send data parcel: " + ex.getMessage());
 		}
 	}

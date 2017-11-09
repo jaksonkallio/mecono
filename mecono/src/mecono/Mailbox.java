@@ -42,7 +42,11 @@ public class Mailbox {
 	public SelfNode getOwner() {
 		return owner;
 	}
-
+	
+	public int getOutboxCount(){
+		return outbox.size();
+	}
+	
 	public NetworkController getNetworkController() {
 		return network_controller;
 	}
@@ -115,7 +119,7 @@ public class Mailbox {
 
 			// Now consult the nodes
 			for (RemoteNode consultant : consult_list) {
-				FindParcel find = new FindParcel();
+				FindParcel find = new FindParcel(this);
 				find.setTarget(node);
 
 				try {

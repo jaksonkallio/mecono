@@ -147,7 +147,7 @@ public class RemoteNode implements Node {
 	private int last_ping_time; // Time of the last ping, in minutes.
 	private int last_online; // Last time this node has successfully been used to send a signal.
 	private int last_use; // Gets the last time this node was used, despite if the signal succeeded or failed.
-	private ArrayList<Path> paths_to;
+	private ArrayList<Path> paths_to = new ArrayList<>();
 	private Set<RemoteNode> neighbors; // This node's neighbors.
 	private SelfNode indexer;
 	private int max_paths = 100; // Only keep the best x paths.

@@ -6,7 +6,8 @@ package mecono;
  */
 public class DataReceiptParcel extends DestinationParcel {
 
-	public DataReceiptParcel() {
+	public DataReceiptParcel(Mailbox mailbox) {
+		super(mailbox);
 	}
 
 }
