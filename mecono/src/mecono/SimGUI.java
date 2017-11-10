@@ -19,13 +19,17 @@ import javafx.scene.text.Font;
  */
 public class SimGUI {
 
-	public SimGUI(SimNetwork sim) {
-		this.sim = sim;
+	public SimGUI(SimNetwork sim_network) {
+		this.sim_network = sim_network;
 		buildMainContainer();
 	}
-
+	
 	public BorderPane getMainContainer() {
 		return main_container;
+	}
+	
+	public void appendGlobalConsole(String new_line){
+		consoleAppend(global_console, new_line);
 	}
 
 	private void nodeSelected() {
@@ -36,10 +40,15 @@ public class SimGUI {
 	}
 
 	private void appendNodeConsole(String new_line) {
-		node_console.appendText(new_line + "\n");
+		consoleAppend(node_console, new_line);
+	}
+	
+	private void consoleAppend(TextArea console, String new_line){
+		console.appendText(new_line + "\n");
 	}
 
 	private void buildMainContainer() {
+		main_container.getChildren().clear();
 		main_container.setPadding(new Insets(10));
 
 		buildNodeList();
@@ -51,7 +60,7 @@ public class SimGUI {
 	}
 
 	private void buildNodeList() {
-		for (SimSelfNode node : sim.getMembers()) {
+		for (SimSelfNode node : sim_network.getMembers()) {
 			node_items.add(node);
 		}
 
@@ -65,10 +74,14 @@ public class SimGUI {
 	}
 
 	private void buildActiveNodeArea() {
+		global_console.setPrefHeight(200);
+		global_console.setEditable(false);
+		global_console.setWrapText(true);
+		global_console.setFont(console_font);
 		node_console.setPrefHeight(400);
 		node_console.setEditable(false);
 		node_console.setWrapText(true);
-		node_console.setFont(new Font("Monospaced Regular", 12));
+		node_console.setFont(console_font);
 		active_node_area.setPrefWidth(600);
 		active_node_area.setPadding(left_inset);
 
@@ -86,21 +99,22 @@ public class SimGUI {
 		});
 
 		active_node_actions.getChildren().addAll(get_node_info, send_from_node, view_outbox, toggle_online);
-		active_node_area.getChildren().addAll(active_node_label, node_console, active_node_actions);
+		active_node_area.getChildren().addAll(global_console, active_node_label, node_console, active_node_actions);
 	}
 
 	private void buildInfoBar() {
-		sim_stats.setText(sim.getStats());
+		sim_stats.setText(sim_network.getStats());
 		info_bar.getChildren().addAll(attribution, sim_stats);
 		info_bar.setPadding(top_inset);
 	}
 
-	private SimNetwork sim;
+	private SimNetwork sim_network;
 	private BorderPane main_container = new BorderPane();
 	private ListView<SimSelfNode> node_list = new ListView<>();
 	private ObservableList<SimSelfNode> node_items = FXCollections.observableArrayList();
 	private Label active_node_label = new Label("Selected Node");
 	private TextArea node_console = new TextArea();
+	private TextArea global_console = new TextArea();
 	private Button get_node_info = new Button("Node Info");
 	private Button send_from_node = new Button("Send From");
 	private Button toggle_online = new Button("Toggle Online");
@@ -112,5 +126,6 @@ public class SimGUI {
 	private HBox info_bar = new HBox(20);
 	private Insets top_inset = new Insets(10, 0, 0, 0);
 	private Insets left_inset = new Insets(0, 0, 0, 10);
+	private Font console_font = new Font("Monospaced Regular", 12);
 	private SimSelfNode selected_node;
 }

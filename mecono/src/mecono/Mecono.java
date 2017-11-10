@@ -23,10 +23,7 @@ public class Mecono extends Application {
 			if (simulated_network) {
 				System.out.println("Running simulation");
 				stage.setTitle("Simulated Network - Mecono " + Mecono.getVersion());
-				sim = new SimNetwork();
-				sim.begin();
-				sim_gui = new SimGUI(sim);
-				root.getChildren().add(sim_gui.getMainContainer());
+				root.getChildren().add(sim.getSimGUI().getMainContainer());
 			}
 		}
 
@@ -50,8 +47,7 @@ public class Mecono extends Application {
 
 	}
 
-	public static SimNetwork sim;
-	public static SimGUI sim_gui;
+	public static final SimNetwork sim = new SimNetwork();
 	public static boolean simulated_network = true;
 	public static boolean sandbox = false;
 	public static int version = 1;

@@ -87,13 +87,18 @@ public class SelfNode implements Node {
 	 * Log a message to the node's log.
 	 * @param importance
 	 * @param message
+	 * @return 
 	 */
-	public void nodeLog(int importance, String message) {
+	public String nodeLog(int importance, String message) {
 		String[] importance_levels = {"INFO", "NOTE", "WARN", "CRIT"};
-
+		
+		String construct = "";
 		if (importance <= (importance_levels.length - 1)) {
-			System.out.println("[" + getAddressLabel() + "][" + importance_levels[importance] + "] " + message);
+			construct = "[" + getAddressLabel() + "][" + importance_levels[importance] + "] " + message;
+			System.out.println(construct);
 		}
+		
+		return construct;
 	}
 
 	/**

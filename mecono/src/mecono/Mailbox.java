@@ -78,7 +78,7 @@ public class Mailbox {
 		return construct;
 	}
 
-	private void processOutboxItem(int i) {
+	public void processOutboxItem(int i) {
 		DestinationParcel parcel = outbox.get(i);
 		if ((((RemoteNode) parcel.getDestination()).isReady())) {
 			parcel.findIdealPath();

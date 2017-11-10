@@ -7,21 +7,47 @@ import java.util.ArrayList;
  * @author jak
  */
 public class SimNetwork {
+	
+	public SimNetwork(){
+		initialize();
+		this.sim_gui = new SimGUI(this);
+	}
+	
+	public SimGUI getSimGUI(){
+		return sim_gui;
+	}
+	
+	public void startMainSimulationLoop(){
+		if(!in_loop){
+			in_loop = true;
+			
+			while(true){
+				memberOutboxProcess();
+				break;
+			}
+			
+			in_loop = false;
+		}
+	}
+	
+	public void initialize() {
+		if(!initialized){
+			generateSimSelfNodes(mesh_size);
+			generateNeighborships();
 
-	public void begin() {
-		generateSimSelfNodes(mesh_size);
-		generateNeighborships();
-		
-		for(int i = 0; i < 3; i++){
-			SimSelfNode originator = members.get((int) (Math.random()*members.size()));
-			RemoteNode destination = originator.getMemoryController().loadRemoteNode(members.get((int) (Math.random()*members.size())).getAddress());
-			originator.sendDataParcel(destination, "test_message_"+i);
+			for(int i = 0; i < 3; i++){
+				SimSelfNode originator = members.get((int) (Math.random()*members.size()));
+				RemoteNode destination = originator.getMemoryController().loadRemoteNode(members.get((int) (Math.random()*members.size())).getAddress());
+				originator.sendDataParcel(destination, "test_message_"+i);
+			}
+			
+			initialized = true;
 		}
 	}
 
 	public void generateSimSelfNodes(int count) {
 		for (int i = 0; i < count; i++) {
-			members.add(new SimSelfNode("n" + i));
+			members.add(new SimSelfNode("n" + i, this));
 		}
 	}
 
@@ -38,7 +64,15 @@ public class SimNetwork {
 	public ArrayList<SimSelfNode> getMembers() {
 		return members;
 	}
-
+	
+	private void memberOutboxProcess(){
+		for (SimSelfNode node : members) {
+			for(int i = 0; i < node.getMailbox().getOutboxCount(); i++){
+				node.getMailbox().processOutboxItem(i);
+			}
+		}
+	}
+	
 	private void generateNeighborships() {
 		// For each member, generate neighbors
 		for (SimSelfNode member_self : members) {
@@ -67,6 +101,8 @@ public class SimNetwork {
 
 	// Simulation Preferences
 	private static final int mesh_size = 8;
+	private boolean initialized = false;
+	private boolean in_loop = false;
 	public static final boolean simulate_latency = true;
 	public static final double parcel_lost_rate = 0.02; // Chance that a parcel just gets thrown out, to simulate a sudden connection glitch.
 	public static final double adversarial_node_rate = 0.05; // Percent of nodes that don't follow the network protocol.
@@ -74,4 +110,5 @@ public class SimNetwork {
 	public static final short maximum_neighbor_count = 3; // Maximum neighbors for random generation. 
 	public static final double chance_neighbor_count_outlier = 0.25; // Chance for a node to have a non-standard neighbor count. If true, finds a random value between min/max neighbor count.
 	private static ArrayList<SimSelfNode> members = new ArrayList<>();
+	private SimGUI sim_gui;
 }
