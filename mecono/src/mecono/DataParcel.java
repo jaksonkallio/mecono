@@ -11,6 +11,11 @@ public class DataParcel extends DestinationParcel {
 	public DataParcel(Mailbox mailbox) {
 		super(mailbox);
 	}
+	
+	@Override
+	public ParcelType getParcelType(){
+		return ParcelType.DATA;
+	}
 
 	@Override
 	public boolean equals(Object o) {
