@@ -78,7 +78,7 @@ public class SimGUI {
 		global_console.setEditable(false);
 		global_console.setWrapText(true);
 		global_console.setFont(console_font);
-		node_console.setPrefHeight(400);
+		node_console.setPrefHeight(200);
 		node_console.setEditable(false);
 		node_console.setWrapText(true);
 		node_console.setFont(console_font);
