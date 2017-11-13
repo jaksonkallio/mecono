@@ -14,8 +14,13 @@ public class MailboxWorker implements Runnable {
 	 */
 	@Override
 	public void run() {
+		working = true;
 		
+		while(working){
+		
+		}
 	}
 	
+	private boolean working = false;
 	private final Mailbox mailbox;
 }
