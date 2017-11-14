@@ -20,8 +20,15 @@ public class SimNetwork {
 	
 	public void startMailboxWorkers(){
 		for (SimSelfNode node : members) {
-			System.out.println("Starting simselfnode "+node.getAddressLabel()+" worker.");
 			node.getMailbox().getWorker().startWorking();
+			System.out.println("Started sim node "+node.getAddressLabel()+" worker");
+		}
+	}
+	
+	public void stopMailboxWorkers(){
+		for (SimSelfNode node : members) {
+			node.getMailbox().getWorker().stopWorking();
+			System.out.println("Stopped sim node "+node.getAddressLabel()+" worker.");
 		}
 	}
 	

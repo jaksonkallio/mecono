@@ -15,13 +15,14 @@ public class Mecono extends Application {
 	public void start(Stage stage) {
 		Pane root = new Pane();
 
-		System.out.println("Mecono started.");
+		System.out.println("Mecono started");
 		if (sandbox) {
-			System.out.println("Running sandbox");
+			System.out.println("Running sandbox...");
 			sandbox();
+			System.out.println("Sandbox done");
 		} else {
 			if (simulated_network) {
-				System.out.println("Running simulation");
+				System.out.println("Running simulation...");
 				stage.setTitle("Simulated Network - Mecono " + Mecono.getVersion());
 				root.getChildren().add(sim.getSimGUI().getMainContainer());
 				sim.startMailboxWorkers();
@@ -31,6 +32,20 @@ public class Mecono extends Application {
 		Scene scene = new Scene(root);
 		stage.setScene(scene);
 		stage.show();
+	}
+	
+	@Override
+	public void stop(){
+		System.out.println("Main GUI closing...");
+		
+		if(simulated_network){
+			System.out.println("Stopping threads...");
+			sim.stopMailboxWorkers();
+		}
+		
+		System.out.println("Mecono ended successully");
+		
+		// Save file
 	}
 
 	/**
