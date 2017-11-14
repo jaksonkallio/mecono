@@ -41,16 +41,17 @@ public class MailboxWorker implements Runnable {
 		int i = 0;
 		
 		while(working){
+			System.out.println("Attempting to process "+mailbox.getOwner().getAddressLabel()+" #"+i);
+			
 			if(i < mailbox.getOutboxCount()){
 				mailbox.processOutboxItem(i);
-				System.out.println("Attempting to process "+mailbox.getOwner().getAddressLabel()+" #"+i);
 				i++;
 			}else{
 				i = 0;
 			}
 			
 			try{
-				Thread.sleep(5000);
+				Thread.sleep((long) (((int) (Math.random()*100)) + 5000 * (1 - mailbox.getOwner().performance_modifier)));
 			} catch (InterruptedException ex) {
 				working = false;
 			}
