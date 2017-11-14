@@ -21,6 +21,10 @@ public class ForeignParcel extends Parcel {
 	public RemoteNode getNextDestination() {
 		return (RemoteNode) path_history.getStop(path_history.getPathLength() - 1);
 	}
+	
+	public String toString(){
+		return "Foreign Parcel - Next: "+getNextNode().getAddress();
+	}
 
 	/**
 	 * Gets how many hops this parcel has traveled so far.

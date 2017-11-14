@@ -38,6 +38,8 @@ public class NetworkController {
 				if (neighbor.getNeighbor().equals(remote_receiver)) {
 					SimSelfNode receiver = SimNetwork.getSelfNodeFromRemoteNode(remote_receiver);
 					receiver.getMailbox().getNetworkController().receiveData(serialized_parcel);
+					mailbox.getOwner().nodeLog(2, "Sent "+parcel.toString()+" to "+receiver.getAddressLabel());
+					System.out.println("xx");
 					break;
 				}
 			}

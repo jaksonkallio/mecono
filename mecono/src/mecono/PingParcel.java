@@ -19,4 +19,13 @@ public class PingParcel extends DestinationParcel {
 	public boolean requiresTestedPath() {
 		return false;
 	}
+	
+	/**
+	 * Ping parcels, unlike normal destination parcels, don't require a tested path before being sent.
+	 * @return 
+	 */
+	@Override
+	public boolean readyToSend(){
+		return pathKnown();
+	}
 }

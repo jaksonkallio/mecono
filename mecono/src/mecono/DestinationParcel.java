@@ -18,6 +18,11 @@ public class DestinationParcel extends Parcel {
 		generateUniqueID();
 		this.mailbox = mailbox;
 	}
+	
+	@Override
+	public String toString(){
+		return getParcelType()+" Parcel -  ID: "+getUniqueID();
+	}
 
 	public void generateUniqueID() {
 		char[] text = new char[Protocol.parcel_unique_id_length];
@@ -31,6 +36,20 @@ public class DestinationParcel extends Parcel {
 
 	public void updateReceivedTime() {
 		time_received = Protocol.getEpochMinute();
+	}
+	
+	/**
+	 * Checks if this parcel has all the send prerequisites met.
+	 * @return 
+	 */
+	public boolean readyToSend(){
+		return pathKnown() && getPath().isTested();
+	}
+	
+	public boolean pathKnown(){
+		findIdealPath();
+		
+		return getPath() != null;
 	}
 
 	public int getTimeReceived() {

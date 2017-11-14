@@ -85,57 +85,57 @@ public class Mailbox {
 
 	public void processOutboxItem(int i) {
 		DestinationParcel parcel = outbox.get(i);
-		if ((((RemoteNode) parcel.getDestination()).isReady())) {
-			parcel.findIdealPath();
-			if (parcel.hasCompletePath() || parcel instanceof PingParcel) {
-				// The remote node has at least one sufficient path to it, and the parcel has a complete (tested) path to the destination. A tested path is needed for non-ping requests.
-
+		RemoteNode destination = (RemoteNode) parcel.getDestination();
+		
+		if(parcel.pathKnown()){
+			if (parcel.readyToSend()) {
 				// Create the response action/expectation
 				UponResponseAction response_action = new UponResponseAction(this, parcel);
 
 				// Give to the network controller for sending
 				network_controller.sendParcel(parcel);
-			} else {
-				consultTrustedForPath((RemoteNode) parcel.getDestination());
 			}
+		}else{
+			consultTrustedForPath(destination);
 		}
 	}
-
+	
+	/**
+	 * Consult trusted nodes for a path to a specific node.
+	 * @param node Target node to look for.
+	 */
 	private void consultTrustedForPath(RemoteNode node) {
-		if (node.getIdealPath() != null) {
-			// We don't have an ideal path
-			ArrayList<RemoteNode> consult_list = new ArrayList<>();
+		ArrayList<RemoteNode> consult_list = new ArrayList<>();
 
-			for (ArrayList<RemoteNode> community_hop : getOwner().getCommunity()) {
-				for (RemoteNode community_member : community_hop) {
-					// Add every community member to the consult list.
-					if (!consult_list.contains(community_member)) {
-						consult_list.add(community_member);
-					}
+		for (ArrayList<RemoteNode> community_hop : getOwner().getCommunity()) {
+			for (RemoteNode community_member : community_hop) {
+				// Add every community member to the consult list.
+				if (!consult_list.contains(community_member)) {
+					consult_list.add(community_member);
 				}
 			}
+		}
 
-			for (RemoteNode trusted_node : getOwner().getTrustedNodes()) {
-				if (!consult_list.contains(trusted_node)) {
-					// Add all trusted nodes to the consult list.
-					consult_list.add(trusted_node);
-				}
+		for (RemoteNode trusted_node : getOwner().getTrustedNodes()) {
+			if (!consult_list.contains(trusted_node)) {
+				// Add all trusted nodes to the consult list.
+				consult_list.add(trusted_node);
+			}
+		}
+
+		// Now consult the nodes
+		for (RemoteNode consultant : consult_list) {
+			FindParcel find = new FindParcel(this);
+			find.setTarget(node);
+
+			try {
+				find.setDestination(consultant);
+			} catch (BadProtocolException ex) {
+
 			}
 
-			// Now consult the nodes
-			for (RemoteNode consultant : consult_list) {
-				FindParcel find = new FindParcel(this);
-				find.setTarget(node);
-
-				try {
-					find.setDestination(consultant);
-				} catch (BadProtocolException ex) {
-
-				}
-
-				if (!expectingResponse(find)) {
-					placeInOutbox(find);
-				}
+			if (!expectingResponse(find)) {
+				placeInOutbox(find);
 			}
 		}
 	}

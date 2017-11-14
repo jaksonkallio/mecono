@@ -114,9 +114,21 @@ public class Path {
 	}
 
 	public int getTotalUses() {
-		return failures + successes;
+		return getTotalFailures() + getTotalSuccesses();
+	}
+	
+	public int getTotalSuccesses(){
+		return successes;
+	}
+	
+	public int getTotalFailures(){
+		return failures;
 	}
 
+	public boolean isTested(){
+		return getTotalSuccesses() > 0;
+	}
+	
 	public double getReliability() {
 		double cooperativity = 0;
 
