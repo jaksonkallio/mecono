@@ -57,6 +57,7 @@ public class Mailbox {
 	}
 
 	public void placeInOutbox(DestinationParcel parcel) {
+		upon_response_actions.add(parcel.getUponResponseAction());
 		parcel.setInOutbox();
 		outbox.add(parcel);
 	}
@@ -146,6 +147,7 @@ public class Mailbox {
 	 */
 	private boolean expectingResponse(DestinationParcel parcel) {
 		if (parcel instanceof FindParcel) {
+
 			for (UponResponseAction existing_action : upon_response_actions) {
 				if (existing_action.getOriginalParcel() instanceof FindParcel && existing_action.getOriginalParcel().equals(parcel)) {
 					return true;

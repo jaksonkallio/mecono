@@ -55,7 +55,7 @@ public class UponResponseAction {
 		if (responded) {
 			return response_parcel.getParcelType();
 		} else {
-			return response_type;
+			return determineResponseType();
 		}
 	}
 

@@ -23,6 +23,10 @@ public class DestinationParcel extends Parcel {
 	public String toString(){
 		return getParcelType()+" Parcel -  ID: "+getUniqueID();
 	}
+	
+	public Mailbox getMailbox(){
+		return mailbox;
+	}
 
 	public void generateUniqueID() {
 		char[] text = new char[Protocol.parcel_unique_id_length];
@@ -94,6 +98,10 @@ public class DestinationParcel extends Parcel {
 		return ParcelType.UNKNOWN;
 	}
 
+	public UponResponseAction getUponResponseAction(){
+		return null;
+	}
+	
 	public void setParcelType(ParcelType parcel_type) {
 		if (!isInOutbox()) {
 			this.parcel_type = parcel_type;
