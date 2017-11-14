@@ -14,6 +14,8 @@ public class Mailbox {
 	public Mailbox(SelfNode owner) {
 		this.owner = owner;
 		this.network_controller = new NetworkController(this);
+		this.worker = new MailboxWorker(this);
+		this.worker_thread = new Thread(worker);
 	}
 
 	/*public boolean sendMessage(ParcelType stream_type, RemoteNode destination, String message_text) {
@@ -41,6 +43,10 @@ public class Mailbox {
 	 */
 	public SelfNode getOwner() {
 		return owner;
+	}
+	
+	public MailboxWorker getWorker(){
+		return worker;
 	}
 	
 	public int getOutboxCount(){
@@ -152,6 +158,8 @@ public class Mailbox {
 	}
 
 	private final SelfNode owner; // The selfnode that runs the mailbox
+	private final MailboxWorker worker;
+	private final Thread worker_thread;
 	private ArrayList<UponResponseAction> upon_response_actions;
 	private final NetworkController network_controller;
 	private Queue<ForeignParcel> outbound_queue; // Outbound queue
