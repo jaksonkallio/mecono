@@ -23,6 +23,10 @@ public class FindParcel extends DestinationParcel {
 	public RemoteNode getTarget() {
 		return target;
 	}
+	
+	public ParcelType getParcelType() {
+		return ParcelType.FIND;
+	}
 
 	private RemoteNode target;
 }

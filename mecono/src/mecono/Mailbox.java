@@ -158,7 +158,7 @@ public class Mailbox {
 
 	private final SelfNode owner; // The selfnode that runs the mailbox
 	private final MailboxWorker worker;
-	private ArrayList<UponResponseAction> upon_response_actions;
+	private ArrayList<UponResponseAction> upon_response_actions = new ArrayList<>();
 	private final NetworkController network_controller;
 	private Queue<ForeignParcel> outbound_queue; // Outbound queue
 	private ArrayList<DestinationParcel> outbox = new ArrayList<>();
