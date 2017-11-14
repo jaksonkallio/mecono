@@ -7,6 +7,7 @@ package mecono;
 public class MailboxWorker implements Runnable {
 	public MailboxWorker(Mailbox mailbox){
 		this.mailbox = mailbox;
+		this.t = new Thread(this);
 	}
 	
 	/**
@@ -28,7 +29,7 @@ public class MailboxWorker implements Runnable {
 	 * Alias for run.
 	 */
 	public void startWorking(){
-		run();
+		t.start();
 	}
 	
 	/**
@@ -40,22 +41,23 @@ public class MailboxWorker implements Runnable {
 		int i = 0;
 		
 		while(working){
-			mailbox.processOutboxItem(i);
-			
 			if(i < mailbox.getOutboxCount()){
+				mailbox.processOutboxItem(i);
+				System.out.println("Attempting to process "+mailbox.getOwner().getAddressLabel()+" #"+i);
 				i++;
 			}else{
 				i = 0;
 			}
-		}
-		
-		try{
-			Thread.sleep(10);
-		} catch (InterruptedException ex) {
-			working = false;
+			
+			try{
+				Thread.sleep(5000);
+			} catch (InterruptedException ex) {
+				working = false;
+			}
 		}
 	}
 	
 	private boolean working = false;
 	private final Mailbox mailbox;
+	private final Thread t;
 }

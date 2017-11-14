@@ -310,4 +310,5 @@ public class SelfNode implements Node {
 	public final int timeout_failure_time = 8; // X minutes before a signal is considered failure.
 	public final int timeout_failure_expiry = 60; // X minutes before a signal's upon response action is deleted. Must be greater than `timeout_failure_time`. 
 	public final int unauthorized_neighborship_expiry = 60; // Only keep unauthorized neighborship connections for the X minutes.
+	public final double performance_modifier = 0.10; // How intense should resource usage be?
 }

@@ -8,7 +8,8 @@ import java.util.ArrayList;
  */
 public class SimNetwork {
 	
-	public SimNetwork(){
+	public SimNetwork(int mesh_size){
+		this.mesh_size = mesh_size;
 		initialize();
 		this.sim_gui = new SimGUI(this);
 	}
@@ -17,16 +18,10 @@ public class SimNetwork {
 		return sim_gui;
 	}
 	
-	public void startMainSimulationLoop(){
-		if(!in_loop){
-			in_loop = true;
-			
-			while(true){
-				memberOutboxProcess();
-				break;
-			}
-			
-			in_loop = false;
+	public void startMailboxWorkers(){
+		for (SimSelfNode node : members) {
+			System.out.println("Starting simselfnode "+node.getAddressLabel()+" worker.");
+			node.getMailbox().getWorker().startWorking();
 		}
 	}
 	
@@ -100,7 +95,7 @@ public class SimNetwork {
 	}
 
 	// Simulation Preferences
-	private static final int mesh_size = 8;
+	private final int mesh_size;
 	private boolean initialized = false;
 	private boolean in_loop = false;
 	public static final boolean simulate_latency = true;

@@ -24,6 +24,7 @@ public class Mecono extends Application {
 				System.out.println("Running simulation");
 				stage.setTitle("Simulated Network - Mecono " + Mecono.getVersion());
 				root.getChildren().add(sim.getSimGUI().getMainContainer());
+				sim.startMailboxWorkers();
 			}
 		}
 
@@ -47,7 +48,7 @@ public class Mecono extends Application {
 
 	}
 
-	public static final SimNetwork sim = new SimNetwork();
+	public static final SimNetwork sim = new SimNetwork(5);
 	public static boolean simulated_network = true;
 	public static boolean sandbox = false;
 	public static int version = 1;
