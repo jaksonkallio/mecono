@@ -261,14 +261,23 @@ public class SelfNode implements Node {
 
 		return 0;
 	}
+	
+	public boolean isTrusted(RemoteNode node){
+		return trusted_nodes.contains(node);
+	}
+	
+	public boolean isPinned(RemoteNode node){
+		return isTrusted(node) || pinned_nodes.contains(node);
+	}
 
 	private NodeAddress address;
 	private String label;
 	protected final Mailbox mailbox;
 	private MemoryController memory_controller; // The memory controller to load/save different paths, nodes, etc.
 	private ArrayList<RemoteNode> neighbors;
-	private ArrayList<ArrayList<RemoteNode>> community = new ArrayList<ArrayList<RemoteNode>>();
-	private ArrayList<RemoteNode> trusted_nodes;
+	private ArrayList<ArrayList<RemoteNode>> community = new ArrayList<>();
+	private ArrayList<RemoteNode> trusted_nodes = new ArrayList<>();
+	private ArrayList<RemoteNode> pinned_nodes = new ArrayList<>();
 	private ArrayList<HistoricParcelType> parcel_type_history = new ArrayList<>();
 
 	private class HistoricParcelType {

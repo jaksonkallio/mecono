@@ -23,16 +23,7 @@ public class RemoteNode implements Node {
 	public String getLabel() {
 		return label;
 	}
-
-	public boolean isTrusted() {
-		return trusted;
-	}
-
-	public boolean isPinned() {
-		// All trusted nodes are inherently pinned as well.
-		return (isTrusted() || pinned);
-	}
-
+	
 	public boolean isAdversarial() {
 		return adversarial;
 	}
@@ -47,7 +38,7 @@ public class RemoteNode implements Node {
 		}
 	}
 
-	public Set<RemoteNode> getNeighbors() {
+	public ArrayList<RemoteNode> getNeighbors() {
 		return neighbors;
 	}
 
@@ -140,15 +131,13 @@ public class RemoteNode implements Node {
 	private int successes = 0; // Successful signals sent across this node.
 	private int strikes = 0; // Unsuccessful signals sent across this node.
 	private int[] successful_signal_dest = {0, 0, 0}; // Signals where valid response received.
-	private boolean trusted; // This node can usually be trusted to adhere to good practices in the network.
-	private boolean pinned; // We should make sure we always have an online path to this node.
 	private boolean adversarial; // Flagged as an adversarial node.
 	private int ping;
 	private int last_ping_time; // Time of the last ping, in minutes.
 	private int last_online; // Last time this node has successfully been used to send a signal.
 	private int last_use; // Gets the last time this node was used, despite if the signal succeeded or failed.
 	private ArrayList<Path> paths_to = new ArrayList<>();
-	private Set<RemoteNode> neighbors; // This node's neighbors.
+	private ArrayList<RemoteNode> neighbors; // This node's neighbors, used only for community members.
 	private SelfNode indexer;
 	private int max_paths = 100; // Only keep the best x paths.
 }
