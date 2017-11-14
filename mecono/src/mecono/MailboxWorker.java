@@ -41,8 +41,6 @@ public class MailboxWorker implements Runnable {
 		int i = 0;
 		
 		while(working){
-			System.out.println("Attempting to process "+mailbox.getOwner().getAddressLabel()+" #"+i);
-			
 			if(i < mailbox.getOutboxCount()){
 				mailbox.processOutboxItem(i);
 				i++;
