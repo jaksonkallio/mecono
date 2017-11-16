@@ -13,6 +13,11 @@ public class UponResponseAction {
 		this.response_type = determineResponseType();
 		this.original_time_sent = Protocol.getEpochSecond();
 	}
+	
+	@Override
+	public String toString(){
+		return "Awaiting "+getResponseType()+" after sending "+getOriginalParcel().getUniqueID();
+	}
 
 	@Override
 	public boolean equals(Object o) {

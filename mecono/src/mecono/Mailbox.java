@@ -131,12 +131,12 @@ public class Mailbox {
 
 			try {
 				find.setDestination(consultant);
+				
+				if (!expectingResponse(find)) {
+					placeInOutbox(find);
+				}
 			} catch (BadProtocolException ex) {
 
-			}
-
-			if (!expectingResponse(find)) {
-				placeInOutbox(find);
 			}
 		}
 	}
@@ -146,13 +146,15 @@ public class Mailbox {
 	 * expecting a response to. Used to protect against spamming the network.
 	 */
 	private boolean expectingResponse(DestinationParcel parcel) {
-		if (parcel instanceof FindParcel) {
-
-			for (UponResponseAction existing_action : upon_response_actions) {
-				if (existing_action.getOriginalParcel() instanceof FindParcel && existing_action.getOriginalParcel().equals(parcel)) {
-					return true;
-				}
+		for (UponResponseAction existing_action : upon_response_actions) {
+			if(existing_action.getOriginalParcel().equals(parcel)){
+				return true;
 			}
+			/*if (existing_action.getOriginalParcel() instanceof FindParcel) {
+				if(((FindParcel) parcel).getTarget().equals(((FindParcel) existing_action.getOriginalParcel()).getTarget()) && parcel.getDestination().equals(existing_action.getOriginalParcel().getDestination())){
+					// A find response is a duplicate if 
+				}
+			}*/
 		}
 
 		return false;

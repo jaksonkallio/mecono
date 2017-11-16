@@ -20,6 +20,13 @@ public class DestinationParcel extends Parcel {
 	}
 	
 	@Override
+	public boolean equals(Object o){
+		DestinationParcel other = (DestinationParcel) o;
+		
+		return this.getDestination().equals(other.getDestination());
+	}
+	
+	@Override
 	public String toString(){
 		return getParcelType()+" Parcel -  ID: "+getUniqueID();
 	}
@@ -99,7 +106,7 @@ public class DestinationParcel extends Parcel {
 	}
 
 	public UponResponseAction getUponResponseAction(){
-		return null;
+		return new UponResponseAction(mailbox, this);
 	}
 	
 	public void setParcelType(ParcelType parcel_type) {

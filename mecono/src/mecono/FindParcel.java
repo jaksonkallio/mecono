@@ -13,21 +13,12 @@ public class FindParcel extends DestinationParcel {
 	@Override
 	public boolean equals(Object o) {
 		FindParcel other = (FindParcel) o;
-		return other.getTarget() == this.getTarget() && super.equals(other);
+
+		return (o instanceof FindParcel && other.getTarget() == this.getTarget() && super.equals(other));
 	}
 
 	public void setTarget(RemoteNode target) {
 		this.target = target;
-	}
-	
-	@Override
-	public UponResponseAction getUponResponseAction(){
-		if(isInOutbox()){
-			// We can only 
-			return new UponResponseAction(getMailbox(), this);
-		}
-		
-		return null;
 	}
 
 	public RemoteNode getTarget() {
