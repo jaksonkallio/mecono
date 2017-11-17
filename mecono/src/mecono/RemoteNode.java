@@ -96,6 +96,13 @@ public class RemoteNode implements Node {
 	}
 
 	public Path getIdealPath() {
+		if(indexer.isNeighbor(this)){
+			ArrayList<RemoteNode> stops = new ArrayList<>();
+			stops.add(this);
+			Path direct_path = new Path(stops, indexer);
+			learnPath(direct_path);
+		}
+		
 		sortPaths();
 
 		if (countPathsTo() > 0) {
