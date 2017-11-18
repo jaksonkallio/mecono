@@ -49,6 +49,10 @@ public class DestinationParcel extends Parcel {
 		time_received = Protocol.getEpochMinute();
 	}
 	
+	public boolean consultIfPathNotKnown(){
+		return true;
+	}
+	
 	/**
 	 * Checks if this parcel has all the send prerequisites met.
 	 * @return 
@@ -91,6 +95,10 @@ public class DestinationParcel extends Parcel {
 				this.destination = destination;
 			}
 		}
+	}
+	
+	public boolean consultWhenPathUnknown(){
+		return true;
 	}
 
 	public boolean isFinalDest() {
@@ -232,7 +240,7 @@ public class DestinationParcel extends Parcel {
 		
 		findIdealPath();
 	}
-
+	
 	private String payload;
 	private Node destination;
 	private int time_received = 0;

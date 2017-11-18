@@ -96,7 +96,7 @@ public class Mailbox {
 				// Give to the network controller for sending
 				network_controller.sendParcel(parcel);
 			}
-		}else{
+		}else if(parcel.consultWhenPathUnknown()){
 			consultTrustedForPath(destination);
 		}
 	}

@@ -28,6 +28,11 @@ public class FindParcel extends DestinationParcel {
 	public ParcelType getParcelType() {
 		return ParcelType.FIND;
 	}
-
+	
+	@Override
+	public boolean consultWhenPathUnknown(){
+		return false;
+	}
+	
 	private RemoteNode target;
 }
