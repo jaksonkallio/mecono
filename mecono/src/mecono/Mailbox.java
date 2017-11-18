@@ -126,17 +126,20 @@ public class Mailbox {
 
 		// Now consult the nodes
 		for (RemoteNode consultant : consult_list) {
-			FindParcel find = new FindParcel(this);
-			find.setTarget(node);
+			if(!consultant.equals(node)){
+				// Only consult a node if the consultant is NOT the node we're looking for.
+				FindParcel find = new FindParcel(this);
+				find.setTarget(node);
 
-			try {
-				find.setDestination(consultant);
-				
-				if (!expectingResponse(find)) {
-					placeInOutbox(find);
+				try {
+					find.setDestination(consultant);
+
+					if (!expectingResponse(find)) {
+						placeInOutbox(find);
+					}
+				} catch (BadProtocolException ex) {
+
 				}
-			} catch (BadProtocolException ex) {
-
 			}
 		}
 	}
