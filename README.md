@@ -24,9 +24,16 @@ Designed and developed by [Jakson Kallio](https://jaksonkallio.github.io).
 * Asynchronous and non-"keep-alive" connections for data communication over very large (possibly interplanetary) distances.
 
 ## What shortcomings does Mecono have?
-* Uncertain how to handle and process incredibly large swathes of data about the rest of the network.
+* Large swathes of data about the network are difficult to sift through.
 * New networks start slow and troubled while individual nodes learn optimizations.
 * Sole developer doesn't have much hardware development knowledge.
+
+## Use cases, sorted by small to large
+* Easy-setup home networking.
+* Easy-setup business/organization networking. Just one router for an entire business. Setup is so easy that no on-site networking specialists are required.
+* Undeveloped countries and villages can set up network access easily with minimum hardware. Reduces risk and involvement of an ISP.
+* ISPs can save money on infrastructure by connecting customers in a city to a single centralized ISP router.
+* Mecono could replace the entire current internet protocol, and would receive all previously listed benefits.
 
 ## News and Progress
 Follow [@MeconoNetwork](https://twitter.com/mecononetwork) on Twitter!
