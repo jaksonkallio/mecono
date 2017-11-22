@@ -29,7 +29,7 @@ public class RemoteNode implements Node {
 	}
 
 	public void learnPath(Path path) {
-		if (path.getStop(0).equals(indexer) && path.getStop(path.getPathLength() - 1).equals(this)) {
+		if (indexer.getNeighbors().contains((RemoteNode) path.getStop(0)) && path.getStop(path.getPathLength() - 1).equals(this)) {
 			// If the first stop is the self node, and the last stop is this node, then store
 			if (!isPathKnown(path)) {
 				// If this path isn't already known

@@ -64,7 +64,7 @@ public class DestinationParcel extends Parcel {
 	public boolean pathKnown(){
 		findIdealPath();
 		
-		return getPath() != null;
+		return getPath() != null || mailbox.getOwner().isNeighbor((RemoteNode) getDestination());
 	}
 
 	public int getTimeReceived() {
