@@ -58,13 +58,13 @@ public class DestinationParcel extends Parcel {
 	 * @return 
 	 */
 	public boolean readyToSend(){
-		return pathKnown() && getPath().isTested();
+		return (pathKnown() && getPath().isTested()) || mailbox.getOwner().isNeighbor((RemoteNode) getDestination());
 	}
 	
 	public boolean pathKnown(){
 		findIdealPath();
 		
-		return getPath() != null || mailbox.getOwner().isNeighbor((RemoteNode) getDestination());
+		return getPath() != null;
 	}
 
 	public int getTimeReceived() {

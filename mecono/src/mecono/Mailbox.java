@@ -88,20 +88,12 @@ public class Mailbox {
 		DestinationParcel parcel = outbox.get(i);
 		RemoteNode destination = (RemoteNode) parcel.getDestination();
 		
-		System.out.println("Processing outbox...");
-		if(parcel.pathKnown()){
-			System.out.println("Path known...");
-			if (parcel.readyToSend()) {
-				System.out.println("Ready to send...");
-				
-				// Create the response action/expectation
-				UponResponseAction response_action = new UponResponseAction(this, parcel);
-				
-				
-				
-				// Give to the network controller for sending
-				network_controller.sendParcel(parcel);
-			}
+		if (parcel.readyToSend()) {
+			// Create the response action/expectation
+			UponResponseAction response_action = new UponResponseAction(this, parcel);
+
+			// Give to the network controller for sending
+			network_controller.sendParcel(parcel);
 		}else if(parcel.consultWhenPathUnknown()){
 			consultTrustedForPath(destination);
 		}
