@@ -85,13 +85,13 @@ public class DestinationParcel extends Parcel {
 		if (path == null) {
 			return this.destination;
 		} else {
-			return path_history.getStop(path_history.getPathLength() - 1);
+			return getPath().getStop(getPath().getPathLength() - 1);
 		}
 	}
 
 	public void setDestination(RemoteNode destination) throws BadProtocolException {
 		if (!isInOutbox()) {
-			if (path_history == null) {
+			if (getPath() == null) {
 				this.destination = destination;
 			}
 		}
