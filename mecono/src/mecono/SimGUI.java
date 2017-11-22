@@ -88,7 +88,7 @@ public class SimGUI {
 		get_node_info.setOnAction(event -> {
 			appendNodeConsole(
 					"Address: " + selected_node.getAddress()
-					+ "\nCommunity: " + selected_node.getCommunityCount() + " nodes (" + selected_node.getNeighborCount() + " neighbors)"
+					+ "\nCommunity: " + selected_node.getNeighborCount() + " neighbors"
 					+ "\nSuccesses: " + selected_node.parcelHistoryCount(true) + " successful parcels sent"
 					+ "\nFailures: " + selected_node.parcelHistoryCount(false) + " failed parcels sent"
 			);

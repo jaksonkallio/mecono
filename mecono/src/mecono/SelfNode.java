@@ -157,7 +157,7 @@ public class SelfNode implements Node {
 	 */
 	public boolean isNeighbor(RemoteNode node) {
 		// Gets if the node is in the community list at hop 1. (index + 1 = hop)
-		return community.get(0).contains(node);
+		return neighbors.contains(node);
 	}
 
 	/**
@@ -165,37 +165,7 @@ public class SelfNode implements Node {
 	 * @return Count of neighbors.
 	 */
 	public int getNeighborCount() {
-		return community.get(0).size();
-	}
-
-	/**
-	 * Counts the nodes in the community.
-	 * @return Count of nodes.
-	 */
-	public int getCommunityCount() {
-		int sum = 0;
-
-		for (ArrayList<RemoteNode> hop : community) {
-			sum += hop.size();
-		}
-
-		return sum;
-	}
-
-	/**
-	 * Checks whether a given node is in this node's community.
-	 * @param node
-	 * @return Whether it is a community member.
-	 */
-	public boolean isInCommunity(RemoteNode node) {
-		// Gets if the node is in the community list at any hop.
-		for (ArrayList<RemoteNode> hop : community) {
-			if (hop.contains(node)) {
-				return true;
-			}
-		}
-
-		return false;
+		return neighbors.size();
 	}
 
 	/**
@@ -203,11 +173,7 @@ public class SelfNode implements Node {
 	 * @param node
 	 */
 	public void addNeighbor(RemoteNode node) {
-		if (community.isEmpty()) {
-			community.add(new ArrayList<>());
-		}
-
-		community.get(0).add(node);
+		neighbors.add(node);
 	}
 	
 	/**
@@ -218,14 +184,6 @@ public class SelfNode implements Node {
 		return neighbors;
 	}
 	
-	/**
-	 * Get the community list.
-	 * @return The community list.
-	 */
-	public ArrayList<ArrayList<RemoteNode>> getCommunity() {
-		return community;
-	}
-
 	/**
 	 * Get a list of trusted nodes.
 	 * @return List of trusted nodes.
@@ -282,8 +240,7 @@ public class SelfNode implements Node {
 	private String label;
 	protected final Mailbox mailbox;
 	private MemoryController memory_controller; // The memory controller to load/save different paths, nodes, etc.
-	private ArrayList<RemoteNode> neighbors;
-	private ArrayList<ArrayList<RemoteNode>> community = new ArrayList<>();
+	private ArrayList<RemoteNode> neighbors = new ArrayList<>();
 	private ArrayList<RemoteNode> trusted_nodes = new ArrayList<>();
 	private ArrayList<RemoteNode> pinned_nodes = new ArrayList<>();
 	private ArrayList<HistoricParcelType> parcel_type_history = new ArrayList<>();
