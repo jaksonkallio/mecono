@@ -25,6 +25,8 @@ public class NetworkController {
 	}
 
 	public void sendParcel(Parcel parcel) {
+		mailbox.getOwner().nodeLog(1, "Attempting to send parcel over network controller...");
+		
 		// Serialize the parcel. Serialization includes an encryption process.
 		JSONObject serialized_parcel = parcel.serialize();
 
@@ -39,7 +41,6 @@ public class NetworkController {
 					SimSelfNode receiver = SimNetwork.getSelfNodeFromRemoteNode(remote_receiver);
 					receiver.getMailbox().getNetworkController().receiveData(serialized_parcel);
 					mailbox.getOwner().nodeLog(2, "Sent "+parcel.toString()+" to "+receiver.getAddressLabel());
-					System.out.println("xx");
 					break;
 				}
 			}
