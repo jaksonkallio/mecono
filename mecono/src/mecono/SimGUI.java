@@ -43,7 +43,7 @@ public class SimGUI {
 		consoleAppend(node_console, new_line);
 	}
 	
-	private void consoleAppend(TextArea console, String new_line){
+	private synchronized void consoleAppend(TextArea console, String new_line){
 		console.appendText(new_line + "\n");
 	}
 
