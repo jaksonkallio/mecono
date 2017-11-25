@@ -13,18 +13,19 @@ public class NetworkController {
 		this.mailbox = mailbox;
 	}
 
-	public void receiveData(JSONObject json_parcel) {
+	public void receiveData(String received_parcel_string) {
 		Parcel received_parcel;
+		JSONObject received_parcel_json = new JSONObject(received_parcel_string);
 
 		try {
-			received_parcel = Parcel.unserialize(json_parcel, mailbox.getOwner());
+			received_parcel = Parcel.unserialize(received_parcel_json, mailbox.getOwner());
 			mailbox.receiveParcel(received_parcel);
 		} catch (BadProtocolException | UnknownResponsibilityException ex) {
 			mailbox.getOwner().nodeLog(2, "Bad parcel received.");
 		}
 	}
 
-	public void sendParcel(Parcel parcel) {
+	public void sendParcel(ForeignParcel parcel) {
 		// Serialize the parcel. Serialization includes an encryption process.
 		JSONObject serialized_parcel = parcel.serialize();
 
@@ -37,7 +38,7 @@ public class NetworkController {
 
 				if (mailbox.getOwner().isNeighbor(remote_receiver)) {
 					SimSelfNode receiver = SimNetwork.getSelfNodeFromRemoteNode(remote_receiver);
-					receiver.getMailbox().getNetworkController().receiveData(serialized_parcel);
+					receiver.getMailbox().getNetworkController().receiveData(serialized_parcel.toString());
 					mailbox.getOwner().nodeLog(2, "Sent "+parcel.toString()+" to "+receiver.getAddressLabel());
 				}
 			} else {

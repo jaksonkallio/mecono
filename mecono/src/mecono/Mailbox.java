@@ -2,6 +2,8 @@ package mecono;
 
 import java.util.ArrayList;
 import java.util.Queue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The mailbox is responsible for managing parcel sending/receiving, queuing
@@ -93,7 +95,11 @@ public class Mailbox {
 			UponResponseAction response_action = new UponResponseAction(this, parcel);
 
 			// Give to the network controller for sending
-			network_controller.sendParcel(parcel);
+			try{
+				network_controller.sendParcel(parcel.constructForeignParcel());
+			} catch (UnknownResponsibilityException | BadProtocolException ex) {
+				getOwner().nodeLog(2, "Could not hand off to network controller: " + ex.getMessage());
+			}
 		}else if(parcel.consultWhenPathUnknown()){
 			consultTrustedForPath(destination);
 		}

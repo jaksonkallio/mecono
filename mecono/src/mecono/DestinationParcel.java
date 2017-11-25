@@ -1,5 +1,6 @@
 package mecono;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -154,7 +155,7 @@ public class DestinationParcel extends Parcel {
 	}
 
 	public boolean hasCompletePath() {
-		return (path != null && path.getPathLength() > 2);
+		return path != null;
 	}
 
 	/**
@@ -232,6 +233,20 @@ public class DestinationParcel extends Parcel {
 		return json_content;
 	}
 	
+	public ForeignParcel constructForeignParcel() throws UnknownResponsibilityException, BadProtocolException {
+		// We only want to construct foreign parcels if we are the originator
+		if(originatorIsSelf()){
+			// Only construct the foreign parcel if the path is completely built.
+			if(hasCompletePath()){
+				return new ForeignParcel(getPath(), encryptAsPayload());
+			}else{
+				throw new BadProtocolException("Cannot construct a foreign parcel without a path.");
+			}
+		}else{
+			throw new UnknownResponsibilityException("May only construct foreign nodes when the self node is the originator.");
+		}
+	}
+	
 	public void setPath(RemoteNode destination, SelfNode originator){
 		if(!isInOutbox()){
 			this.destination = destination;
@@ -239,6 +254,25 @@ public class DestinationParcel extends Parcel {
 		}
 		
 		findIdealPath();
+	}
+	
+	/**
+	 * Encrypt this destination parcel as a payload.
+	 * @return 
+	 */
+	private String encryptAsPayload(){
+		JSONObject plaintext_payload = new JSONObject();
+		JSONArray actual_path = new JSONArray(getPath());
+		
+		plaintext_payload.put("actual_path", actual_path);
+		plaintext_payload.put("parcel_type", getParcelType());
+		plaintext_payload.put("unique_id", getUniqueID());
+		plaintext_payload.put("content", getSerializedContent());
+		plaintext_payload.put("signature", "parcel signature here");
+		
+		// TODO: Payload encryption operation.
+		
+		return plaintext_payload.toString();
 	}
 	
 	private String payload;

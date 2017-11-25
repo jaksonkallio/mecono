@@ -13,7 +13,7 @@ public class SimSelfNode extends SelfNode {
 		this.sim_network = sim_network;
 	}
 
-	public void receiveRawString(JSONObject raw_parcel) {
+	public void receiveRawString(String raw_parcel) {
 		mailbox.getNetworkController().receiveData(raw_parcel);
 	}
 	

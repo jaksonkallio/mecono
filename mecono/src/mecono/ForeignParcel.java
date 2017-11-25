@@ -1,5 +1,8 @@
 package mecono;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 /**
  * Foreign parcels are parcels where the SelfNode is neither the originator or
  * destination.
@@ -9,7 +12,7 @@ package mecono;
 public class ForeignParcel extends Parcel {
 
 	public ForeignParcel(Path path_history, String payload) {
-		this.path_history = path_history;
+		this.path = path;
 		this.payload = payload;
 	}
 
@@ -39,6 +42,17 @@ public class ForeignParcel extends Parcel {
 	public RemoteNode getNextNode() {
 		// For foreign parcels, the next node is the last item in the path.
 		return (RemoteNode) path.getStop(path.getPathLength() - 1);
+	}
+	
+	@Override
+	public JSONObject serialize(){
+		JSONObject serialized_parcel = new JSONObject();
+		JSONArray serialized_path_history = new JSONArray(getPath());
+		
+		serialized_parcel.put("path_history", serialized_path_history);
+		serialized_parcel.put("payload", payload);
+		
+		return serialized_parcel;
 	}
 
 	private String payload;
