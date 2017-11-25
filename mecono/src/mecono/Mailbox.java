@@ -108,10 +108,10 @@ public class Mailbox {
 		
 		// A neighbor has an implicitly defined path, so it can never be the target of a search.
 		if(!owner.isNeighbor(node)){
-			for (RemoteNode neighbor : getOwner().getNeighbors()) {
+			for (Neighbor neighbor : getOwner().getNeighbors()) {
 				// Add every community member to the consult list.
-				if (!consult_list.contains(neighbor)) {
-					consult_list.add(neighbor);
+				if (!consult_list.contains(neighbor.getNode())) {
+					consult_list.add(neighbor.getNode());
 				}
 			}
 

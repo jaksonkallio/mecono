@@ -151,13 +151,29 @@ public class SelfNode implements Node {
 	}
 
 	/**
+	 * Checks if the given neighbor is a neighbor.
+	 * @param node
+	 * @return Neighborship status.
+	 */
+	public boolean isNeighbor(Neighbor neighbor) {
+		// Gets if the node is in the community list at hop 1. (index + 1 = hop)
+		return neighbors.contains(neighbor);
+	}
+	
+	/**
 	 * Checks if the given node is a neighbor.
 	 * @param node
 	 * @return Neighborship status.
 	 */
 	public boolean isNeighbor(RemoteNode node) {
 		// Gets if the node is in the community list at hop 1. (index + 1 = hop)
-		return neighbors.contains(node);
+		for(Neighbor neighbor : neighbors){
+			if(neighbor.getNode().equals(node)){
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	/**
@@ -172,7 +188,7 @@ public class SelfNode implements Node {
 	 * Add a neighbor.
 	 * @param node
 	 */
-	public void addNeighbor(RemoteNode node) {
+	public void addNeighbor(Neighbor node) {
 		neighbors.add(node);
 	}
 	
@@ -180,7 +196,7 @@ public class SelfNode implements Node {
 	 * Get neighbor list
 	 * @return 
 	 */
-	public ArrayList<RemoteNode> getNeighbors(){
+	public ArrayList<Neighbor> getNeighbors(){
 		return neighbors;
 	}
 	
@@ -240,7 +256,7 @@ public class SelfNode implements Node {
 	private String label;
 	protected final Mailbox mailbox;
 	private MemoryController memory_controller; // The memory controller to load/save different paths, nodes, etc.
-	private ArrayList<RemoteNode> neighbors = new ArrayList<>();
+	private ArrayList<Neighbor> neighbors = new ArrayList<>();
 	private ArrayList<RemoteNode> trusted_nodes = new ArrayList<>();
 	private ArrayList<RemoteNode> pinned_nodes = new ArrayList<>();
 	private ArrayList<HistoricParcelType> parcel_type_history = new ArrayList<>();

@@ -187,8 +187,8 @@ public class DestinationParcel extends Parcel {
 	@Override
 	public RemoteNode getNextNode() {
 		if (originatorIsSelf()) {
-			// Originator -> neighbor -> node 2 -> node 3 -> ... -> destination
-			return (RemoteNode) path.getStop(1);
+			// (Self Originator ->) neighbor -> node 2 -> node 3 -> ... -> destination
+			return (RemoteNode) path.getStop(0);
 		} else {
 			// There is no next node, if the self node is not the first node in the path. 
 			return null;

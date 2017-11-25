@@ -87,8 +87,8 @@ public class SimNetwork {
 				RemoteNode other = member_self.getMemoryController().loadRemoteNode(other_self.getAddress());
 				// Get the remote version of this member, to reciprocate the neighborship.
 				RemoteNode member_remote = other_self.getMemoryController().loadRemoteNode(member_self.getAddress());
-				other_self.addNeighbor(member_remote);
-				member_self.addNeighbor(other);
+				other_self.addNeighbor(new Neighbor(member_remote, 2));
+				member_self.addNeighbor(new Neighbor(other, 2));
 			}
 		}
 	}
