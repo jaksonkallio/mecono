@@ -150,9 +150,17 @@ public class Path {
 
 		return cooperativity;
 	}
-
+	
+	public boolean isTrimmed(){
+		return getStop(0).equals(relative_origin);
+	}
+	
 	public int getLastUse() {
 		return last_use;
+	}
+	
+	public SelfNode getRelativeOrigin(){
+		return relative_origin;
 	}
 
 	/**
