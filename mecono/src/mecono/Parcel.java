@@ -16,7 +16,7 @@ public abstract class Parcel {
 	 * @return RemoteNode Originator node object.
 	 */
 	public Node getOriginator() {
-		if(path != null){
+		if(getPath() != null){
 			return (RemoteNode) path.getStop(0);
 		}else{
 			return originator;

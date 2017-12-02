@@ -17,6 +17,10 @@ public class Path {
 	public Path(ArrayList<RemoteNode> stops, SelfNode relative_origin) {
 		this.stops = stops;
 		this.relative_origin = relative_origin;
+		
+		if(isTrimmed()){
+			stops.remove(0);
+		}
 	}
 
 	public Path(String[] addresses) {
@@ -46,7 +50,16 @@ public class Path {
 	 * @return
 	 */
 	public Node getStop(int i) {
-		return stops.get(i);
+		if(i <= 0){
+                    return getRelativeOrigin();
+		}
+		
+                System.out.println("Getting stop");
+		return stops.get(i - 1);
+	}
+	
+	public SelfNode getRelativeOrigin(){
+		return relative_origin;
 	}
 
 	/**
@@ -151,16 +164,12 @@ public class Path {
 		return cooperativity;
 	}
 	
-	public boolean isTrimmed(){
-		return getStop(0).equals(relative_origin);
+	private boolean isTrimmed(){
+		return stops.get(0).equals(relative_origin);
 	}
 	
 	public int getLastUse() {
 		return last_use;
-	}
-	
-	public SelfNode getRelativeOrigin(){
-		return relative_origin;
 	}
 
 	/**

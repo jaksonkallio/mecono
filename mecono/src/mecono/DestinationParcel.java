@@ -107,7 +107,7 @@ public class DestinationParcel extends Parcel {
 	}
 
 	public boolean originatorIsSelf() {
-		return getOriginator().equals(mailbox.getOwner());
+            return getOriginator() != null && getOriginator().equals(mailbox.getOwner());
 	}
 
 	public ParcelType getParcelType() {
