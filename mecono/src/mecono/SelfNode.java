@@ -145,7 +145,7 @@ public class SelfNode implements Node {
 			DataParcel parcel = new DataParcel(getMailbox(), TransferDirection.OUTBOUND);
 			parcel.setMessage(message);
 			parcel.placeInOutbox();
-		} catch (UnknownResponsibilityException ex) {
+		} catch (UnknownResponsibilityException | MissingParcelDetailsException ex) {
 			nodeLog(2, "Cannot send data parcel: " + ex.getMessage());
 		}
 	}

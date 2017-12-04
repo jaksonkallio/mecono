@@ -15,13 +15,13 @@ public abstract class Parcel {
 	 *
 	 * @return RemoteNode Originator node object.
 	 */
-	public abstract Node getOriginator();
+	public abstract Node getOriginator() throws MissingParcelDetailsException;
 
 	public void setPath(Path path) {
 		this.path = path;
 	}
 
-	public Path getPath() {
+	public Path getPath() throws MissingParcelDetailsException {
 		return path;
 	}
 
@@ -30,7 +30,7 @@ public abstract class Parcel {
 	 *
 	 * @return
 	 */
-	public RemoteNode getNextNode() {
+	public RemoteNode getNextNode() throws MissingParcelDetailsException{
 		return null;
 	}
 

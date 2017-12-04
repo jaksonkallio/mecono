@@ -61,12 +61,20 @@ public class DestinationParcel extends Parcel {
 	 * Checks if this parcel has all the send prerequisites met.
 	 * @return 
 	 */
-	public boolean readyToSend(){
-		return (pathKnown() && getPath().isTested()) || mailbox.getOwner().isNeighbor((RemoteNode) getDestination());
+	public boolean readyToSend() {
+		try{
+			return (pathKnown() && getPath().isTested()) || mailbox.getOwner().isNeighbor((RemoteNode) getDestination());
+		}catch(MissingParcelDetailsException ex){
+			return false;
+		}
 	}
 	
-	public boolean pathKnown(){
-		return getPath() != null;
+	public boolean pathKnown() {
+		try{
+			return getPath() != null;
+		}catch(MissingParcelDetailsException ex){
+			return false;
+		}
 	}
 
 	public int getTimeReceived() {
@@ -78,11 +86,17 @@ public class DestinationParcel extends Parcel {
 	}
 	
 	public Node getDestination() {
-		Path path = getPath();
-		return path.getStop(path.getPathLength() - 1);
+		try{
+			Path dest_path = getPath();
+			return dest_path.getStop(dest_path.getPathLength() - 1);
+		}catch(MissingParcelDetailsException ex){
+			mailbox.getOwner().nodeLog(2, "Could not get destination: "+ex.getMessage());
+		}
+		
+		return null;
 	}
 
-	public void setDestination(RemoteNode destination) throws BadProtocolException {
+	public void setDestination(RemoteNode destination) throws MissingParcelDetailsException {
 		if (!isInOutbox()) {
 			if (getPath() == null) {
 				this.destination = destination;
@@ -98,7 +112,7 @@ public class DestinationParcel extends Parcel {
 		return destination.equals(mailbox.getOwner());
 	}
 
-	public boolean originatorIsSelf() {
+	public boolean originatorIsSelf() throws MissingParcelDetailsException {
             return getOriginator() != null && getOriginator().equals(mailbox.getOwner());
 	}
 
@@ -155,7 +169,7 @@ public class DestinationParcel extends Parcel {
 	 *
 	 * @throws UnknownResponsibilityException
 	 */
-	public void placeInOutbox() throws UnknownResponsibilityException {
+	public void placeInOutbox() throws UnknownResponsibilityException, MissingParcelDetailsException {
 		if (!isInOutbox()) {
 			if (!originatorIsSelf()) {
 				throw new UnknownResponsibilityException("The self node is not the originator of the parcel to send.");
@@ -178,7 +192,7 @@ public class DestinationParcel extends Parcel {
 	}
 
 	@Override
-	public RemoteNode getNextNode() {
+	public RemoteNode getNextNode() throws MissingParcelDetailsException {
 		if (originatorIsSelf()) {
 			// (Self Originator ->) neighbor -> node 2 -> node 3 -> ... -> destination
 			return (RemoteNode) path.getStop(0);
@@ -204,9 +218,14 @@ public class DestinationParcel extends Parcel {
 		return signature;
 	}
 	
-	public Path getPath(){
+	@Override
+	public Path getPath() throws MissingParcelDetailsException {
 		if(fixed_path == null){
-			return ((RemoteNode) destination).getIdealPath();
+			if(destination != null){
+				return ((RemoteNode) destination).getIdealPath();
+			}else{
+				throw new MissingParcelDetailsException("Attempting to get path when destination is not set.");
+			}
 		}
 		
 		return fixed_path;
@@ -216,14 +235,18 @@ public class DestinationParcel extends Parcel {
 	public JSONObject serialize() {
 		JSONObject serialized = new JSONObject();
 
-		serialized = serialized.put("path_history", getPath());
-		serialized = serialized.put("destination", getDestination().getAddress());
-		serialized = serialized.put("parcel_type", Parcel.getParcelTypeCode(parcel_type));
-		serialized = serialized.put("unique_id", getUniqueID());
-		serialized = serialized.put("official_path", getPath());
-		serialized = serialized.put("content", getSerializedContent());
-		serialized = serialized.put("signature", getSignature());
-
+		try{
+			serialized = serialized.put("path_history", getPath());
+			serialized = serialized.put("destination", getDestination().getAddress());
+			serialized = serialized.put("parcel_type", Parcel.getParcelTypeCode(parcel_type));
+			serialized = serialized.put("unique_id", getUniqueID());
+			serialized = serialized.put("official_path", getPath());
+			serialized = serialized.put("content", getSerializedContent());
+			serialized = serialized.put("signature", getSignature());
+		}catch(MissingParcelDetailsException ex){
+			mailbox.getOwner().nodeLog(2, "Could not serialized parcel: "+ex.getMessage());
+		}
+		
 		return serialized;
 	}
 
@@ -233,7 +256,7 @@ public class DestinationParcel extends Parcel {
 		return json_content;
 	}
 	
-	public ForeignParcel constructForeignParcel() throws UnknownResponsibilityException, BadProtocolException {
+	public ForeignParcel constructForeignParcel() throws UnknownResponsibilityException, BadProtocolException, MissingParcelDetailsException {
 		// We only want to construct foreign parcels if we are the originator
 		if(originatorIsSelf()){
 			// Only construct the foreign parcel if the path is completely built.
@@ -253,12 +276,12 @@ public class DestinationParcel extends Parcel {
 		}
 	}
 	
-	public void setFixedPath(){
+	public void setFixedPath() throws MissingParcelDetailsException {
 		setFixedPath(getPath());
 	}
 	
 	@Override
-	public Node getOriginator(){
+	public Node getOriginator() throws MissingParcelDetailsException {
 		return getPath().getStop(0);
 	}
 	
@@ -266,18 +289,18 @@ public class DestinationParcel extends Parcel {
 	 * Encrypt this destination parcel as a payload.
 	 * @return 
 	 */
-	private String encryptAsPayload(){
+	private String encryptAsPayload() throws MissingParcelDetailsException{
 		JSONObject plaintext_payload = new JSONObject();
 		JSONArray actual_path = new JSONArray(getPath());
-		
+
 		plaintext_payload.put("actual_path", actual_path);
 		plaintext_payload.put("parcel_type", getParcelType());
 		plaintext_payload.put("unique_id", getUniqueID());
 		plaintext_payload.put("content", getSerializedContent());
 		plaintext_payload.put("signature", "parcel signature here");
-		
+
 		// TODO: Payload encryption operation.
-		
+
 		return plaintext_payload.toString();
 	}
 	

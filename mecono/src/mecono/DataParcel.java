@@ -21,7 +21,11 @@ public class DataParcel extends DestinationParcel {
 	public boolean equals(Object o) {
 		if (o instanceof DataParcel) {
 			DataParcel other = (DataParcel) o;
-			return (other.getMessage().equals(this.getMessage()) && other.getDestination().equals(this.getDestination()) && other.getOriginator().equals(this.getOriginator()));
+			try{
+				return (other.getMessage().equals(this.getMessage()) && other.getDestination().equals(this.getDestination()) && other.getOriginator().equals(this.getOriginator()));
+			}catch(MissingParcelDetailsException ex){
+				return false;
+			}
 		}
 
 		return false;

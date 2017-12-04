@@ -73,7 +73,10 @@ public class Mailbox {
 
 			for (DestinationParcel parcel : outbox) {
 				construct += "\n--" + parcel.getUniqueID() + ": " + parcel.getParcelType() + " to " + parcel.getDestination().getAddress() + " ";
-
+				
+				boolean ready_to_send;
+				boolean path_known;
+				
 				if (!parcel.readyToSend()) {
 					construct += "[Dest Not Ready]";
 				}
@@ -98,7 +101,7 @@ public class Mailbox {
 			// Give to the network controller for sending
 			try{
 				network_controller.sendParcel(parcel.constructForeignParcel());
-			} catch (UnknownResponsibilityException | BadProtocolException ex) {
+			} catch (UnknownResponsibilityException | MissingParcelDetailsException | BadProtocolException ex) {
 				getOwner().nodeLog(2, "Could not hand off to network controller: " + ex.getMessage());
 			}
 		}else if(parcel.consultWhenPathUnknown()){
@@ -143,8 +146,8 @@ public class Mailbox {
 							owner.nodeLog(1, "Consulting trusted/neighbor for destination...");
 							placeInOutbox(find);
 						}
-					} catch (BadProtocolException ex) {
-
+					} catch (MissingParcelDetailsException ex) {
+						
 					}
 				}
 			}
