@@ -27,6 +27,14 @@ public class RemoteNode implements Node {
     public boolean isAdversarial() {
         return adversarial;
     }
+	
+	public void logResult(boolean endpoint){
+		if(endpoint){
+			endpoint_uses++;
+		}else{
+			instrumental_uses++;
+		}
+	}
 
     public void learnPath(Path path) {
         if (indexer.isNeighbor((RemoteNode) path.getStop(1)) && path.getStop(path.getPathLength() - 1).equals(this)) {
@@ -59,7 +67,6 @@ public class RemoteNode implements Node {
         }
 
         this.ping = ping;
-        successful_signal_dest[0]++;
         last_ping_time = Protocol.getEpochMinute();
     }
 
@@ -76,23 +83,12 @@ public class RemoteNode implements Node {
         return paths_to.size();
     }
 
-    public int getLastUse() {
-        return last_use;
+    public int getLastOnline() {
+        return last_ping_time;
     }
 
     public int getPing() {
         return ping;
-    }
-
-    public int getTotalUses() {
-        return Math.abs(successes + strikes);
-    }
-
-    /**
-     * Mark this node as being online at the current time.
-     */
-    public void markOnline() {
-        last_online = Protocol.getEpochMinute();
     }
 
     public Path getIdealPath() {
@@ -135,14 +131,11 @@ public class RemoteNode implements Node {
 
     private String address;
     private String label;
-    private int successes = 0; // Successful signals sent across this node.
-    private int strikes = 0; // Unsuccessful signals sent across this node.
-    private int[] successful_signal_dest = {0, 0, 0}; // Signals where valid response received.
+    private int instrumental_uses = 0; // Successful signals sent across this node
+    private int endpoint_uses = 0; // Successful signals sent to this node
     private boolean adversarial; // Flagged as an adversarial node.
     private int ping;
     private int last_ping_time; // Time of the last ping, in minutes.
-    private int last_online; // Last time this node has successfully been used to send a signal.
-    private int last_use; // Gets the last time this node was used, despite if the signal succeeded or failed.
     private ArrayList<Path> paths_to = new ArrayList<>();
     private ArrayList<RemoteNode> neighbors; // This node's neighbors, used only for community members.
     private SelfNode indexer;
