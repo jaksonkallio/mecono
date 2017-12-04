@@ -8,8 +8,8 @@ import java.util.ArrayList;
  */
 public class FindResponseParcel extends DestinationParcel {
 
-	public FindResponseParcel(Mailbox mailbox) {
-		super(mailbox);
+	public FindResponseParcel(Mailbox mailbox, TransferDirection direction) {
+		super(mailbox, direction);
 	}
 
 	public void unserializeContent() {

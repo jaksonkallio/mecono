@@ -8,8 +8,8 @@ import org.json.JSONObject;
  */
 public class DataParcel extends DestinationParcel {
 
-	public DataParcel(Mailbox mailbox) {
-		super(mailbox);
+	public DataParcel(Mailbox mailbox, TransferDirection direction) {
+		super(mailbox, direction);
 	}
 	
 	@Override

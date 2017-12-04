@@ -1,6 +1,7 @@
 package mecono;
 
 import java.util.ArrayList;
+import mecono.DestinationParcel.TransferDirection;
 
 /**
  *
@@ -141,7 +142,7 @@ public class SelfNode implements Node {
 	 */
 	public void sendDataParcel(RemoteNode destination, String message){
 		try {
-			DataParcel parcel = new DataParcel(getMailbox());
+			DataParcel parcel = new DataParcel(getMailbox(), TransferDirection.OUTBOUND);
 			parcel.setPath(destination, this);
 			parcel.setMessage(message);
 			parcel.placeInOutbox();

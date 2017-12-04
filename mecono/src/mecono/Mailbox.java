@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import mecono.DestinationParcel.TransferDirection;
 
 /**
  * The mailbox is responsible for managing parcel sending/receiving, queuing
@@ -132,7 +133,7 @@ public class Mailbox {
 			for (RemoteNode consultant : consult_list) {
 				if(!consultant.equals(node)){
 					// Only consult a node if the consultant is NOT the node we're looking for.
-					FindParcel find = new FindParcel(this);
+					FindParcel find = new FindParcel(this, TransferDirection.OUTBOUND);
 					find.setTarget(node);
 
 					try {

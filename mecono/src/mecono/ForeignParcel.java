@@ -25,10 +25,21 @@ public class ForeignParcel extends Parcel {
 		return (RemoteNode) path_history.getStop(path_history.getPathLength() - 1);
 	}
 	
+	@Override
 	public String toString(){
 		return "Foreign Parcel - Next: "+getNextNode().getAddress();
 	}
 
+	@Override
+	public void setPath(Path path){
+		this.path_history = path;
+	}
+	
+	@Override
+	public Path getPath(){
+		return path_history;
+	}
+	
 	/**
 	 * Gets how many hops this parcel has traveled so far.
 	 *
@@ -55,5 +66,11 @@ public class ForeignParcel extends Parcel {
 		return serialized_parcel;
 	}
 
+	@Override
+	public Node getOriginator() {
+		return path_history.getStop(0);
+	}
+	
 	private String payload;
+	private Path path_history;
 }

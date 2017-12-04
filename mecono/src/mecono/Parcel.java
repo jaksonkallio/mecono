@@ -15,13 +15,7 @@ public abstract class Parcel {
 	 *
 	 * @return RemoteNode Originator node object.
 	 */
-	public Node getOriginator() {
-		if(getPath() != null){
-			return (RemoteNode) path.getStop(0);
-		}else{
-			return originator;
-		}
-	}
+	public abstract Node getOriginator();
 
 	public void setPath(Path path) {
 		this.path = path;
@@ -51,25 +45,25 @@ public abstract class Parcel {
 		if (json_parcel.getString("destination").equals(relative_self.getAddress())) {
 			switch (Protocol.parcel_type_codes[json_parcel.getInt("parcel_type")]) {
 				case PING:
-					received_parcel = new PingParcel(mailbox);
+					received_parcel = new PingParcel(mailbox, DestinationParcel.TransferDirection.INBOUND);
 					break;
 				case PING_RESPONSE:
-					received_parcel = new PingResponseParcel(mailbox);
+					received_parcel = new PingResponseParcel(mailbox, DestinationParcel.TransferDirection.INBOUND);
 					break;
 				case FIND:
-					received_parcel = new FindParcel(mailbox);
+					received_parcel = new FindParcel(mailbox, DestinationParcel.TransferDirection.INBOUND);
 					break;
 				case FIND_RESPONSE:
-					received_parcel = new FindResponseParcel(mailbox);
+					received_parcel = new FindResponseParcel(mailbox, DestinationParcel.TransferDirection.INBOUND);
 					break;
 				case DATA:
-					received_parcel = new DataParcel(mailbox);
+					received_parcel = new DataParcel(mailbox, DestinationParcel.TransferDirection.INBOUND);
 					break;
 				case DATA_RECEIPT:
-					received_parcel = new DataReceiptParcel(mailbox);
+					received_parcel = new DataReceiptParcel(mailbox, DestinationParcel.TransferDirection.INBOUND);
 					break;
 				default:
-					received_parcel = new DestinationParcel(mailbox);
+					received_parcel = new DestinationParcel(mailbox, DestinationParcel.TransferDirection.INBOUND);
 			}
 		}
 

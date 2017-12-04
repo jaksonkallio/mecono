@@ -6,8 +6,8 @@ package mecono;
  */
 public class FindParcel extends DestinationParcel {
 
-	public FindParcel(Mailbox mailbox) {
-		super(mailbox);
+	public FindParcel(Mailbox mailbox, TransferDirection direction) {
+		super(mailbox, direction);
 	}
 
 	@Override

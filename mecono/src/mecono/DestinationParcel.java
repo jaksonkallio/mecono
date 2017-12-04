@@ -13,11 +13,14 @@ public class DestinationParcel extends Parcel {
 
 	/**
 	 * Constructor
+	 * @param mailbox
+	 * @param direction
 	 */
 	//pathhistory,[destination,parceltype,originator,content,signature(destination+originator+content)]
-	public DestinationParcel(Mailbox mailbox) {
+	public DestinationParcel(Mailbox mailbox, TransferDirection direction) {
 		generateUniqueID();
 		this.mailbox = mailbox;
+		this.direction = direction;
 	}
 	
 	@Override
@@ -36,7 +39,7 @@ public class DestinationParcel extends Parcel {
 		return mailbox;
 	}
 
-	public void generateUniqueID() {
+	private void generateUniqueID() {
 		char[] text = new char[Protocol.parcel_unique_id_length];
 
 		for (int i = 0; i < Protocol.parcel_unique_id_length; i++) {
@@ -256,6 +259,10 @@ public class DestinationParcel extends Parcel {
 		findIdealPath();
 	}
 	
+	public Node getOriginator(){
+		
+	}
+	
 	/**
 	 * Encrypt this destination parcel as a payload.
 	 * @return 
@@ -283,4 +290,8 @@ public class DestinationParcel extends Parcel {
 	private String unique_id;
 	private String signature;
 	private ParcelType parcel_type = ParcelType.UNKNOWN;
+	private final TransferDirection direction;
+	public enum TransferDirection {
+		OUTBOUND, INBOUND
+	};
 }
