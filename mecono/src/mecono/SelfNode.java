@@ -143,7 +143,6 @@ public class SelfNode implements Node {
 	public void sendDataParcel(RemoteNode destination, String message){
 		try {
 			DataParcel parcel = new DataParcel(getMailbox(), TransferDirection.OUTBOUND);
-			parcel.setPath(destination, this);
 			parcel.setMessage(message);
 			parcel.placeInOutbox();
 		} catch (UnknownResponsibilityException ex) {

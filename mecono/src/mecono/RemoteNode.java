@@ -99,7 +99,7 @@ public class RemoteNode implements Node {
         if (indexer.isNeighbor(this)) {
             ArrayList<RemoteNode> stops = new ArrayList<>();
             stops.add(this);
-            Path direct_path = new Path(stops, indexer);
+            Path direct_path = new Path(stops);
             learnPath(direct_path);
         }
 
