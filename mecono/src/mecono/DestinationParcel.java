@@ -66,8 +66,6 @@ public class DestinationParcel extends Parcel {
 	}
 	
 	public boolean pathKnown(){
-		findIdealPath();
-		
 		return getPath() != null;
 	}
 
@@ -79,18 +77,9 @@ public class DestinationParcel extends Parcel {
 		return Math.max(Protocol.getEpochMinute() - time_received, 0);
 	}
 	
-	public void setOriginator(SelfNode originator){
-		if(!isInOutbox()){
-			this.originator = originator;
-		}
-	}
-	
 	public Node getDestination() {
-		if (path == null) {
-			return this.destination;
-		} else {
-			return getPath().getStop(getPath().getPathLength() - 1);
-		}
+		Path path = getPath();
+		return path.getStop(path.getPathLength() - 1);
 	}
 
 	public void setDestination(RemoteNode destination) throws BadProtocolException {
@@ -214,6 +203,14 @@ public class DestinationParcel extends Parcel {
 	public String getSignature() {
 		return signature;
 	}
+	
+	public Path getPath(){
+		if(fixed_path == null){
+			return ((RemoteNode) destination).getIdealPath();
+		}
+		
+		return fixed_path;
+	}
 
 	@Override
 	public JSONObject serialize() {
@@ -250,17 +247,19 @@ public class DestinationParcel extends Parcel {
 		}
 	}
 	
-	public void setPath(RemoteNode destination, SelfNode originator){
-		if(!isInOutbox()){
-			this.destination = destination;
-			this.originator = originator;
+	public void setFixedPath(Path fixed_path){
+		if(fixed_path != null){
+			this.fixed_path = fixed_path;
 		}
-		
-		findIdealPath();
 	}
 	
+	public void setFixedPath(){
+		setFixedPath(getPath());
+	}
+	
+	@Override
 	public Node getOriginator(){
-		
+		return getPath().getStop(0);
 	}
 	
 	/**
@@ -285,12 +284,14 @@ public class DestinationParcel extends Parcel {
 	private String payload;
 	private Node destination;
 	private int time_received = 0;
-	private Mailbox mailbox;
+	private final Mailbox mailbox;
 	private boolean in_outbox;
 	private String unique_id;
 	private String signature;
+	private Path fixed_path;
 	private ParcelType parcel_type = ParcelType.UNKNOWN;
 	private final TransferDirection direction;
+
 	public enum TransferDirection {
 		OUTBOUND, INBOUND
 	};
