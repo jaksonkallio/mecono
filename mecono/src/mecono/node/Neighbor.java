@@ -1,4 +1,4 @@
-package mecono;
+package mecono.node;
 
 /**
  * A neighbor has a remote node.

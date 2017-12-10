@@ -1,5 +1,6 @@
-package mecono;
+package mecono.node;
 
+import mecono.protocol.Protocol;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

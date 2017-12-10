@@ -1,4 +1,4 @@
-package mecono;
+package mecono.node;
 
 /**
  * The mailbox worker is a threaded helper object that processes the mailbox inbox and outbox.

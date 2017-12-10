@@ -1,4 +1,6 @@
-package mecono;
+package mecono.node;
+
+import mecono.protocol.Protocol;
 
 /**
  *

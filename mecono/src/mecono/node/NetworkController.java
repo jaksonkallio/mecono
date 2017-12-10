@@ -1,6 +1,13 @@
-package mecono;
+package mecono.node;
 
+import mecono.protocol.BadProtocolException;
+import mecono.protocol.UnknownResponsibilityException;
+import mecono.parceling.Parcel;
+import mecono.parceling.ForeignParcel;
+import mecono.parceling.MissingParcelDetailsException;
 import java.util.ArrayList;
+import mecono.Mecono;
+import mecono.protocol.SimNetwork;
 import org.json.JSONObject;
 
 /**

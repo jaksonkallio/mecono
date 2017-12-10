@@ -1,5 +1,19 @@
-package mecono;
+package mecono.parceling;
 
+import mecono.parceling.types.DataParcel;
+import mecono.parceling.types.FindResponseParcel;
+import mecono.parceling.types.DataReceiptParcel;
+import mecono.parceling.types.FindParcel;
+import mecono.parceling.types.PingResponseParcel;
+import mecono.parceling.types.PingParcel;
+import mecono.protocol.BadProtocolException;
+import mecono.node.Mailbox;
+import mecono.node.Node;
+import mecono.node.Path;
+import mecono.protocol.Protocol;
+import mecono.node.RemoteNode;
+import mecono.node.SelfNode;
+import mecono.protocol.UnknownResponsibilityException;
 import org.json.*;
 
 /**

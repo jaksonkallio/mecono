@@ -1,7 +1,12 @@
-package mecono;
+package mecono.node;
 
+import mecono.protocol.UnknownResponsibilityException;
+import mecono.parceling.ParcelType;
+import mecono.parceling.types.DataParcel;
+import mecono.parceling.MissingParcelDetailsException;
+import mecono.parceling.DestinationParcel;
 import java.util.ArrayList;
-import mecono.DestinationParcel.TransferDirection;
+import mecono.parceling.DestinationParcel.TransferDirection;
 
 /**
  *

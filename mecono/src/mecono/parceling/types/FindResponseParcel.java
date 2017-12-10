@@ -1,6 +1,9 @@
-package mecono;
+package mecono.parceling.types;
 
 import java.util.ArrayList;
+import mecono.node.Mailbox;
+import mecono.node.Path;
+import mecono.parceling.DestinationParcel;
 
 /**
  *

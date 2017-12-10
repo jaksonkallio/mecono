@@ -1,4 +1,4 @@
-package mecono;
+package mecono.node;
 
 /**
  *

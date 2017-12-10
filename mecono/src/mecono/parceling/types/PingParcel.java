@@ -1,4 +1,8 @@
-package mecono;
+package mecono.parceling.types;
+
+import mecono.node.Mailbox;
+import mecono.parceling.DestinationParcel;
+import mecono.parceling.ParcelType;
 
 /**
  *

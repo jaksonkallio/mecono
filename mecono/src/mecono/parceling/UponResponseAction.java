@@ -1,4 +1,7 @@
-package mecono;
+package mecono.parceling;
+
+import mecono.node.Mailbox;
+import mecono.protocol.Protocol;
 
 /**
  * @description An action potential waiting for a response from a node after

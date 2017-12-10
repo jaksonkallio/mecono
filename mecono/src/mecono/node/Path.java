@@ -1,4 +1,4 @@
-package mecono;
+package mecono.node;
 
 import java.util.ArrayList;
 import java.util.Arrays;

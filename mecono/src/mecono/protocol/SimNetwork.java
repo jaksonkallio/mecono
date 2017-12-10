@@ -1,5 +1,9 @@
-package mecono;
+package mecono.protocol;
 
+import mecono.ui.SimGUI;
+import mecono.node.SimSelfNode;
+import mecono.node.Neighbor;
+import mecono.node.RemoteNode;
 import java.util.ArrayList;
 
 /**

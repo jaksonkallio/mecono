@@ -1,5 +1,6 @@
-package mecono;
+package mecono.protocol;
 
+import mecono.parceling.ParcelType;
 import java.util.Random;
 
 /**

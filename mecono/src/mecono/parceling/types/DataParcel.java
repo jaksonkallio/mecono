@@ -1,5 +1,9 @@
-package mecono;
+package mecono.parceling.types;
 
+import mecono.node.Mailbox;
+import mecono.parceling.DestinationParcel;
+import mecono.parceling.MissingParcelDetailsException;
+import mecono.parceling.ParcelType;
 import org.json.JSONObject;
 
 /**

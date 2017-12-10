@@ -1,8 +1,16 @@
-package mecono;
+package mecono.node;
 
+import mecono.protocol.BadProtocolException;
+import mecono.protocol.UnknownResponsibilityException;
+import mecono.parceling.Parcel;
+import mecono.parceling.ForeignParcel;
+import mecono.parceling.MissingParcelDetailsException;
+import mecono.parceling.UponResponseAction;
+import mecono.parceling.types.FindParcel;
+import mecono.parceling.DestinationParcel;
 import java.util.ArrayList;
 import java.util.Queue;
-import mecono.DestinationParcel.TransferDirection;
+import mecono.parceling.DestinationParcel.TransferDirection;
 
 /**
  * The mailbox is responsible for managing parcel sending/receiving, queuing

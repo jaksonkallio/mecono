@@ -1,6 +1,13 @@
-package mecono;
+package mecono.parceling;
 
 import java.util.ArrayList;
+import mecono.protocol.BadProtocolException;
+import mecono.node.Mailbox;
+import mecono.node.Node;
+import mecono.node.Path;
+import mecono.protocol.Protocol;
+import mecono.node.RemoteNode;
+import mecono.protocol.UnknownResponsibilityException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -175,7 +182,7 @@ public class DestinationParcel extends Parcel {
      * not the self node.
      *
      * @throws UnknownResponsibilityException
-     * @throws mecono.MissingParcelDetailsException
+     * @throws mecono.parceling.MissingParcelDetailsException
      */
     public void placeInOutbox() throws UnknownResponsibilityException, MissingParcelDetailsException {
         if (!isInOutbox()) {

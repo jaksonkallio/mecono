@@ -1,8 +1,12 @@
-package mecono;
+package mecono.parceling;
 
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import mecono.node.Mailbox;
+import mecono.node.Node;
+import mecono.node.Path;
+import mecono.node.RemoteNode;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
