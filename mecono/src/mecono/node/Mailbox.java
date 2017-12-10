@@ -155,7 +155,7 @@ public class Mailbox {
                         find.setDestination(consultant);
 
                         if (!expectingResponse(find)) {
-                            owner.nodeLog(1, "Consulting trusted/neighbor for destination...");
+                            owner.nodeLog(1, "Consulting " + find.getDestination().getAddress() + " for path to " + find.getTarget().getAddress());
                             placeInOutbox(find);
                         }
                     } catch (MissingParcelDetailsException ex) {

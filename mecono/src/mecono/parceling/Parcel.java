@@ -58,6 +58,7 @@ public abstract class Parcel {
 		Parcel received_parcel = null;
 		Mailbox mailbox = relative_self.getMailbox();
 
+		mailbox.getOwner().nodeLog(0, "Unserializing received parcel: "+json_parcel.toString());
 		if (json_parcel.has("destination")) {
 			if (json_parcel.getString("destination").equals(relative_self.getAddress())) {
 				switch (Protocol.parcel_type_codes[json_parcel.getInt("parcel_type")]) {
