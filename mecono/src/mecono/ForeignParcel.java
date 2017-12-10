@@ -31,7 +31,14 @@ public class ForeignParcel extends Parcel {
 
     @Override
     public String toString() {
-        return "Foreign Parcel - Next: " + getNextNode().getAddress();
+        String next_node_address = "";
+        
+        try{
+            next_node_address = getNextNode().getAddress();
+        } catch (MissingParcelDetailsException ex) {
+            next_node_address = "Unknown";
+        }
+        return "Foreign Parcel - Next: " + next_node_address;
     }
 
     @Override
@@ -42,7 +49,7 @@ public class ForeignParcel extends Parcel {
     @Override
     public Path getPath() throws MissingParcelDetailsException {
         if (path_history == null) {
-            throw new MissingParcelDetailsException("No path history from the foreign parcel.");
+            throw new MissingParcelDetailsException("No path history supplied from the foreign parcel.");
         }
 
         return path_history;
@@ -58,9 +65,14 @@ public class ForeignParcel extends Parcel {
     }
 
     @Override
-    public RemoteNode getNextNode() {
-        // For foreign parcels, the next node is the last item in the path.
-        return (RemoteNode) path.getStop(path.getPathLength() - 1);
+    public RemoteNode getNextNode() throws MissingParcelDetailsException {
+        try{
+            // For foreign parcels, the next node is the last item in the path.
+            return (RemoteNode) getPath().getStop(path.getPathLength() - 1);
+        } catch(MissingParcelDetailsException ex){
+            mailbox.getOwner().nodeLog(2, "Next node in path not known: " + ex.getMessage());
+            throw ex;
+        }
     }
 
     @Override
@@ -77,7 +89,7 @@ public class ForeignParcel extends Parcel {
             serialized_parcel.put("path_history", serialized_path_history);
             serialized_parcel.put("payload", payload);
         } catch (MissingParcelDetailsException ex) {
-            mailbox.getOwner().nodeLog(2, "Could not serialized parcel: " + ex.getMessage());
+            mailbox.getOwner().nodeLog(2, "Could not serialize parcel: " + ex.getMessage());
         }
 
         return serialized_parcel;
