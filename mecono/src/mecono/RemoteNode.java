@@ -53,6 +53,7 @@ public class RemoteNode implements Node {
     @Override
     public boolean equals(Object o) {
         Node other = (Node) o;
+
         return other.getAddress().equals(this.getAddress());
     }
 
@@ -130,7 +131,7 @@ public class RemoteNode implements Node {
         });
     }
 
-    private String address;
+    private final String address;
     private String label;
     private int instrumental_uses = 0; // Successful signals sent across this node
     private int endpoint_uses = 0; // Successful signals sent to this node
