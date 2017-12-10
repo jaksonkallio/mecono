@@ -93,7 +93,8 @@ public class RemoteNode implements Node {
 
     public Path getIdealPath() {
         if (indexer.isNeighbor(this)) {
-            ArrayList<RemoteNode> stops = new ArrayList<>();
+            ArrayList<Node> stops = new ArrayList<>();
+            stops.add(indexer);
             stops.add(this);
             Path direct_path = new Path(stops);
             learnPath(direct_path);
