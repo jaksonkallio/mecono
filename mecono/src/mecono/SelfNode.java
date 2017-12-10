@@ -96,7 +96,7 @@ public class SelfNode implements Node {
      * @return
      */
     public String nodeLog(int importance, String message) {
-        String[] importance_levels = {"INFO", "NOTE", "WARN", "CRIT"};
+        String[] importance_levels = {"INFO", "NOTE", "WARN", "CRIT", "GOOD"};
 
         String construct = "";
         if (importance <= (importance_levels.length - 1)) {
