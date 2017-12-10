@@ -46,7 +46,7 @@ public class SimGUI {
 	}
 	
 	private synchronized void consoleAppend(TextArea console, String new_line){
-		console.appendText(new_line + "\n");
+		javafx.application.Platform.runLater( () -> console.appendText(new_line + "\n"));
 	}
 
 	private void buildMainContainer() {
