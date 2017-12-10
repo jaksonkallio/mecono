@@ -81,7 +81,11 @@ public class SelfNode implements Node {
      */
     @Override
     public String getLabel() {
-        return label;
+		if(label.equals("")){
+			return getAddress();
+		}else{
+			return label;
+		}
     }
 
     /**
@@ -105,7 +109,7 @@ public class SelfNode implements Node {
 
         String construct = "";
         if (importance <= (importance_levels.length - 1)) {
-            construct = "[" + getAddressLabel() + "][" + importance_levels[importance] + "] " + message;
+            construct = "[" + getLabel().substring(0, 4) + "][" + importance_levels[importance] + "] " + message;
             System.out.println(construct);
         }
 

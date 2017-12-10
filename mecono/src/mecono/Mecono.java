@@ -64,7 +64,7 @@ public class Mecono extends Application {
 
 	}
 
-	public static final SimNetwork sim = new SimNetwork(5);
+	public static final SimNetwork sim = new SimNetwork();
 	public static boolean simulated_network = true;
 	public static boolean sandbox = false;
 	public static int version = 1;

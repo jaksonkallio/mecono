@@ -9,9 +9,18 @@ import org.json.JSONObject;
  */
 public class SimSelfNode extends SelfNode {
 
-	public SimSelfNode(String label, SimNetwork sim_network) {
-		super(label);
+	public SimSelfNode(String label, NodeAddress node_address, SimNetwork sim_network) {
+		super(label, node_address);
 		this.sim_network = sim_network;
+	}
+	
+	public SimSelfNode(String label, SimNetwork sim_network) {
+		super(label, new NodeAddress());
+	}
+	
+	@Override
+	public String toString(){
+		return getLabel();
 	}
 
 	public void receiveRawString(String raw_parcel) {
