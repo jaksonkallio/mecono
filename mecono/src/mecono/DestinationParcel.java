@@ -1,5 +1,6 @@
 package mecono;
 
+import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -19,8 +20,8 @@ public class DestinationParcel extends Parcel {
      */
     //pathhistory,[destination,parceltype,originator,content,signature(destination+originator+content)]
     public DestinationParcel(Mailbox mailbox, TransferDirection direction) {
+        super(mailbox);
         generateUniqueID();
-        this.mailbox = mailbox;
         this.direction = direction;
     }
 
@@ -91,7 +92,7 @@ public class DestinationParcel extends Parcel {
     }
 
     public Node getDestination() {
-       //try {
+        //try {
         return destination;
         //} catch (MissingParcelDetailsException ex) {
         //    mailbox.getOwner().nodeLog(2, "Could not get destination: " + ex.getMessage());
@@ -269,8 +270,8 @@ public class DestinationParcel extends Parcel {
         // We only want to construct foreign parcels if we are the originator
         if (originatorIsSelf()) {
             // Only construct the foreign parcel if the path is completely built.
-            if (hasCompletePath()) {
-                return new ForeignParcel(getPath(), encryptAsPayload());
+            if (pathKnown()) {
+                return new ForeignParcel(mailbox, getPath(), encryptAsPayload());
             } else {
                 throw new BadProtocolException("Cannot construct a foreign parcel without a path.");
             }
@@ -291,9 +292,9 @@ public class DestinationParcel extends Parcel {
 
     @Override
     public Node getOriginator() throws MissingParcelDetailsException {
-        if(direction == TransferDirection.OUTBOUND){
+        if (direction == TransferDirection.OUTBOUND) {
             return (Node) mailbox.getOwner();
-        }else{
+        } else {
             return getPath().getStop(0);
         }
     }
@@ -305,7 +306,12 @@ public class DestinationParcel extends Parcel {
      */
     private String encryptAsPayload() throws MissingParcelDetailsException {
         JSONObject plaintext_payload = new JSONObject();
-        JSONArray actual_path = new JSONArray(getPath());
+        JSONArray actual_path = new JSONArray();
+        ArrayList<Node> stops = getPath().getStops();
+
+        for (Node stop : stops) {
+            actual_path.put(stop.getAddress());
+        }
 
         plaintext_payload.put("actual_path", actual_path);
         plaintext_payload.put("parcel_type", getParcelType());
@@ -314,13 +320,14 @@ public class DestinationParcel extends Parcel {
         plaintext_payload.put("signature", "parcel signature here");
 
         // TODO: Payload encryption operation.
+        System.out.println(plaintext_payload.toString());
         return plaintext_payload.toString();
     }
 
     private String payload;
     private Node destination;
     private int time_received = 0;
-    private final Mailbox mailbox;
+
     private boolean in_outbox;
     private String unique_id;
     private String signature;
