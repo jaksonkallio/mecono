@@ -99,6 +99,7 @@ public class Mailbox {
             // Give to the network controller for sending
             try {
                 network_controller.sendParcel(parcel.constructForeignParcel());
+				outbox.remove(i);
             } catch (UnknownResponsibilityException | MissingParcelDetailsException | BadProtocolException ex) {
                 getOwner().nodeLog(2, "Could not hand off to network controller: " + ex.getMessage());
             }

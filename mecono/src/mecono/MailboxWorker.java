@@ -38,14 +38,14 @@ public class MailboxWorker implements Runnable {
 	@Override
 	public void run() {
 		working = true;
-		int i = 0;
+		int i = -1;
 		
 		while(working){
-			if(i < mailbox.getOutboxCount()){
+			if(i >= 0){
 				mailbox.processOutboxItem(i);
-				i++;
+				i--;
 			}else{
-				i = 0;
+				i = mailbox.getOutboxCount() - 1;
 			}
 			
 			try{
