@@ -320,7 +320,6 @@ public class DestinationParcel extends Parcel {
         plaintext_payload.put("signature", "parcel signature here");
 
         // TODO: Payload encryption operation.
-        System.out.println(plaintext_payload.toString());
         return plaintext_payload.toString();
     }
 

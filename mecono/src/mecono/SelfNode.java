@@ -151,6 +151,7 @@ public class SelfNode implements Node {
      */
     public void sendDataParcel(RemoteNode destination, String message) {
         try {
+			nodeLog(0, "Attempting to send data: " + message + " to " + destination.getAddress());
             DataParcel parcel = new DataParcel(getMailbox(), TransferDirection.OUTBOUND);
             parcel.setDestination(destination);
             parcel.setMessage(message);
