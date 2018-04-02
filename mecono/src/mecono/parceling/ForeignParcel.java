@@ -42,7 +42,7 @@ public class ForeignParcel extends Parcel {
         } catch (MissingParcelDetailsException ex) {
             next_node_address = "Unknown";
         }
-        return "Foreign Parcel - Next: " + next_node_address;
+        return "Foreign Parcel [Next: " + next_node_address+"]";
     }
 
     @Override
