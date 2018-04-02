@@ -1,5 +1,6 @@
 package mecono.parceling;
 
+import java.util.ArrayList;
 import mecono.parceling.types.DataParcel;
 import mecono.parceling.types.FindResponseParcel;
 import mecono.parceling.types.DataReceiptParcel;
@@ -57,11 +58,15 @@ public abstract class Parcel {
 	public static Parcel unserialize(JSONObject json_parcel, SelfNode relative_self) throws BadProtocolException, UnknownResponsibilityException {
 		Parcel received_parcel = null;
 		Mailbox mailbox = relative_self.getMailbox();
-
 		mailbox.getOwner().nodeLog(0, "Unserializing received parcel: "+json_parcel.toString());
-		if (json_parcel.has("destination")) {
-			if (json_parcel.getString("destination").equals(relative_self.getAddress())) {
-				switch (Protocol.parcel_type_codes[json_parcel.getInt("parcel_type")]) {
+		
+		JSONObject json_parcel_payload = new JSONObject(json_parcel.getString("payload"));
+		if (json_parcel_payload.has("actual_path")) {
+			JSONArray actual_path = json_parcel_payload.getJSONArray("actual_path");
+			String destination_address = actual_path.getString(actual_path.length() - 1);
+			
+			if (destination_address != null && destination_address.equals(relative_self.getAddress())) {
+				switch (parseParcelType(json_parcel_payload.getString("parcel_type"))) {
 					case PING:
 						received_parcel = new PingParcel(mailbox, DestinationParcel.TransferDirection.INBOUND);
 						break;
@@ -77,8 +82,8 @@ public abstract class Parcel {
 					case DATA:
 						received_parcel = new DataParcel(mailbox, DestinationParcel.TransferDirection.INBOUND);
 						
-						if (json_parcel.has("content") && json_parcel.getJSONObject("content").has("message")) {
-							((DataParcel) received_parcel).setMessage(json_parcel.getJSONObject("content").getString("message"));
+						if (json_parcel_payload.has("content") && json_parcel_payload.getJSONObject("content").has("message")) {
+							((DataParcel) received_parcel).setMessage(json_parcel_payload.getJSONObject("content").getString("message"));
 						} else {
 							throw new BadProtocolException("Bad content format.");
 						}
@@ -90,9 +95,13 @@ public abstract class Parcel {
 					default:
 						received_parcel = new DestinationParcel(mailbox, DestinationParcel.TransferDirection.INBOUND);
 				}
+			}else{
+				throw new BadProtocolException("Node is not the final destination");
 			}
+		}else{
+			throw new BadProtocolException("Missing destination parameter");
 		}
-
+		
 		return received_parcel;
 	}
 
@@ -103,6 +112,29 @@ public abstract class Parcel {
 			}
 		}
 		return -1;
+	}
+	
+	public static ParcelType parseParcelType(String parcel_type){
+		switch(parcel_type){
+			case "PING":
+				return ParcelType.PING;
+			case "PING_RESPONSE":
+				return ParcelType.PING_RESPONSE;
+			case "FIND":
+				return ParcelType.FIND;
+			case "FIND_RESPONSE":
+				return ParcelType.FIND_RESPONSE;
+			case "DATA":
+				return ParcelType.DATA;
+			case "DATA_RECEIPT":
+				return ParcelType.DATA_RECEIPT;
+			case "COMMUNITY":
+				return ParcelType.COMMUNITY;
+			case "COMMUNITY_RESPONSE":
+				return ParcelType.COMMUNITY_RESPONSE;
+			default:
+				return ParcelType.UNKNOWN;
+		}
 	}
 
 	protected final Mailbox mailbox;

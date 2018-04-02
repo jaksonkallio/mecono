@@ -28,7 +28,7 @@ public class NetworkController {
             received_parcel = Parcel.unserialize(received_parcel_json, mailbox.getOwner());
             mailbox.receiveParcel(received_parcel);
         } catch (BadProtocolException | UnknownResponsibilityException ex) {
-            mailbox.getOwner().nodeLog(2, "Bad parcel received.");
+            mailbox.getOwner().nodeLog(2, "Could not unserialize received parcel: " + ex.getMessage());
         }
     }
 
