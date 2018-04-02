@@ -58,7 +58,7 @@ public abstract class Parcel {
 	public static Parcel unserialize(JSONObject json_parcel, SelfNode relative_self) throws BadProtocolException, UnknownResponsibilityException {
 		Parcel received_parcel = null;
 		Mailbox mailbox = relative_self.getMailbox();
-		mailbox.getOwner().nodeLog(0, "Unserializing received parcel: "+json_parcel.toString());
+		//mailbox.getOwner().nodeLog(0, "Unserializing received parcel: "+json_parcel.toString());
 		
 		JSONObject json_parcel_payload = new JSONObject(json_parcel.getString("payload"));
 		if (json_parcel_payload.has("actual_path")) {
