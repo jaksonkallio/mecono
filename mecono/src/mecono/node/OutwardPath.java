@@ -53,6 +53,10 @@ public class OutwardPath extends Path {
         return last_use;
     }
 	
+	public Path getRawPath(){
+		return new Path(getStops());
+	}
+	
 	private SelfNode relative_origin;
     private int successes = 0;
     private int failures = 0;

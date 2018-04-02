@@ -130,6 +130,14 @@ public class Path {
 
         return identifier;
     }
+	
+	public static ArrayList<Path> convertToRawPaths(ArrayList<OutwardPath> outwards_paths){
+		ArrayList<Path> paths_raw = new ArrayList<>();
+		for(OutwardPath outward_path : outwards_paths){
+			paths_raw.add(outward_path);
+		}
+		return paths_raw;
+	}
 
     private ArrayList<Node> stops;
 }

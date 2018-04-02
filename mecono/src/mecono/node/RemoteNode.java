@@ -85,6 +85,10 @@ public class RemoteNode implements Node {
         return paths_to.size();
     }
 
+	public ArrayList<OutwardPath> getPathsTo(){
+		return paths_to;
+	}
+	
     public int getLastOnline() {
         return last_ping_time;
     }

@@ -7,6 +7,8 @@ import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.DestinationParcel;
 import java.util.ArrayList;
 import mecono.parceling.DestinationParcel.TransferDirection;
+import mecono.parceling.types.FindParcel;
+import mecono.parceling.types.FindResponseParcel;
 
 /**
  *
@@ -95,6 +97,27 @@ public class SelfNode implements Node {
      */
     public void receiveParcel(DestinationParcel parcel) {
         nodeLog(1, "Data received via mecono network: " + parcel.toString());
+		
+		try {
+			if(parcel instanceof FindParcel){
+				RemoteNode originator = (RemoteNode) parcel.getOriginator();
+				
+				if(((FindParcel) parcel).getTarget() == null){
+					throw new MissingParcelDetailsException("Unknown find target");
+				}
+				
+				FindResponseParcel response = new FindResponseParcel(getMailbox(), TransferDirection.OUTBOUND);
+				RemoteNode target = ((FindParcel) parcel).getTarget();
+				ArrayList<Path> available_paths = Path.convertToRawPaths(target.getPathsTo());
+				response.setTargetAnswers(available_paths); // Set response to our answer
+				response.setDestination(originator); // Set the destination to the person that contacted us (a response)
+				response.placeInOutbox(); // Send the response
+			}
+		} catch(MissingParcelDetailsException ex){
+			nodeLog(2, "Could not handle received parcel: " + ex.getMessage());
+		} catch(UnknownResponsibilityException ex){
+			nodeLog(2, "Uknown responsibility when sending response: " + ex.getMessage());
+		}
     }
 
     /**
