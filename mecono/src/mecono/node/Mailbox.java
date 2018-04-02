@@ -35,12 +35,14 @@ public class Mailbox {
     public void receiveParcel(Parcel parcel) {
         if (parcel instanceof DestinationParcel) {
             getOwner().receiveParcel((DestinationParcel) parcel);
-			getOwner().nodeLog(1, "Received destination parcel");
+			getOwner().nodeLog(1, "Mailbox received destination parcel");
         } else if (parcel instanceof ForeignParcel) {
             outbound_queue.offer((ForeignParcel) parcel);
-			getOwner().nodeLog(1, "Received foreign parcel");
-        } else {
-			getOwner().nodeLog(1, "Received parcel with unknown classification");
+			getOwner().nodeLog(1, "Mailbox received foreign parcel");
+        } else if(parcel == null) {
+			getOwner().nodeLog(2, "Mailbox received null parcel from network controller");
+		} else {
+			getOwner().nodeLog(2, "Mailbox received parcel with unknown classification");
 		}
     }
 
