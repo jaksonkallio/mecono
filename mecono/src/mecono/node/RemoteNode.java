@@ -37,7 +37,7 @@ public class RemoteNode implements Node {
 		}
 	}
 
-    public void learnPath(Path path) {
+    public void learnPath(OutwardPath path) {
         if (indexer.isNeighbor((RemoteNode) path.getStop(1)) && path.getStop(path.getPathLength() - 1).equals(this)) {
             // If the first stop is the self node, and the last stop is this node, then store
             if (!isPathKnown(path)) {
@@ -93,12 +93,12 @@ public class RemoteNode implements Node {
         return ping;
     }
 
-    public Path getIdealPath() {
+    public OutwardPath getIdealPath() {
         if (indexer.isNeighbor(this)) {
             ArrayList<Node> stops = new ArrayList<>();
             stops.add(indexer);
             stops.add(this);
-            Path direct_path = new Path(stops);
+            OutwardPath direct_path = new OutwardPath(stops);
             learnPath(direct_path);
         }
 
@@ -123,9 +123,9 @@ public class RemoteNode implements Node {
     }
 
     private void sortPaths() {
-        Collections.sort(paths_to, new Comparator<Path>() {
+        Collections.sort(paths_to, new Comparator<OutwardPath>() {
             @Override
-            public int compare(Path path2, Path path1) {
+            public int compare(OutwardPath path2, OutwardPath path1) {
 
                 return (int) (1000 * (path2.getReliability() - path1.getReliability()));
             }
@@ -139,7 +139,7 @@ public class RemoteNode implements Node {
     private boolean adversarial; // Flagged as an adversarial node.
     private int ping;
     private int last_ping_time; // Time of the last ping, in minutes.
-    private ArrayList<Path> paths_to = new ArrayList<>();
+    private ArrayList<OutwardPath> paths_to = new ArrayList<>();
     private ArrayList<RemoteNode> neighbors; // This node's neighbors, used only for community members.
     private SelfNode indexer;
     private int max_paths = 100; // Only keep the best x paths.

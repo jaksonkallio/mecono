@@ -62,8 +62,14 @@ public abstract class Parcel {
 		
 		JSONObject json_parcel_payload = new JSONObject(json_parcel.getString("payload"));
 		if (json_parcel_payload.has("actual_path")) {
-			JSONArray actual_path = json_parcel_payload.getJSONArray("actual_path");
-			String destination_address = actual_path.getString(actual_path.length() - 1);
+			JSONArray actual_stops_json = json_parcel_payload.getJSONArray("actual_path");
+			ArrayList<Node> stops = new ArrayList<>();
+			for(int i = 0; i < actual_stops_json.length(); i++){
+				stops.add(relative_self.getMemoryController().loadRemoteNode(actual_stops_json.getString(i)));
+			}
+			Path actual_path = new Path(stops);
+			
+			String destination_address = actual_path.getStop(actual_path.getPathLength() - 1).getAddress();
 			
 			if (destination_address != null && destination_address.equals(relative_self.getAddress())) {
 				switch (parseParcelType(json_parcel_payload.getString("parcel_type"))) {
@@ -94,6 +100,14 @@ public abstract class Parcel {
 						break;
 					default:
 						received_parcel = new DestinationParcel(mailbox, DestinationParcel.TransferDirection.INBOUND);
+				}
+				
+				if(json_parcel_payload.has("unique_id")){
+					((DestinationParcel) received_parcel).setUniqueID(json_parcel_payload.getString("unique_id"));
+				}
+				
+				if(json_parcel_payload.has("unique_id")){
+					((DestinationParcel) received_parcel).setUniqueID(json_parcel_payload.getString("unique_id"));
 				}
 			}else{
 				throw new BadProtocolException("Node is not the final destination");

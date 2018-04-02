@@ -140,7 +140,9 @@ public class SelfNode implements Node {
      * @param path
      */
     public void learnPath(Path path) {
-        if (path.getStop(0).equals(this)) {
+		// TODO: Fix to work with OutwardPath system. Given a path, find/construct useful outward paths.
+		
+        /*if (path.getStop(0).equals(this)) {
             // Verify that stop 0 is the self node
             Path working_path = path;
 
@@ -149,7 +151,7 @@ public class SelfNode implements Node {
                 // Get the subpath, which is the same path but with the last node chopped off.
                 working_path = working_path.getSubpath(working_path.getPathLength() - 2);
             }
-        }
+        }*/
     }
 
     /**

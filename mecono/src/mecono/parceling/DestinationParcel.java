@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import mecono.protocol.BadProtocolException;
 import mecono.node.Mailbox;
 import mecono.node.Node;
+import mecono.node.OutwardPath;
 import mecono.node.Path;
 import mecono.protocol.Protocol;
 import mecono.node.RemoteNode;
@@ -233,16 +234,20 @@ public class DestinationParcel extends Parcel {
     public String getUniqueID() {
         return unique_id;
     }
+	
+	public void setUniqueID(String unique_id) {
+        this.unique_id = unique_id;
+    }
 
     public String getSignature() {
         return signature;
     }
 
     @Override
-    public Path getPath() throws MissingParcelDetailsException {
+    public OutwardPath getPath() throws MissingParcelDetailsException {
         if (fixed_path == null) {
             if (destination != null) {
-                Path ideal_path = ((RemoteNode) destination).getIdealPath();
+                OutwardPath ideal_path = ((RemoteNode) destination).getIdealPath();
                 return ideal_path;
             } else {
                 throw new MissingParcelDetailsException("Attempting to get path when destination is not set.");
@@ -291,7 +296,7 @@ public class DestinationParcel extends Parcel {
         }
     }
 
-    public void setFixedPath(Path fixed_path) {
+    public void setFixedPath(OutwardPath fixed_path) {
         if (fixed_path != null) {
             this.fixed_path = fixed_path;
         }
@@ -341,7 +346,7 @@ public class DestinationParcel extends Parcel {
     private boolean in_outbox;
     private String unique_id;
     private String signature;
-    private Path fixed_path;
+    private OutwardPath fixed_path;
     private ParcelType parcel_type = ParcelType.UNKNOWN;
     private final TransferDirection direction;
 
