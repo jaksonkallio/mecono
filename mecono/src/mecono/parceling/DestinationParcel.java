@@ -41,8 +41,12 @@ public class DestinationParcel extends Parcel {
 
     @Override
     public String toString() {
-        return getParcelType() + " Parcel -  ID: " + getUniqueID();
-    }
+		try {
+			return getParcelType() + " Parcel [ID: " + getUniqueID() + "][Origin: " + getOriginator() + "]";
+		} catch(MissingParcelDetailsException ex){
+			return getParcelType() + " Parcel [Insufficient Details]";
+		}
+	}
 
     public Mailbox getMailbox() {
         return mailbox;

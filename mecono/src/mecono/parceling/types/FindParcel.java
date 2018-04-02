@@ -21,6 +21,18 @@ public class FindParcel extends DestinationParcel {
 
 		return (o instanceof FindParcel && other.getTarget() == this.getTarget() && super.equals(other));
 	}
+	
+	@Override
+	public String toString(){
+		String target_address = "";
+		if(getTarget() == null){
+			target_address = "NA";
+		}else{
+			target_address = getTarget().getAddress();
+		}
+		
+		return super.toString() + "[FindTarget: " + target_address + "]";
+	}
 
 	public void setTarget(RemoteNode target) {
 		this.target = target;
@@ -30,6 +42,7 @@ public class FindParcel extends DestinationParcel {
 		return target;
 	}
 	
+	@Override
 	public ParcelType getParcelType() {
 		return ParcelType.FIND;
 	}
