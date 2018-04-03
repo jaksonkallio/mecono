@@ -66,14 +66,7 @@ public abstract class Parcel {
 		}
 		
 		if (json_parcel.getJSONObject("payload").has("actual_path")) {
-			JSONArray actual_stops_json = json_parcel.getJSONObject("payload").getJSONArray("actual_path");
-			
-			// Get the path from the parcel
-			ArrayList<Node> stops = new ArrayList<>();
-			for(int i = 0; i < actual_stops_json.length(); i++){
-				stops.add(relative_self.getMemoryController().loadRemoteNode(actual_stops_json.getString(i)));
-			}
-			Path actual_path = new Path(stops);
+			Path actual_path = DestinationParcel.unserializeActualPath(json_parcel.getJSONObject("payload").getJSONArray("actual_path"), relative_self);
 			String destination_address = actual_path.getStop(actual_path.getPathLength() - 1).getAddress();
 			
 			// Get if this is a valid destination parcel

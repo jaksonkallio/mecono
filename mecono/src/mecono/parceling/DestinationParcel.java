@@ -50,11 +50,17 @@ public class DestinationParcel extends Parcel {
 
     @Override
     public String toString() {
+		String str = "";
+		
+		str = getParcelType() + " Parcel ";
+		
 		try {
-			return getParcelType() + " Parcel [ID: " + getUniqueID() + "][Origin: " + getOriginator() + "]";
+			str += "[ID: " + getUniqueID() + "][Origin: " + getOriginator() + "]";
 		} catch(MissingParcelDetailsException ex){
-			return getParcelType() + " Parcel [Insufficient Details]";
+			str += "[Insufficient Details: " + ex.getMessage() + "]";
 		}
+		
+		return str;
 	}
 
     public Mailbox getMailbox() {
@@ -106,6 +112,14 @@ public class DestinationParcel extends Parcel {
     public int getTimeReceived() {
         return time_received;
     }
+	
+	public static Path unserializeActualPath(JSONArray actual_path_json, SelfNode relative_self){
+		ArrayList<Node> stops = new ArrayList<>();
+		for(int i = 0; i < actual_path_json.length(); i++){
+			stops.add(relative_self.getMemoryController().loadRemoteNode(actual_path_json.getString(i)));
+		}
+		return new Path(stops);
+	}
 
 	public static DestinationParcel unserialize(JSONObject parcel_json, SelfNode relative_self) throws MissingParcelDetailsException {
 		DestinationParcel parcel;
@@ -160,6 +174,8 @@ public class DestinationParcel extends Parcel {
 			default:
 				parcel = new DestinationParcel(relative_self.getMailbox(), DestinationParcel.TransferDirection.INBOUND);
 		}
+		
+		parcel.setFixedPath(DestinationParcel.unserializeActualPath(payload_json.getJSONArray("actual_path"), relative_self));
 		
 		return parcel;
 	}
@@ -272,6 +288,10 @@ public class DestinationParcel extends Parcel {
         }
     }
 
+	public TransferDirection getTransferDirection(){
+		return direction;
+	}
+	
     public void setInOutbox() {
         in_outbox = true;
     }
@@ -309,9 +329,9 @@ public class DestinationParcel extends Parcel {
     }
 
     @Override
-    public OutwardPath getPath() throws MissingParcelDetailsException {
+    public Path getPath() throws MissingParcelDetailsException {
         if (fixed_path == null) {
-            if (destination != null) {
+            if (destination == null && !isInOutbox() && getTransferDirection() == TransferDirection.OUTBOUND) {
                 OutwardPath ideal_path = ((RemoteNode) destination).getIdealPath();
                 return ideal_path;
             } else {
@@ -411,7 +431,7 @@ public class DestinationParcel extends Parcel {
     private boolean in_outbox;
     private String unique_id;
     private String signature;
-    private OutwardPath fixed_path;
+    private Path path;
     private ParcelType parcel_type = ParcelType.UNKNOWN;
     private final TransferDirection direction;
 
