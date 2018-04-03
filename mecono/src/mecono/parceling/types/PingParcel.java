@@ -2,6 +2,7 @@ package mecono.parceling.types;
 
 import mecono.node.Mailbox;
 import mecono.parceling.DestinationParcel;
+import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.ParcelType;
 
 /**
@@ -27,9 +28,10 @@ public class PingParcel extends DestinationParcel {
 	/**
 	 * Ping parcels, unlike normal destination parcels, don't require a tested path before being sent.
 	 * @return 
+	 * @throws mecono.parceling.MissingParcelDetailsException 
 	 */
 	@Override
-	public boolean readyToSend(){
-		return pathKnown();
+	public boolean readyToSend() throws MissingParcelDetailsException {
+		return isActualPathKnown();
 	}
 }

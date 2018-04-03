@@ -89,24 +89,25 @@ public class DestinationParcel extends Parcel {
      * Checks if this parcel has all the send prerequisites met.
      *
      * @return
+	 * @throws mecono.parceling.MissingParcelDetailsException
      */
-    public boolean readyToSend() {
-        try {
-            return (pathKnown() && getPath().isTested()) || mailbox.getOwner().isNeighbor((RemoteNode) getDestination());
-        } catch (MissingParcelDetailsException ex) {
-            return false;
-        }
-    }
+    public boolean readyToSend() throws MissingParcelDetailsException {
+		Path outward_path = getActualPath();
+		
+		if(getTransferDirection() != TransferDirection.OUTBOUND){
+			return false;
+		}
+		
+		if(!(outward_path instanceof OutwardPath)){
+			return false;
+		}
 
-    public boolean pathKnown() {
-        try {
-            Path path = getPath();
-            return path != null;
-        } catch (MissingParcelDetailsException ex) {
+		if(!isActualPathKnown() || !((OutwardPath) outward_path).isTested()){
+			return false;
+		}
 
-        }
-
-        return false;
+		return true;
+		//return (isActualPathKnown() && ((OutwardPath) outward_path).isTested()) || mailbox.getOwner().isNeighbor((RemoteNode) getDestination());
     }
 
     public int getTimeReceived() {
@@ -175,7 +176,7 @@ public class DestinationParcel extends Parcel {
 				parcel = new DestinationParcel(relative_self.getMailbox(), DestinationParcel.TransferDirection.INBOUND);
 		}
 		
-		parcel.setFixedPath(DestinationParcel.unserializeActualPath(payload_json.getJSONArray("actual_path"), relative_self));
+		parcel.setActualPath(DestinationParcel.unserializeActualPath(payload_json.getJSONArray("actual_path"), relative_self));
 		
 		return parcel;
 	}
@@ -194,12 +195,10 @@ public class DestinationParcel extends Parcel {
         //return null;
     }
 
-    public void setDestination(RemoteNode destination) throws MissingParcelDetailsException {
-        if (!isInOutbox()) {
-            if (fixed_path == null && this.destination == null) {
-                this.destination = destination;
-            }
-        }
+    public void setDestination(RemoteNode destination) {
+		if(!isInOutbox() && getTransferDirection() == TransferDirection.OUTBOUND){
+			this.destination = destination;
+		}
     }
 
     public boolean consultWhenPathUnknown() {
@@ -252,16 +251,6 @@ public class DestinationParcel extends Parcel {
         return in_outbox;
     }
 
-    public void findIdealPath() {
-        if (!isFinalDest()) {
-            setPath(((RemoteNode) getDestination()).getIdealPath());
-        }
-    }
-
-    public boolean hasCompletePath() {
-        return path != null;
-    }
-
     /**
      * Place the parcel in the outbox. A destination parcel can only be in the
      * outbox if (1) the originator is the self node and (2) the destination is
@@ -298,13 +287,11 @@ public class DestinationParcel extends Parcel {
 
     @Override
     public RemoteNode getNextNode() throws MissingParcelDetailsException {
-        if (originatorIsSelf()) {
-            // (Self Originator ->) neighbor -> node 2 -> node 3 -> ... -> destination
-            return (RemoteNode) path.getStop(0);
-        } else {
-            // There is no next node, if the self node is not the first node in the path. 
-            return null;
-        }
+        if(getTransferDirection() == TransferDirection.OUTBOUND){
+			return (RemoteNode) getActualPath().getStop(1);
+		}
+		
+		return null;
     }
 
     /**
@@ -329,29 +316,15 @@ public class DestinationParcel extends Parcel {
     }
 
     @Override
-    public Path getPath() throws MissingParcelDetailsException {
-        if (fixed_path == null) {
-            if (destination == null && !isInOutbox() && getTransferDirection() == TransferDirection.OUTBOUND) {
-                OutwardPath ideal_path = ((RemoteNode) destination).getIdealPath();
-                return ideal_path;
-            } else {
-                throw new MissingParcelDetailsException("Attempting to get path when destination is not set.");
-            }
-        }
-
-        return fixed_path;
-    }
-
-    @Override
     public JSONObject serialize() {
         JSONObject serialized = new JSONObject();
 
         try {
-            serialized = serialized.put("path_history", getPath());
+            serialized = serialized.put("path_history", getPathHistory());
             serialized = serialized.put("destination", getDestination().getAddress());
             serialized = serialized.put("parcel_type", Parcel.getParcelTypeCode(parcel_type));
             serialized = serialized.put("unique_id", getUniqueID());
-            serialized = serialized.put("official_path", getPath());
+            serialized = serialized.put("actual_path", getActualPath());
             serialized = serialized.put("content", getSerializedContent());
             serialized = serialized.put("signature", getSignature());
         } catch (MissingParcelDetailsException ex) {
@@ -371,8 +344,8 @@ public class DestinationParcel extends Parcel {
         // We only want to construct foreign parcels if we are the originator
         if (originatorIsSelf()) {
             // Only construct the foreign parcel if the path is completely built.
-            if (pathKnown()) {
-                return new ForeignParcel(mailbox, getPath(), encryptAsPayload());
+            if (isActualPathKnown()) {
+                return new ForeignParcel(mailbox, getActualPath(), encryptAsPayload());
             } else {
                 throw new BadProtocolException("Cannot construct a foreign parcel without a path.");
             }
@@ -381,22 +354,38 @@ public class DestinationParcel extends Parcel {
         }
     }
 
-    public void setFixedPath(OutwardPath fixed_path) {
-        if (fixed_path != null) {
-            this.fixed_path = fixed_path;
-        }
-    }
-
-    public void setFixedPath() throws MissingParcelDetailsException {
-        setFixedPath(getPath());
-    }
-
+	public void setActualPath(Path actual_path) {
+		if(getTransferDirection() == TransferDirection.INBOUND){
+			this.actual_path = actual_path;
+		}
+	}
+	
+	public Path getActualPath() throws MissingParcelDetailsException {
+		if(actual_path == null && direction == TransferDirection.OUTBOUND){
+			if(destination == null){
+				throw new MissingParcelDetailsException("No path set and missing destination");
+			}
+			
+			if(isInOutbox()){
+				throw new MissingParcelDetailsException("Cannot generate path after being placed in outbox");
+			}
+						
+			actual_path = ((RemoteNode) destination).getIdealPath();
+		}
+		
+		return actual_path;
+	}
+	
+	public boolean isActualPathKnown() throws MissingParcelDetailsException {
+		return getActualPath() != null;
+	}
+	
     @Override
     public Node getOriginator() throws MissingParcelDetailsException {
-        if (direction == TransferDirection.OUTBOUND) {
+        if (getTransferDirection() == TransferDirection.OUTBOUND) {
             return (Node) mailbox.getOwner();
         } else {
-            return getPath().getStop(0);
+            return getActualPath().getStop(0);
         }
     }
 
@@ -408,7 +397,7 @@ public class DestinationParcel extends Parcel {
     private String encryptAsPayload() throws MissingParcelDetailsException {
         JSONObject plaintext_payload = new JSONObject();
         JSONArray actual_path = new JSONArray();
-        ArrayList<Node> stops = getPath().getStops();
+        ArrayList<Node> stops = getActualPath().getStops();
 
         for (Node stop : stops) {
             actual_path.put(stop.getAddress());
@@ -431,7 +420,7 @@ public class DestinationParcel extends Parcel {
     private boolean in_outbox;
     private String unique_id;
     private String signature;
-    private Path path;
+    private Path actual_path;
     private ParcelType parcel_type = ParcelType.UNKNOWN;
     private final TransferDirection direction;
 

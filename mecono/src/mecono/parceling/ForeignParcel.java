@@ -45,20 +45,6 @@ public class ForeignParcel extends Parcel {
         return "Foreign Parcel [Next: " + next_node_address+"]";
     }
 
-    @Override
-    public void setPath(Path path) {
-        this.path_history = path;
-    }
-
-    @Override
-    public Path getPath() throws MissingParcelDetailsException {
-        if (path_history == null) {
-            throw new MissingParcelDetailsException("No path history supplied from the foreign parcel.");
-        }
-
-        return path_history;
-    }
-
     /**
      * Gets how many hops this parcel has traveled so far.
      *
@@ -72,7 +58,7 @@ public class ForeignParcel extends Parcel {
     public RemoteNode getNextNode() throws MissingParcelDetailsException {
         try{
             // For foreign parcels, the next node is the last item in the path.
-            return (RemoteNode) getPath().getStop(getPath().getPathLength() - 1);
+            return (RemoteNode) getPathHistory().getStop(getPathHistory().getPathLength() - 1);
         } catch(MissingParcelDetailsException ex){
             mailbox.getOwner().nodeLog(2, "Next node in path not known: " + ex.getMessage());
             throw ex;
@@ -85,7 +71,7 @@ public class ForeignParcel extends Parcel {
         JSONArray serialized_path_history = new JSONArray();
 
         try {
-            ArrayList<Node> stops = getPath().getStops();
+            ArrayList<Node> stops = getPathHistory().getStops();
             for (Node stop : stops) {
                 serialized_path_history.put(stop.getAddress());
             }

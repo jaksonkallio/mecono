@@ -86,16 +86,13 @@ public class Mailbox {
             for (DestinationParcel parcel : outbox) {
                 construct += "\n--" + parcel.getUniqueID() + ": " + parcel.getParcelType() + " to " + parcel.getDestination().getAddress() + " ";
 
-                boolean ready_to_send;
-                boolean path_known;
-
-                if (!parcel.readyToSend()) {
-                    construct += "[Dest Not Ready]";
-                }
-
-                if (!parcel.pathKnown()) {
-                    construct += "[Missing Path]";
-                }
+				try {
+					if (!parcel.isActualPathKnown()) {
+						throw new MissingParcelDetailsException("Missing Path");
+					}
+				} catch(MissingParcelDetailsException ex){
+					construct += ex.getMessage();
+				}
             }
         }
 
@@ -105,21 +102,25 @@ public class Mailbox {
     public void processOutboxItem(int i) {
         DestinationParcel parcel = outbox.get(i);
         RemoteNode destination = (RemoteNode) parcel.getDestination();
+		
+		try {
+			if (parcel.readyToSend()) {
+				// Create the response action/expectation
+				UponResponseAction response_action = new UponResponseAction(this, parcel);
 
-        if (parcel.readyToSend()) {
-            // Create the response action/expectation
-            UponResponseAction response_action = new UponResponseAction(this, parcel);
-
-            // Give to the network controller for sending
-            try {
-                network_controller.sendParcel(parcel.constructForeignParcel());
-				outbox.remove(i);
-            } catch (UnknownResponsibilityException | MissingParcelDetailsException | BadProtocolException ex) {
-                getOwner().nodeLog(2, "Could not hand off to network controller: " + ex.getMessage());
-            }
-        } else if (parcel.consultWhenPathUnknown()) {
-            consultTrustedForPath(destination);
-        }
+				// Give to the network controller for sending
+				try {
+					network_controller.sendParcel(parcel.constructForeignParcel());
+					outbox.remove(i);
+				} catch (UnknownResponsibilityException | MissingParcelDetailsException | BadProtocolException ex) {
+					getOwner().nodeLog(2, "Could not hand off to network controller: " + ex.getMessage());
+				}
+			} else if (parcel.consultWhenPathUnknown()) {
+				consultTrustedForPath(destination);
+			}
+		} catch(MissingParcelDetailsException ex){
+			
+		}
     }
 
     /**
@@ -152,17 +153,12 @@ public class Mailbox {
                     // Only consult a node if the consultant is NOT the node we're looking for.
                     FindParcel find = new FindParcel(this, TransferDirection.OUTBOUND);
                     find.setTarget(node);
+					find.setDestination(consultant);
 
-                    try {
-                        find.setDestination(consultant);
-
-                        if (!expectingResponse(find)) {
-                            owner.nodeLog(1, "Consulting " + find.getDestination().getAddress() + " for path to " + find.getTarget().getAddress());
-                            placeInOutbox(find);
-                        }
-                    } catch (MissingParcelDetailsException ex) {
-
-                    }
+					if (!expectingResponse(find)) {
+						owner.nodeLog(1, "Consulting " + find.getDestination().getAddress() + " for path to " + find.getTarget().getAddress());
+						placeInOutbox(find);
+					}
                 }
             }
         }
