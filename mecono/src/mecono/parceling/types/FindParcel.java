@@ -2,8 +2,11 @@ package mecono.parceling.types;
 
 import mecono.node.Mailbox;
 import mecono.node.RemoteNode;
+import mecono.node.SelfNode;
 import mecono.parceling.DestinationParcel;
+import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.ParcelType;
+import org.json.JSONObject;
 
 /**
  *
@@ -40,6 +43,13 @@ public class FindParcel extends DestinationParcel {
 
 	public RemoteNode getTarget() {
 		return target;
+	}
+	
+	@Override
+	public JSONObject getSerializedContent(){
+		JSONObject json_content = new JSONObject();
+        json_content = json_content.put("target", getTarget().getAddress());
+        return json_content;
 	}
 	
 	@Override

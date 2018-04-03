@@ -14,6 +14,7 @@ import mecono.node.Path;
 import mecono.protocol.Protocol;
 import mecono.node.RemoteNode;
 import mecono.node.SelfNode;
+import mecono.parceling.DestinationParcel.TransferDirection;
 import mecono.protocol.UnknownResponsibilityException;
 import org.json.*;
 
@@ -55,13 +56,41 @@ public abstract class Parcel {
 		return null;
 	}
 
-	public static Parcel unserialize(JSONObject json_parcel, SelfNode relative_self) throws BadProtocolException, UnknownResponsibilityException {
-		Parcel received_parcel = null;
-		Mailbox mailbox = relative_self.getMailbox();
+	public static Parcel unserialize(JSONObject json_parcel, SelfNode relative_self) throws MissingParcelDetailsException {
 		//mailbox.getOwner().nodeLog(0, "Unserializing received parcel: "+json_parcel.toString());
 		
-		JSONObject json_parcel_payload = new JSONObject(json_parcel.getString("payload"));
-		if (json_parcel_payload.has("actual_path")) {
+		if(json_parcel.has("payload")){
+			json_parcel.put("payload", new JSONObject(json_parcel.getString("payload")));
+		}else{
+			throw new MissingParcelDetailsException("Missing payload");
+		}
+		
+		if (json_parcel.getJSONObject("payload").has("actual_path")) {
+			JSONArray actual_stops_json = json_parcel.getJSONObject("payload").getJSONArray("actual_path");
+			
+			// Get the path from the parcel
+			ArrayList<Node> stops = new ArrayList<>();
+			for(int i = 0; i < actual_stops_json.length(); i++){
+				stops.add(relative_self.getMemoryController().loadRemoteNode(actual_stops_json.getString(i)));
+			}
+			Path actual_path = new Path(stops);
+			String destination_address = actual_path.getStop(actual_path.getPathLength() - 1).getAddress();
+			
+			// Get if this is a valid destination parcel
+			if (destination_address != null && destination_address.equals(relative_self.getAddress())) {
+				// Destination parcel
+				DestinationParcel base_parcel = new DestinationParcel(relative_self.getMailbox(), TransferDirection.INBOUND);
+				return DestinationParcel.unserialize(json_parcel, relative_self);
+			}else{
+				throw new MissingParcelDetailsException("Could not determine destination from payload actual path");
+			}
+		}else{
+			// TODO: Foreign parcel
+		}
+		
+		return null;
+		
+		/*if (json_parcel_payload.has("actual_path")) {
 			JSONArray actual_stops_json = json_parcel_payload.getJSONArray("actual_path");
 			ArrayList<Node> stops = new ArrayList<>();
 			for(int i = 0; i < actual_stops_json.length(); i++){
@@ -72,43 +101,7 @@ public abstract class Parcel {
 			String destination_address = actual_path.getStop(actual_path.getPathLength() - 1).getAddress();
 			
 			if (destination_address != null && destination_address.equals(relative_self.getAddress())) {
-				switch (parseParcelType(json_parcel_payload.getString("parcel_type"))) {
-					case PING:
-						received_parcel = new PingParcel(mailbox, DestinationParcel.TransferDirection.INBOUND);
-						break;
-					case PING_RESPONSE:
-						received_parcel = new PingResponseParcel(mailbox, DestinationParcel.TransferDirection.INBOUND);
-						break;
-					case FIND:
-						received_parcel = new FindParcel(mailbox, DestinationParcel.TransferDirection.INBOUND);
-						break;
-					case FIND_RESPONSE:
-						received_parcel = new FindResponseParcel(mailbox, DestinationParcel.TransferDirection.INBOUND);
-						break;
-					case DATA:
-						received_parcel = new DataParcel(mailbox, DestinationParcel.TransferDirection.INBOUND);
-						
-						if (json_parcel_payload.has("content") && json_parcel_payload.getJSONObject("content").has("message")) {
-							((DataParcel) received_parcel).setMessage(json_parcel_payload.getJSONObject("content").getString("message"));
-						} else {
-							throw new BadProtocolException("Bad content format.");
-						}
-
-						break;
-					case DATA_RECEIPT:
-						received_parcel = new DataReceiptParcel(mailbox, DestinationParcel.TransferDirection.INBOUND);
-						break;
-					default:
-						received_parcel = new DestinationParcel(mailbox, DestinationParcel.TransferDirection.INBOUND);
-				}
-				
-				if(json_parcel_payload.has("unique_id")){
-					((DestinationParcel) received_parcel).setUniqueID(json_parcel_payload.getString("unique_id"));
-				}
-				
-				if(json_parcel_payload.has("unique_id")){
-					((DestinationParcel) received_parcel).setUniqueID(json_parcel_payload.getString("unique_id"));
-				}
+				DestinationParcel.parse();
 			}else{
 				throw new BadProtocolException("Node is not the final destination");
 			}
@@ -116,7 +109,7 @@ public abstract class Parcel {
 			throw new BadProtocolException("Missing destination parameter");
 		}
 		
-		return received_parcel;
+		return received_parcel;*/
 	}
 
 	public static int getParcelTypeCode(ParcelType target) {

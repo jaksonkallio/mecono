@@ -8,6 +8,14 @@ import mecono.node.OutwardPath;
 import mecono.node.Path;
 import mecono.protocol.Protocol;
 import mecono.node.RemoteNode;
+import mecono.node.SelfNode;
+import static mecono.parceling.Parcel.parseParcelType;
+import mecono.parceling.types.DataParcel;
+import mecono.parceling.types.DataReceiptParcel;
+import mecono.parceling.types.FindParcel;
+import mecono.parceling.types.FindResponseParcel;
+import mecono.parceling.types.PingParcel;
+import mecono.parceling.types.PingResponseParcel;
 import mecono.protocol.UnknownResponsibilityException;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -99,6 +107,63 @@ public class DestinationParcel extends Parcel {
         return time_received;
     }
 
+	public static DestinationParcel unserialize(JSONObject parcel_json, SelfNode relative_self) throws MissingParcelDetailsException {
+		DestinationParcel parcel;
+		JSONObject content_json;
+		JSONObject payload_json;
+		
+		if(parcel_json.has("payload")){
+			payload_json = parcel_json.getJSONObject("payload");
+		}else{
+			throw new MissingParcelDetailsException("Missing payload");
+		}
+		
+		if(parcel_json.getJSONObject("payload").has("content")){
+			content_json = parcel_json.getJSONObject("payload").getJSONObject("content");
+		}else{
+			throw new MissingParcelDetailsException("Missing content");
+		}
+		
+		switch (parseParcelType(payload_json.getString("parcel_type"))) {
+			case PING:
+				parcel = new PingParcel(relative_self.getMailbox(), DestinationParcel.TransferDirection.INBOUND);
+				break;
+			case PING_RESPONSE:
+				parcel = new PingResponseParcel(relative_self.getMailbox(), DestinationParcel.TransferDirection.INBOUND);
+				break;
+			case FIND:
+				parcel = new FindParcel(relative_self.getMailbox(), DestinationParcel.TransferDirection.INBOUND);
+				
+				if(content_json.has("target")){
+					((FindParcel) parcel).setTarget(relative_self.getMemoryController().loadRemoteNode(content_json.getString("target")));
+				}else{
+					throw new MissingParcelDetailsException("Missing target");
+				}
+				
+				break;
+			case FIND_RESPONSE:
+				parcel = new FindResponseParcel(relative_self.getMailbox(), DestinationParcel.TransferDirection.INBOUND);
+				break;
+			case DATA:
+				parcel = new DataParcel(relative_self.getMailbox(), DestinationParcel.TransferDirection.INBOUND);
+
+				if (content_json.has("message")) {
+					((DataParcel) parcel).setMessage(content_json.getString("message"));
+				} else {
+					throw new MissingParcelDetailsException("Invalid data parcel content");
+				}
+
+				break;
+			case DATA_RECEIPT:
+				parcel = new DataReceiptParcel(relative_self.getMailbox(), DestinationParcel.TransferDirection.INBOUND);
+				break;
+			default:
+				parcel = new DestinationParcel(relative_self.getMailbox(), DestinationParcel.TransferDirection.INBOUND);
+		}
+		
+		return parcel;
+	}
+	
     public int getAge() {
         return Math.max(Protocol.getEpochMinute() - time_received, 0);
     }
