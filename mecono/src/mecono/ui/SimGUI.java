@@ -13,6 +13,8 @@ import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
+import mecono.node.Neighbor;
+import mecono.node.RemoteNode;
 import mecono.protocol.SimNetwork;
 
 /**
@@ -88,12 +90,23 @@ public class SimGUI {
 		active_node_area.setPadding(left_inset);
 
 		get_node_info.setOnAction(event -> {
-			appendNodeConsole(
-					"Address: " + selected_node.getAddress()
-					+ "\nCommunity: " + selected_node.getNeighborCount() + " neighbors"
-					+ "\nSuccesses: " + selected_node.parcelHistoryCount(true) + " successful parcels sent"
-					+ "\nFailures: " + selected_node.parcelHistoryCount(false) + " failed parcels sent"
-			);
+			ArrayList<Neighbor> neighbors = selected_node.getNeighbors();
+			String neighbors_str = "";
+			for(Neighbor neighbor : neighbors){
+				if(!neighbors_str.equals("")){
+					neighbors_str += ", ";
+				}
+				
+				neighbors_str += neighbor.getNode().getAddress();
+			}
+			
+			String str = "";
+			str += "Address: " + selected_node.getAddress();
+			str += "\nNeighbors: " + selected_node.getNeighborCount() + " (" + neighbors_str + ")";
+			str += "\nSuccessful Sends: " + selected_node.parcelHistoryCount(true);
+			str += "\nFailed Sends: " + selected_node.parcelHistoryCount(false);
+			
+			appendNodeConsole(str);
 		});
 
 		view_outbox.setOnAction(event -> {
