@@ -55,7 +55,12 @@ public class DestinationParcel extends Parcel {
 		str = getParcelType() + " Parcel ";
 		
 		try {
-			str += "[ID: " + getUniqueID() + "][Origin: " + getOriginator() + "]";
+			str += "[ID: " + getUniqueID() + "]";
+			if(getTransferDirection() == TransferDirection.OUTBOUND){
+				str += "[Destination: " + getDestination().getAddress() + "]";
+			}else{
+				str += "[Origin: " + getOriginator().getAddress() + "]";
+			}
 		} catch(MissingParcelDetailsException ex){
 			str += "[Insufficient Details: " + ex.getMessage() + "]";
 		}
@@ -366,10 +371,10 @@ public class DestinationParcel extends Parcel {
 				throw new MissingParcelDetailsException("No path set and missing destination");
 			}
 			
-			if(isInOutbox()){
+			/*if(isInOutbox()){
 				throw new MissingParcelDetailsException("Cannot generate path after being placed in outbox");
-			}
-						
+			}*/
+			
 			actual_path = ((RemoteNode) destination).getIdealPath();
 		}
 		

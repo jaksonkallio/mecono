@@ -84,15 +84,15 @@ public class Mailbox {
             construct = "Parcels in outbox:";
 
             for (DestinationParcel parcel : outbox) {
-                construct += "\n--" + parcel.getUniqueID() + ": " + parcel.getParcelType() + " to " + parcel.getDestination().getAddress() + " ";
+                construct += "\n--" + parcel.toString();
 
-				try {
+				/*try {
 					if (!parcel.isActualPathKnown()) {
 						throw new MissingParcelDetailsException("Missing Path");
 					}
 				} catch(MissingParcelDetailsException ex){
 					construct += ex.getMessage();
-				}
+				}*/
             }
         }
 
@@ -119,7 +119,7 @@ public class Mailbox {
 				consultTrustedForPath(destination);
 			}
 		} catch(MissingParcelDetailsException ex){
-			
+			getOwner().nodeLog(2, "Could not send parcel: " + ex.getMessage());
 		}
     }
 
