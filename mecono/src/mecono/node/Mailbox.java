@@ -101,6 +101,7 @@ public class Mailbox {
 
     public void processOutboxItem(int i) {
         DestinationParcel parcel = outbox.get(i);
+		//getOwner().nodeLog(0, "Attemping to send "+parcel.toString());
         RemoteNode destination = (RemoteNode) parcel.getDestination();
 		
 		try {
@@ -118,7 +119,7 @@ public class Mailbox {
 			} else if (parcel.consultWhenPathUnknown()) {
 				consultTrustedForPath(destination);
 			}
-		} catch(MissingParcelDetailsException ex){
+		} catch(MissingParcelDetailsException | BadProtocolException ex){
 			getOwner().nodeLog(2, "Could not send parcel: " + ex.getMessage());
 		}
     }

@@ -131,6 +131,26 @@ public class Path {
         return identifier;
     }
 	
+	@Override
+	public String toString(){
+		StringBuilder construct = new StringBuilder();
+		ArrayList<Node> stops = getStops();
+		boolean first_added = false;
+		
+		construct.append("[");
+		for(Node stop : stops){
+			if(first_added){
+				construct.append(" -> ");
+			}
+			
+			construct.append(stop.getAddress());
+			first_added = true;
+		}
+		construct.append("]");
+		
+		return construct.toString();
+	}
+	
 	public static ArrayList<Path> convertToRawPaths(ArrayList<OutwardPath> outwards_paths){
 		ArrayList<Path> paths_raw = new ArrayList<>();
 		for(OutwardPath outward_path : outwards_paths){

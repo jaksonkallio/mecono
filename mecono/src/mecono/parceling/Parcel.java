@@ -35,7 +35,7 @@ public abstract class Parcel {
 	 */
 	public abstract Node getOriginator() throws MissingParcelDetailsException;
 
-	public void setPathHistory(Path path_history) {
+	public final void setPathHistory(Path path_history) {
 		this.path_history = path_history;
 	}
 

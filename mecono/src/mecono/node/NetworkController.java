@@ -33,30 +33,33 @@ public class NetworkController {
         }
     }
 
-    public void sendParcel(ForeignParcel parcel) {
-        try {
-            // Serialize the parcel. Serialization includes an encryption process.
-            JSONObject serialized_parcel = parcel.serialize();
+    public void sendParcel(ForeignParcel parcel) throws MissingParcelDetailsException, BadProtocolException {
+		//mailbox.getOwner().nodeLog(0, "In sendParcel");
+		
+		// Serialize the parcel. Serialization includes an encryption process.
+		JSONObject serialized_parcel = parcel.serialize();
 
-            // Simulation of the network controller means that we call the receive method on the next nodes network controller.
-            RemoteNode remote_receiver = parcel.getNextNode();
+		// Simulation of the network controller means that we call the receive method on the next nodes network controller.
+		RemoteNode remote_receiver = parcel.getNextNode();
 
-            if (remote_receiver != null) {
-                if (Mecono.simulated_network) {
-                    boolean neighbor_connection_exists = false;
+		if (remote_receiver != null) {
+			if (Mecono.simulated_network) {
+				boolean neighbor_connection_exists = false;
 
-                    if (mailbox.getOwner().isNeighbor(remote_receiver)) {
-                        SimSelfNode receiver = SimNetwork.getSelfNodeFromRemoteNode(remote_receiver);
-                        receiver.getMailbox().getNetworkController().receiveData(serialized_parcel.toString());
-                        mailbox.getOwner().nodeLog(4, "Sent " + parcel.toString() + " to " + receiver.getAddressLabel());
-                    }
-                } else {
-                    // TODO: Non-simulation sending routine
-                }
-            }
-        } catch (MissingParcelDetailsException ex) {
-            mailbox.getOwner().nodeLog(2, "Could not send parcel: " + ex.getMessage());
-        }
+				if (mailbox.getOwner().isNeighbor(remote_receiver)) {
+					SimSelfNode receiver = SimNetwork.getSelfNodeFromRemoteNode(remote_receiver);
+					receiver.getMailbox().getNetworkController().receiveData(serialized_parcel.toString());
+					//mailbox.getOwner().nodeLog(4, "Sent " + parcel.toString() + " to " + receiver.getAddressLabel());
+				}else{
+					throw new MissingParcelDetailsException("Next node is not neighbor");
+				}
+			} else {
+				// TODO: Non-simulation sending routine
+				throw new BadProtocolException("Only simulated network is available");
+			}
+		} else {
+			throw new MissingParcelDetailsException("Next node is null");
+		}
     }
 
     private final Mailbox mailbox;
