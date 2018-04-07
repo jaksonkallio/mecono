@@ -134,7 +134,7 @@ public class RemoteNode implements Node {
             @Override
             public int compare(PathStats path2, PathStats path1) {
 
-                return (int) (1000 * (path2.getReliability() - path1.getReliability()));
+                return (int) (1000 * (path2.reliability() - path1.reliability()));
             }
         });
     }
