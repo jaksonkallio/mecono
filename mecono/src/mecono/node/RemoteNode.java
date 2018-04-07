@@ -44,8 +44,8 @@ public class RemoteNode implements Node {
             // If the first stop is the self node, and the last stop is this node, then store
             if (!isPathKnown(path)) {
                 // If this path isn't already known
-				PathStats path_stats = new PathStats(path, indexer);
-                paths_to.add(path_stats);
+                PathStats path_stats = indexer.getMemoryController().loadPath(path);
+				paths_to.add(path_stats);
             }
         }
     }

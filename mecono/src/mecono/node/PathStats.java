@@ -19,7 +19,7 @@ public class PathStats {
 		this(path, RNG.generateString(5), indexer);
 	}
 	
-	public String getIdentifier(){
+	public String identifier(){
 		return identifier;
 	}
 	
@@ -28,10 +28,15 @@ public class PathStats {
 		if(o instanceof PathStats){
 			PathStats other = (PathStats) o;
 			
-			return this.getIdentifier().equals(other.getIdentifier());
+			return this.identifier().equals(other.identifier());
 		}
 		
 		return false;
+	}
+	
+	@Override
+	public String toString(){
+		return "Path ["+successes()+" s]["+failures()+" f]"+getPath().toString();
 	}
 	
 	public void markUsed(){
@@ -63,6 +68,10 @@ public class PathStats {
 	
 	public int successes(){
 		return successes;
+	}
+	
+	public int failures(){
+		return failures;
 	}
 	
 	public Path getPath(){
