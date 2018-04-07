@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import mecono.parceling.BadPathException;
 import org.json.JSONArray;
 
 /**
@@ -71,9 +72,17 @@ public class Path {
      * @param end
      * @return Path Resulting subpath.
      */
-    public Path getSubpath(int start, int end) {
+    public Path getSubpath(int start, int end) throws BadPathException {
         ArrayList<Node> subpath_stops = new ArrayList<>();
 
+		if(start < 0){
+			throw new BadPathException("Subpath starting below zero");
+		}
+		
+		if(end >= getPathLength()){
+			throw new BadPathException("Subpath ending after last node");
+		}
+		
         while (start <= end) {
             subpath_stops.add(stops.get(start));
             start++;
@@ -94,7 +103,13 @@ public class Path {
      * @return
      */
     public Path getSubpath(int end) {
-        return getSubpath(0, end);
+		try {
+			return getSubpath(0, end);
+		} catch(BadPathException ex) {
+			// TODO: Should never happen
+		}
+		
+		return null;
     }
 
     /**
@@ -103,7 +118,13 @@ public class Path {
      * @return
      */
     public Path getIntermediatePath() {
-        return this.getSubpath(1, this.getPathLength() - 2);
+		try {
+			return this.getSubpath(1, this.getPathLength() - 2);
+		} catch(BadPathException ex) {
+			// TODO: Should never happen
+		}
+		
+		return null;
     }
 
     public static Path unserialize(String ser_path, SelfNode owner) {
