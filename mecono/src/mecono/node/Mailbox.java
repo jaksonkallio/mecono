@@ -84,7 +84,7 @@ public class Mailbox {
             construct = "Parcels in outbox:";
 
             for (DestinationParcel parcel : outbox) {
-                construct += "\n--" + parcel.toString();
+                construct += "\n-- " + parcel.toString();
 
 				/*try {
 					if (!parcel.isActualPathKnown()) {
