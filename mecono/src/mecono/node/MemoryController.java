@@ -1,6 +1,7 @@
 package mecono.node;
 
 import java.util.ArrayList;
+import mecono.parceling.BadPathException;
 
 /**
  *
@@ -28,7 +29,7 @@ public class MemoryController {
 		return new_node;
 	}
 
-	public PathStats loadPath(Path target) {
+	public PathStats loadPath(Path target) throws BadPathException {
 		// Check if node is loaded into memory
 		for (PathStats path : paths_memory) {
 			if (path.getPath().equals(target)) {

@@ -116,7 +116,7 @@ public class SelfNode implements Node {
 				response.setDestination(originator); // Set the destination to the person that contacted us (a response)
 				response.placeInOutbox(); // Send the response
 			}else{
-				throw new MissingParcelDetailsException("Unknown parcel type");
+				throw new MissingParcelDetailsException("No defined upon-receive action");
 			}
 		} catch(MissingParcelDetailsException ex){
 			nodeLog(2, "Could not handle received parcel: " + ex.getMessage());

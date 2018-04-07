@@ -1,5 +1,6 @@
 package mecono.node;
 
+import mecono.parceling.BadPathException;
 import mecono.protocol.Protocol;
 import mecono.protocol.RNG;
 
@@ -9,13 +10,15 @@ import mecono.protocol.RNG;
  */
 public class PathStats {
 	
-	public PathStats(Path path, String identifier, SelfNode indexer){
-		this.path = path;
+	public PathStats(Path path, String identifier, SelfNode indexer) throws BadPathException {
 		this.identifier = identifier;
 		this.indexer = indexer;
+		
+		validateOutwardPath(path);
+		this.path = path;
 	}
 	
-	public PathStats(Path path, SelfNode indexer){
+	public PathStats(Path path, SelfNode indexer) throws BadPathException {
 		this(path, RNG.generateString(5), indexer);
 	}
 	
@@ -72,6 +75,20 @@ public class PathStats {
 	
 	public int failures(){
 		return failures;
+	}
+	
+	private void validateOutwardPath(Path path) throws BadPathException {
+		if(path == null) {
+			throw new BadPathException("Path is null");
+		}
+		
+		if(path.getPathLength() < 2){
+			throw new BadPathException("Path "+path.toString()+" is less than two nodes");
+		}
+		
+		if(!path.getStop(0).equals(indexer)){
+			throw new BadPathException("Indexer is not first node in path "+path.toString());
+		}
 	}
 	
 	public Path getPath(){

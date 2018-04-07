@@ -23,18 +23,20 @@ public class Path {
 
     @Override
     public boolean equals(Object o) {
-        Path other = (Path) o;
-        boolean is_equal = true;
+		if(o instanceof Path){
+			Path other = (Path) o;
 
-        for (int i = 0; i < getPathLength(); i++) {
-            // If we find just one node out of place, paths are different
-            if (!this.getStop(i).equals(other.getStop(i))) {
-                is_equal = false;
-                break;
-            }
-        }
-
-        return is_equal;
+			for (int i = 0; i < getPathLength(); i++) {
+				// If we find just one node out of place, paths are different
+				if (!this.getStop(i).equals(other.getStop(i))) {
+					return false;
+				}
+			}
+			
+			return true;
+		}
+		
+        return false;
     }
 
     /**

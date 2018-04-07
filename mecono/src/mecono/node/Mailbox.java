@@ -10,6 +10,7 @@ import mecono.parceling.types.FindParcel;
 import mecono.parceling.DestinationParcel;
 import java.util.ArrayList;
 import java.util.Queue;
+import mecono.parceling.BadPathException;
 import mecono.parceling.DestinationParcel.TransferDirection;
 
 /**
@@ -81,7 +82,7 @@ public class Mailbox {
         String construct = "No parcels in outbox.";
 
         if (outbox.size() > 0) {
-            construct = "Parcels in outbox:";
+            construct = "";
 
             for (DestinationParcel parcel : outbox) {
                 construct += "\n-- " + parcel.toString();
@@ -119,7 +120,7 @@ public class Mailbox {
 			} else if (parcel.consultWhenPathUnknown()) {
 				consultTrustedForPath(destination);
 			}
-		} catch(MissingParcelDetailsException | BadProtocolException ex){
+		} catch(MissingParcelDetailsException | BadProtocolException | BadPathException ex){
 			getOwner().nodeLog(2, "Could not send parcel: " + ex.getMessage());
 		}
     }

@@ -90,7 +90,7 @@ public class DestinationParcel extends Parcel {
 			
 		} catch(MissingParcelDetailsException ex){
 			str += "[Insufficient Details: " + ex.getMessage() + "]";
-		} catch(BadProtocolException ex){
+		} catch(BadProtocolException | BadPathException ex){
 			if(getTransferDirection() == TransferDirection.OUTBOUND){
 				str += "[Illegal to Send: " + ex.getMessage() + "]";
 			}else{
@@ -131,24 +131,25 @@ public class DestinationParcel extends Parcel {
      * @return
 	 * @throws mecono.parceling.MissingParcelDetailsException
 	 * @throws mecono.protocol.BadProtocolException
+	 * @throws mecono.parceling.BadPathException
      */
-    public boolean readyToSend() throws MissingParcelDetailsException, BadProtocolException {
+    public boolean readyToSend() throws MissingParcelDetailsException, BadProtocolException, BadPathException {
 		Path outward_path = getActualPath();
 		
 		if(getTransferDirection() != TransferDirection.OUTBOUND){
 			throw new BadProtocolException("Cannot send when transfer direction is not outbound");
 		}
-		
-		if(!(outward_path instanceof OutwardPath)){
-			return false;
-		}
 
-		if((!isActualPathKnown() || !((OutwardPath) outward_path).isTested()) && !(this instanceof FindParcel)){
+		if(outward_path != null){
+			PathStats path_stats = mailbox.getOwner().getMemoryController().loadPath(outward_path);
+			if(requiresTestedPath() && path_stats.successes() > 0){
+				return false;
+			}
+		}else{
 			return false;
 		}
 
 		return true;
-		//return (isActualPathKnown() && ((OutwardPath) outward_path).isTested()) || mailbox.getOwner().isNeighbor((RemoteNode) getDestination());
     }
 
     public int getTimeReceived() {

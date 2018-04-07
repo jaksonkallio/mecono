@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Set;
+import mecono.parceling.BadPathException;
 
 /**
  *
@@ -39,7 +40,7 @@ public class RemoteNode implements Node {
 		}
 	}
 
-    public void learnPath(Path path) {
+    public void learnPath(Path path) throws BadPathException {
         if (indexer.isNeighbor((RemoteNode) path.getStop(1)) && path.getStop(path.getPathLength() - 1).equals(this)) {
             // If the first stop is the self node, and the last stop is this node, then store
             if (!isPathKnown(path)) {
@@ -106,7 +107,11 @@ public class RemoteNode implements Node {
             stops.add(indexer);
             stops.add(this);
             OutwardPath direct_path = new OutwardPath(stops);
-            learnPath(direct_path);
+            try {
+				learnPath(direct_path);
+			}catch(BadPathException ex){
+				indexer.nodeLog(2, "Could learn neighborship", ex.getMessage());
+			}
         }
 
         sortPaths();
