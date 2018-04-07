@@ -77,19 +77,25 @@ public class DestinationParcel extends Parcel {
 				}else{
 					str += outward_path.toString();
 				}
+				
+				if(readyToSend()){
+					str += "[Ready]";
+				}else{
+					str += "[Not Ready]";
+				}
 			}else{
 				str += "[Origin: " + getOriginator().getAddress() + "]";
 			}
 			
-			if(readyToSend()){
-				str += "[Ready]";
-			}else{
-				str += "[Not Ready]";
-			}
+			
 		} catch(MissingParcelDetailsException ex){
 			str += "[Insufficient Details: " + ex.getMessage() + "]";
 		} catch(BadProtocolException ex){
-			str += "[Illegal to Send: " + ex.getMessage() + "]";
+			if(getTransferDirection() == TransferDirection.OUTBOUND){
+				str += "[Illegal to Send: " + ex.getMessage() + "]";
+			}else{
+				str += "[Illegal: " + ex.getMessage() + "]";
+			}
 		}
 		
 		
