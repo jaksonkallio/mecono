@@ -411,7 +411,7 @@ public class DestinationParcel extends Parcel {
 				throw new MissingParcelDetailsException("Cannot generate path after being placed in outbox");
 			}*/
 			
-			actual_path = ((RemoteNode) destination).getIdealPath();
+			actual_path = ((RemoteNode) destination).getIdealPath().getPath();
 		}
 		
 		return actual_path;

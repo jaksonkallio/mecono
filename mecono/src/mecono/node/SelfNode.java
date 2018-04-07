@@ -6,6 +6,7 @@ import mecono.parceling.types.DataParcel;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.DestinationParcel;
 import java.util.ArrayList;
+import mecono.parceling.BadPathException;
 import mecono.parceling.DestinationParcel.TransferDirection;
 import mecono.parceling.types.FindParcel;
 import mecono.parceling.types.FindResponseParcel;
@@ -99,6 +100,8 @@ public class SelfNode implements Node {
         nodeLog(1, "Data received via mecono network: " + parcel.toString());
 		
 		try {
+			learnPath(parcel.getActualPath());
+			
 			if(parcel instanceof FindParcel){
 				RemoteNode originator = (RemoteNode) parcel.getOriginator();
 				
@@ -112,11 +115,15 @@ public class SelfNode implements Node {
 				response.setTargetAnswers(available_paths); // Set response to our answer
 				response.setDestination(originator); // Set the destination to the person that contacted us (a response)
 				response.placeInOutbox(); // Send the response
+			}else{
+				throw new MissingParcelDetailsException("Unknown parcel type");
 			}
 		} catch(MissingParcelDetailsException ex){
 			nodeLog(2, "Could not handle received parcel: " + ex.getMessage());
 		} catch(UnknownResponsibilityException ex){
-			nodeLog(2, "Uknown responsibility when sending response: " + ex.getMessage());
+			nodeLog(2, "Unknown responsibility when sending response: " + ex.getMessage());
+		} catch(BadPathException ex){
+			nodeLog(2, "Cannot learn path from received parcel: " + ex.getMessage());
 		}
     }
 
@@ -137,6 +144,10 @@ public class SelfNode implements Node {
         }
 
         return construct;
+    }
+	
+	public String nodeLog(int importance, String message, String submessage) {
+		return nodeLog(importance, message + ": " + submessage);
     }
 
     /**
@@ -161,10 +172,58 @@ public class SelfNode implements Node {
      * Takes in a path and updates all remote node's paths mentioned.
      *
      * @param path
+	 * @throws mecono.parceling.BadPathException
      */
-    public void learnPath(Path path) {
+    public void learnPath(Path path) throws BadPathException {
 		// TODO: Fix to work with OutwardPath system. Given a path, find/construct useful outward paths.
 		
+		// Learning a path is only useful if there are 2+ nodes
+		if(path.getPathLength() < 2){
+			throw new BadPathException("Path contains less than two nodes");
+		}
+		
+		boolean self_node_found = false;
+		int count = 0;
+
+		for(int i = 0; i < path.getPathLength(); i++){
+			if(path.getStop(i).equals(this)){
+				// We don't want there to be multiple instances of a self node in a path
+				if(self_node_found){
+					throw new BadPathException("Self node included twice in one path");
+				}
+
+				self_node_found = true;
+			}else{
+				count++;
+			}
+		}
+
+		if(!self_node_found){
+			throw new BadPathException("Self node not included in path");
+		}
+
+		if(count == 0){
+			// Base case, the self node is the first node in the path
+			// Learn every subsequent path, like:
+			/*
+			SelfNode -> B -> C -> D (Learn a path from SelfNode to D)
+			SelfNode -> B -> C
+			SelfNode -> B (Will almost always be ignored, since B is a neighbor)
+			(Done)
+			*/ 
+			while (path.getPathLength() >= 2) {
+                ((RemoteNode) path.getStop(path.getPathLength() - 1)).learnPath(path);
+                // Get the subpath, which is the same path but with the last node chopped off.
+                path = path.getSubpath(path.getPathLength() - 2);
+            }
+		}else{
+			Path before = path.getSubpath(0, count);
+			Path after = path.getSubpath(count, path.getPathLength());
+
+			before.reverse();
+			learnPath(before);
+			learnPath(after);
+		}
         /*if (path.getStop(0).equals(this)) {
             // Verify that stop 0 is the self node
             Path working_path = path;

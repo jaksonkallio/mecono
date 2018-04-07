@@ -2,6 +2,7 @@ package mecono.node;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.json.JSONArray;
 
@@ -81,6 +82,10 @@ public class Path {
         return new Path(subpath_stops);
     }
 
+	public void reverse(){
+		Collections.reverse(stops);
+	}
+	
     /**
      * More specific use of getSubpath to only get the start of the path up to
      * the end value.
@@ -151,10 +156,10 @@ public class Path {
 		return construct.toString();
 	}
 	
-	public static ArrayList<Path> convertToRawPaths(ArrayList<OutwardPath> outwards_paths){
+	public static ArrayList<Path> convertToRawPaths(ArrayList<PathStats> outwards_paths){
 		ArrayList<Path> paths_raw = new ArrayList<>();
-		for(OutwardPath outward_path : outwards_paths){
-			paths_raw.add(outward_path);
+		for(PathStats outward_path : outwards_paths){
+			paths_raw.add(outward_path.getPath());
 		}
 		return paths_raw;
 	}

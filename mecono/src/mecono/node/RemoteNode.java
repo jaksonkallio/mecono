@@ -17,10 +17,12 @@ public class RemoteNode implements Node {
         this.indexer = indexer;
     }
 
+	@Override
     public String getAddress() {
         return address;
     }
 
+	@Override
     public String getLabel() {
         return label;
     }
@@ -37,12 +39,13 @@ public class RemoteNode implements Node {
 		}
 	}
 
-    public void learnPath(OutwardPath path) {
+    public void learnPath(Path path) {
         if (indexer.isNeighbor((RemoteNode) path.getStop(1)) && path.getStop(path.getPathLength() - 1).equals(this)) {
             // If the first stop is the self node, and the last stop is this node, then store
             if (!isPathKnown(path)) {
                 // If this path isn't already known
-                paths_to.add(path);
+				PathStats path_stats = new PathStats(path, indexer);
+                paths_to.add(path_stats);
             }
         }
     }
@@ -85,7 +88,7 @@ public class RemoteNode implements Node {
         return paths_to.size();
     }
 
-	public ArrayList<OutwardPath> getPathsTo(){
+	public ArrayList<PathStats> getPathsTo(){
 		return paths_to;
 	}
 	
@@ -97,7 +100,7 @@ public class RemoteNode implements Node {
         return ping;
     }
 
-    public OutwardPath getIdealPath() {
+    public PathStats getIdealPath() {
         if (indexer.isNeighbor(this)) {
             ArrayList<Node> stops = new ArrayList<>();
             stops.add(indexer);
@@ -117,8 +120,8 @@ public class RemoteNode implements Node {
     }
 
     private boolean isPathKnown(Path target) {
-        for (Path path : paths_to) {
-            if (path.equals(target)) {
+        for (PathStats path : paths_to) {
+            if (path.getPath().equals(target)) {
                 return true;
             }
         }
@@ -127,9 +130,9 @@ public class RemoteNode implements Node {
     }
 
     private void sortPaths() {
-        Collections.sort(paths_to, new Comparator<OutwardPath>() {
+        Collections.sort(paths_to, new Comparator<PathStats>() {
             @Override
-            public int compare(OutwardPath path2, OutwardPath path1) {
+            public int compare(PathStats path2, PathStats path1) {
 
                 return (int) (1000 * (path2.getReliability() - path1.getReliability()));
             }
@@ -143,7 +146,7 @@ public class RemoteNode implements Node {
     private boolean adversarial; // Flagged as an adversarial node.
     private int ping;
     private int last_ping_time; // Time of the last ping, in minutes.
-    private ArrayList<OutwardPath> paths_to = new ArrayList<>();
+    private ArrayList<PathStats> paths_to = new ArrayList<>();
     private ArrayList<RemoteNode> neighbors; // This node's neighbors, used only for community members.
     private SelfNode indexer;
     private int max_paths = 100; // Only keep the best x paths.

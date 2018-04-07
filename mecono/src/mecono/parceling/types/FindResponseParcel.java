@@ -5,6 +5,7 @@ import mecono.node.Mailbox;
 import mecono.node.OutwardPath;
 import mecono.node.Path;
 import mecono.parceling.DestinationParcel;
+import mecono.parceling.ParcelType;
 import mecono.parceling.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,9 +31,14 @@ public class FindResponseParcel extends DestinationParcel implements Response {
 	}
 	
 	@Override
+	public ParcelType getParcelType() {
+        return ParcelType.FIND_RESPONSE;
+    }
+	
+	@Override
 	public JSONObject getSerializedContent(){
 		JSONObject json_content = new JSONObject();
-        json_content = json_content.put("target_answers", target_answers);
+        json_content.put("target_answers", target_answers);
         return json_content;
 	}
 
