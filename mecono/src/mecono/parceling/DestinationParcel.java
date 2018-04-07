@@ -6,6 +6,7 @@ import mecono.node.Mailbox;
 import mecono.node.Node;
 import mecono.node.OutwardPath;
 import mecono.node.Path;
+import mecono.node.PathStats;
 import mecono.protocol.Protocol;
 import mecono.node.RemoteNode;
 import mecono.node.SelfNode;
@@ -410,8 +411,10 @@ public class DestinationParcel extends Parcel {
 			/*if(isInOutbox()){
 				throw new MissingParcelDetailsException("Cannot generate path after being placed in outbox");
 			}*/
-			
-			actual_path = ((RemoteNode) destination).getIdealPath().getPath();
+			PathStats ideal_path = ((RemoteNode) destination).getIdealPath();
+			if(ideal_path != null){
+				actual_path = ideal_path.getPath();
+			}
 		}
 		
 		return actual_path;
