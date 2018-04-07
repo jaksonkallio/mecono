@@ -174,12 +174,11 @@ public class SelfNode implements Node {
      * @param path
 	 * @throws mecono.parceling.BadPathException
      */
-    public void learnPath(Path path) throws BadPathException {
-		// TODO: Fix to work with OutwardPath system. Given a path, find/construct useful outward paths.
-		
+    public void learnPath(Path path) throws BadPathException {		
 		// Learning a path is only useful if there are 2+ nodes
 		if(path.getPathLength() < 2){
-			throw new BadPathException("Path contains less than two nodes");
+			//throw new BadPathException("Path contains less than two nodes");
+			return;
 		}
 		
 		boolean self_node_found = false;
@@ -194,7 +193,9 @@ public class SelfNode implements Node {
 
 				self_node_found = true;
 			}else{
-				count++;
+				if(!self_node_found){
+					count++;
+				}
 			}
 		}
 
@@ -203,38 +204,43 @@ public class SelfNode implements Node {
 		}
 
 		if(count == 0){
-			// Base case, the self node is the first node in the path
-			// Learn every subsequent path, like:
-			/*
-			SelfNode -> B -> C -> D (Learn a path from SelfNode to D)
-			SelfNode -> B -> C
-			SelfNode -> B (Will almost always be ignored, since B is a neighbor)
-			(Done)
-			*/ 
-			while (path.getPathLength() >= 2) {
-                ((RemoteNode) path.getStop(path.getPathLength() - 1)).learnPath(path);
-                // Get the subpath, which is the same path but with the last node chopped off.
-                path = path.getSubpath(path.getPathLength() - 2);
-            }
+			// Self node is already first node, so its organized
+			learnOrganizedPath(path);
 		}else{
-			Path before = path.getSubpath(0, count);
-			Path after = path.getSubpath(count, path.getPathLength());
-
-			before.reverse();
-			learnPath(before);
-			learnPath(after);
+			try {
+				Path before = path.getSubpath(0, count);
+				Path after = path.getSubpath(count, (path.getPathLength() - 1));
+				before.reverse();
+				learnOrganizedPath(before);
+				learnOrganizedPath(after);
+			}catch(BadPathException ex){
+				//nodeLog(2, "Cannot learn organized path", ex.getMessage());
+			}
 		}
-        /*if (path.getStop(0).equals(this)) {
-            // Verify that stop 0 is the self node
-            Path working_path = path;
-
-            while (working_path.getPathLength() > 1) {
-                ((RemoteNode) working_path.getStop(working_path.getPathLength() - 1)).learnPath(working_path);
-                // Get the subpath, which is the same path but with the last node chopped off.
-                working_path = working_path.getSubpath(working_path.getPathLength() - 2);
-            }
-        }*/
     }
+	
+	private void learnOrganizedPath(Path path) throws BadPathException {
+		/*
+		SelfNode -> B -> C -> D (Learn a path from SelfNode to D)
+		SelfNode -> B -> C
+		SelfNode -> B (Will almost always be ignored, since B is a neighbor)
+		(Done)
+		*/ 
+		
+		if(path.getPathLength() < 2){
+			throw new BadPathException("Path contains less than two nodes");
+		}
+		
+		if(!path.getStop(0).equals(this)){
+			throw new BadPathException("Self node is not first node in path");
+		}
+		
+		while (path.getPathLength() >= 2) {
+			((RemoteNode) path.getStop(path.getPathLength() - 1)).learnPath(path);
+			// Get the subpath, which is the same path but with the last node chopped off.
+			path = path.getSubpath(path.getPathLength() - 2);
+		}
+	}
 
     /**
      * Sends a data parcel to a given node, containing the given message.
@@ -257,6 +263,7 @@ public class SelfNode implements Node {
     /**
      * Checks if the given neighbor is a neighbor.
      *
+	 * @param neighbor
      * @param node
      * @return Neighborship status.
      */
