@@ -4,7 +4,7 @@ package mecono.protocol;
  *
  * @author jak
  */
-public class UnknownResponsibilityException extends Exception {
+public class UnknownResponsibilityException extends MeconoException {
 
 	public UnknownResponsibilityException() {
 		super();

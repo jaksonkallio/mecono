@@ -4,7 +4,7 @@ package mecono.protocol;
  *
  * @author jak
  */
-public class BadProtocolException extends Exception {
+public class BadProtocolException extends MeconoException {
 
 	public BadProtocolException() {
 		super();

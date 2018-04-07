@@ -1,10 +1,12 @@
 package mecono.parceling;
 
+import mecono.protocol.MeconoException;
+
 /**
  *
  * @author jak
  */
-public class BadPathException extends Exception {
+public class BadPathException extends MeconoException {
 
 	public BadPathException() {
 		super();
