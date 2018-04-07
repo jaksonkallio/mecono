@@ -43,6 +43,10 @@ public class MemoryController {
 
 		return new_path;
 	}
+	
+	public ArrayList<RemoteNode> getNodeMemory(){
+		return nodes_memory;
+	}
 
 	private SelfNode owner;
 	private ArrayList<RemoteNode> nodes_memory = new ArrayList<>();

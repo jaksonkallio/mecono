@@ -14,6 +14,8 @@ import javafx.geometry.Insets;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import mecono.node.Neighbor;
+import mecono.node.Path;
+import mecono.node.PathStats;
 import mecono.node.RemoteNode;
 import mecono.protocol.SimNetwork;
 
@@ -108,12 +110,44 @@ public class SimGUI {
 			
 			appendNodeConsole(str);
 		});
+		
+		discovered_nodes_button.setOnAction(event -> {
+			ArrayList<RemoteNode> discovered_nodes = selected_node.getMemoryController().getNodeMemory();
+			StringBuilder discovered_nodes_str = new StringBuilder();
+			
+			int discovered_nodes_count = 0;
+			for(RemoteNode node : discovered_nodes){
+				int known_paths = 0;
+				
+				discovered_nodes_count++;
+				
+				discovered_nodes_str.append("-- ");
+				discovered_nodes_str.append(node.getAddress());
+				discovered_nodes_str.append("\n");
+				
+				for(PathStats path : node.getPathsTo()){
+					known_paths++;
+					discovered_nodes_str.append("  -- ");
+					discovered_nodes_str.append(path.toString());
+					discovered_nodes_str.append("\n");
+				}
+				
+				discovered_nodes_str.append("  -- ");
+				discovered_nodes_str.append(known_paths);
+				discovered_nodes_str.append(" known paths\n");
+			}
+			discovered_nodes_str.append("-- ");
+			discovered_nodes_str.append(discovered_nodes_count);
+			discovered_nodes_str.append(" discovered nodes\n");
+			
+			appendNodeConsole(discovered_nodes_str.toString());
+		});
 
 		view_outbox.setOnAction(event -> {
 			appendNodeConsole(selected_node.getMailbox().listOutbox());
 		});
 
-		active_node_actions.getChildren().addAll(get_node_info, send_from_node, view_outbox, toggle_online);
+		active_node_actions.getChildren().addAll(get_node_info, discovered_nodes_button, send_from_node, view_outbox, toggle_online);
 		active_node_area.getChildren().addAll(global_console, active_node_label, node_console, active_node_actions);
 	}
 
@@ -131,6 +165,7 @@ public class SimGUI {
 	private TextArea node_console = new TextArea();
 	private TextArea global_console = new TextArea();
 	private Button get_node_info = new Button("Node Info");
+	private Button discovered_nodes_button = new Button("Discovered Nodes");
 	private Button send_from_node = new Button("Send From");
 	private Button toggle_online = new Button("Toggle Online");
 	private Button view_outbox = new Button("View Outbox");
