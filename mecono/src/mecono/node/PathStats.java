@@ -10,16 +10,21 @@ import mecono.protocol.RNG;
  */
 public class PathStats {
 	
-	public PathStats(Path path, String identifier, SelfNode indexer) throws BadPathException {
+	public PathStats(Path path, String identifier, SelfNode indexer, RemoteNode learned_from) throws BadPathException {
 		this.identifier = identifier;
 		this.indexer = indexer;
 		
 		validateOutwardPath(path);
 		this.path = path;
+		this.learned_from = learned_from;
+	}
+	
+	public PathStats(Path path, SelfNode indexer, RemoteNode learned_from) throws BadPathException {
+		this(path, RNG.generateString(5), indexer, learned_from);
 	}
 	
 	public PathStats(Path path, SelfNode indexer) throws BadPathException {
-		this(path, RNG.generateString(5), indexer);
+		this(path, indexer, null);
 	}
 	
 	public String identifier(){
@@ -39,7 +44,22 @@ public class PathStats {
 	
 	@Override
 	public String toString(){
-		return "Path ["+successes()+" s]["+failures()+" f]"+getPath().toString();
+		StringBuilder str = new StringBuilder();
+		str.append("Path [");
+		str.append(successes());
+		str.append(" s][");
+		str.append(failures());
+		str.append(" f]");
+		
+		if(getLearnedFrom() != null){
+			str.append("[Learned from: ");
+			str.append(getLearnedFrom().getAddress());
+			str.append("] ");
+		}
+		
+		str.append(getPath().toString());
+		
+		return str.toString();
 	}
 	
 	public void markUsed(){
@@ -95,6 +115,10 @@ public class PathStats {
 		return path;
 	}
 	
+	public RemoteNode getLearnedFrom(){
+		return learned_from;
+	}
+	
 	public double reliability() {
         double reliability = 0;
 
@@ -124,6 +148,7 @@ public class PathStats {
 	private int successes = 0;
 	private int failures = 0;
 	private int pending = 0;
+	private final RemoteNode learned_from;
 	private int last_used = 0; // Epoch minute timestamp of last successful use
 	private final SelfNode indexer;
 	private final String identifier;

@@ -29,7 +29,7 @@ public class MemoryController {
 		return new_node;
 	}
 
-	public PathStats loadPath(Path target) throws BadPathException {
+	/*public PathStats loadPath(Path target) throws BadPathException {
 		// Check if node is loaded into memory
 		for (PathStats path : paths_memory) {
 			if (path.getPath().equals(target)) {
@@ -41,9 +41,10 @@ public class MemoryController {
 		// Return a new blank path
 		PathStats new_path = new PathStats(target, owner);
 		paths_memory.add(new_path);
+		owner.nodeLog(0, "Learned path: " + new_path.toString());
 
 		return new_path;
-	}
+	}*/
 	
 	public ArrayList<RemoteNode> getNodeMemory(){
 		return nodes_memory;
@@ -51,6 +52,6 @@ public class MemoryController {
 
 	private SelfNode owner;
 	private ArrayList<RemoteNode> nodes_memory = new ArrayList<>();
-	private ArrayList<PathStats> paths_memory = new ArrayList<>();
+	//private ArrayList<PathStats> paths_memory = new ArrayList<>();
 	private final int max_loaded_nodes = 1000; // Only keep the X most important nodes.
 }

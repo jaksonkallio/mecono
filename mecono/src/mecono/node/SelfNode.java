@@ -100,7 +100,7 @@ public class SelfNode implements Node {
         nodeLog(1, "Data received via mecono network: " + parcel.toString());
 		
 		try {
-			learnPath(parcel.getActualPath());
+			learnPath(parcel.getActualPath(), null);
 			
 			if(parcel instanceof FindParcel){
 				RemoteNode originator = (RemoteNode) parcel.getOriginator();
@@ -115,8 +115,15 @@ public class SelfNode implements Node {
 				response.setTargetAnswers(available_paths); // Set response to our answer
 				response.setDestination(originator); // Set the destination to the person that contacted us (a response)
 				response.placeInOutbox(); // Send the response
+			}else if(parcel instanceof FindResponseParcel){
+				for(Path target_answer : ((FindResponseParcel) parcel).getTargetAnswers()){
+					// A protocol policy is to only return paths that start with self node
+					if(target_answer.getStop(0).equals(parcel.getOriginator())){
+						learnUsingPathExtension(target_answer, (RemoteNode) parcel.getOriginator());
+					}
+				}
 			}else{
-				throw new MissingParcelDetailsException("No defined upon-receive action");
+				throw new MissingParcelDetailsException("No defined upon-receive action for parcel type "+parcel.getParcelType().name());
 			}
 		} catch(MissingParcelDetailsException ex){
 			nodeLog(2, "Could not handle received parcel: " + ex.getMessage());
@@ -126,6 +133,30 @@ public class SelfNode implements Node {
 			nodeLog(2, "Cannot learn path from received parcel: " + ex.getMessage());
 		}
     }
+	
+	/**
+	 * Constructs paths using an isolated path, most likely given by a FindResponse parcel.
+	 * @param extension 
+	 * @param learned_from 
+	 */
+	public void learnUsingPathExtension(Path extension, RemoteNode learned_from){
+		/*
+		SelfNode knows path...
+		SN -> B -> C
+		...and asks "C" for a path to "F". One of the responses (`extension` argument) from "C" is...
+		C -> D -> E -> F
+		SelfNode looks up "C" and all the paths to it. For each known path to C, we can learnPath(known_path + extension)
+		*/
+		ArrayList<PathStats> paths_to_responder = ((RemoteNode) extension.getStop(0)).getPathsTo();
+		for(PathStats path_stats : paths_to_responder){
+			try {
+				Path extended_path = new Path(path_stats.getPath(), extension.getSubpath(1, (extension.getPathLength() - 1)));
+				learnPath(extended_path, learned_from);
+			}catch(BadPathException ex){
+				
+			}
+		}
+	}
 
     /**
      * Log a message to the node's log.
@@ -174,7 +205,7 @@ public class SelfNode implements Node {
      * @param path
 	 * @throws mecono.parceling.BadPathException
      */
-    public void learnPath(Path path) throws BadPathException {		
+    public void learnPath(Path path, RemoteNode learned_from) throws BadPathException {		
 		// Learning a path is only useful if there are 2+ nodes
 		if(path.getPathLength() < 2){
 			//throw new BadPathException("Path contains less than two nodes");
@@ -205,21 +236,21 @@ public class SelfNode implements Node {
 
 		if(count == 0){
 			// Self node is already first node, so its organized
-			learnOrganizedPath(path);
+			learnOrganizedPath(path, learned_from);
 		}else{
 			try {
 				Path before = path.getSubpath(0, count);
 				Path after = path.getSubpath(count, (path.getPathLength() - 1));
 				before.reverse();
-				learnOrganizedPath(before);
-				learnOrganizedPath(after);
+				learnOrganizedPath(before, learned_from);
+				learnOrganizedPath(after, learned_from);
 			}catch(BadPathException ex){
 				//nodeLog(2, "Cannot learn organized path", ex.getMessage());
 			}
 		}
     }
 	
-	private void learnOrganizedPath(Path path) throws BadPathException {
+	private void learnOrganizedPath(Path path, RemoteNode learned_from) throws BadPathException {
 		/*
 		SelfNode -> B -> C -> D (Learn a path from SelfNode to D)
 		SelfNode -> B -> C
@@ -236,7 +267,7 @@ public class SelfNode implements Node {
 		}
 		
 		while (path.getPathLength() >= 2) {
-			((RemoteNode) path.getStop(path.getPathLength() - 1)).learnPath(path);
+			((RemoteNode) path.getStop(path.getPathLength() - 1)).learnPath(path, learned_from);
 			// Get the subpath, which is the same path but with the last node chopped off.
 			path = path.getSubpath(path.getPathLength() - 2);
 		}

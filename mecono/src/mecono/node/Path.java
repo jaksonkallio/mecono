@@ -13,19 +13,39 @@ import org.json.JSONArray;
  */
 public class Path {
 
-    public Path() {
-
-    }
-
     public Path(ArrayList<Node> stops) {
         this.stops = stops;
     }
+	
+	public Path(Path copy_path){
+		this.stops = copy_path.getStops();
+	}
+	
+	public Path(Path concat_path1, Path concat_path2){
+		ArrayList<Node> stops_path1 = null;
+		ArrayList<Node> stops_path2 = null;
+		
+		if(concat_path1 != null && concat_path2 != null){
+			stops_path1 = concat_path1.getStops();
+			stops_path2 = concat_path1.getStops();
+
+			for(Node stop : stops_path2){
+				stops_path1.add(stop);
+			}
+		}
+		
+		this.stops = stops_path1;
+	}
 
     @Override
     public boolean equals(Object o) {
 		if(o instanceof Path){
 			Path other = (Path) o;
 
+			if(other.getPathLength() != this.getPathLength()){
+				return false;
+			}
+			
 			for (int i = 0; i < getPathLength(); i++) {
 				// If we find just one node out of place, paths are different
 				if (!this.getStop(i).equals(other.getStop(i))) {
@@ -187,5 +207,5 @@ public class Path {
 		return paths_raw;
 	}
 
-    private ArrayList<Node> stops;
+    private final ArrayList<Node> stops;
 }

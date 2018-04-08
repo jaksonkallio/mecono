@@ -2,12 +2,10 @@ package mecono.parceling.types;
 
 import java.util.ArrayList;
 import mecono.node.Mailbox;
-import mecono.node.OutwardPath;
 import mecono.node.Path;
 import mecono.parceling.DestinationParcel;
 import mecono.parceling.ParcelType;
 import mecono.parceling.Response;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -25,6 +23,10 @@ public class FindResponseParcel extends DestinationParcel implements Response {
 			this.target_answers = target_answers;
 		}
 	}
+	
+	public ArrayList<Path> getTargetAnswers(){
+		return target_answers;
+	}
 
 	public void unserializeContent() {
 
@@ -40,6 +42,11 @@ public class FindResponseParcel extends DestinationParcel implements Response {
 		JSONObject json_content = new JSONObject();
         json_content.put("target_answers", target_answers);
         return json_content;
+	}
+	
+	@Override
+	public boolean requiresTestedPath(){
+		return false;
 	}
 
 	private ArrayList<Path> target_answers = new ArrayList<>();

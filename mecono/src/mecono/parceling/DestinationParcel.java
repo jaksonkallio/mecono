@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import mecono.protocol.BadProtocolException;
 import mecono.node.Mailbox;
 import mecono.node.Node;
-import mecono.node.OutwardPath;
 import mecono.node.Path;
 import mecono.node.PathStats;
 import mecono.protocol.Protocol;
@@ -70,7 +69,7 @@ public class DestinationParcel extends Parcel {
 			if(getTransferDirection() == TransferDirection.OUTBOUND){
 				str += "[Destination: " + getDestination().getAddress() + "]";
 				
-				OutwardPath outward_path = (OutwardPath) getActualPath();
+				Path outward_path = getActualPath();
 				
 				if(outward_path == null){
 					str += "[Unknown Path]";
@@ -134,18 +133,13 @@ public class DestinationParcel extends Parcel {
 	 * @throws mecono.parceling.BadPathException
      */
     public boolean readyToSend() throws MissingParcelDetailsException, BadProtocolException, BadPathException {
-		Path outward_path = getActualPath();
+		getActualPath();
 		
 		if(getTransferDirection() != TransferDirection.OUTBOUND){
 			throw new BadProtocolException("Cannot send when transfer direction is not outbound");
 		}
 
-		if(outward_path != null){
-			PathStats path_stats = mailbox.getOwner().getMemoryController().loadPath(outward_path);
-			if(requiresTestedPath() && path_stats.successes() > 0){
-				return false;
-			}
-		}else{
+		if(getActualPath() == null || getOutboundActualPath() == null || (requiresTestedPath() && getOutboundActualPath().successes() <= 0)){
 			return false;
 		}
 
@@ -390,9 +384,8 @@ public class DestinationParcel extends Parcel {
             // Only construct the foreign parcel if the path is completely built.
             if (isActualPathKnown()) {
 				ForeignParcel outbound_foreign_parcel = new ForeignParcel(mailbox, getActualPath(), encryptAsPayload());
-				Path new_path_history = new Path();
 				// The path history will contain current node + next node
-				new_path_history = getActualPath().getSubpath(1);
+				Path new_path_history = getActualPath().getSubpath(1);
 				outbound_foreign_parcel.setPathHistory(new_path_history);
                 return outbound_foreign_parcel;
             } else {
@@ -420,7 +413,8 @@ public class DestinationParcel extends Parcel {
 			}*/
 			PathStats ideal_path = ((RemoteNode) destination).getIdealPath();
 			if(ideal_path != null){
-				actual_path = ideal_path.getPath();
+				outbound_actual_path = ideal_path;
+				actual_path = outbound_actual_path.getPath();
 			}
 		}
 		
@@ -429,6 +423,10 @@ public class DestinationParcel extends Parcel {
 	
 	public boolean isActualPathKnown() throws MissingParcelDetailsException {
 		return getActualPath() != null;
+	}
+	
+	public PathStats getOutboundActualPath(){
+		return outbound_actual_path;
 	}
 	
     @Override
@@ -472,6 +470,7 @@ public class DestinationParcel extends Parcel {
     private String unique_id;
     private String signature;
     private Path actual_path;
+	private PathStats outbound_actual_path;
     private ParcelType parcel_type = ParcelType.UNKNOWN;
     private final TransferDirection direction;
 

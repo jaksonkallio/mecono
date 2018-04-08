@@ -40,12 +40,12 @@ public class RemoteNode implements Node {
 		}
 	}
 
-    public void learnPath(Path path) throws BadPathException {
+    public void learnPath(Path path, RemoteNode learned_from) throws BadPathException {
         if (indexer.isNeighbor((RemoteNode) path.getStop(1)) && path.getStop(path.getPathLength() - 1).equals(this)) {
             // If the first stop is the self node, and the last stop is this node, then store
             if (!isPathKnown(path)) {
                 // If this path isn't already known
-                PathStats path_stats = indexer.getMemoryController().loadPath(path);
+                PathStats path_stats = new PathStats(path, indexer, learned_from);
 				paths_to.add(path_stats);
             }
         }
@@ -106,9 +106,9 @@ public class RemoteNode implements Node {
             ArrayList<Node> stops = new ArrayList<>();
             stops.add(indexer);
             stops.add(this);
-            OutwardPath direct_path = new OutwardPath(stops);
+            Path direct_path = new Path(stops);
             try {
-				learnPath(direct_path);
+				learnPath(direct_path, null);
 			}catch(BadPathException ex){
 				indexer.nodeLog(2, "Could learn neighborship", ex.getMessage());
 			}

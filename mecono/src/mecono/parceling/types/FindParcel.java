@@ -62,5 +62,10 @@ public class FindParcel extends DestinationParcel {
 		return false;
 	}
 	
+	@Override
+	public boolean requiresTestedPath(){
+		return false;
+	}
+	
 	private RemoteNode target;
 }
