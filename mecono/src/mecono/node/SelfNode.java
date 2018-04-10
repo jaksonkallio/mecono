@@ -90,6 +90,17 @@ public class SelfNode implements Node {
 			return label;
 		}
     }
+	
+	@Override
+    public boolean equals(Object o) {
+        if(o instanceof Node){
+			Node other = (Node) o;
+
+			return other.getAddress().equals(this.getAddress());
+		}
+		
+		return false;
+    }
 
     /**
      * Receive and process a destination parcel from the mecono network.
@@ -206,13 +217,15 @@ public class SelfNode implements Node {
      * Takes in a path and updates all remote node's paths mentioned.
      *
      * @param path
+	 * @param learned_from
 	 * @throws mecono.parceling.BadPathException
      */
-    public void learnPath(Path path, RemoteNode learned_from) throws BadPathException {		
+    public void learnPath(Path path, RemoteNode learned_from) throws BadPathException {
+		nodeLog(0, "Learning path", path.toString());
+		
 		// Learning a path is only useful if there are 2+ nodes
 		if(path.getPathLength() < 2){
-			//throw new BadPathException("Path contains less than two nodes");
-			return;
+			throw new BadPathException("Path contains less than two nodes");
 		}
 		
 		boolean self_node_found = false;
@@ -248,7 +261,7 @@ public class SelfNode implements Node {
 				learnOrganizedPath(before, learned_from);
 				learnOrganizedPath(after, learned_from);
 			}catch(BadPathException ex){
-				//nodeLog(2, "Cannot learn organized path", ex.getMessage());
+				nodeLog(2, "Cannot learn organized path", ex.getMessage());
 			}
 		}
     }

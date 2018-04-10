@@ -54,12 +54,16 @@ public class RemoteNode implements Node {
     public ArrayList<RemoteNode> getNeighbors() {
         return neighbors;
     }
-
-    @Override
+	
+	@Override
     public boolean equals(Object o) {
-        Node other = (Node) o;
+        if(o instanceof Node){
+			Node other = (Node) o;
 
-        return other.getAddress().equals(this.getAddress());
+			return other.getAddress().equals(this.getAddress());
+		}
+		
+		return false;
     }
 
     public int getNeighborCount() {
@@ -127,6 +131,7 @@ public class RemoteNode implements Node {
     private boolean isPathKnown(Path target) {
         for (PathStats path : paths_to) {
             if (path.getPath().equals(target)) {
+				//indexer.nodeLog(2, "Path already known", target.toString());
                 return true;
             }
         }
