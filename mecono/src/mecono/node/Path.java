@@ -27,7 +27,7 @@ public class Path {
 		
 		if(concat_path1 != null && concat_path2 != null){
 			stops_path1 = new ArrayList<>(concat_path1.getStops());
-			stops_path2 = new ArrayList<>(concat_path1.getStops());
+			stops_path2 = new ArrayList<>(concat_path2.getStops());
 
 			for(Node stop : stops_path2){
 				stops_path1.add(stop);

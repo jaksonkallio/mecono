@@ -153,9 +153,10 @@ public class SelfNode implements Node {
 		for(PathStats path_stats : paths_to_responder){
 			try {
 				Path extended_path = new Path(path_stats.getPath(), extension.getSubpath(1, (extension.getPathLength() - 1)));
+				nodeLog(2, "Attempting to learn extended path", extended_path.toString());
 				learnPath(extended_path, learned_from);
 			}catch(BadPathException ex){
-				
+				nodeLog(2, "Did not learn path", ex.getMessage());
 			}
 		}
 	}
