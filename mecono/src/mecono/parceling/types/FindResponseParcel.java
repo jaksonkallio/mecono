@@ -25,6 +25,10 @@ public class FindResponseParcel extends DestinationParcel implements Response {
 		}
 	}
 	
+	public void setTargetAnswers(JSONArray serialized_target_answers){
+		setTargetAnswers(unserializeContent(serialized_target_answers));
+	}
+	
 	public ArrayList<Path> getTargetAnswers(){
 		return target_answers;
 	}
@@ -49,6 +53,16 @@ public class FindResponseParcel extends DestinationParcel implements Response {
 		
         json_content.put("target_answers", target_answer_array);
         return json_content;
+	}
+	
+	private ArrayList<Path> unserializeContent(JSONArray target_answers_json){
+		ArrayList<Path> unserialized_target_answers = new ArrayList<>();
+		
+		for(int i = 0; i < target_answers_json.length(); i++){
+			unserialized_target_answers.add(Path.unserialize(target_answers_json.getString(i), getMailbox().getOwner()));
+		}
+		
+		return unserialized_target_answers;
 	}
 	
 	@Override

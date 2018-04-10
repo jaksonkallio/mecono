@@ -21,16 +21,17 @@ public class NetworkController {
     }
 
     public void receiveData(String received_parcel_string) {
-        Parcel received_parcel;
+        //Parcel received_parcel;
         JSONObject received_parcel_json = new JSONObject(received_parcel_string);
 
-        try {
-            received_parcel = Parcel.unserialize(received_parcel_json, mailbox.getOwner());
-            mailbox.receiveParcel(received_parcel);
-        } catch (MissingParcelDetailsException ex) {
-            mailbox.getOwner().nodeLog(2, "Could not unserialize received parcel: " + ex.getMessage());
-			mailbox.getOwner().nodeLog(2, "Received parcel JSON: " + received_parcel_json.toString(2));
-        }
+        //try {
+			mailbox.enqueueInbound(received_parcel_json);
+            //received_parcel = Parcel.unserialize(received_parcel_json, mailbox.getOwner());
+           // mailbox.receiveParcel(received_parcel);
+        //} catch (MissingParcelDetailsException ex) {
+           //mailbox.getOwner().nodeLog(2, "Could not unserialize received parcel: " + ex.getMessage());
+			//mailbox.getOwner().nodeLog(2, "Received parcel JSON: " + received_parcel_json.toString(2));
+       // }
     }
 
     public void sendParcel(ForeignParcel parcel) throws MissingParcelDetailsException, BadProtocolException {

@@ -48,6 +48,8 @@ public class MailboxWorker implements Runnable {
 				i = mailbox.getOutboxCount() - 1;
 			}
 			
+			mailbox.processInboundQueue();
+			
 			try{
 				long delay = (long) (((int) (Math.random()*100)) + 5000 * (1 - mailbox.getOwner().performance_modifier));
 				Thread.sleep(delay);

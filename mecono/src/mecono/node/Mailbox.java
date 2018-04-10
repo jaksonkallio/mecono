@@ -10,8 +10,10 @@ import mecono.parceling.types.FindParcel;
 import mecono.parceling.DestinationParcel;
 import java.util.ArrayList;
 import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 import mecono.parceling.BadPathException;
 import mecono.parceling.DestinationParcel.TransferDirection;
+import org.json.JSONObject;
 
 /**
  * The mailbox is responsible for managing parcel sending/receiving, queuing
@@ -184,6 +186,22 @@ public class Mailbox {
 
         return false;
     }
+	
+	public void enqueueInbound(JSONObject serialized_parcel){
+		if(serialized_parcel != null){
+			inbound_queue.offer(serialized_parcel);
+		}
+	}
+	
+	public void processInboundQueue(){
+		if(inbound_queue.size() > 0){
+			try {
+				receiveParcel(Parcel.unserialize(inbound_queue.poll(), getOwner()));
+			} catch(MissingParcelDetailsException ex){
+				getOwner().nodeLog(2, "Could not receive parcel", ex.getMessage());
+			}
+		}
+	}
 
     private final SelfNode owner; // The selfnode that runs the mailbox
     private final MailboxWorker worker;
@@ -191,4 +209,5 @@ public class Mailbox {
     private final NetworkController network_controller;
     private Queue<ForeignParcel> outbound_queue; // Outbound queue
     private ArrayList<DestinationParcel> outbox = new ArrayList<>();
+	private Queue<JSONObject> inbound_queue = new LinkedBlockingQueue<>(); 
 }

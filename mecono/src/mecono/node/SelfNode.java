@@ -121,7 +121,7 @@ public class SelfNode implements Node {
 					
 					// A protocol policy is to only return paths that start with self node
 					if(target_answer.getStop(0).equals(parcel.getOriginator())){
-						//learnUsingPathExtension(target_answer, (RemoteNode) parcel.getOriginator());
+						learnUsingPathExtension(target_answer, (RemoteNode) parcel.getOriginator());
 					}
 				}
 			}else{

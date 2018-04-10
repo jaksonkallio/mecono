@@ -194,6 +194,10 @@ public class DestinationParcel extends Parcel {
 				break;
 			case FIND_RESPONSE:
 				parcel = new FindResponseParcel(relative_self.getMailbox(), DestinationParcel.TransferDirection.INBOUND);
+				if(content_json.has("target_answers")){
+					((FindResponseParcel) parcel).setTargetAnswers(content_json.getJSONArray("target_answers"));
+				}
+				
 				break;
 			case DATA:
 				parcel = new DataParcel(relative_self.getMailbox(), DestinationParcel.TransferDirection.INBOUND);
