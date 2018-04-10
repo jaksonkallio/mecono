@@ -117,9 +117,11 @@ public class SelfNode implements Node {
 				response.placeInOutbox(); // Send the response
 			}else if(parcel instanceof FindResponseParcel){
 				for(Path target_answer : ((FindResponseParcel) parcel).getTargetAnswers()){
+					nodeLog(0, "Target answer: "+target_answer.toString());
+					
 					// A protocol policy is to only return paths that start with self node
 					if(target_answer.getStop(0).equals(parcel.getOriginator())){
-						learnUsingPathExtension(target_answer, (RemoteNode) parcel.getOriginator());
+						//learnUsingPathExtension(target_answer, (RemoteNode) parcel.getOriginator());
 					}
 				}
 			}else{
@@ -336,6 +338,7 @@ public class SelfNode implements Node {
      */
     public void addNeighbor(Neighbor node) {
         neighbors.add(node);
+		node.getNode().getIdealPath();
     }
 
     /**

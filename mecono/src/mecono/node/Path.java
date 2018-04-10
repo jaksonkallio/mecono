@@ -156,6 +156,20 @@ public class Path {
         }
         return new Path(path_nodes);
     }
+	
+	public String serialize() {
+		StringBuilder path_str = new StringBuilder();
+        
+		for (Node node : getStops()) {
+			if(path_str.length() != 0){
+				path_str.append("-");
+			}
+			
+			path_str.append(node.getAddress());
+        }
+
+		return path_str.toString();
+    }
 
     /**
      * Regenerates the serialized identifier.

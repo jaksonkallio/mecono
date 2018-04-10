@@ -6,6 +6,7 @@ import mecono.node.Path;
 import mecono.parceling.DestinationParcel;
 import mecono.parceling.ParcelType;
 import mecono.parceling.Response;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -40,7 +41,13 @@ public class FindResponseParcel extends DestinationParcel implements Response {
 	@Override
 	public JSONObject getSerializedContent(){
 		JSONObject json_content = new JSONObject();
-        json_content.put("target_answers", target_answers);
+		JSONArray target_answer_array = new JSONArray();
+		
+		for(Path path : target_answers){
+			target_answer_array.put(path.serialize());
+		}
+		
+        json_content.put("target_answers", target_answer_array);
         return json_content;
 	}
 	

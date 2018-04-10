@@ -110,7 +110,7 @@ public class RemoteNode implements Node {
             try {
 				learnPath(direct_path, null);
 			}catch(BadPathException ex){
-				indexer.nodeLog(2, "Could learn neighborship", ex.getMessage());
+				indexer.nodeLog(2, "Could not learn neighborship", ex.getMessage());
 			}
         }
 
