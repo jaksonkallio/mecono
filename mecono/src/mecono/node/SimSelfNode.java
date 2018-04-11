@@ -31,7 +31,7 @@ public class SimSelfNode extends SelfNode {
 	public synchronized String nodeLog(int importance, String message){
 		String construct = super.nodeLog(importance, message);
 		
-		if(sim_network != null && sim_network.getSimGUI() != null){
+		if(sim_network != null && sim_network.getSimGUI() != null && construct != null){
 			sim_network.getSimGUI().appendGlobalConsole(construct);
 		}
 		

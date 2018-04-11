@@ -128,7 +128,7 @@ public class SelfNode implements Node {
 				response.placeInOutbox(); // Send the response
 			}else if(parcel instanceof FindResponseParcel){
 				for(Path target_answer : ((FindResponseParcel) parcel).getTargetAnswers()){
-					nodeLog(0, "Target answer: "+target_answer.toString());
+					nodeLog(ErrorStatus.GOOD, LogLevel.VERBOSE, "Target answer: "+target_answer.toString());
 					
 					// A protocol policy is to only return paths that start with self node
 					if(target_answer.getStop(0).equals(parcel.getOriginator())){
@@ -164,36 +164,78 @@ public class SelfNode implements Node {
 		for(PathStats path_stats : paths_to_responder){
 			try {
 				Path extended_path = new Path(path_stats.getPath(), extension.getSubpath(1, (extension.getPathLength() - 1)));
-				nodeLog(2, "Attempting to learn extended path", extended_path.toString());
+				nodeLog(ErrorStatus.INFO, LogLevel.VERBOSE, "Attempting to learn extended path", extended_path.toString());
+				
 				learnPath(extended_path, learned_from);
 			}catch(BadPathException ex){
-				nodeLog(2, "Did not learn path", ex.getMessage());
+				nodeLog(ErrorStatus.FAIL, LogLevel.VERBOSE, "Did not learn path", ex.getMessage());
 			}
 		}
 	}
 
+	public static enum LogLevel {
+		VERBOSE, COMMON, ATTENTION, INTERVENE
+	}
+	
+	public static enum ErrorStatus {
+		INFO, FAIL, GOOD
+	}
+	
     /**
      * Log a message to the node's log.
      *
      * @param importance
+	 * @param log_level
      * @param message
      * @return
      */
-    public String nodeLog(int importance, String message) {
-        String[] importance_levels = {"INFO", "NOTE", "WARN", "CRIT", "GOOD"};
+    public String nodeLog(ErrorStatus error_status, LogLevel log_level, String message) {
+		/*
+		Log Levels:
+		0 - Extremely verbose details. Example: "didn't learn path", "upon receive parcel timed out"
+		1 - Common actions. Example: "sent parcel", "forwarded parcel"
+		2 - Attention actions. Example: "Data received by mecono network"
+		3 - Intervene-required actions. No examples yet.
+		*/
+		if(log_level.ordinal() < MIN_LOG_LEVEL){
+			return null;
+		}
 
-        String construct = "";
-        if (importance <= (importance_levels.length - 1)) {
-            construct = "[" + getLabel().substring(0, 4) + "][" + importance_levels[importance] + "] " + message;
-            System.out.println(construct);
-        }
+        String construct = "[" + getLabel().substring(0, 4) + "][" + error_status.name() + "] " + message;
+        System.out.println(construct);
 
         return construct;
+    }
+	
+	public String nodeLog(int importance, LogLevel log_level, String message) {
+		ErrorStatus error_status = ErrorStatus.INFO;
+		
+		if(importance == 0 || importance == 1){
+			error_status = ErrorStatus.INFO;
+		}
+		
+		if(importance == 2 || importance == 3){
+			error_status = ErrorStatus.FAIL;
+		}
+		
+		if(importance == 4){
+			error_status = ErrorStatus.GOOD;
+		}
+		
+		return nodeLog(error_status, log_level, message);
+    }
+	
+	public String nodeLog(int importance, String message) {
+		return nodeLog(importance, LogLevel.COMMON, message);
     }
 	
 	public String nodeLog(int importance, String message, String submessage) {
 		return nodeLog(importance, message + ": " + submessage);
     }
+	
+	public String nodeLog(ErrorStatus error_status, LogLevel log_level, String message, String submessage) {
+		return nodeLog(error_status, log_level,  message + ": " + submessage);
+	}
 
     /**
      * Get the node's mailbox.
@@ -221,7 +263,7 @@ public class SelfNode implements Node {
 	 * @throws mecono.parceling.BadPathException
      */
     public void learnPath(Path path, RemoteNode learned_from) throws BadPathException {
-		nodeLog(0, "Learning path", path.toString());
+		nodeLog(ErrorStatus.INFO, LogLevel.VERBOSE, "Learning path", path.toString());
 		
 		// Learning a path is only useful if there are 2+ nodes
 		if(path.getPathLength() < 2){
@@ -261,7 +303,7 @@ public class SelfNode implements Node {
 				learnOrganizedPath(before, learned_from);
 				learnOrganizedPath(after, learned_from);
 			}catch(BadPathException ex){
-				nodeLog(2, "Cannot learn organized path", ex.getMessage());
+				nodeLog(ErrorStatus.FAIL, LogLevel.VERBOSE, "Cannot learn organized path", ex.getMessage());
 			}
 		}
     }
@@ -456,6 +498,7 @@ public class SelfNode implements Node {
     }
 
     // Node preferences
+	public static final int MIN_LOG_LEVEL = 1;
     public final int offline_successful_ping_threshold = 8; // A successful ping within the last x minutes means the node is online.
     public final int pinned_ping_interval = 4; // How many minutes between each ping to pinned nodes.
     public final boolean ready_when_offline = true; // Should nodes be considered ready even when offline
