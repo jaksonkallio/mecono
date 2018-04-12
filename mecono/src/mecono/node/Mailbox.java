@@ -5,7 +5,7 @@ import mecono.protocol.UnknownResponsibilityException;
 import mecono.parceling.Parcel;
 import mecono.parceling.ForeignParcel;
 import mecono.parceling.MissingParcelDetailsException;
-import mecono.parceling.UponResponseAction;
+import mecono.parceling.SentParcel;
 import mecono.parceling.types.FindParcel;
 import mecono.parceling.DestinationParcel;
 import java.util.ArrayList;
@@ -110,7 +110,7 @@ public class Mailbox {
 		try {
 			if (parcel.readyToSend()) {
 				// Create the response action/expectation
-				UponResponseAction response_action = new UponResponseAction(this, parcel);
+				SentParcel response_action = new SentParcel(this, parcel);
 
 				// Give to the network controller for sending
 				try {
@@ -173,7 +173,7 @@ public class Mailbox {
      * expecting a response to. Used to protect against spamming the network.
      */
     private boolean expectingResponse(DestinationParcel parcel) {
-        for (UponResponseAction existing_action : upon_response_actions) {
+        for (SentParcel existing_action : upon_response_actions) {
             if (existing_action.getOriginalParcel().equals(parcel)) {
                 return true;
             }
@@ -205,7 +205,7 @@ public class Mailbox {
 
     private final SelfNode owner; // The selfnode that runs the mailbox
     private final MailboxWorker worker;
-    private ArrayList<UponResponseAction> upon_response_actions = new ArrayList<>();
+    private ArrayList<SentParcel> upon_response_actions = new ArrayList<>();
     private final NetworkController network_controller;
     private Queue<ForeignParcel> outbound_queue; // Outbound queue
     private ArrayList<DestinationParcel> outbox = new ArrayList<>();

@@ -257,8 +257,8 @@ public class DestinationParcel extends Parcel {
         return ParcelType.UNKNOWN;
     }
 
-    public UponResponseAction getUponResponseAction() {
-        return new UponResponseAction(mailbox, this);
+    public SentParcel getUponResponseAction() {
+        return new SentParcel(mailbox, this);
     }
 
     public void setParcelType(ParcelType parcel_type) {

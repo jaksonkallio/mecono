@@ -8,9 +8,9 @@ import mecono.protocol.Protocol;
  * initially sending out a signal.
  * @author jak
  */
-public class UponResponseAction {
+public class SentParcel {
 
-	public UponResponseAction(Mailbox mailbox, DestinationParcel original_parcel) {
+	public SentParcel(Mailbox mailbox, DestinationParcel original_parcel) {
 		this.mailbox = mailbox;
 		this.original_parcel = original_parcel;
 		this.response_type = determineResponseType();
@@ -24,7 +24,7 @@ public class UponResponseAction {
 
 	@Override
 	public boolean equals(Object o) {
-		UponResponseAction other = (UponResponseAction) o;
+		SentParcel other = (SentParcel) o;
 		return (this.getOriginalParcel().equals(other.getOriginalParcel()));
 	}
 
