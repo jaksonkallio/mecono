@@ -39,20 +39,20 @@ public class FindResponseParcel extends DestinationParcel implements Response {
 	
 	@Override
 	public String toString(){
-		StringBuilder target_answers = new StringBuilder();
+		StringBuilder target_answers_str = new StringBuilder();
 		if(getTargetAnswers() == null || getTargetAnswers().isEmpty()){
-			target_answers.append("NA");
+			target_answers_str.append("NA");
 		}else{
 			for(Path path : getTargetAnswers()){
-				if(target_answers.length() != 0){
-					target_answers.append(" ,");
+				if(target_answers_str.length() != 0){
+					target_answers_str.append(" ,");
 				}
-				target_answers.append(path.toString());
+				target_answers_str.append(path.toString());
 			}
 			
 		}
 		
-		return super.toString() + "[TargetAnswers: " + target_answers.toString() + "]";
+		return super.toString() + "[TargetAnswers: " + target_answers_str.toString() + "]";
 	}
 	
 	@Override
