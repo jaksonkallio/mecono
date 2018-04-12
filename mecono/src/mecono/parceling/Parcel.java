@@ -38,6 +38,10 @@ public abstract class Parcel {
 	public final void setPathHistory(Path path_history) {
 		this.path_history = path_history;
 	}
+	
+	public static boolean validUniqueID(String unique_id) {
+		return unique_id.length() == 6;
+	}
 
 	public Path getPathHistory() throws MissingParcelDetailsException {
 		if(path_history == null){

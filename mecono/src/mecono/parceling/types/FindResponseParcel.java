@@ -6,6 +6,7 @@ import mecono.node.Path;
 import mecono.parceling.DestinationParcel;
 import mecono.parceling.ParcelType;
 import mecono.parceling.Response;
+import mecono.parceling.ResponseParcel;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -13,7 +14,7 @@ import org.json.JSONObject;
  *
  * @author jak
  */
-public class FindResponseParcel extends DestinationParcel implements Response {
+public class FindResponseParcel extends ResponseParcel implements Response {
 
 	public FindResponseParcel(Mailbox mailbox, TransferDirection direction) {
 		super(mailbox, direction);

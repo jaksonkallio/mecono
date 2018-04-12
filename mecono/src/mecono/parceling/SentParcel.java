@@ -28,23 +28,21 @@ public class SentParcel {
 		return (this.getOriginalParcel().equals(other.getOriginalParcel()));
 	}
 
-	public void giveResponse(DestinationParcel response_parcel) {
-		if (response_type == response_parcel.getParcelType()) {
-			// The response pallet is indeed the response to the original sent pallet
-			// TODO: Verify parcel ID is the same
+	public void giveResponse(ResponseParcel response_parcel) {
+		if (getResponseType() == response_parcel.getParcelType() && original_parcel.getUniqueID().equals(response_parcel.getRespondedID())) {
 			this.response_parcel = response_parcel;
 			responded = true;
 		}
 	}
 
+	/**
+	 * There are only a couple cases where action is required upon response. Ping to determine the latency, and data to tell if a chunk has been sent and doesn't need re-broadcast.
+	 */
 	public void runAction() {
 		if (responded) {
 			switch (getResponseType()) {
 				case PING_RESPONSE:
 					actionFromPing();
-					break;
-				case FIND_RESPONSE:
-					actionFromFind();
 					break;
 				case DATA_RECEIPT:
 					actionFromData();
@@ -73,10 +71,6 @@ public class SentParcel {
 	private void actionFromPing() {
 		// TODO: Verify that the destination signed the original pallet
 		//original_parcel.getDestination().updateSuccessfulPing((int) (Protocol.getEpochSecond() - response_parcel.getTimeSent()));
-	}
-
-	private void actionFromFind() {
-		// TODO: What to do after a find is responded to
 	}
 
 	private void actionFromData() {
