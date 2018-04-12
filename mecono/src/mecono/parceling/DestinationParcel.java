@@ -454,7 +454,15 @@ public class DestinationParcel extends Parcel {
             return getActualPath().getStop(0);
         }
     }
+	
+	public void setUsedPath(){
+		this.used_path = actual_path;
+	}
 
+	public Path getUsedPath(){
+		return used_path;
+	}
+	
     /**
      * Encrypt this destination parcel as a payload.
      *
@@ -488,6 +496,7 @@ public class DestinationParcel extends Parcel {
     private String signature;
     private long time_created;
 	private Path actual_path;
+	private Path used_path;
 	private PathStats outbound_actual_path;
     private ParcelType parcel_type = ParcelType.UNKNOWN;
     private final TransferDirection direction;

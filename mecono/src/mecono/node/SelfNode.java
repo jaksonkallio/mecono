@@ -8,8 +8,12 @@ import mecono.parceling.DestinationParcel;
 import java.util.ArrayList;
 import mecono.parceling.BadPathException;
 import mecono.parceling.DestinationParcel.TransferDirection;
+import mecono.parceling.ResponseParcel;
+import mecono.parceling.SentParcel;
 import mecono.parceling.types.FindParcel;
 import mecono.parceling.types.FindResponseParcel;
+import mecono.parceling.types.PingParcel;
+import mecono.parceling.types.PingResponseParcel;
 
 /**
  *
@@ -135,6 +139,14 @@ public class SelfNode implements Node {
 						learnUsingPathExtension(target_answer, (RemoteNode) parcel.getOriginator());
 					}
 				}
+			}else if(parcel instanceof PingResponseParcel){
+				SentParcel sent_parcel = mailbox.getSentParcel(((PingResponseParcel) parcel).getRespondedID());
+				sent_parcel.giveResponse((ResponseParcel) parcel);
+				long ping = sent_parcel.getPing();
+				
+				// Update the ping on the path
+				PingParcel original_parcel = (PingParcel) sent_parcel.getOriginalParcel();
+				Path used_path = original_parcel.getUsedPath();
 			}else{
 				throw new MissingParcelDetailsException("No defined upon-receive action for parcel type "+parcel.getParcelType().name());
 			}

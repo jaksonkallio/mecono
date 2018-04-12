@@ -115,6 +115,7 @@ public class Mailbox {
 				// Give to the network controller for sending
 				try {
 					network_controller.sendParcel(parcel.constructForeignParcel());
+					parcel.setUsedPath();
 					outbox.remove(i);
 				} catch (UnknownResponsibilityException | MissingParcelDetailsException | BadProtocolException ex) {
 					getOwner().nodeLog(2, "Could not hand off to network controller: " + ex.getMessage());
@@ -202,7 +203,17 @@ public class Mailbox {
 			}
 		}
 	}
-
+	
+	public SentParcel getSentParcel(String unique_id){
+		for(SentParcel sent_parcel : upon_response_actions){
+			if(sent_parcel.getOriginalParcel().getUniqueID().equals(unique_id)){
+				return sent_parcel;
+			}
+		}
+		
+		return null;
+	}
+	
     private final SelfNode owner; // The selfnode that runs the mailbox
     private final MailboxWorker worker;
     private ArrayList<SentParcel> upon_response_actions = new ArrayList<>();
