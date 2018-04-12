@@ -14,7 +14,7 @@ public class SentParcel {
 		this.mailbox = mailbox;
 		this.original_parcel = original_parcel;
 		this.response_type = determineResponseType();
-		this.original_time_sent = Protocol.getEpochSecond();
+		this.original_time_sent = Protocol.getEpochMilliSecond();
 	}
 	
 	@Override
@@ -33,6 +33,10 @@ public class SentParcel {
 			this.response_parcel = response_parcel;
 			responded = true;
 		}
+	}
+	
+	public ResponseParcel getResponseParcel(){
+		return response_parcel;
 	}
 
 	/**
@@ -55,6 +59,14 @@ public class SentParcel {
 
 	public DestinationParcel getOriginalParcel() {
 		return original_parcel;
+	}
+	
+	public long getPing() throws MissingParcelDetailsException{
+		if(getResponseParcel() == null){
+			throw new MissingParcelDetailsException("Cannot get ping, response wasn't received yet.");
+		}
+		
+		return Math.max(0, (getResponseParcel().getTimeCreated() - original_time_sent));
 	}
 
 	public ParcelType getResponseType() {
@@ -92,7 +104,7 @@ public class SentParcel {
 
 	private final Mailbox mailbox;
 	private final DestinationParcel original_parcel;
-	private DestinationParcel response_parcel;
+	private ResponseParcel response_parcel;
 	private boolean responded = false;
 	private final long original_time_sent;
 	private final ParcelType response_type;

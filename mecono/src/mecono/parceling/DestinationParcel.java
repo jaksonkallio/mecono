@@ -39,7 +39,20 @@ public class DestinationParcel extends Parcel {
         super(mailbox);
         generateUniqueID();
         this.direction = direction;
+		setTimeCreated();
     }
+	
+	public final void setTimeCreated(){
+		setTimeCreated(Protocol.getEpochMilliSecond());
+	}
+	
+	public final void setTimeCreated(long time_created){
+		this.time_created = time_created;
+	}
+	
+	public final long getTimeCreated(){
+		return time_created;
+	}
 
     @Override
     public boolean equals(Object o) {
@@ -473,7 +486,8 @@ public class DestinationParcel extends Parcel {
     private boolean in_outbox;
     private String unique_id;
     private String signature;
-    private Path actual_path;
+    private long time_created;
+	private Path actual_path;
 	private PathStats outbound_actual_path;
     private ParcelType parcel_type = ParcelType.UNKNOWN;
     private final TransferDirection direction;
