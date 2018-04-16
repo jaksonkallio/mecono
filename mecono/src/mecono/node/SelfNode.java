@@ -105,59 +105,6 @@ public class SelfNode implements Node {
 		
 		return false;
     }
-
-    /**
-     * Receive and process a destination parcel from the mecono network.
-     *
-     * @param parcel The parcel received.
-     */
-    public void receiveParcel(DestinationParcel parcel) {
-        nodeLog(1, "Data received via mecono network: " + parcel.toString());
-		
-		try {
-			learnPath(parcel.getActualPath(), null);
-			
-			if(parcel instanceof FindParcel){
-				RemoteNode originator = (RemoteNode) parcel.getOriginator();
-				
-				if(((FindParcel) parcel).getTarget() == null){
-					throw new MissingParcelDetailsException("Unknown find target");
-				}
-				
-				FindResponseParcel response = new FindResponseParcel(getMailbox(), TransferDirection.OUTBOUND);
-				RemoteNode target = ((FindParcel) parcel).getTarget();
-				ArrayList<Path> available_paths = Path.convertToRawPaths(target.getPathsTo());
-				response.setTargetAnswers(available_paths); // Set response to our answer
-				response.setDestination(originator); // Set the destination to the person that contacted us (a response)
-				response.placeInOutbox(); // Send the response
-			}else if(parcel instanceof FindResponseParcel){
-				for(Path target_answer : ((FindResponseParcel) parcel).getTargetAnswers()){
-					nodeLog(ErrorStatus.GOOD, LogLevel.VERBOSE, "Target answer: "+target_answer.toString());
-					
-					// A protocol policy is to only return paths that start with self node
-					if(target_answer.getStop(0).equals(parcel.getOriginator())){
-						learnUsingPathExtension(target_answer, (RemoteNode) parcel.getOriginator());
-					}
-				}
-			}else if(parcel instanceof PingResponseParcel){
-				SentParcel sent_parcel = mailbox.getSentParcel(((PingResponseParcel) parcel).getRespondedID());
-				sent_parcel.giveResponse((ResponseParcel) parcel);
-				long ping = sent_parcel.getPing();
-				
-				// Update the ping on the path
-				PingParcel original_parcel = (PingParcel) sent_parcel.getOriginalParcel();
-				Path used_path = original_parcel.getUsedPath();
-			}else{
-				throw new MissingParcelDetailsException("No defined upon-receive action for parcel type "+parcel.getParcelType().name());
-			}
-		} catch(MissingParcelDetailsException ex){
-			nodeLog(2, "Could not handle received parcel: " + ex.getMessage());
-		} catch(UnknownResponsibilityException ex){
-			nodeLog(2, "Unknown responsibility when sending response: " + ex.getMessage());
-		} catch(BadPathException ex){
-			nodeLog(2, "Cannot learn path from received parcel: " + ex.getMessage());
-		}
-    }
 	
 	/**
 	 * Constructs paths using an isolated path, most likely given by a FindResponse parcel.

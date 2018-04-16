@@ -13,6 +13,10 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import mecono.parceling.BadPathException;
 import mecono.parceling.DestinationParcel.TransferDirection;
+import mecono.parceling.ResponseParcel;
+import mecono.parceling.types.FindResponseParcel;
+import mecono.parceling.types.PingParcel;
+import mecono.parceling.types.PingResponseParcel;
 import org.json.JSONObject;
 
 /**
@@ -29,25 +33,67 @@ public class Mailbox {
         this.worker = new MailboxWorker(this);
     }
 
-    /*public boolean sendMessage(ParcelType stream_type, RemoteNode destination, String message_text) {
-		Pallet message = new Pallet(this);
-		message.createNewMessage(stream_type, destination, message_text);
-
-		return true;
-	}*/
     public void receiveParcel(Parcel parcel) {
         if (parcel instanceof DestinationParcel) {
-            getOwner().receiveParcel((DestinationParcel) parcel);
-			//getOwner().nodeLog(1, "Mailbox received destination parcel");
+            processDestinationParcel((DestinationParcel) parcel);
+			getOwner().nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.VERBOSE, "Mailbox received destination parcel");
         } else if (parcel instanceof ForeignParcel) {
             outbound_queue.offer((ForeignParcel) parcel);
-			//getOwner().nodeLog(1, "Mailbox received foreign parcel");
+			getOwner().nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.COMMON, "Mailbox received foreign parcel");
         } else if(parcel == null) {
-			getOwner().nodeLog(2, "Mailbox received null parcel from network controller");
+			getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Mailbox received null parcel from network controller");
 		} else {
-			getOwner().nodeLog(2, "Mailbox received parcel with unknown classification");
+			getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Mailbox received parcel with unknown classification");
 		}
     }
+	
+	public void processDestinationParcel(DestinationParcel parcel){
+		getOwner().nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.COMMON, "Processing received destination parcel", parcel.toString());
+		
+		try {
+			getOwner().learnPath(parcel.getActualPath(), null);
+			
+			if(parcel instanceof FindParcel){
+				RemoteNode originator = (RemoteNode) parcel.getOriginator();
+				
+				if(((FindParcel) parcel).getTarget() == null){
+					throw new MissingParcelDetailsException("Unknown find target");
+				}
+				
+				FindResponseParcel response = new FindResponseParcel(this, TransferDirection.OUTBOUND);
+				RemoteNode target = ((FindParcel) parcel).getTarget();
+				ArrayList<Path> available_paths = Path.convertToRawPaths(target.getPathsTo());
+				response.setTargetAnswers(available_paths); // Set response to our answer
+				response.setDestination(originator); // Set the destination to the person that contacted us (a response)
+				response.placeInOutbox(); // Send the response
+			}else if(parcel instanceof FindResponseParcel){
+				for(Path target_answer : ((FindResponseParcel) parcel).getTargetAnswers()){
+					getOwner().nodeLog(SelfNode.ErrorStatus.GOOD, SelfNode.LogLevel.VERBOSE, "Target answer: "+target_answer.toString());
+					
+					// A protocol policy is to only return paths that start with self node
+					if(target_answer.getStop(0).equals(parcel.getOriginator())){
+						getOwner().learnUsingPathExtension(target_answer, (RemoteNode) parcel.getOriginator());
+					}
+				}
+			}else if(parcel instanceof PingResponseParcel){
+				SentParcel sent_parcel = getSentParcel(((PingResponseParcel) parcel).getRespondedID());
+				sent_parcel.giveResponse((ResponseParcel) parcel);
+				long ping = sent_parcel.getPing();
+				
+				// Update the ping on the path
+				PingParcel original_parcel = (PingParcel) sent_parcel.getOriginalParcel();
+				Path used_path = original_parcel.getUsedPath();
+			}else{
+				throw new MissingParcelDetailsException("No defined upon-receive action for parcel type "+parcel.getParcelType().name());
+			}
+		} catch(MissingParcelDetailsException ex){
+			getOwner().nodeLog(2, "Could not handle received parcel: " + ex.getMessage());
+		} catch(UnknownResponsibilityException ex){
+			getOwner().nodeLog(2, "Unknown responsibility when sending response: " + ex.getMessage());
+		} catch(BadPathException ex){
+			getOwner().nodeLog(2, "Cannot learn path from received parcel: " + ex.getMessage());
+		}
+	}
 
     private void enqueueOutbound(ForeignParcel parcel) {
         outbound_queue.offer(parcel);
@@ -75,7 +121,7 @@ public class Mailbox {
     }
 
     public void placeInOutbox(DestinationParcel parcel) {
-        upon_response_actions.add(parcel.getUponResponseAction());
+        sent_parcels.add(parcel.getUponResponseAction());
         parcel.setInOutbox();
         outbox.add(parcel);
     }
@@ -174,7 +220,7 @@ public class Mailbox {
      * expecting a response to. Used to protect against spamming the network.
      */
     private boolean expectingResponse(DestinationParcel parcel) {
-        for (SentParcel existing_action : upon_response_actions) {
+        for (SentParcel existing_action : sent_parcels) {
             if (existing_action.getOriginalParcel().equals(parcel)) {
                 return true;
             }
@@ -205,7 +251,7 @@ public class Mailbox {
 	}
 	
 	public SentParcel getSentParcel(String unique_id){
-		for(SentParcel sent_parcel : upon_response_actions){
+		for(SentParcel sent_parcel : sent_parcels){
 			if(sent_parcel.getOriginalParcel().getUniqueID().equals(unique_id)){
 				return sent_parcel;
 			}
@@ -216,7 +262,7 @@ public class Mailbox {
 	
     private final SelfNode owner; // The selfnode that runs the mailbox
     private final MailboxWorker worker;
-    private ArrayList<SentParcel> upon_response_actions = new ArrayList<>();
+    private ArrayList<SentParcel> sent_parcels = new ArrayList<>();
     private final NetworkController network_controller;
     private Queue<ForeignParcel> outbound_queue; // Outbound queue
     private ArrayList<DestinationParcel> outbox = new ArrayList<>();
