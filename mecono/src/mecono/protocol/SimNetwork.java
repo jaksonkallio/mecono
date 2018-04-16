@@ -12,51 +12,51 @@ import mecono.node.NodeAddress;
  * @author jak
  */
 public class SimNetwork {
-	
-	public SimNetwork(int mesh_size){
+
+	public SimNetwork(int mesh_size) {
 		this.mesh_size = mesh_size;
 		initializeRandomEnvironment();
 		this.sim_gui = new SimGUI(this);
 	}
-	
-	public SimNetwork(){
+
+	public SimNetwork() {
 		this.mesh_size = 0;
 		initializeControlledEnvironment();
 		this.sim_gui = new SimGUI(this);
 	}
-	
-	public SimGUI getSimGUI(){
+
+	public SimGUI getSimGUI() {
 		return sim_gui;
 	}
-	
-	public void startMailboxWorkers(){
+
+	public void startMailboxWorkers() {
 		for (SimSelfNode node : members) {
 			node.getMailbox().getWorker().startWorking();
 			node.nodeLog(0, "Started sim node mailbox worker");
 		}
 	}
-	
-	public void stopMailboxWorkers(){
+
+	public void stopMailboxWorkers() {
 		for (SimSelfNode node : members) {
 			node.getMailbox().getWorker().stopWorking();
 			node.nodeLog(0, "Stopped sim node mailbox worker");
 		}
 	}
-	
-	public final void initializeControlledEnvironment(){
+
+	public final void initializeControlledEnvironment() {
 		members.clear();
 		String test_addr_suffix = "eee";
-		
+
 		// CSE v1 https://github.com/jaksonkallio/mecono/issues/13
-		members.add(new SimSelfNode("Andreas", new NodeAddress("A"+test_addr_suffix), this));
-		members.add(new SimSelfNode("Brandon", new NodeAddress("B"+test_addr_suffix), this));
-		members.add(new SimSelfNode("Carolyn", new NodeAddress("C"+test_addr_suffix), this));
-		members.add(new SimSelfNode("Dominic", new NodeAddress("D"+test_addr_suffix), this));
-		members.add(new SimSelfNode("Evelyn", new NodeAddress("E"+test_addr_suffix), this));
-		members.add(new SimSelfNode("Finn", new NodeAddress("F"+test_addr_suffix), this));
-		members.add(new SimSelfNode("Gerald", new NodeAddress("G"+test_addr_suffix), this));
-		members.add(new SimSelfNode("Xavier", new NodeAddress("X"+test_addr_suffix), this));
-		
+		members.add(new SimSelfNode("Andreas", new NodeAddress("A" + test_addr_suffix), this));
+		members.add(new SimSelfNode("Brandon", new NodeAddress("B" + test_addr_suffix), this));
+		members.add(new SimSelfNode("Carolyn", new NodeAddress("C" + test_addr_suffix), this));
+		members.add(new SimSelfNode("Dominic", new NodeAddress("D" + test_addr_suffix), this));
+		members.add(new SimSelfNode("Evelyn", new NodeAddress("E" + test_addr_suffix), this));
+		members.add(new SimSelfNode("Finn", new NodeAddress("F" + test_addr_suffix), this));
+		members.add(new SimSelfNode("Gerald", new NodeAddress("G" + test_addr_suffix), this));
+		members.add(new SimSelfNode("Xavier", new NodeAddress("X" + test_addr_suffix), this));
+
 		createNeighborship(members.get(0), members.get(1));
 		createNeighborship(members.get(0), members.get(3));
 		createNeighborship(members.get(1), members.get(3));
@@ -66,32 +66,32 @@ public class SimNetwork {
 		createNeighborship(members.get(5), members.get(6));
 		createNeighborship(members.get(5), members.get(7));
 		createNeighborship(members.get(6), members.get(7));
-		
+
 		int test_parcels[][] = {
 			{0, 1},
 			{2, 3},
 			{1, 5},
 			{1, 6}
 		};
-		
-		for(int i = 0; i < test_parcels.length; i++){
+
+		for (int i = 0; i < test_parcels.length; i++) {
 			SimSelfNode sender = members.get(test_parcels[i][0]);
 			RemoteNode receiver = sender.getMemoryController().loadRemoteNode(members.get(test_parcels[i][1]).getAddress());
 			sender.sendDataParcel(receiver, "test_message_" + i);
 		}
 	}
-	
+
 	public final void initializeRandomEnvironment() {
-		if(!initialized){
+		if (!initialized) {
 			generateSimSelfNodes(mesh_size);
 			generateRandomNeighborships();
 
-			for(int i = 0; i < 3; i++){
-				SimSelfNode originator = members.get((int) (Math.random()*members.size()));
-				RemoteNode destination = originator.getMemoryController().loadRemoteNode(members.get((int) (Math.random()*members.size())).getAddress());
-				originator.sendDataParcel(destination, "test_message_"+i);
+			for (int i = 0; i < 3; i++) {
+				SimSelfNode originator = members.get((int) (Math.random() * members.size()));
+				RemoteNode destination = originator.getMemoryController().loadRemoteNode(members.get((int) (Math.random() * members.size())).getAddress());
+				originator.sendDataParcel(destination, "test_message_" + i);
 			}
-			
+
 			initialized = true;
 		}
 	}
@@ -115,15 +115,15 @@ public class SimNetwork {
 	public ArrayList<SimSelfNode> getMembers() {
 		return members;
 	}
-	
-	private void memberOutboxProcess(){
+
+	private void memberOutboxProcess() {
 		for (SimSelfNode node : members) {
-			for(int i = 0; i < node.getMailbox().getOutboxCount(); i++){
+			for (int i = 0; i < node.getMailbox().getOutboxCount(); i++) {
 				node.getMailbox().processOutboxItem(i);
 			}
 		}
 	}
-	
+
 	private void generateRandomNeighborships() {
 		// For each member, generate neighbors
 		for (SimSelfNode node1 : members) {
@@ -137,8 +137,8 @@ public class SimNetwork {
 			}
 		}
 	}
-	
-	private void createNeighborship(SimSelfNode node1, SimSelfNode node2){
+
+	private void createNeighborship(SimSelfNode node1, SimSelfNode node2) {
 		RemoteNode node2_remote = node1.getMemoryController().loadRemoteNode(node2.getAddress());
 		RemoteNode node1_remote = node2.getMemoryController().loadRemoteNode(node1.getAddress());
 		node1.addNeighbor(new Neighbor(node2_remote, 2));

@@ -17,10 +17,10 @@ public class SentParcel {
 		this.response_type = determineResponseType();
 		this.original_time_sent = Protocol.getEpochMilliSecond();
 	}
-	
+
 	@Override
-	public String toString(){
-		return "Awaiting "+getResponseType()+" after sending "+getOriginalParcel().getUniqueID();
+	public String toString() {
+		return "Awaiting " + getResponseType() + " after sending " + getOriginalParcel().getUniqueID();
 	}
 
 	@Override
@@ -35,13 +35,15 @@ public class SentParcel {
 			responded = true;
 		}
 	}
-	
-	public ResponseParcel getResponseParcel(){
+
+	public ResponseParcel getResponseParcel() {
 		return response_parcel;
 	}
 
 	/**
-	 * There are only a couple cases where action is required upon response. Ping to determine the latency, and data to tell if a chunk has been sent and doesn't need re-broadcast.
+	 * There are only a couple cases where action is required upon response.
+	 * Ping to determine the latency, and data to tell if a chunk has been sent
+	 * and doesn't need re-broadcast.
 	 */
 	public void runAction() {
 		if (responded) {
@@ -61,12 +63,12 @@ public class SentParcel {
 	public DestinationParcel getOriginalParcel() {
 		return original_parcel;
 	}
-	
-	public long getPing() throws MissingParcelDetailsException{
-		if(getResponseParcel() == null){
+
+	public long getPing() throws MissingParcelDetailsException {
+		if (getResponseParcel() == null) {
 			throw new MissingParcelDetailsException("Cannot get ping, response wasn't received yet.");
 		}
-		
+
 		return Math.max(0, (getResponseParcel().getTimeCreated() - original_time_sent));
 	}
 

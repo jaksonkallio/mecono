@@ -5,6 +5,7 @@ package mecono.protocol;
  * @author jak
  */
 public abstract class MeconoException extends Exception {
+
 	public MeconoException() {
 		super();
 	}
@@ -12,9 +13,9 @@ public abstract class MeconoException extends Exception {
 	public MeconoException(String message) {
 		super(message);
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		return getMessage();
 	}
 }

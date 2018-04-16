@@ -26,26 +26,26 @@ public class FindParcel extends DestinationParcel {
 
 		return (o instanceof FindParcel && other.getTarget() == this.getTarget() && super.equals(other));
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		String target_address = "";
-		if(getTarget() == null){
+		if (getTarget() == null) {
 			target_address = "NA";
-		}else{
+		} else {
 			target_address = getTarget().getAddress();
 		}
-		
+
 		return super.toString() + "[FindTarget: " + target_address + "]";
 	}
 
 	@Override
 	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
 		super.onReceiveAction();
-		
+
 		RemoteNode originator = (RemoteNode) getOriginator();
-				
-		if(getTarget() == null){
+
+		if (getTarget() == null) {
 			throw new MissingParcelDetailsException("Unknown find target");
 		}
 
@@ -56,7 +56,7 @@ public class FindParcel extends DestinationParcel {
 		response.setDestination(originator); // Set the destination to the person that contacted us (a response)
 		response.placeInOutbox(); // Send the response
 	}
-	
+
 	public void setTarget(RemoteNode target) {
 		this.target = target;
 	}
@@ -64,28 +64,28 @@ public class FindParcel extends DestinationParcel {
 	public RemoteNode getTarget() {
 		return target;
 	}
-	
+
 	@Override
-	public JSONObject getSerializedContent(){
+	public JSONObject getSerializedContent() {
 		JSONObject json_content = new JSONObject();
-        json_content = json_content.put("target", getTarget().getAddress());
-        return json_content;
+		json_content = json_content.put("target", getTarget().getAddress());
+		return json_content;
 	}
-	
+
 	@Override
 	public ParcelType getParcelType() {
 		return ParcelType.FIND;
 	}
-	
+
 	@Override
-	public boolean consultWhenPathUnknown(){
+	public boolean consultWhenPathUnknown() {
 		return false;
 	}
-	
+
 	@Override
-	public boolean requiresTestedPath(){
+	public boolean requiresTestedPath() {
 		return false;
 	}
-	
+
 	private RemoteNode target;
 }

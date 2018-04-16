@@ -16,27 +16,27 @@ import org.json.JSONObject;
  */
 public class NetworkController {
 
-    public NetworkController(Mailbox mailbox) {
-        this.mailbox = mailbox;
-    }
+	public NetworkController(Mailbox mailbox) {
+		this.mailbox = mailbox;
+	}
 
-    public void receiveData(String received_parcel_string) {
-        //Parcel received_parcel;
-        JSONObject received_parcel_json = new JSONObject(received_parcel_string);
+	public void receiveData(String received_parcel_string) {
+		//Parcel received_parcel;
+		JSONObject received_parcel_json = new JSONObject(received_parcel_string);
 
-        //try {
-			mailbox.enqueueInbound(received_parcel_json);
-            //received_parcel = Parcel.unserialize(received_parcel_json, mailbox.getOwner());
-           // mailbox.receiveParcel(received_parcel);
-        //} catch (MissingParcelDetailsException ex) {
-           //mailbox.getOwner().nodeLog(2, "Could not unserialize received parcel: " + ex.getMessage());
-			//mailbox.getOwner().nodeLog(2, "Received parcel JSON: " + received_parcel_json.toString(2));
-       // }
-    }
+		//try {
+		mailbox.enqueueInbound(received_parcel_json);
+		//received_parcel = Parcel.unserialize(received_parcel_json, mailbox.getOwner());
+		// mailbox.receiveParcel(received_parcel);
+		//} catch (MissingParcelDetailsException ex) {
+		//mailbox.getOwner().nodeLog(2, "Could not unserialize received parcel: " + ex.getMessage());
+		//mailbox.getOwner().nodeLog(2, "Received parcel JSON: " + received_parcel_json.toString(2));
+		// }
+	}
 
-    public void sendParcel(ForeignParcel parcel) throws MissingParcelDetailsException, BadProtocolException {
+	public void sendParcel(ForeignParcel parcel) throws MissingParcelDetailsException, BadProtocolException {
 		//mailbox.getOwner().nodeLog(0, "In sendParcel");
-		
+
 		// Serialize the parcel. Serialization includes an encryption process.
 		JSONObject serialized_parcel = parcel.serialize();
 
@@ -51,7 +51,7 @@ public class NetworkController {
 					SimSelfNode receiver = SimNetwork.getSelfNodeFromRemoteNode(remote_receiver);
 					receiver.getMailbox().getNetworkController().receiveData(serialized_parcel.toString());
 					//mailbox.getOwner().nodeLog(4, "Sent " + parcel.toString() + " to " + receiver.getAddressLabel());
-				}else{
+				} else {
 					throw new MissingParcelDetailsException("Next node is not neighbor");
 				}
 			} else {
@@ -61,7 +61,7 @@ public class NetworkController {
 		} else {
 			throw new MissingParcelDetailsException("Next node is null");
 		}
-    }
+	}
 
-    private final Mailbox mailbox;
+	private final Mailbox mailbox;
 }

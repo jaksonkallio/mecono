@@ -16,6 +16,7 @@ public class PingResponseParcel extends ResponseParcel {
 	public PingResponseParcel(Mailbox mailbox, TransferDirection direction) {
 		super(mailbox, direction);
 	}
+
 	@Override
 	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
 		SentParcel sent_parcel = mailbox.getSentParcel(getRespondedID());

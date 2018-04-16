@@ -45,8 +45,7 @@ public class MemoryController {
 
 		return new_path;
 	}*/
-	
-	public ArrayList<RemoteNode> getNodeMemory(){
+	public ArrayList<RemoteNode> getNodeMemory() {
 		return nodes_memory;
 	}
 

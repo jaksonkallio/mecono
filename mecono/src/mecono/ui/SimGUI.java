@@ -29,12 +29,12 @@ public class SimGUI {
 		this.sim_network = sim_network;
 		buildMainContainer();
 	}
-	
+
 	public BorderPane getMainContainer() {
 		return main_container;
 	}
-	
-	public void appendGlobalConsole(String new_line){
+
+	public void appendGlobalConsole(String new_line) {
 		consoleAppend(global_console, new_line);
 	}
 
@@ -48,9 +48,9 @@ public class SimGUI {
 	private void appendNodeConsole(String new_line) {
 		consoleAppend(node_console, new_line);
 	}
-	
-	private synchronized void consoleAppend(TextArea console, String new_line){
-		javafx.application.Platform.runLater( () -> console.appendText(new_line + "\n"));
+
+	private synchronized void consoleAppend(TextArea console, String new_line) {
+		javafx.application.Platform.runLater(() -> console.appendText(new_line + "\n"));
 	}
 
 	private void buildMainContainer() {
@@ -94,44 +94,44 @@ public class SimGUI {
 		get_node_info.setOnAction(event -> {
 			ArrayList<Neighbor> neighbors = selected_node.getNeighbors();
 			String neighbors_str = "";
-			for(Neighbor neighbor : neighbors){
-				if(!neighbors_str.equals("")){
+			for (Neighbor neighbor : neighbors) {
+				if (!neighbors_str.equals("")) {
 					neighbors_str += ", ";
 				}
-				
+
 				neighbors_str += neighbor.getNode().getAddress();
 			}
-			
+
 			String str = "";
 			str += "Address: " + selected_node.getAddress();
 			str += "\nNeighbors: " + selected_node.getNeighborCount() + " (" + neighbors_str + ")";
 			str += "\nSuccessful Sends: " + selected_node.parcelHistoryCount(true);
 			str += "\nFailed Sends: " + selected_node.parcelHistoryCount(false);
-			
+
 			appendNodeConsole(str);
 		});
-		
+
 		discovered_nodes_button.setOnAction(event -> {
 			ArrayList<RemoteNode> discovered_nodes = selected_node.getMemoryController().getNodeMemory();
 			StringBuilder discovered_nodes_str = new StringBuilder();
-			
+
 			int discovered_nodes_count = 0;
-			for(RemoteNode node : discovered_nodes){
+			for (RemoteNode node : discovered_nodes) {
 				int known_paths = 0;
-				
+
 				discovered_nodes_count++;
-				
+
 				discovered_nodes_str.append("-- ");
 				discovered_nodes_str.append(node.getAddress());
 				discovered_nodes_str.append("\n");
-				
-				for(PathStats path : node.getPathsTo()){
+
+				for (PathStats path : node.getPathsTo()) {
 					known_paths++;
 					discovered_nodes_str.append("  -- ");
 					discovered_nodes_str.append(path.toString());
 					discovered_nodes_str.append("\n");
 				}
-				
+
 				discovered_nodes_str.append("  -- ");
 				discovered_nodes_str.append(known_paths);
 				discovered_nodes_str.append(" known paths\n");
@@ -139,7 +139,7 @@ public class SimGUI {
 			discovered_nodes_str.append("-- ");
 			discovered_nodes_str.append(discovered_nodes_count);
 			discovered_nodes_str.append(" discovered nodes\n");
-			
+
 			appendNodeConsole(discovered_nodes_str.toString());
 		});
 

@@ -38,16 +38,16 @@ public abstract class Parcel {
 	public final void setPathHistory(Path path_history) {
 		this.path_history = path_history;
 	}
-	
+
 	public static boolean validUniqueID(String unique_id) {
 		return unique_id.length() == 6;
 	}
 
 	public Path getPathHistory() throws MissingParcelDetailsException {
-		if(path_history == null){
+		if (path_history == null) {
 			throw new MissingParcelDetailsException("No path history was supplied");
 		}
-		
+
 		return path_history;
 	}
 
@@ -66,31 +66,31 @@ public abstract class Parcel {
 
 	public static Parcel unserialize(JSONObject json_parcel, SelfNode relative_self) throws MissingParcelDetailsException {
 		//mailbox.getOwner().nodeLog(0, "Unserializing received parcel: "+json_parcel.toString());
-		
-		if(json_parcel.has("payload")){
+
+		if (json_parcel.has("payload")) {
 			json_parcel.put("payload", new JSONObject(json_parcel.getString("payload")));
-		}else{
+		} else {
 			throw new MissingParcelDetailsException("Missing payload");
 		}
-		
+
 		if (json_parcel.getJSONObject("payload").has("actual_path")) {
 			Path actual_path = DestinationParcel.unserializeActualPath(json_parcel.getJSONObject("payload").getJSONArray("actual_path"), relative_self);
 			String destination_address = actual_path.getStop(actual_path.getPathLength() - 1).getAddress();
-			
+
 			// Get if this is a valid destination parcel
 			if (destination_address != null && destination_address.equals(relative_self.getAddress())) {
 				// Destination parcel
 				DestinationParcel base_parcel = new DestinationParcel(relative_self.getMailbox(), TransferDirection.INBOUND);
 				return DestinationParcel.unserialize(json_parcel, relative_self);
-			}else{
+			} else {
 				throw new MissingParcelDetailsException("Could not determine destination from payload actual path");
 			}
-		}else{
+		} else {
 			// TODO: Foreign parcel
 		}
-		
+
 		return null;
-		
+
 		/*if (json_parcel_payload.has("actual_path")) {
 			JSONArray actual_stops_json = json_parcel_payload.getJSONArray("actual_path");
 			ArrayList<Node> stops = new ArrayList<>();
@@ -121,9 +121,9 @@ public abstract class Parcel {
 		}
 		return -1;
 	}
-	
-	public static ParcelType parseParcelType(String parcel_type){
-		switch(parcel_type){
+
+	public static ParcelType parseParcelType(String parcel_type) {
+		switch (parcel_type) {
 			case "PING":
 				return ParcelType.PING;
 			case "PING_RESPONSE":

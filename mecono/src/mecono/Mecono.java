@@ -34,18 +34,18 @@ public class Mecono extends Application {
 		stage.setScene(scene);
 		stage.show();
 	}
-	
+
 	@Override
-	public void stop(){
+	public void stop() {
 		System.out.println("Main GUI closing...");
-		
-		if(simulated_network){
+
+		if (simulated_network) {
 			System.out.println("Stopping threads...");
 			sim.stopMailboxWorkers();
 		}
-		
+
 		System.out.println("Mecono ended successully");
-		
+
 		// Save file
 	}
 

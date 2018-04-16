@@ -25,7 +25,7 @@ public class Protocol {
 	public static long getEpochSecond() {
 		return (int) (System.currentTimeMillis() / 1000L);
 	}
-	
+
 	public static long getEpochMilliSecond() {
 		return System.currentTimeMillis();
 	}

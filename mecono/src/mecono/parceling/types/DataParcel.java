@@ -15,9 +15,9 @@ public class DataParcel extends DestinationParcel {
 	public DataParcel(Mailbox mailbox, TransferDirection direction) {
 		super(mailbox, direction);
 	}
-	
+
 	@Override
-	public ParcelType getParcelType(){
+	public ParcelType getParcelType() {
 		return ParcelType.DATA;
 	}
 
@@ -25,9 +25,9 @@ public class DataParcel extends DestinationParcel {
 	public boolean equals(Object o) {
 		if (o instanceof DataParcel) {
 			DataParcel other = (DataParcel) o;
-			try{
+			try {
 				return (other.getMessage().equals(this.getMessage()) && other.getDestination().equals(this.getDestination()) && other.getOriginator().equals(this.getOriginator()));
-			}catch(MissingParcelDetailsException ex){
+			} catch (MissingParcelDetailsException ex) {
 				return false;
 			}
 		}

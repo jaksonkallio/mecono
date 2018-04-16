@@ -18,78 +18,78 @@ import org.json.JSONObject;
  */
 public class ForeignParcel extends Parcel {
 
-    public ForeignParcel(Mailbox mailbox, Path path_history, String payload) {
-        super(mailbox);
-        this.path_history = path_history;
-        this.payload = payload;
-    }
+	public ForeignParcel(Mailbox mailbox, Path path_history, String payload) {
+		super(mailbox);
+		this.path_history = path_history;
+		this.payload = payload;
+	}
 
-    /**
-     * Gets the next node.
-     *
-     * @return RemoteNode The next node
-     */
-    public RemoteNode getNextDestination() {
-        return (RemoteNode) path_history.getStop(path_history.getPathLength() - 1);
-    }
+	/**
+	 * Gets the next node.
+	 *
+	 * @return RemoteNode The next node
+	 */
+	public RemoteNode getNextDestination() {
+		return (RemoteNode) path_history.getStop(path_history.getPathLength() - 1);
+	}
 
-    @Override
-    public String toString() {
-        String next_node_address = "";
-        
-        try{
-            next_node_address = getNextNode().getAddress();
-        } catch (MissingParcelDetailsException ex) {
-            next_node_address = "Unknown";
-        }
-        return "Foreign Parcel [Next: " + next_node_address+"]";
-    }
+	@Override
+	public String toString() {
+		String next_node_address = "";
 
-    /**
-     * Gets how many hops this parcel has traveled so far.
-     *
-     * @return Integer Hop count
-     */
-    public int getHopCount() {
-        return (path_history.getPathLength() - 2);
-    }
+		try {
+			next_node_address = getNextNode().getAddress();
+		} catch (MissingParcelDetailsException ex) {
+			next_node_address = "Unknown";
+		}
+		return "Foreign Parcel [Next: " + next_node_address + "]";
+	}
 
-    @Override
-    public RemoteNode getNextNode() throws MissingParcelDetailsException {
-        try{
-            // For foreign parcels, the next node is the last item in the path.
-            return (RemoteNode) getPathHistory().getStop(getPathHistory().getPathLength() - 1);
-        } catch(MissingParcelDetailsException ex){
-            mailbox.getOwner().nodeLog(2, "Next node in path not known: " + ex.getMessage());
-            throw ex;
-        }
-    }
+	/**
+	 * Gets how many hops this parcel has traveled so far.
+	 *
+	 * @return Integer Hop count
+	 */
+	public int getHopCount() {
+		return (path_history.getPathLength() - 2);
+	}
 
-    @Override
-    public JSONObject serialize() {
-        JSONObject serialized_parcel = new JSONObject();
-        JSONArray serialized_path_history = new JSONArray();
+	@Override
+	public RemoteNode getNextNode() throws MissingParcelDetailsException {
+		try {
+			// For foreign parcels, the next node is the last item in the path.
+			return (RemoteNode) getPathHistory().getStop(getPathHistory().getPathLength() - 1);
+		} catch (MissingParcelDetailsException ex) {
+			mailbox.getOwner().nodeLog(2, "Next node in path not known: " + ex.getMessage());
+			throw ex;
+		}
+	}
 
-        try {
-            ArrayList<Node> stops = getPathHistory().getStops();
-            for (Node stop : stops) {
-                serialized_path_history.put(stop.getAddress());
-            }
+	@Override
+	public JSONObject serialize() {
+		JSONObject serialized_parcel = new JSONObject();
+		JSONArray serialized_path_history = new JSONArray();
 
-            serialized_parcel.put("path_history", serialized_path_history);
-            serialized_parcel.put("payload", payload);
-        } catch (MissingParcelDetailsException ex) {
-            mailbox.getOwner().nodeLog(2, "Could not serialize parcel: " + ex.getMessage());
-        }
+		try {
+			ArrayList<Node> stops = getPathHistory().getStops();
+			for (Node stop : stops) {
+				serialized_path_history.put(stop.getAddress());
+			}
 
-        return serialized_parcel;
-    }
+			serialized_parcel.put("path_history", serialized_path_history);
+			serialized_parcel.put("payload", payload);
+		} catch (MissingParcelDetailsException ex) {
+			mailbox.getOwner().nodeLog(2, "Could not serialize parcel: " + ex.getMessage());
+		}
 
-    @Override
-    public Node getOriginator() {
-        return path_history.getStop(0);
-    }
+		return serialized_parcel;
+	}
 
-    private String payload;
-    private Path path_history;
+	@Override
+	public Node getOriginator() {
+		return path_history.getStop(0);
+	}
+
+	private String payload;
+	private Path path_history;
 }

@@ -1,37 +1,41 @@
 package mecono.node;
 
 /**
- * The mailbox worker is a threaded helper object that processes the mailbox inbox and outbox.
+ * The mailbox worker is a threaded helper object that processes the mailbox
+ * inbox and outbox.
+ *
  * @author sabreok
  */
 public class MailboxWorker implements Runnable {
-	public MailboxWorker(Mailbox mailbox){
+
+	public MailboxWorker(Mailbox mailbox) {
 		this.mailbox = mailbox;
 		this.t = new Thread(this);
 	}
-	
+
 	/**
 	 * Gets whether the worker is working.
-	 * @return 
+	 *
+	 * @return
 	 */
-	public boolean isWorking(){
+	public boolean isWorking() {
 		return working;
 	}
-	
+
 	/**
 	 * Tells the worker to stop working.
 	 */
-	public void stopWorking(){
+	public void stopWorking() {
 		working = false;
 	}
-	
+
 	/**
 	 * Alias for run.
 	 */
-	public void startWorking(){
+	public void startWorking() {
 		t.start();
 	}
-	
+
 	/**
 	 * Main helper loop.
 	 */
@@ -39,26 +43,26 @@ public class MailboxWorker implements Runnable {
 	public void run() {
 		working = true;
 		int i = -1;
-		
-		while(working){
-			if(i >= 0){
+
+		while (working) {
+			if (i >= 0) {
 				mailbox.processOutboxItem(i);
 				i--;
-			}else{
+			} else {
 				i = mailbox.getOutboxCount() - 1;
 			}
-			
+
 			mailbox.processInboundQueue();
-			
-			try{
-				long delay = (long) (((int) (Math.random()*100)) + 5000 * (1 - mailbox.getOwner().performance_modifier));
+
+			try {
+				long delay = (long) (((int) (Math.random() * 100)) + 5000 * (1 - mailbox.getOwner().performance_modifier));
 				Thread.sleep(delay);
 			} catch (InterruptedException ex) {
 				working = false;
 			}
 		}
 	}
-	
+
 	private boolean working = false;
 	private final Mailbox mailbox;
 	private final Thread t;

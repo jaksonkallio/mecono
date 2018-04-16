@@ -24,11 +24,13 @@ public class PingParcel extends DestinationParcel {
 	public boolean requiresTestedPath() {
 		return false;
 	}
-	
+
 	/**
-	 * Ping parcels, unlike normal destination parcels, don't require a tested path before being sent.
-	 * @return 
-	 * @throws mecono.parceling.MissingParcelDetailsException 
+	 * Ping parcels, unlike normal destination parcels, don't require a tested
+	 * path before being sent.
+	 *
+	 * @return
+	 * @throws mecono.parceling.MissingParcelDetailsException
 	 */
 	@Override
 	public boolean readyToSend() throws MissingParcelDetailsException {

@@ -2,10 +2,12 @@ package mecono.protocol;
 
 /**
  * Random string generator.
+ *
  * @author jak
  */
 public class RNG {
-	public final static String generateString(int length){
+
+	public final static String generateString(int length) {
 		char[] text = new char[length];
 
 		for (int i = 0; i < length; i++) {
