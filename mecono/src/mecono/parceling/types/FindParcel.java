@@ -1,11 +1,13 @@
 package mecono.parceling.types;
 
+import java.util.ArrayList;
 import mecono.node.Mailbox;
+import mecono.node.Path;
 import mecono.node.RemoteNode;
-import mecono.node.SelfNode;
 import mecono.parceling.DestinationParcel;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.ParcelType;
+import mecono.protocol.BadProtocolException;
 import org.json.JSONObject;
 
 /**
@@ -37,6 +39,24 @@ public class FindParcel extends DestinationParcel {
 		return super.toString() + "[FindTarget: " + target_address + "]";
 	}
 
+	@Override
+	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
+		super.onReceiveAction();
+		
+		RemoteNode originator = (RemoteNode) getOriginator();
+				
+		if(getTarget() == null){
+			throw new MissingParcelDetailsException("Unknown find target");
+		}
+
+		FindResponseParcel response = new FindResponseParcel(mailbox, TransferDirection.OUTBOUND);
+		RemoteNode target = getTarget();
+		ArrayList<Path> available_paths = Path.convertToRawPaths(target.getPathsTo());
+		response.setTargetAnswers(available_paths); // Set response to our answer
+		response.setDestination(originator); // Set the destination to the person that contacted us (a response)
+		response.placeInOutbox(); // Send the response
+	}
+	
 	public void setTarget(RemoteNode target) {
 		this.target = target;
 	}

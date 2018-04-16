@@ -13,10 +13,6 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import mecono.parceling.BadPathException;
 import mecono.parceling.DestinationParcel.TransferDirection;
-import mecono.parceling.ResponseParcel;
-import mecono.parceling.types.FindResponseParcel;
-import mecono.parceling.types.PingParcel;
-import mecono.parceling.types.PingResponseParcel;
 import org.json.JSONObject;
 
 /**
@@ -51,45 +47,16 @@ public class Mailbox {
 		getOwner().nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.COMMON, "Processing received destination parcel", parcel.toString());
 		
 		try {
+			// Learn path
 			getOwner().learnPath(parcel.getActualPath(), null);
 			
-			if(parcel instanceof FindParcel){
-				RemoteNode originator = (RemoteNode) parcel.getOriginator();
-				
-				if(((FindParcel) parcel).getTarget() == null){
-					throw new MissingParcelDetailsException("Unknown find target");
-				}
-				
-				FindResponseParcel response = new FindResponseParcel(this, TransferDirection.OUTBOUND);
-				RemoteNode target = ((FindParcel) parcel).getTarget();
-				ArrayList<Path> available_paths = Path.convertToRawPaths(target.getPathsTo());
-				response.setTargetAnswers(available_paths); // Set response to our answer
-				response.setDestination(originator); // Set the destination to the person that contacted us (a response)
-				response.placeInOutbox(); // Send the response
-			}else if(parcel instanceof FindResponseParcel){
-				for(Path target_answer : ((FindResponseParcel) parcel).getTargetAnswers()){
-					getOwner().nodeLog(SelfNode.ErrorStatus.GOOD, SelfNode.LogLevel.VERBOSE, "Target answer: "+target_answer.toString());
-					
-					// A protocol policy is to only return paths that start with self node
-					if(target_answer.getStop(0).equals(parcel.getOriginator())){
-						getOwner().learnUsingPathExtension(target_answer, (RemoteNode) parcel.getOriginator());
-					}
-				}
-			}else if(parcel instanceof PingResponseParcel){
-				SentParcel sent_parcel = getSentParcel(((PingResponseParcel) parcel).getRespondedID());
-				sent_parcel.giveResponse((ResponseParcel) parcel);
-				long ping = sent_parcel.getPing();
-				
-				// Update the ping on the path
-				PingParcel original_parcel = (PingParcel) sent_parcel.getOriginalParcel();
-				Path used_path = original_parcel.getUsedPath();
-			}else{
-				throw new MissingParcelDetailsException("No defined upon-receive action for parcel type "+parcel.getParcelType().name());
-			}
-		} catch(MissingParcelDetailsException ex){
+			// Update path stats
+			// TODO: Update path statistics, ie, increment success
+			
+			// Do any required action
+			parcel.onReceiveAction();
+		} catch(MissingParcelDetailsException | BadProtocolException ex){
 			getOwner().nodeLog(2, "Could not handle received parcel: " + ex.getMessage());
-		} catch(UnknownResponsibilityException ex){
-			getOwner().nodeLog(2, "Unknown responsibility when sending response: " + ex.getMessage());
 		} catch(BadPathException ex){
 			getOwner().nodeLog(2, "Cannot learn path from received parcel: " + ex.getMessage());
 		}

@@ -312,18 +312,18 @@ public class DestinationParcel extends Parcel {
      * @throws UnknownResponsibilityException
      * @throws mecono.parceling.MissingParcelDetailsException
      */
-    public void placeInOutbox() throws UnknownResponsibilityException, MissingParcelDetailsException {
+    public void placeInOutbox() throws BadProtocolException, MissingParcelDetailsException {
         if (!isInOutbox()) {
             if (!originatorIsSelf()) {
-                throw new UnknownResponsibilityException("The self node is not the originator of the parcel to send.");
+                throw new BadProtocolException("The self node is not the originator of the parcel to send.");
             }
 
             if (getDestination().equals(mailbox.getOwner())) {
-                throw new UnknownResponsibilityException("The destination of a parcel to send cannot be the self node.");
+                throw new BadProtocolException("The destination of a parcel to send cannot be the self node.");
             }
 
             if (getDestination().equals(getOriginator())) {
-                throw new UnknownResponsibilityException("The destination cannot be the parcel's originator.");
+                throw new BadProtocolException("The destination cannot be the parcel's originator.");
             }
 
             mailbox.placeInOutbox(this);
@@ -461,6 +461,13 @@ public class DestinationParcel extends Parcel {
 
 	public Path getUsedPath(){
 		return used_path;
+	}
+	
+	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
+		if(getTransferDirection() != TransferDirection.INBOUND){
+			throw new BadProtocolException("The parcel isn't inbound");
+		}
+		//mailbox.getOwner().nodeLog(ErrorStatus.INFO, LogLevel.VERBOSE, "Default on receive action");
 	}
 	
     /**

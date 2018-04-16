@@ -1,19 +1,12 @@
 package mecono.node;
 
-import mecono.protocol.UnknownResponsibilityException;
 import mecono.parceling.ParcelType;
 import mecono.parceling.types.DataParcel;
 import mecono.parceling.MissingParcelDetailsException;
-import mecono.parceling.DestinationParcel;
 import java.util.ArrayList;
 import mecono.parceling.BadPathException;
 import mecono.parceling.DestinationParcel.TransferDirection;
-import mecono.parceling.ResponseParcel;
-import mecono.parceling.SentParcel;
-import mecono.parceling.types.FindParcel;
-import mecono.parceling.types.FindResponseParcel;
-import mecono.parceling.types.PingParcel;
-import mecono.parceling.types.PingResponseParcel;
+import mecono.protocol.BadProtocolException;
 
 /**
  *
@@ -303,7 +296,7 @@ public class SelfNode implements Node {
             parcel.setDestination(destination);
             parcel.setMessage(message);
             parcel.placeInOutbox();
-        } catch (UnknownResponsibilityException | MissingParcelDetailsException ex) {
+        } catch (BadProtocolException | MissingParcelDetailsException ex) {
             nodeLog(2, "Cannot send data parcel: " + ex.getMessage());
         }
     }

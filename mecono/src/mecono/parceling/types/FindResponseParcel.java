@@ -3,10 +3,13 @@ package mecono.parceling.types;
 import java.util.ArrayList;
 import mecono.node.Mailbox;
 import mecono.node.Path;
-import mecono.parceling.DestinationParcel;
+import mecono.node.RemoteNode;
+import mecono.node.SelfNode;
+import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.ParcelType;
 import mecono.parceling.Response;
 import mecono.parceling.ResponseParcel;
+import mecono.protocol.BadProtocolException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -36,6 +39,18 @@ public class FindResponseParcel extends ResponseParcel implements Response {
 
 	public void unserializeContent() {
 
+	}
+	
+	@Override
+	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
+		for(Path target_answer : getTargetAnswers()){
+			mailbox.getOwner().nodeLog(SelfNode.ErrorStatus.GOOD, SelfNode.LogLevel.VERBOSE, "Target answer: "+target_answer.toString());
+
+			// A protocol policy is to only return paths that start with self node
+			if(target_answer.getStop(0).equals(getOriginator())){
+				mailbox.getOwner().learnUsingPathExtension(target_answer, (RemoteNode) getOriginator());
+			}
+		}
 	}
 	
 	@Override
