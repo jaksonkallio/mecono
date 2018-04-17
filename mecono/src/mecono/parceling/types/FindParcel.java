@@ -51,6 +51,7 @@ public class FindParcel extends DestinationParcel {
 
 		FindResponseParcel response = new FindResponseParcel(mailbox, TransferDirection.OUTBOUND);
 		RemoteNode target = getTarget();
+		response.setRespondedID(getUniqueID());
 		ArrayList<Path> available_paths = Path.convertToRawPaths(target.getPathsTo());
 		response.setTargetAnswers(available_paths); // Set response to our answer
 		response.setDestination(originator); // Set the destination to the person that contacted us (a response)

@@ -397,7 +397,7 @@ public class DestinationParcel extends Parcel {
 		if (originatorIsSelf()) {
 			// Only construct the foreign parcel if the path is completely built.
 			if (isActualPathKnown()) {
-				ForeignParcel outbound_foreign_parcel = new ForeignParcel(mailbox, getActualPath(), encryptAsPayload());
+				ForeignParcel outbound_foreign_parcel = new ForeignParcel(mailbox, getActualPath(), encryptAsPayload().toString());
 				// The path history will contain current node + next node
 				Path new_path_history = getActualPath().getSubpath(1);
 				outbound_foreign_parcel.setPathHistory(new_path_history);
@@ -482,7 +482,7 @@ public class DestinationParcel extends Parcel {
 	 *
 	 * @return
 	 */
-	private String encryptAsPayload() throws MissingParcelDetailsException {
+	protected JSONObject encryptAsPayload() throws MissingParcelDetailsException {
 		JSONObject plaintext_payload = new JSONObject();
 		JSONArray actual_path = new JSONArray();
 		ArrayList<Node> stops = getActualPath().getStops();
@@ -498,7 +498,7 @@ public class DestinationParcel extends Parcel {
 		plaintext_payload.put("signature", "parcel signature here");
 
 		// TODO: Payload encryption operation.
-		return plaintext_payload.toString();
+		return plaintext_payload;
 	}
 
 	private String payload;

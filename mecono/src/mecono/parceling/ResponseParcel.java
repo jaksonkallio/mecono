@@ -4,6 +4,7 @@ import mecono.node.Mailbox;
 import mecono.node.Path;
 import mecono.node.PathStats;
 import mecono.protocol.BadProtocolException;
+import org.json.JSONObject;
 
 /**
  *
@@ -13,6 +14,11 @@ public class ResponseParcel extends DestinationParcel {
 
 	public ResponseParcel(Mailbox mailbox, TransferDirection direction) {
 		super(mailbox, direction);
+	}
+	
+	@Override
+	public String toString() {
+		return super.toString()+"[RespondingTo: "+getRespondedID()+"]";
 	}
 
 	/**
@@ -56,6 +62,13 @@ public class ResponseParcel extends DestinationParcel {
 			this.respond_to_id = respond_to_id;
 		}
 	}
-
+	
+	@Override
+	protected JSONObject encryptAsPayload() throws MissingParcelDetailsException {
+		JSONObject payload = super.encryptAsPayload();
+		payload.put("responding_to", getRespondedID());
+		return payload;
+	}
+	
 	private String respond_to_id;
 }
