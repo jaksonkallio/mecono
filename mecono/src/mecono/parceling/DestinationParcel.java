@@ -306,7 +306,7 @@ public class DestinationParcel extends Parcel {
 	 * outbox if (1) the originator is the self node and (2) the destination is
 	 * not the self node.
 	 *
-	 * @throws UnknownResponsibilityException
+	 * @throws mecono.protocol.BadProtocolException
 	 * @throws mecono.parceling.MissingParcelDetailsException
 	 */
 	public void placeInOutbox() throws BadProtocolException, MissingParcelDetailsException {
@@ -415,9 +415,19 @@ public class DestinationParcel extends Parcel {
 			this.actual_path = actual_path;
 		}
 	}
-
+	
+	public void setIsSent(){
+		if(!isSent()){
+			this.is_sent = true;
+		}
+	}
+	
+	public boolean isSent(){
+		return is_sent;
+	}
+	
 	public Path getActualPath() throws MissingParcelDetailsException {
-		if (direction == TransferDirection.OUTBOUND) {
+		if (direction == TransferDirection.OUTBOUND && !isSent()) {
 			if (destination == null) {
 				throw new MissingParcelDetailsException("No path set and missing destination");
 			}
@@ -498,6 +508,7 @@ public class DestinationParcel extends Parcel {
 	private boolean in_outbox;
 	private String unique_id;
 	private String signature;
+	private boolean is_sent = false;
 	private long time_created;
 	private Path actual_path;
 	private Path used_path;

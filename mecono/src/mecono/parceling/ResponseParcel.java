@@ -1,6 +1,9 @@
 package mecono.parceling;
 
 import mecono.node.Mailbox;
+import mecono.node.Path;
+import mecono.node.PathStats;
+import mecono.protocol.BadProtocolException;
 
 /**
  *
@@ -22,6 +25,30 @@ public class ResponseParcel extends DestinationParcel {
 	 */
 	public String getRespondedID() {
 		return respond_to_id;
+	}
+	
+	public SentParcel getSentParcel(){
+		return mailbox.getSentParcel(getRespondedID());
+	}
+	
+	@Override
+	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
+		super.onReceiveAction();
+		
+		// Update the sent parcel
+		SentParcel responding_to = getSentParcel();
+		
+		if(responding_to != null){
+			responding_to.giveResponse(this);
+
+			// If successful send, we can 
+			if(responding_to.isSuccessful()){
+				PathStats path_used = responding_to.getOriginalParcel().getOutboundActualPath();
+				path_used.success();
+			}
+		}else{
+			throw new MissingParcelDetailsException("Unwarranted response (or original parcel timeout)");
+		}
 	}
 
 	public void setRespondedID(String respond_to_id) {

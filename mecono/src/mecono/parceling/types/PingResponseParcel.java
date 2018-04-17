@@ -2,6 +2,7 @@ package mecono.parceling.types;
 
 import mecono.node.Mailbox;
 import mecono.node.Path;
+import mecono.node.PathStats;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.ResponseParcel;
 import mecono.parceling.SentParcel;
@@ -19,12 +20,16 @@ public class PingResponseParcel extends ResponseParcel {
 
 	@Override
 	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
-		SentParcel sent_parcel = mailbox.getSentParcel(getRespondedID());
-		sent_parcel.giveResponse(this);
-		long ping = sent_parcel.getPing();
-
-		// Update the ping on the path
-		PingParcel original_parcel = (PingParcel) sent_parcel.getOriginalParcel();
-		Path used_path = original_parcel.getUsedPath();
+		super.onReceiveAction();
+		
+		SentParcel sent_parcel = getSentParcel();
+		
+		if(sent_parcel.isSuccessful()){
+			long ping = sent_parcel.getPing();
+			PingParcel original_parcel = (PingParcel) sent_parcel.getOriginalParcel();
+			PathStats used_path = original_parcel.getOutboundActualPath();
+			
+			used_path.setPing(ping);
+		}
 	}
 }

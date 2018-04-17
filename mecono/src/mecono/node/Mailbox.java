@@ -52,6 +52,7 @@ public class Mailbox {
 
 			// Update path stats
 			// TODO: Update path statistics, ie, increment success
+			
 			// Do any required action
 			parcel.onReceiveAction();
 		} catch (MissingParcelDetailsException | BadProtocolException ex) {
@@ -128,6 +129,8 @@ public class Mailbox {
 				try {
 					network_controller.sendParcel(parcel.constructForeignParcel());
 					parcel.setUsedPath();
+					parcel.setIsSent();
+					parcel.getOutboundActualPath().pending();
 					outbox.remove(i);
 				} catch (UnknownResponsibilityException | MissingParcelDetailsException | BadProtocolException ex) {
 					getOwner().nodeLog(2, "Could not hand off to network controller: " + ex.getMessage());

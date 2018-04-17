@@ -48,9 +48,11 @@ public class PathStats {
 		StringBuilder str = new StringBuilder();
 		str.append("Path [");
 		str.append(successes());
-		str.append(" s][");
+		str.append(" success][");
 		str.append(failures());
-		str.append(" f]");
+		str.append(" fail][");
+		str.append(getPing());
+		str.append(" ms]");
 
 		if (getLearnedFrom() != null) {
 			str.append("[Learned from: ");
@@ -96,6 +98,14 @@ public class PathStats {
 
 	public int failures() {
 		return failures;
+	}
+	
+	public void setPing(long ping){
+		this.ping = ping;
+	}
+	
+	public long getPing(){
+		return ping;
 	}
 
 	private void validateOutwardPath(Path path) throws BadPathException {
@@ -149,6 +159,7 @@ public class PathStats {
 	private int successes = 0;
 	private int failures = 0;
 	private int pending = 0;
+	private long ping;
 	private final RemoteNode learned_from;
 	private int last_used = 0; // Epoch minute timestamp of last successful use
 	private final SelfNode indexer;

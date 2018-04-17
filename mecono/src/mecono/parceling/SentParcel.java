@@ -92,6 +92,10 @@ public class SentParcel {
 		// TODO: What to do after data was successfully received remotely
 	}
 
+	public boolean isSuccessful(){
+		return getResponseParcel() != null;
+	}
+	
 	private ParcelType determineResponseType() {
 		switch (original_parcel.getParcelType()) {
 			case PING:
