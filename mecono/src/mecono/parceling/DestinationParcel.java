@@ -225,6 +225,14 @@ public class DestinationParcel extends Parcel {
 			default:
 				parcel = new DestinationParcel(relative_self.getMailbox(), DestinationParcel.TransferDirection.INBOUND);
 		}
+		
+		if(parcel instanceof ResponseParcel){
+			if (payload_json.has("responding_to") && Parcel.validUniqueID(payload_json.getString("responding_to"))) {
+				((ResponseParcel) parcel).setRespondedID(payload_json.getString("responding_to"));
+			}else{
+				throw new MissingParcelDetailsException("Response parcel missing valid responding-to field");
+			}
+		}
 
 		parcel.setActualPath(DestinationParcel.unserializeActualPath(payload_json.getJSONArray("actual_path"), relative_self));
 
