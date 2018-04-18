@@ -128,7 +128,7 @@ public class Mailbox {
 				} catch (UnknownResponsibilityException | MissingParcelDetailsException | BadProtocolException ex) {
 					getOwner().nodeLog(2, "Could not hand off to network controller: " + ex.getMessage());
 				}
-			} else if (parcel.consultWhenPathUnknown()) {
+			} else if (!parcel.isActualPathKnown() && parcel.consultWhenPathUnknown()) {
 				consultTrustedForPath(destination);
 			}
 		} catch (MissingParcelDetailsException | BadProtocolException | BadPathException ex) {
@@ -142,9 +142,11 @@ public class Mailbox {
 			
 			// Check if it was successful
 			if(sent_parcel.isSuccessful()){
-				getOwner().nodeLog(ErrorStatus.GOOD, LogLevel.VERBOSE, "Sent parcel was responded to successfully, erased from cache");
-				// Remove successful sent/receive parcel combos
-				sent_parcels.remove(i);
+				if(Protocol.elapsedMillis(sent_parcel.getResponseParcel().getTimeReceived()) > sent_parcel.getOriginalParcel().getResendCooldown()){
+					getOwner().nodeLog(ErrorStatus.GOOD, LogLevel.COMMON, "Sent parcel was responded to successfully and cooldown reached, erased from cache");
+					// Remove successful sent/receive parcel combos
+					sent_parcels.remove(i);
+				}
 			}else{
 				if(Protocol.elapsedMillis(sent_parcel.getOriginalParcel().getTimeCreated()) > sent_parcel.getOriginalParcel().getResponseWaitExpiry()){
 					getOwner().nodeLog(ErrorStatus.FAIL, LogLevel.ATTENTION, "Response wait expiry ("+sent_parcel.getOriginalParcel().getResponseWaitExpiry()+"ms) reached for original parcel", sent_parcel.getOriginalParcel().toString());

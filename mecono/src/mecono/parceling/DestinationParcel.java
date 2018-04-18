@@ -54,6 +54,10 @@ public class DestinationParcel extends Parcel {
 		this.time_created = time_created;
 	}
 
+	public void setTimeReceived(){
+		this.time_received = Protocol.getEpochMilliSecond();
+	}
+	
 	public final long getTimeCreated() {
 		return time_created;
 	}
@@ -160,7 +164,7 @@ public class DestinationParcel extends Parcel {
 		return true;
 	}
 
-	public int getTimeReceived() {
+	public long getTimeReceived() {
 		return time_received;
 	}
 	
@@ -168,7 +172,19 @@ public class DestinationParcel extends Parcel {
 		return time_sent;
 	}
 	
+	/**
+	 * How long to wait for a response.
+	 * @return 
+	 */
 	public long getResponseWaitExpiry(){
+		return 600 * 1000l;
+	}
+	
+	/**
+	 * Cooldown before sending another parcel of this type, after receiving a response.
+	 * @return 
+	 */
+	public long getResendCooldown(){
 		return 600 * 1000l;
 	}
 
@@ -255,10 +271,6 @@ public class DestinationParcel extends Parcel {
 		parcel.setActualPath(DestinationParcel.unserializeActualPath(payload_json.getJSONArray("actual_path"), relative_self));
 
 		return parcel;
-	}
-
-	public int getAge() {
-		return Math.max(Protocol.getEpochMinute() - time_received, 0);
 	}
 
 	public Node getDestination() {
@@ -517,7 +529,7 @@ public class DestinationParcel extends Parcel {
 
 	private String payload;
 	private Node destination;
-	private int time_received = 0;
+	private long time_received = 0;
 
 	private boolean in_outbox;
 	private String unique_id;

@@ -33,6 +33,7 @@ public class SentParcel {
 		if (getResponseType() == response_parcel.getParcelType() && original_parcel.getUniqueID().equals(response_parcel.getRespondedID())) {
 			this.response_parcel = response_parcel;
 			responded = true;
+			response_parcel.setTimeReceived();
 		}
 	}
 
