@@ -33,6 +33,10 @@ public class Protocol {
 	public static int elapsedMinutes(int since) {
 		return getEpochMinute() - since;
 	}
+	
+	public static long elapsedMillis(long since) {
+		return getEpochMilliSecond() - since;
+	}
 
 	public static final Random rng = new Random();
 	public static final char[] hex_chars = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};

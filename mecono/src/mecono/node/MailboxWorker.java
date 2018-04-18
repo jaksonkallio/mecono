@@ -43,6 +43,7 @@ public class MailboxWorker implements Runnable {
 	public void run() {
 		working = true;
 		int i = -1;
+		int j = -1;
 
 		while (working) {
 			if (i >= 0) {
@@ -50,6 +51,13 @@ public class MailboxWorker implements Runnable {
 				i--;
 			} else {
 				i = mailbox.getOutboxCount() - 1;
+			}
+			
+			if (j >= 0) {
+				mailbox.cleanSentParcel(j);
+				j--;
+			} else {
+				j = mailbox.getSentParcelCount() - 1;
 			}
 
 			mailbox.processInboundQueue();

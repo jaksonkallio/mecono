@@ -46,6 +46,10 @@ public class DestinationParcel extends Parcel {
 		setTimeCreated(Protocol.getEpochMilliSecond());
 	}
 
+	public void setTimeSent(){
+		this.time_sent = Protocol.getEpochMilliSecond();
+	}
+	
 	public final void setTimeCreated(long time_created) {
 		this.time_created = time_created;
 	}
@@ -158,6 +162,14 @@ public class DestinationParcel extends Parcel {
 
 	public int getTimeReceived() {
 		return time_received;
+	}
+	
+	public long getTimeSent() {
+		return time_sent;
+	}
+	
+	public long getResponseWaitExpiry(){
+		return 600 * 1000l;
 	}
 
 	public static Path unserializeActualPath(JSONArray actual_path_json, SelfNode relative_self) {
@@ -512,6 +524,7 @@ public class DestinationParcel extends Parcel {
 	private String signature;
 	private boolean is_sent = false;
 	private long time_created;
+	private long time_sent;
 	private Path actual_path;
 	private Path used_path;
 	private PathStats outbound_actual_path;

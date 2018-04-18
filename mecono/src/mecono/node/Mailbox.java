@@ -11,8 +11,11 @@ import mecono.parceling.DestinationParcel;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
+import mecono.node.SelfNode.ErrorStatus;
+import mecono.node.SelfNode.LogLevel;
 import mecono.parceling.BadPathException;
 import mecono.parceling.DestinationParcel.TransferDirection;
+import mecono.protocol.Protocol;
 import org.json.JSONObject;
 
 /**
@@ -119,6 +122,7 @@ public class Mailbox {
 					network_controller.sendParcel(parcel.constructForeignParcel());
 					parcel.setUsedPath();
 					parcel.setIsSent();
+					parcel.setTimeSent();
 					parcel.getOutboundActualPath().pending();
 					outbox.remove(i);
 				} catch (UnknownResponsibilityException | MissingParcelDetailsException | BadProtocolException ex) {
@@ -130,6 +134,28 @@ public class Mailbox {
 		} catch (MissingParcelDetailsException | BadProtocolException | BadPathException ex) {
 			getOwner().nodeLog(2, "Could not send parcel: " + ex.getMessage());
 		}
+	}
+	
+	public void cleanSentParcel(int i){
+		if(i < sent_parcels.size() && i >= 0){
+			SentParcel sent_parcel = sent_parcels.get(i);
+			
+			// Check if it was successful
+			if(sent_parcel.isSuccessful()){
+				getOwner().nodeLog(ErrorStatus.GOOD, LogLevel.VERBOSE, "Sent parcel was responded to successfully, erased from cache");
+				// Remove successful sent/receive parcel combos
+				sent_parcels.remove(i);
+			}else{
+				if(Protocol.elapsedMillis(sent_parcel.getOriginalParcel().getTimeCreated()) > sent_parcel.getOriginalParcel().getResponseWaitExpiry()){
+					getOwner().nodeLog(ErrorStatus.FAIL, LogLevel.ATTENTION, "Response wait expiry ("+sent_parcel.getOriginalParcel().getResponseWaitExpiry()+"ms) reached for original parcel", sent_parcel.getOriginalParcel().toString());
+					sent_parcels.remove(i);
+				}
+			}
+		}
+	}
+	
+	public int getSentParcelCount(){
+		return sent_parcels.size();
 	}
 
 	/**
