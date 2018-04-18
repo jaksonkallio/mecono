@@ -226,6 +226,12 @@ public class DestinationParcel extends Parcel {
 				parcel = new DestinationParcel(relative_self.getMailbox(), DestinationParcel.TransferDirection.INBOUND);
 		}
 		
+		if (payload_json.has("unique_id") && Parcel.validUniqueID(payload_json.getString("unique_id"))) {
+			parcel.setUniqueID(payload_json.getString("unique_id"));
+		} else {
+			throw new MissingParcelDetailsException("Missing unique ID");
+		}
+		
 		if(parcel instanceof ResponseParcel){
 			if (payload_json.has("responding_to") && Parcel.validUniqueID(payload_json.getString("responding_to"))) {
 				((ResponseParcel) parcel).setRespondedID(payload_json.getString("responding_to"));
@@ -244,13 +250,7 @@ public class DestinationParcel extends Parcel {
 	}
 
 	public Node getDestination() {
-		//try {
 		return destination;
-		//} catch (MissingParcelDetailsException ex) {
-		//    mailbox.getOwner().nodeLog(2, "Could not get destination: " + ex.getMessage());
-		//}
-
-		//return null;
 	}
 
 	public void setDestination(RemoteNode destination) {
@@ -399,8 +399,6 @@ public class DestinationParcel extends Parcel {
 	}
 
 	public ForeignParcel constructForeignParcel() throws UnknownResponsibilityException, BadProtocolException, MissingParcelDetailsException {
-		//mailbox.getOwner().nodeLog(0, "In constructForeignParcel");
-
 		// We only want to construct foreign parcels if we are the originator
 		if (originatorIsSelf()) {
 			// Only construct the foreign parcel if the path is completely built.
@@ -440,9 +438,6 @@ public class DestinationParcel extends Parcel {
 				throw new MissingParcelDetailsException("No path set and missing destination");
 			}
 
-			/*if(isInOutbox()){
-				throw new MissingParcelDetailsException("Cannot generate path after being placed in outbox");
-			}*/
 			PathStats ideal_path = ((RemoteNode) destination).getIdealPath();
 			if (ideal_path != null) {
 				outbound_actual_path = ideal_path;
@@ -482,7 +477,6 @@ public class DestinationParcel extends Parcel {
 		if (getTransferDirection() != TransferDirection.INBOUND) {
 			throw new BadProtocolException("The parcel isn't inbound");
 		}
-		//mailbox.getOwner().nodeLog(ErrorStatus.INFO, LogLevel.VERBOSE, "Default on receive action");
 	}
 
 	/**

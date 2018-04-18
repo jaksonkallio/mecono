@@ -49,9 +49,6 @@ public class Mailbox {
 		try {
 			// Learn path
 			getOwner().learnPath(parcel.getActualPath(), null);
-
-			// Update path stats
-			// TODO: Update path statistics, ie, increment success
 			
 			// Do any required action
 			parcel.onReceiveAction();
@@ -101,14 +98,6 @@ public class Mailbox {
 
 			for (DestinationParcel parcel : outbox) {
 				construct += "\n-- " + parcel.toString();
-
-				/*try {
-					if (!parcel.isActualPathKnown()) {
-						throw new MissingParcelDetailsException("Missing Path");
-					}
-				} catch(MissingParcelDetailsException ex){
-					construct += ex.getMessage();
-				}*/
 			}
 		}
 
@@ -193,11 +182,6 @@ public class Mailbox {
 			if (existing_action.getOriginalParcel().equals(parcel)) {
 				return true;
 			}
-			/*if (existing_action.getOriginalParcel() instanceof FindParcel) {
-				if(((FindParcel) parcel).getTarget().equals(((FindParcel) existing_action.getOriginalParcel()).getTarget()) && parcel.getDestination().equals(existing_action.getOriginalParcel().getDestination())){
-					// A find response is a duplicate if 
-				}
-			}*/
 		}
 
 		return false;
