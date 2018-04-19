@@ -4,6 +4,7 @@ import mecono.node.Mailbox;
 import mecono.node.Path;
 import mecono.node.PathStats;
 import mecono.parceling.MissingParcelDetailsException;
+import mecono.parceling.ParcelType;
 import mecono.parceling.ResponseParcel;
 import mecono.parceling.SentParcel;
 import mecono.protocol.BadProtocolException;
@@ -31,5 +32,10 @@ public class PingResponseParcel extends ResponseParcel {
 			
 			used_path.setPing(ping);
 		}
+	}
+	
+	@Override
+	public ParcelType getParcelType() {
+		return ParcelType.PING_RESPONSE;
 	}
 }

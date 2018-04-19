@@ -15,6 +15,7 @@ import mecono.node.SelfNode.ErrorStatus;
 import mecono.node.SelfNode.LogLevel;
 import mecono.parceling.BadPathException;
 import mecono.parceling.DestinationParcel.TransferDirection;
+import mecono.parceling.types.PingParcel;
 import mecono.protocol.Protocol;
 import org.json.JSONObject;
 
@@ -113,10 +114,11 @@ public class Mailbox {
 		RemoteNode destination = (RemoteNode) parcel.getDestination();
 
 		try {
+			if(!destination.isOnline() && parcel.requiresOnlinePath()){
+				pingRemote(destination);
+			}
+			
 			if (parcel.readyToSend()) {
-				// Create the response action/expectation
-				SentParcel response_action = new SentParcel(this, parcel);
-
 				// Give to the network controller for sending
 				try {
 					network_controller.sendParcel(parcel.constructForeignParcel());
@@ -133,6 +135,19 @@ public class Mailbox {
 			}
 		} catch (MissingParcelDetailsException | BadProtocolException | BadPathException ex) {
 			getOwner().nodeLog(2, "Could not send parcel: " + ex.getMessage());
+		}
+	}
+	
+	public void pingRemote(RemoteNode remote){
+		PingParcel ping_parcel = new PingParcel(this, TransferDirection.OUTBOUND);
+		ping_parcel.setDestination(remote);
+		
+		if(!expectingResponse(ping_parcel)){
+			try {
+				ping_parcel.placeInOutbox();
+			} catch (MissingParcelDetailsException | BadProtocolException ex) {
+				getOwner().nodeLog(ErrorStatus.FAIL, LogLevel.COMMON, "Could not ping remote", ex.getMessage());
+			}
 		}
 	}
 	

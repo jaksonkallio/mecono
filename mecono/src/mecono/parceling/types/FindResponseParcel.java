@@ -102,7 +102,7 @@ public class FindResponseParcel extends ResponseParcel implements Response {
 	}
 
 	@Override
-	public boolean requiresTestedPath() {
+	public boolean requiresOnlinePath() {
 		return false;
 	}
 

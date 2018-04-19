@@ -1,9 +1,13 @@
 package mecono.parceling.types;
 
+import java.util.ArrayList;
 import mecono.node.Mailbox;
+import mecono.node.Path;
+import mecono.node.RemoteNode;
 import mecono.parceling.DestinationParcel;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.ParcelType;
+import mecono.protocol.BadProtocolException;
 
 /**
  *
@@ -21,8 +25,18 @@ public class PingParcel extends DestinationParcel {
 	}
 
 	@Override
-	public boolean requiresTestedPath() {
+	public boolean requiresOnlinePath() {
 		return false;
+	}
+
+	@Override
+	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException{
+		super.onReceiveAction();
+		
+		PingResponseParcel response = new PingResponseParcel(mailbox, TransferDirection.OUTBOUND);
+		response.setRespondedID(getUniqueID());
+		response.setDestination((RemoteNode) getOriginator()); // Set the destination to the person that contacted us (a response)
+		response.placeInOutbox(); // Send the response
 	}
 
 	/**

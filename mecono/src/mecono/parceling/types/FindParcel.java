@@ -22,9 +22,12 @@ public class FindParcel extends DestinationParcel {
 
 	@Override
 	public boolean equals(Object o) {
-		FindParcel other = (FindParcel) o;
+		if(o instanceof FindParcel){
+			FindParcel other = (FindParcel) o;
+			return other.getTarget() == this.getTarget() && super.equals(other);
+		}
 
-		return (o instanceof FindParcel && other.getTarget() == this.getTarget() && super.equals(other));
+		return false;
 	}
 
 	@Override
@@ -84,7 +87,7 @@ public class FindParcel extends DestinationParcel {
 	}
 
 	@Override
-	public boolean requiresTestedPath() {
+	public boolean requiresOnlinePath() {
 		return false;
 	}
 

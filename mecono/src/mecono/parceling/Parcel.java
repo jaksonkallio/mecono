@@ -83,7 +83,7 @@ public abstract class Parcel {
 				DestinationParcel base_parcel = new DestinationParcel(relative_self.getMailbox(), TransferDirection.INBOUND);
 				return DestinationParcel.unserialize(json_parcel, relative_self);
 			} else {
-				throw new MissingParcelDetailsException("Could not determine destination from payload actual path");
+				throw new MissingParcelDetailsException("Could not determine destination from payload actual path: "+json_parcel.toString());
 			}
 		} else {
 			// TODO: Foreign parcel

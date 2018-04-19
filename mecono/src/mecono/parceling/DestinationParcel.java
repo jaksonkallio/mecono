@@ -157,7 +157,7 @@ public class DestinationParcel extends Parcel {
 			throw new BadProtocolException("Cannot send when transfer direction is not outbound");
 		}
 
-		if (getActualPath() == null || getOutboundActualPath() == null || (requiresTestedPath() && getOutboundActualPath().successes() <= 0)) {
+		if (getActualPath() == null || getOutboundActualPath() == null || (requiresOnlinePath() && !((RemoteNode) getDestination()).isOnline())) {
 			return false;
 		}
 
@@ -381,7 +381,7 @@ public class DestinationParcel extends Parcel {
 	 *
 	 * @return
 	 */
-	public boolean requiresTestedPath() {
+	public boolean requiresOnlinePath() {
 		return mailbox.getOwner().require_tested_path_before_send;
 	}
 
