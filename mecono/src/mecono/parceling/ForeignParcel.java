@@ -7,6 +7,9 @@ import mecono.node.Mailbox;
 import mecono.node.Node;
 import mecono.node.Path;
 import mecono.node.RemoteNode;
+import mecono.node.SelfNode;
+import mecono.node.SelfNode.ErrorStatus;
+import mecono.node.SelfNode.LogLevel;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -35,14 +38,15 @@ public class ForeignParcel extends Parcel {
 
 	@Override
 	public String toString() {
-		String next_node_address = "";
-
+		String str = "Foreign Parcel";
+		
 		try {
-			next_node_address = getNextNode().getAddress();
-		} catch (MissingParcelDetailsException ex) {
-			next_node_address = "Unknown";
+			str += "[PathHistory: "+getPathHistory().toString()+"]";
+		}catch(MissingParcelDetailsException ex){
+			mailbox.getOwner().nodeLog(ErrorStatus.FAIL, LogLevel.VERBOSE, "Unknown path history");
 		}
-		return "Foreign Parcel [Next: " + next_node_address + "]";
+		
+		return str;
 	}
 
 	/**
