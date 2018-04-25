@@ -88,8 +88,16 @@ public abstract class Parcel {
 			if(json_parcel.has("path_history")){
 				Path path_history = DestinationParcel.unserializeActualPath(json_parcel.getJSONArray("path_history"), relative_self);
 				if(json_parcel.has("payload")){
-					String payload_string = json_parcel.getString("payload");
+					String payload_string = json_parcel.getJSONObject("payload").toString();
 					ForeignParcel parcel = new ForeignParcel(relative_self.getMailbox(), path_history, payload_string);
+					
+					int i = 0;
+					for(Node stop : actual_path.getStops()){
+						if(stop.equals(relative_self) && i <= (actual_path.getPathLength() - 1)){
+							parcel.setNextNode((RemoteNode) actual_path.getStop(i + 1));
+						}
+						i++;
+					}
 					
 					return parcel;
 				}else{

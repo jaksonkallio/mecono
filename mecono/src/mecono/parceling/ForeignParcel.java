@@ -42,6 +42,7 @@ public class ForeignParcel extends Parcel {
 		
 		try {
 			str += "[PathHistory: "+getPathHistory().toString()+"]";
+			str += "[NextNode: "+getNextNode().toString()+"]";
 		}catch(MissingParcelDetailsException ex){
 			mailbox.getOwner().nodeLog(ErrorStatus.FAIL, LogLevel.VERBOSE, "Unknown path history");
 		}
@@ -60,13 +61,11 @@ public class ForeignParcel extends Parcel {
 
 	@Override
 	public RemoteNode getNextNode() throws MissingParcelDetailsException {
-		try {
-			// For foreign parcels, the next node is the last item in the path.
-			return (RemoteNode) getPathHistory().getStop(getPathHistory().getPathLength() - 1);
-		} catch (MissingParcelDetailsException ex) {
-			mailbox.getOwner().nodeLog(2, "Next node in path not known: " + ex.getMessage());
-			throw ex;
-		}
+		return next_node;
+	}
+	
+	public void setNextNode(RemoteNode next) {
+		this.next_node = next;
 	}
 
 	@Override
@@ -96,4 +95,5 @@ public class ForeignParcel extends Parcel {
 
 	private String payload;
 	private Path path_history;
+	private RemoteNode next_node;
 }

@@ -429,7 +429,8 @@ public class DestinationParcel extends Parcel {
 			if (isActualPathKnown()) {
 				ForeignParcel outbound_foreign_parcel = new ForeignParcel(mailbox, getActualPath(), encryptAsPayload().toString());
 				// The path history will contain current node + next node
-				Path new_path_history = getActualPath().getSubpath(1);
+				Path new_path_history = getActualPath().getSubpath(0);
+				outbound_foreign_parcel.setNextNode((RemoteNode) getActualPath().getStop(1));
 				outbound_foreign_parcel.setPathHistory(new_path_history);
 				return outbound_foreign_parcel;
 			} else {

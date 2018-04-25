@@ -39,7 +39,7 @@ public class Mailbox {
 			getOwner().nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.VERBOSE, "Mailbox received destination parcel");
 		} else if (parcel instanceof ForeignParcel) {
 			outbound_queue.offer((ForeignParcel) parcel);
-			getOwner().nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.COMMON, "Mailbox received foreign parcel");
+			getOwner().nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.COMMON, "Mailbox received foreign parcel", ((ForeignParcel) parcel).toString());
 		} else if (parcel == null) {
 			getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Mailbox received null parcel from network controller");
 		} else {
@@ -260,7 +260,7 @@ public class Mailbox {
 	private final MailboxWorker worker;
 	private ArrayList<SentParcel> sent_parcels = new ArrayList<>();
 	private final NetworkController network_controller;
-	private Queue<ForeignParcel> outbound_queue; // Outbound queue
+	private Queue<ForeignParcel> outbound_queue = new LinkedBlockingQueue<>(); // Outbound queue
 	private ArrayList<DestinationParcel> outbox = new ArrayList<>();
 	private Queue<JSONObject> inbound_queue = new LinkedBlockingQueue<>();
 }
