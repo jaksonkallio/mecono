@@ -156,8 +156,8 @@ public class DestinationParcel extends Parcel {
 		if (getTransferDirection() != TransferDirection.OUTBOUND) {
 			throw new BadProtocolException("Cannot send when transfer direction is not outbound");
 		}
-
-		if (getActualPath() == null || getOutboundActualPath() == null || (requiresOnlinePath() && !((RemoteNode) getDestination()).isOnline())) {
+		
+		if (getActualPath() == null || getOutboundActualPath() == null || (requiresOnlinePath() && !getOutboundActualPath().online())) {
 			return false;
 		}
 

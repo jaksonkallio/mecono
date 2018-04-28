@@ -66,7 +66,7 @@ public class PathStats {
 	}
 
 	public void markUsed() {
-		last_used = Protocol.getEpochMinute();
+		last_used = Protocol.getEpochSecond();
 	}
 
 	public void success() {
@@ -89,7 +89,7 @@ public class PathStats {
 	}
 
 	public boolean online() {
-		return successes() > 0 && Protocol.elapsedMinutes(last_used) > PATH_TESTED_EXPIRY;
+		return successes() > 0 && Protocol.elapsedSeconds(last_used) <= PATH_TESTED_EXPIRY;
 	}
 
 	public int successes() {
@@ -161,7 +161,7 @@ public class PathStats {
 	private int pending = 0;
 	private long ping;
 	private final RemoteNode learned_from;
-	private int last_used = 0; // Epoch minute timestamp of last successful use
+	private long last_used = 0; // Epoch second timestamp of last successful use
 	private final SelfNode indexer;
 	private final String identifier;
 }
