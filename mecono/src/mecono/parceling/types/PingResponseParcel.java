@@ -1,7 +1,6 @@
 package mecono.parceling.types;
 
 import mecono.node.Mailbox;
-import mecono.node.Path;
 import mecono.node.PathStats;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.ParcelType;
@@ -37,5 +36,10 @@ public class PingResponseParcel extends ResponseParcel {
 	@Override
 	public ParcelType getParcelType() {
 		return ParcelType.PING_RESPONSE;
+	}
+	
+	@Override
+	public boolean requiresOnlinePath(){
+		return false;
 	}
 }
