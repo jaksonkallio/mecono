@@ -188,15 +188,19 @@ public class DestinationParcel extends Parcel {
 		return 600 * 1000l;
 	}
 
-	public static Path unserializeActualPath(JSONArray actual_path_json, SelfNode relative_self) {
+	public static Path unserializeActualPath(JSONArray actual_path_json, SelfNode relative_self) throws BadProtocolException {
 		ArrayList<Node> stops = new ArrayList<>();
 		for (int i = 0; i < actual_path_json.length(); i++) {
+			if(!Node.isValidAddress(actual_path_json.getString(i))){
+				throw new BadProtocolException("Invalid address");
+			}
+			
 			stops.add(relative_self.getMemoryController().loadRemoteNode(actual_path_json.getString(i)));
 		}
 		return new Path(stops);
 	}
 
-	public static DestinationParcel unserialize(JSONObject parcel_json, SelfNode relative_self) throws MissingParcelDetailsException {
+	public static DestinationParcel unserialize(JSONObject parcel_json, SelfNode relative_self) throws MissingParcelDetailsException, BadProtocolException {
 		DestinationParcel parcel;
 		JSONObject content_json;
 		JSONObject payload_json;
@@ -267,7 +271,7 @@ public class DestinationParcel extends Parcel {
 				throw new MissingParcelDetailsException("Response parcel missing valid responding-to field");
 			}
 		}
-
+		
 		parcel.setActualPath(DestinationParcel.unserializeActualPath(payload_json.getJSONArray("actual_path"), relative_self));
 
 		return parcel;

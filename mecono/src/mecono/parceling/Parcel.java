@@ -64,7 +64,7 @@ public abstract class Parcel {
 		return null;
 	}
 
-	public static Parcel unserialize(JSONObject json_parcel, SelfNode relative_self) throws MissingParcelDetailsException {
+	public static Parcel unserialize(JSONObject json_parcel, SelfNode relative_self) throws MissingParcelDetailsException, BadProtocolException {
 		//mailbox.getOwner().nodeLog(0, "Unserializing received parcel: "+json_parcel.toString());
 
 		if (json_parcel.has("payload")) {
@@ -164,5 +164,5 @@ public abstract class Parcel {
 
 	protected final Mailbox mailbox;
 	protected Node originator;
-	protected Path path_history;
+	private Path path_history;
 }

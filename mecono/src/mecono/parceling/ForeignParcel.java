@@ -23,7 +23,7 @@ public class ForeignParcel extends Parcel {
 
 	public ForeignParcel(Mailbox mailbox, Path path_history, String payload) {
 		super(mailbox);
-		this.path_history = path_history;
+		setPathHistory(path_history);
 		this.payload = payload;
 	}
 
@@ -75,10 +75,13 @@ public class ForeignParcel extends Parcel {
 
 		try {
 			ArrayList<Node> stops = getPathHistory().getStops();
+			// Add a copy of the path history...
 			for (Node stop : stops) {
 				serialized_path_history.put(stop.getAddress());
 			}
-
+			// ...along with the next node in the path
+			serialized_path_history.put(getNextNode().getAddress());
+			
 			serialized_parcel.put("path_history", serialized_path_history);
 			serialized_parcel.put("payload", payload);
 		} catch (MissingParcelDetailsException ex) {

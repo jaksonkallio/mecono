@@ -251,7 +251,7 @@ public class Mailbox {
 		if (inbound_queue.size() > 0) {
 			try {
 				receiveParcel(Parcel.unserialize(inbound_queue.poll(), getOwner()));
-			} catch (MissingParcelDetailsException ex) {
+			} catch (MissingParcelDetailsException | BadProtocolException ex) {
 				getOwner().nodeLog(2, "Could not receive parcel", ex.getMessage());
 			}
 		}
