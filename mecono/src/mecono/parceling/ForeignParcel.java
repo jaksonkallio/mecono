@@ -42,7 +42,7 @@ public class ForeignParcel extends Parcel {
 		
 		try {
 			str += "[PathHistory: "+getPathHistory().toString()+"]";
-			str += "[NextNode: "+getNextNode().toString()+"]";
+			str += "[NextNode: "+getNextNode().getAddress()+"]";
 		}catch(MissingParcelDetailsException ex){
 			mailbox.getOwner().nodeLog(ErrorStatus.FAIL, LogLevel.VERBOSE, "Unknown path history");
 		}
