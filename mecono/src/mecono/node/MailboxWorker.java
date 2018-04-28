@@ -59,9 +59,11 @@ public class MailboxWorker implements Runnable {
 			} else {
 				j = mailbox.getSentParcelCount() - 1;
 			}
-
+			
+			
 			mailbox.processInboundQueue();
-
+			mailbox.processForwardQueue();
+			
 			try {
 				long delay = (long) (((int) (Math.random() * 100)) + 5000 * (1 - mailbox.getOwner().performance_modifier));
 				Thread.sleep(delay);

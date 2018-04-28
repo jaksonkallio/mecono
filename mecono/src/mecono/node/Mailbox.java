@@ -38,7 +38,7 @@ public class Mailbox {
 			processDestinationParcel((DestinationParcel) parcel);
 			getOwner().nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.VERBOSE, "Mailbox received destination parcel");
 		} else if (parcel instanceof ForeignParcel) {
-			outbound_queue.offer((ForeignParcel) parcel);
+			forward_queue.offer((ForeignParcel) parcel);
 			getOwner().nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.COMMON, "Mailbox received foreign parcel", ((ForeignParcel) parcel).toString());
 		} else if (parcel == null) {
 			getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Mailbox received null parcel from network controller");
@@ -64,7 +64,7 @@ public class Mailbox {
 	}
 
 	private void enqueueOutbound(ForeignParcel parcel) {
-		outbound_queue.offer(parcel);
+		forward_queue.offer(parcel);
 	}
 
 	/**
@@ -107,6 +107,17 @@ public class Mailbox {
 
 		return construct;
 	}
+	
+	public void processForwardQueue(){
+		if(forward_queue.size() > 0){
+			ForeignParcel parcel = forward_queue.poll();
+			try {
+				network_controller.sendParcel(parcel);
+			} catch (MissingParcelDetailsException | BadProtocolException ex) {
+				getOwner().nodeLog(2, "Could not hand off to network controller: " + ex.getMessage());
+			}
+		}
+	}
 
 	public void processOutboxItem(int i) {
 		DestinationParcel parcel = outbox.get(i);
@@ -121,7 +132,7 @@ public class Mailbox {
 			if (parcel.readyToSend()) {
 				// Give to the network controller for sending
 				try {
-					network_controller.sendParcel(parcel.constructForeignParcel());
+					forward_queue.offer(parcel.constructForeignParcel());
 					parcel.setUsedPath();
 					parcel.setIsSent();
 					parcel.setTimeSent();
@@ -258,9 +269,9 @@ public class Mailbox {
 
 	private final SelfNode owner; // The selfnode that runs the mailbox
 	private final MailboxWorker worker;
-	private ArrayList<SentParcel> sent_parcels = new ArrayList<>();
+	private final ArrayList<SentParcel> sent_parcels = new ArrayList<>();
 	private final NetworkController network_controller;
-	private Queue<ForeignParcel> outbound_queue = new LinkedBlockingQueue<>(); // Outbound queue
-	private ArrayList<DestinationParcel> outbox = new ArrayList<>();
-	private Queue<JSONObject> inbound_queue = new LinkedBlockingQueue<>();
+	private final Queue<ForeignParcel> forward_queue = new LinkedBlockingQueue<>(); // The forward queue is made up of foreign parcels ready to be sent.
+	private final ArrayList<DestinationParcel> outbox = new ArrayList<>(); // The outbox is made up of destination parcels that are waiting for the right conditions to send
+	private final Queue<JSONObject> inbound_queue = new LinkedBlockingQueue<>(); // The inbound queue is made up of received JSON objects that need to be processed
 }
