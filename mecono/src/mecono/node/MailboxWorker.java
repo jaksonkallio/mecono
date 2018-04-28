@@ -65,7 +65,7 @@ public class MailboxWorker implements Runnable {
 			mailbox.processForwardQueue();
 			
 			try {
-				long delay = (long) (((int) (Math.random() * 100)) + 5000 * (1 - mailbox.getOwner().performance_modifier));
+				long delay = (long) (((int) (Math.random() * 50)) + 1000 * (1 - mailbox.getOwner().NODE_PERFORMANCE_MODIFIER));
 				Thread.sleep(delay);
 			} catch (InterruptedException ex) {
 				working = false;

@@ -459,10 +459,9 @@ public class SelfNode implements Node {
 	public final boolean require_tested_path_before_send = true; // For normal parcels, do we require a tested (path with >1 use) before sending?
 	public final int cooperativity_minimum_sample_size = 5; // Cooperativity will be calculated only after total uses is at least X.
 	public final double path_reliability_rating_bonus = 0.10;
-	public final boolean forward_signals_for_blacklisted_nodes = false;
-	public final int signal_attempts = 100; // Attempt to send a signal X times, retrying after each timeout failure.
-	public final int timeout_failure_time = 8; // X minutes before a signal is considered failure.
-	public final int timeout_failure_expiry = 60; // X minutes before a signal's upon response action is deleted. Must be greater than `timeout_failure_time`. 
-	public final int unauthorized_neighborship_expiry = 60; // Only keep unauthorized neighborship connections for the X minutes.
-	public final double performance_modifier = 0.9; // Percentage, how intense should resource usage be? Higher value means more intense but faster and more dedicated. Lower means slower but less impactful of host system.
+	public final int MAX_PATH_HIST_LENGTH = 30; // Only forward a foreign parcel if the path history has fewer than this many stops.
+	public final boolean FORWARD_WHEN_BLACKLISTED_IN_HISTORY = true;
+	public final int SENT_NO_RESPONSE_TIMEOUT = 60; // If no response in X seconds, consider the transfer failed.
+	public final int SENT_SUCCESS_TIMEOUT = 30; // After X seconds, clear out an old sent parcel. This will allow a future congruent parcel to be sent.
+	public final double NODE_PERFORMANCE_MODIFIER = 0.9; // Percentage, how intense should resource usage be? Higher value means more intense but faster and more dedicated. Lower means slower but less impactful of host system.
 }
