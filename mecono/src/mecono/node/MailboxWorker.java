@@ -42,22 +42,32 @@ public class MailboxWorker implements Runnable {
 	@Override
 	public void run() {
 		working = true;
-		int i = -1;
-		int j = -1;
+		int[] counters = new int[3];
+		counters[0] = -1; // Outbox items
+		counters[1] = -1; // Sent parcel
+		counters[2] = -1; // Pinned nodes
+
 
 		while (working) {
-			if (i >= 0) {
-				mailbox.processOutboxItem(i);
-				i--;
+			if (counters[0] >= 0) {
+				mailbox.processOutboxItem(counters[0]);
+				counters[0]--;
 			} else {
-				i = mailbox.getOutboxCount() - 1;
+				counters[0] = mailbox.getOutboxCount() - 1;
 			}
 			
-			if (j >= 0) {
-				mailbox.cleanSentParcel(j);
-				j--;
+			if (counters[1] >= 0) {
+				mailbox.cleanSentParcel(counters[1]);
+				counters[1]--;
 			} else {
-				j = mailbox.getSentParcelCount() - 1;
+				counters[1] = mailbox.getSentParcelCount() - 1;
+			}
+			
+			if (counters[2] >= 0) {
+				mailbox.pingPinnedNode(counters[2]);
+				counters[2]--;
+			} else {
+				counters[2] = mailbox.getPinnedNodeCount() - 1;
 			}
 			
 			

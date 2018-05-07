@@ -118,7 +118,22 @@ public class Mailbox {
 			}
 		}
 	}
+	
+	public void pingPinnedNode(int i){
+		if(pinned_nodes == null){
+			return;
+		}
+		
+		RemoteNode pinned_node = pinned_nodes.get(i);
+		if(Protocol.elapsedSeconds(pinned_node.getLastPinged()) >= getOwner().PINNED_NODE_RE_PING_TIME){
+			pingRemote(pinned_node);
+		}
+	}
 
+	public int getPinnedNodeCount(){
+		return pinned_nodes.size();
+	}
+	
 	public void processOutboxItem(int i) {
 		DestinationParcel parcel = outbox.get(i);
 		//getOwner().nodeLog(0, "Attemping to send "+parcel.toString());
@@ -271,6 +286,7 @@ public class Mailbox {
 	private final MailboxWorker worker;
 	private final ArrayList<SentParcel> sent_parcels = new ArrayList<>();
 	private final NetworkController network_controller;
+	private final ArrayList<RemoteNode> pinned_nodes = new ArrayList<>();
 	private final Queue<ForeignParcel> forward_queue = new LinkedBlockingQueue<>(); // The forward queue is made up of foreign parcels ready to be sent.
 	private final ArrayList<DestinationParcel> outbox = new ArrayList<>(); // The outbox is made up of destination parcels that are waiting for the right conditions to send
 	private final Queue<JSONObject> inbound_queue = new LinkedBlockingQueue<>(); // The inbound queue is made up of received JSON objects that need to be processed

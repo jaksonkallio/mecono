@@ -79,6 +79,10 @@ public class RemoteNode implements Node {
 		this.ping = ping;
 		last_ping_time = Protocol.getEpochMinute();
 	}
+	
+	public long getLastPinged(){
+		return getIdealPath().getLastUse();
+	}
 
 	public boolean isOnline() {
 		return ((Protocol.getEpochMinute() - last_ping_time) < indexer.offline_successful_ping_threshold);
