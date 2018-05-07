@@ -68,6 +68,10 @@ public class PathStats {
 	public void markUsed() {
 		last_used = Protocol.getEpochSecond();
 	}
+	
+	public long getLastUse(){
+		return last_used;
+	}
 
 	public void success() {
 		pending--;
@@ -89,7 +93,7 @@ public class PathStats {
 	}
 
 	public boolean online() {
-		return successes() > 0 && Protocol.elapsedSeconds(last_used) <= PATH_TESTED_EXPIRY;
+		return successes() > 0 && Protocol.elapsedSeconds(getLastUse()) <= PATH_TESTED_EXPIRY;
 	}
 
 	public int successes() {
@@ -133,20 +137,18 @@ public class PathStats {
 	public double reliability() {
 		double reliability = 0;
 
-		if (totalUses() > 0) {
-			if (successes() > 0) {
-				// Cooperativity bonus favors nodes that have had a lot of signals sent over them. This gives frequently used paths some slack, and also allows them to improve their reliability over time (up to 100%).
-				reliability = (successes() * (1 + PATH_RELIABILITY_BONUS)) / totalUses();
-			} else {
-				// Only nodes that have had at least one successful signal sent over them get a cooperativity bonus.
-				reliability = 0;
-			}
+		if (totalUses() >= 5) {
+			// Reliability bonus favors nodes that have had a lot of signals sent over them
+			// This gives frequently used paths some slack, and also allows them to improve their reliability over time (up to 100%)
+			// Example: if the PATH_RELIABILITY_BONUS == 2%, then for every 50 successes (50*0.02=1), they get another success added for the calculation.
+			reliability = (successes() * (1 + PATH_RELIABILITY_BONUS)) / totalUses();
 		} else {
-			// Until we get a good sample size, the cooperativity is constant.
-			reliability = 0.25;
+			// We need a good sample size (>5) before we can give a calculated reliability
+			// It's nice to give new paths a chance at success, so we temporarily bump up their reliability to 0.75 until they are tested.
+			reliability = 0.75;
 		}
 
-		// Cooperativity may never be greater than 100%.
+		// Reliability may never be greater than 100%
 		reliability = Math.min(reliability, 1.00);
 
 		return reliability;
