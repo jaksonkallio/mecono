@@ -1,6 +1,6 @@
 package mecono.node;
 
-import mecono.protocol.SimNetwork;
+import mecono.protocol.cse.SimNetwork;
 import org.json.JSONObject;
 
 /**

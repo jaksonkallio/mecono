@@ -1,10 +1,11 @@
 package mecono;
 
-import mecono.protocol.SimNetwork;
+import mecono.protocol.cse.SimNetwork;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import mecono.protocol.cse.versions.CSEv1;
 
 /**
  *
@@ -64,7 +65,7 @@ public class Mecono extends Application {
 
 	}
 
-	public static final SimNetwork sim = new SimNetwork();
+	public static final SimNetwork sim = new CSEv1();
 	public static boolean simulated_network = true;
 	public static boolean sandbox = false;
 	public static int version = 1;

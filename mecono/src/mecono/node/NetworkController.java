@@ -7,7 +7,7 @@ import mecono.parceling.ForeignParcel;
 import mecono.parceling.MissingParcelDetailsException;
 import java.util.ArrayList;
 import mecono.Mecono;
-import mecono.protocol.SimNetwork;
+import mecono.protocol.cse.SimNetwork;
 import org.json.JSONObject;
 
 /**

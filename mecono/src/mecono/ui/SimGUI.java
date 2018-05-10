@@ -17,7 +17,7 @@ import mecono.node.Neighbor;
 import mecono.node.Path;
 import mecono.node.PathStats;
 import mecono.node.RemoteNode;
-import mecono.protocol.SimNetwork;
+import mecono.protocol.cse.SimNetwork;
 
 /**
  *
@@ -160,11 +160,16 @@ public class SimGUI {
 		info_bar.setPadding(top_inset);
 	}
 	
+	private Label generateStatLabel(String label, String value){
+		return new Label(label + ": " + value);
+	}
+	
 	private void buildSimNetworkOverview(){
 		columns[2].setPrefWidth(200);
 		columns[2].setPadding(hor_insets);
 		sim_stats.setText("Sim Net Stats");
 		columns[2].getChildren().add(sim_stats);
+		columns[2].getChildren().add(new Label("Version: " + sim_network.getVersionLabel()));
 	}
 
 	private final SimNetwork sim_network;
