@@ -162,6 +162,8 @@ public class SimGUI {
 	
 	private void buildSimNetworkOverview(){
 		columns[2].setPrefWidth(200);
+		columns[2].setPadding(hor_insets);
+		sim_stats.setText("Sim Net Stats");
 		columns[2].getChildren().add(sim_stats);
 	}
 
@@ -185,6 +187,7 @@ public class SimGUI {
 	private final Label sim_stats = new Label("Simulation Network Statistics");
 	private final HBox info_bar = new HBox(20);
 	private final Insets top_inset = new Insets(10, 0, 0, 0);
+	private final Insets hor_insets = new Insets(0, 10, 0, 10);
 	private final Insets left_inset = new Insets(0, 0, 0, 10);
 	private final Font console_font = new Font("Monospaced Regular", 12);
 	private SimSelfNode selected_node;
