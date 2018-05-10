@@ -30,7 +30,7 @@ public class SimGUI {
 		buildMainContainer();
 	}
 
-	public BorderPane getMainContainer() {
+	public HBox getMainContainer() {
 		return main_container;
 	}
 
@@ -58,11 +58,11 @@ public class SimGUI {
 		main_container.setPadding(new Insets(10));
 
 		buildNodeList();
-		main_container.setLeft(node_list);
+		main_container.getChildren().add(column_1);
 		buildActiveNodeArea();
-		main_container.setCenter(active_node_area);
-		buildInfoBar();
-		main_container.setBottom(info_bar);
+		main_container.getChildren().add(active_node_area);
+		buildSimNetworkOverview();
+		main_container.getChildren().add(columns[2]);
 	}
 
 	private void buildNodeList() {
@@ -77,6 +77,9 @@ public class SimGUI {
 		node_list.getSelectionModel().selectedItemProperty().addListener(event -> {
 			nodeSelected();
 		});
+		
+		buildInfoBar();
+		column_1.getChildren().addAll(node_list, info_bar);
 	}
 
 	private void buildActiveNodeArea() {
@@ -156,26 +159,33 @@ public class SimGUI {
 		info_bar.getChildren().addAll(attribution, sim_stats);
 		info_bar.setPadding(top_inset);
 	}
+	
+	private void buildSimNetworkOverview(){
+		columns[2].setPrefWidth(200);
+		columns[2].getChildren().add(sim_stats);
+	}
 
-	private SimNetwork sim_network;
-	private BorderPane main_container = new BorderPane();
-	private ListView<SimSelfNode> node_list = new ListView<>();
-	private ObservableList<SimSelfNode> node_items = FXCollections.observableArrayList();
-	private Label active_node_label = new Label("Selected Node");
-	private TextArea node_console = new TextArea();
-	private TextArea global_console = new TextArea();
-	private Button get_node_info = new Button("Node Info");
-	private Button discovered_nodes_button = new Button("Discovered Nodes");
-	private Button send_from_node = new Button("Send From");
-	private Button toggle_online = new Button("Toggle Online");
-	private Button view_outbox = new Button("View Outbox");
-	private VBox active_node_actions = new VBox(10);
-	private VBox active_node_area = new VBox(10);
-	private Label attribution = new Label("Made by Jakson Kallio");
-	private Label sim_stats = new Label("Statistics loading...");
-	private HBox info_bar = new HBox(20);
-	private Insets top_inset = new Insets(10, 0, 0, 0);
-	private Insets left_inset = new Insets(0, 0, 0, 10);
-	private Font console_font = new Font("Monospaced Regular", 12);
+	private final SimNetwork sim_network;
+	private final HBox main_container = new HBox();
+	private final VBox column_1 = new VBox();
+	private final VBox[] columns = {new VBox(), new VBox(), new VBox()};
+	private final ListView<SimSelfNode> node_list = new ListView<>();
+	private final ObservableList<SimSelfNode> node_items = FXCollections.observableArrayList();
+	private final Label active_node_label = new Label("Selected Node");
+	private final TextArea node_console = new TextArea();
+	private final TextArea global_console = new TextArea();
+	private final Button get_node_info = new Button("Node Info");
+	private final Button discovered_nodes_button = new Button("Discovered Nodes");
+	private final Button send_from_node = new Button("Send From");
+	private final Button toggle_online = new Button("Toggle Online");
+	private final Button view_outbox = new Button("View Outbox");
+	private final VBox active_node_actions = new VBox(10);
+	private final VBox active_node_area = new VBox(10);
+	private final Label attribution = new Label("Made by Jakson Kallio");
+	private final Label sim_stats = new Label("Simulation Network Statistics");
+	private final HBox info_bar = new HBox(20);
+	private final Insets top_inset = new Insets(10, 0, 0, 0);
+	private final Insets left_inset = new Insets(0, 0, 0, 10);
+	private final Font console_font = new Font("Monospaced Regular", 12);
 	private SimSelfNode selected_node;
 }
