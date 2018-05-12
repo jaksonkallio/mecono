@@ -31,14 +31,14 @@ public abstract class SimNetwork {
 	}
 	
 	public void startMailboxWorkers() {
-		for (SimSelfNode node : members) {
+		for (SimSelfNode node : node_set) {
 			node.getMailbox().getWorker().startWorking();
 			node.nodeLog(0, "Started sim node mailbox worker");
 		}
 	}
 
 	public void stopMailboxWorkers() {
-		for (SimSelfNode node : members) {
+		for (SimSelfNode node : node_set) {
 			node.getMailbox().getWorker().stopWorking();
 			node.nodeLog(0, "Stopped sim node mailbox worker");
 		}
@@ -67,8 +67,8 @@ public abstract class SimNetwork {
 		}
 	}*/
 
-	public static SimSelfNode getSelfNodeFromRemoteNode(RemoteNode target) {
-		for (SimSelfNode node : members) {
+	public SimSelfNode getSelfNodeFromRemoteNode(RemoteNode target) {
+		for (SimSelfNode node : node_set) {
 			if (target.equals(node)) {
 				return node;
 			}
@@ -78,7 +78,7 @@ public abstract class SimNetwork {
 	}
 
 	public ArrayList<SimSelfNode> getMembers() {
-		return members;
+		return node_set;
 	}
 
 	/*private void memberOutboxProcess() {
@@ -127,8 +127,7 @@ public abstract class SimNetwork {
 	}
 
 	// Simulation Preferences
-	private static final ArrayList<SimSelfNode> members = new ArrayList<>();
-	private final ArrayList<SimSelfNode> node_set = new ArrayList<>();
-	private final ArrayList<SimSelfNode> parcel_set = new ArrayList<>();
+	protected final ArrayList<SimSelfNode> node_set = new ArrayList<>();
+	protected final ArrayList<SimSelfNode> parcel_set = new ArrayList<>();
 	private final SimGUI sim_gui;
 }

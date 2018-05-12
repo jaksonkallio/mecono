@@ -38,6 +38,10 @@ public class SimSelfNode extends SelfNode {
 		return construct;
 	}
 
+	public SimNetwork getSimNetwork(){
+		return sim_network;
+	}
+	
 	private boolean adversarial_node = false;
 	private SimNetwork sim_network;
 }

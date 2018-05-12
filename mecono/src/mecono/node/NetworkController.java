@@ -48,7 +48,7 @@ public class NetworkController {
 				boolean neighbor_connection_exists = false;
 
 				if (mailbox.getOwner().isNeighbor(remote_receiver)) {
-					SimSelfNode receiver = SimNetwork.getSelfNodeFromRemoteNode(remote_receiver);
+					SimSelfNode receiver = ((SimSelfNode) mailbox.getOwner()).getSimNetwork().getSelfNodeFromRemoteNode(remote_receiver);
 					receiver.getMailbox().getNetworkController().receiveData(serialized_parcel.toString());
 					//mailbox.getOwner().nodeLog(4, "Sent " + parcel.toString() + " to " + receiver.getAddressLabel());
 				} else {
