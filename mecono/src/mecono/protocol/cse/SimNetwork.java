@@ -117,8 +117,18 @@ public abstract class SimNetwork {
 	public String getStats() {
 		return "";
 	}
+	
+	public ArrayList<SimSelfNode> getNodeSet(){
+		return node_set;
+	}
+	
+	public ArrayList<SimSelfNode> getParcelSet(){
+		return parcel_set;
+	}
 
 	// Simulation Preferences
 	private static final ArrayList<SimSelfNode> members = new ArrayList<>();
+	private final ArrayList<SimSelfNode> node_set = new ArrayList<>();
+	private final ArrayList<SimSelfNode> parcel_set = new ArrayList<>();
 	private final SimGUI sim_gui;
 }
