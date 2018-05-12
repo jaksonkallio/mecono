@@ -1,5 +1,7 @@
 package mecono.protocol.cse.versions;
 
+import mecono.node.NodeAddress;
+import mecono.node.SimSelfNode;
 import mecono.protocol.cse.SimNetwork;
 
 /**
@@ -10,11 +12,23 @@ public class CSEv2 extends SimNetwork {
 
 	@Override
 	protected void initEnvironment() {
-		
+		createNodes();
+		createNeighborships();
 	}
 	
-	private void fillNeighborshipsArray(){
-		
+	private void createNodes(){
+		for(int i = 0; i < node_count; i++){
+			node_set.add(new SimSelfNode("node"+i, new NodeAddress("n"+i), this));
+		}
+	}
+	
+	private void createNeighborships(){
+		for(int i = 0; i < neighborships.length; i++){
+			for(int j = 0; j < neighborships[i].length; j++){
+				int neighbor_id = (j + neighborships[i][j]) % neighborships[i].length;
+				createNeighborship(node_set.get(j), node_set.get(neighbor_id));
+			}
+		}
 	}
 	
 	private int node_count = 100;
