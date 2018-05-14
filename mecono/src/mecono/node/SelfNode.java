@@ -73,7 +73,11 @@ public class SelfNode implements Node {
 	 * Get the shortened address label for quick reference.
 	 */
 	public String getAddressLabel() {
-		return getAddress().substring(0, 4);
+		if(getAddress().length() > 4){
+			return getAddress().substring(0, 4);
+		}
+		
+		return getAddress();
 	}
 
 	/**
@@ -155,7 +159,7 @@ public class SelfNode implements Node {
 			return null;
 		}
 
-		String construct = "[" + getLabel().substring(0, 4) + "][" + error_status.name() + "] " + message;
+		String construct = "[" + getAddressLabel() + "][" + error_status.name() + "] " + message;
 		System.out.println(construct);
 
 		return construct;
