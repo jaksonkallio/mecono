@@ -5,7 +5,7 @@ import mecono.node.SimSelfNode;
 import mecono.node.Neighbor;
 import mecono.node.RemoteNode;
 import java.util.ArrayList;
-import mecono.node.NodeAddress;
+import java.util.Arrays;
 
 /**
  *
@@ -122,12 +122,17 @@ public abstract class SimNetwork {
 		return node_set;
 	}
 	
-	public ArrayList<SimSelfNode> getParcelSet(){
+	public ArrayList<ArrayList<Integer>> getParcelSet(){
 		return parcel_set;
+	}
+	
+	protected void addSampleParcel(int n1, int n2){
+		Integer[] pair = {n1, n2};
+		parcel_set.add(new ArrayList<>(Arrays.asList(pair)));
 	}
 
 	// Simulation Preferences
 	protected final ArrayList<SimSelfNode> node_set = new ArrayList<>();
-	protected final ArrayList<SimSelfNode> parcel_set = new ArrayList<>();
+	protected final ArrayList<ArrayList<Integer>> parcel_set = new ArrayList<>();
 	private final SimGUI sim_gui;
 }
