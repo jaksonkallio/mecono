@@ -10,6 +10,13 @@ public class ParcelHistoryArchive {
 	
 	public void addParcelHistoryItem(String parcel_id, ParcelType parcel_type){
 		parcel_history.offer(new ParcelHistoryItem(parcel_id, parcel_type));
+		trimOld();
+	}
+	
+	private void trimOld(){
+		while(parcel_history.size() > HISTORY_LIMIT){
+			parcel_history.poll();
+		}
 	}
 	
 	// Number of previous parcels to keep
