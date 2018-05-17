@@ -130,6 +130,14 @@ public abstract class SimNetwork {
 		Integer[] pair = {n1, n2};
 		parcel_set.add(new ArrayList<>(Arrays.asList(pair)));
 	}
+	
+	protected void distributeSampleParcels(){
+		for(int i = 0; i < parcel_set.size(); i++){
+			SimSelfNode sender = node_set.get(parcel_set.get(i).get(0));
+			RemoteNode receiver = sender.getMemoryController().loadRemoteNode(node_set.get(parcel_set.get(i).get(1)).getAddress());
+			sender.sendDataParcel(receiver, "test_message_" + i);
+		}
+	}
 
 	// Simulation Preferences
 	protected final ArrayList<SimSelfNode> node_set = new ArrayList<>();
