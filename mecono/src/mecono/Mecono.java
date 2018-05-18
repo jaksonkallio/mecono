@@ -27,7 +27,7 @@ public class Mecono extends Application {
 				System.out.println("Running simulation...");
 				stage.setTitle("Simulated Network - Mecono " + Mecono.getVersion());
 				root.getChildren().add(sim.getSimGUI().getMainContainer());
-				sim.startMailboxWorkers();
+				// sim.startMailboxWorkers();
 			}
 		}
 

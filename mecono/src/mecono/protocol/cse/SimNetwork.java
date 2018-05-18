@@ -33,9 +33,12 @@ public abstract class SimNetwork {
 	}
 	
 	public void startMailboxWorkers() {
-		for (SimSelfNode node : node_set) {
-			node.getMailbox().getWorker().startWorking();
-			node.nodeLog(0, "Started sim node mailbox worker");
+		if(!isStarted()){
+			is_started = true;
+			for (SimSelfNode node : node_set) {
+				node.getMailbox().getWorker().startWorking();
+				node.nodeLog(0, "Started sim node mailbox worker");
+			}
 		}
 	}
 
@@ -44,6 +47,10 @@ public abstract class SimNetwork {
 			node.getMailbox().getWorker().stopWorking();
 			node.nodeLog(0, "Stopped sim node mailbox worker");
 		}
+	}
+	
+	public boolean isStarted(){
+		return is_started;
 	}
 
 	protected abstract void initEnvironment();
@@ -168,4 +175,5 @@ public abstract class SimNetwork {
 	protected final ArrayList<SimSelfNode> node_set = new ArrayList<>();
 	protected final ArrayList<ArrayList<Integer>> parcel_set = new ArrayList<>();
 	private final SimGUI sim_gui;
+	private boolean is_started = false;
 }
