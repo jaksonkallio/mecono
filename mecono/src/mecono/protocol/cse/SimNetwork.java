@@ -110,7 +110,7 @@ public abstract class SimNetwork {
 			count_fail += pha.getCount(false, ParcelType.PING);
 		}
 		
-		return (count_success / (count_fail + count_success));
+		return (count_success / Math.max(1, (count_fail + count_success)));
 	}
 
 	/*private void memberOutboxProcess() {
