@@ -196,6 +196,10 @@ public class Mailbox {
 			}
 		}
 	}
+
+	public ParcelHistoryArchive getParcelHistoryArchive(){
+		return parcel_history_archive;
+	}
 	
 	public int getSentParcelCount(){
 		return sent_parcels.size();
@@ -290,4 +294,5 @@ public class Mailbox {
 	private final Queue<ForeignParcel> forward_queue = new LinkedBlockingQueue<>(); // The forward queue is made up of foreign parcels ready to be sent.
 	private final ArrayList<DestinationParcel> outbox = new ArrayList<>(); // The outbox is made up of destination parcels that are waiting for the right conditions to send
 	private final Queue<JSONObject> inbound_queue = new LinkedBlockingQueue<>(); // The inbound queue is made up of received JSON objects that need to be processed
+	private final ParcelHistoryArchive parcel_history_archive = new ParcelHistoryArchive();
 }
