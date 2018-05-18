@@ -2,6 +2,9 @@ package mecono.ui;
 
 import mecono.node.SimSelfNode;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
@@ -79,7 +82,10 @@ public class SimGUI {
 		});
 		
 		buildInfoBar();
-		column_1.getChildren().addAll(node_list, info_bar);
+		start_simulation.setOnAction(event -> {
+			sim_network.startMailboxWorkers();
+		});
+		column_1.getChildren().addAll(node_list, info_bar, start_simulation);
 	}
 
 	private void buildActiveNodeArea() {
@@ -164,12 +170,33 @@ public class SimGUI {
 		return new Label(label + ": " + value);
 	}
 	
+	private void startSimulatedNetworkStatisticsRefresher(){
+		Timer timer = new java.util.Timer();
+
+		timer.schedule(new TimerTask() {
+			public void run() {
+				 Platform.runLater(new Runnable() {
+					public void run() {
+						updateSimulatedNetworkStats();
+					}
+				});
+			}
+		}, 20, 500);
+	}
+	
 	private void buildSimNetworkOverview(){
-		columns[2].setPrefWidth(200);
+		columns[2].setPrefWidth(300);
 		columns[2].setPadding(hor_insets);
 		sim_stats.setText("Sim Net Stats");
 		columns[2].getChildren().add(sim_stats);
 		columns[2].getChildren().add(new Label("Version: " + sim_network.getVersionLabel()));
+		columns[2].getChildren().addAll(outbox_count, success_ping_rate);
+		startSimulatedNetworkStatisticsRefresher();
+	}
+	
+	private void updateSimulatedNetworkStats(){
+		outbox_count.setText("Outbox Count: " + sim_network.parcelsInOutbox());
+		success_ping_rate.setText("Successful Ping Rate: " + UtilGUI.formatPercentage(sim_network.successfulPingRate()));
 	}
 
 	private final SimNetwork sim_network;
@@ -185,6 +212,7 @@ public class SimGUI {
 	private final Button discovered_nodes_button = new Button("Discovered Nodes");
 	private final Button send_from_node = new Button("Send From");
 	private final Button toggle_online = new Button("Toggle Online");
+	private final Button start_simulation = new Button("Start Simulation");
 	private final Button view_outbox = new Button("View Outbox");
 	private final VBox active_node_actions = new VBox(10);
 	private final VBox active_node_area = new VBox(10);
@@ -196,4 +224,8 @@ public class SimGUI {
 	private final Insets left_inset = new Insets(0, 0, 0, 10);
 	private final Font console_font = new Font("Monospaced Regular", 12);
 	private SimSelfNode selected_node;
+	
+	// Simulated network statistics
+	private final Label outbox_count = new Label();
+	private final Label success_ping_rate = new Label();
 }
