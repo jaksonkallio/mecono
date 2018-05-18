@@ -80,6 +80,17 @@ public abstract class SimNetwork {
 	public ArrayList<SimSelfNode> getMembers() {
 		return node_set;
 	}
+	
+	public int parcelsInOutbox(){
+		int sum = 0;
+		
+		for(SimSelfNode node : getNodeSet()){
+			sum += node.getMailbox().getOutboxCount();
+		}
+		
+		return sum;
+	}
+	
 
 	/*private void memberOutboxProcess() {
 		for (SimSelfNode node : members) {
