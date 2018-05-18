@@ -1,7 +1,7 @@
 package mecono.node;
 
+import java.util.LinkedList;
 import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
 import mecono.parceling.ParcelType;
 
 
@@ -11,6 +11,15 @@ public class ParcelHistoryArchive {
 	public void addParcelHistoryItem(String parcel_id, ParcelType parcel_type){
 		parcel_history.offer(new ParcelHistoryItem(parcel_id, parcel_type));
 		trimOld();
+	}
+	
+	public void markParcelResponded(String parcel_id){
+		for(ParcelHistoryItem parcel_item : parcel_history){
+			if(parcel_item.parcel_id.equals(parcel_id)){
+				parcel_item.has_response = true;
+				break;
+			}
+		}
 	}
 	
 	private void trimOld(){
@@ -23,7 +32,7 @@ public class ParcelHistoryArchive {
 	public final int HISTORY_LIMIT = 1000;
 	
 	// Parcel history item container
-	Queue<ParcelHistoryItem> parcel_history = new LinkedBlockingQueue<>();
+	Queue<ParcelHistoryItem> parcel_history = new LinkedList<>();
 	
 	// Each parcel history item, has meta data.
 	private class ParcelHistoryItem {
