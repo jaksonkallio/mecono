@@ -22,6 +22,18 @@ public class ParcelHistoryArchive {
 		}
 	}
 	
+	public double getCount(boolean has_response, ParcelType parcel_type){
+		int count = 0;
+		
+		for(ParcelHistoryItem parcel_item : parcel_history){
+			if(parcel_item.has_response == has_response && parcel_item.parcel_type == parcel_type){
+				count++;
+			}
+		}
+		
+		return count;
+	}
+	
 	private void trimOld(){
 		while(parcel_history.size() > HISTORY_LIMIT){
 			parcel_history.poll();
