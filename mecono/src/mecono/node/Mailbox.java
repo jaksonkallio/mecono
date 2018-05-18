@@ -15,6 +15,7 @@ import mecono.node.SelfNode.ErrorStatus;
 import mecono.node.SelfNode.LogLevel;
 import mecono.parceling.BadPathException;
 import mecono.parceling.DestinationParcel.TransferDirection;
+import mecono.parceling.ParcelType;
 import mecono.parceling.types.PingParcel;
 import mecono.protocol.Protocol;
 import org.json.JSONObject;
@@ -152,6 +153,7 @@ public class Mailbox {
 					parcel.setIsSent();
 					parcel.setTimeSent();
 					parcel.getOutboundActualPath().pending();
+					parcel_history_archive.addParcelHistoryItem(parcel.getUniqueID(), parcel.getParcelType());
 					outbox.remove(i);
 				} catch (UnknownResponsibilityException | MissingParcelDetailsException | BadProtocolException ex) {
 					getOwner().nodeLog(2, "Could not hand off to network controller: " + ex.getMessage());
