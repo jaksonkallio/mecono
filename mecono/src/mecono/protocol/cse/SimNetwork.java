@@ -6,6 +6,8 @@ import mecono.node.Neighbor;
 import mecono.node.RemoteNode;
 import java.util.ArrayList;
 import java.util.Arrays;
+import mecono.node.ParcelHistoryArchive;
+import mecono.parceling.ParcelType;
 
 /**
  *
@@ -91,6 +93,18 @@ public abstract class SimNetwork {
 		return sum;
 	}
 	
+	public double successfulPingRate(){
+		int count_success = 0;
+		int count_fail = 0;
+		
+		for(SimSelfNode node : getNodeSet()){
+			ParcelHistoryArchive pha = node.getMailbox().getParcelHistoryArchive();
+			count_success += pha.getCount(true, ParcelType.PING);
+			count_fail += pha.getCount(false, ParcelType.PING);
+		}
+		
+		return (count_success / (count_fail + count_success));
+	}
 
 	/*private void memberOutboxProcess() {
 		for (SimSelfNode node : members) {
