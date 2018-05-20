@@ -112,6 +112,19 @@ public abstract class SimNetwork {
 		
 		return (count_success / Math.max(1, (count_fail + count_success)));
 	}
+	
+	public double successfulDataRate(){
+		int count_success = 0;
+		int count_fail = 0;
+		
+		for(SimSelfNode node : getNodeSet()){
+			ParcelHistoryArchive pha = node.getMailbox().getParcelHistoryArchive();
+			count_success += pha.getCount(true, ParcelType.DATA);
+			count_fail += pha.getCount(false, ParcelType.DATA);
+		}
+		
+		return (count_success / Math.max(1, (count_fail + count_success)));
+	}
 
 	/*private void memberOutboxProcess() {
 		for (SimSelfNode node : members) {

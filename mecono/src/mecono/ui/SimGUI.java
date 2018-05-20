@@ -190,13 +190,14 @@ public class SimGUI {
 		sim_stats.setText("Sim Net Stats");
 		columns[2].getChildren().add(sim_stats);
 		columns[2].getChildren().add(new Label("Version: " + sim_network.getVersionLabel()));
-		columns[2].getChildren().addAll(outbox_count, success_ping_rate);
+		columns[2].getChildren().addAll(outbox_count, success_ping_rate, success_data_rate);
 		startSimulatedNetworkStatisticsRefresher();
 	}
 	
 	private void updateSimulatedNetworkStats(){
 		outbox_count.setText("Outbox Count: " + sim_network.parcelsInOutbox());
 		success_ping_rate.setText("Successful Ping Rate: " + UtilGUI.formatPercentage(sim_network.successfulPingRate()));
+		success_data_rate.setText("Successful Data Rate: " + UtilGUI.formatPercentage(sim_network.successfulDataRate()));
 	}
 
 	private final SimNetwork sim_network;
@@ -226,6 +227,7 @@ public class SimGUI {
 	private SimSelfNode selected_node;
 	
 	// Simulated network statistics
+	private final Label success_data_rate = new Label();
 	private final Label outbox_count = new Label();
 	private final Label success_ping_rate = new Label();
 }
