@@ -153,7 +153,7 @@ public class Mailbox {
 					parcel.setIsSent();
 					parcel.setTimeSent();
 					parcel.getOutboundActualPath().pending();
-					parcel_history_archive.addParcelHistoryItem(parcel.getUniqueID(), parcel.getParcelType());
+					parcel_history_archive.addParcelHistoryItem(parcel);
 					outbox.remove(i);
 				} catch (UnknownResponsibilityException | MissingParcelDetailsException | BadProtocolException ex) {
 					getOwner().nodeLog(2, "Could not hand off to network controller: " + ex.getMessage());

@@ -4,20 +4,21 @@ import java.util.LinkedList;
 import java.util.Queue;
 import mecono.parceling.DestinationParcel;
 import mecono.parceling.ParcelType;
+import mecono.parceling.ResponseParcel;
 
 
 // Contains metadata about the parcels that were successfully sent into the network.
 public class ParcelHistoryArchive {
 	
 	public void addParcelHistoryItem(DestinationParcel parcel){
-		parcel_history.offer(new ParcelHistoryItem(parcel.getUniqueID(), parcel.getParcelType(), parcel.getTimeSent()));
+		parcel_history.offer(parcel);
 		trimOld();
 	}
 	
-	public void markParcelResponded(String parcel_id){
-		for(ParcelHistoryItem parcel_item : parcel_history){
-			if(parcel_item.parcel_id.equals(parcel_id)){
-				parcel_item.has_response = true;
+	public void markParcelResponded(String parcel_id, ResponseParcel response){
+		for(DestinationParcel parcel_item : parcel_history){
+			if(parcel_item.getUniqueID().equals(parcel_id)){
+				parcel_item.setResponse(response);
 				break;
 			}
 		}
@@ -26,8 +27,8 @@ public class ParcelHistoryArchive {
 	public double getCount(boolean has_response, ParcelType parcel_type){
 		int count = 0;
 		
-		for(ParcelHistoryItem parcel_item : parcel_history){
-			if(parcel_item.has_response == has_response && parcel_item.parcel_type == parcel_type){
+		for(DestinationParcel parcel_item : parcel_history){
+			if(parcel_item.hasResponse() == has_response && parcel_item.getParcelType() == parcel_type){
 				count++;
 			}
 		}
@@ -45,7 +46,7 @@ public class ParcelHistoryArchive {
 	public final int HISTORY_LIMIT = 1000;
 	
 	// Parcel history item container
-	Queue<ParcelHistoryItem> parcel_history = new LinkedList<>();
+	Queue<DestinationParcel> parcel_history = new LinkedList<>();
 	
 	// Each parcel history item, has meta data.
 	private class ParcelHistoryItem {

@@ -57,7 +57,7 @@ public class ResponseParcel extends DestinationParcel {
 				PathStats path_used = original_parcel.getOutboundActualPath();
 				path_used.success();
 				ParcelHistoryArchive parcel_history_archive = getMailbox().getParcelHistoryArchive();
-				parcel_history_archive.markParcelResponded(original_parcel.getUniqueID());
+				parcel_history_archive.markParcelResponded(original_parcel.getUniqueID(), this);
 				getMailbox().getOwner().nodeLog(SelfNode.ErrorStatus.GOOD, SelfNode.LogLevel.VERBOSE, "Marked parcel history archive item as responded to.");
 			}
 		}else{

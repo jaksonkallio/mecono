@@ -180,6 +180,14 @@ public class DestinationParcel extends Parcel {
 		return 600 * 1000l;
 	}
 	
+	public void setResponse(ResponseParcel response){
+		this.response = response;
+	}
+	
+	public boolean hasResponse(){
+		return response != null;
+	}
+	
 	/**
 	 * Cooldown before sending another parcel of this type, after receiving a response.
 	 * @return 
@@ -547,6 +555,7 @@ public class DestinationParcel extends Parcel {
 	private PathStats outbound_actual_path;
 	private ParcelType parcel_type = ParcelType.UNKNOWN;
 	private final TransferDirection direction;
+	private ResponseParcel response;
 
 	public enum TransferDirection {
 		OUTBOUND, INBOUND
