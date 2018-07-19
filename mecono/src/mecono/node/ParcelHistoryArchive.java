@@ -47,18 +47,4 @@ public class ParcelHistoryArchive {
 	
 	// Parcel history item container
 	Queue<DestinationParcel> parcel_history = new LinkedList<>();
-	
-	// Each parcel history item, has meta data.
-	private class ParcelHistoryItem {
-		public ParcelHistoryItem(String parcel_id, ParcelType parcel_type, long time_sent){
-			this.parcel_id = parcel_id;
-			this.parcel_type = parcel_type;
-			this.time_sent = time_sent;
-		}
-	
-		public final String parcel_id;
-		public boolean has_response = false;
-		public long time_sent = 0; // Epoch millis
-		public final ParcelType parcel_type;
-	}
 }
