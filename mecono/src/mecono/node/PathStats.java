@@ -163,7 +163,7 @@ public class PathStats {
 	private int pending = 0;
 	private long ping;
 	private final RemoteNode learned_from;
-	private long last_used = 0; // Epoch second timestamp of last successful use
+	private long last_used = 0; // Epoch millis timestamp of last successful use
 	private final SelfNode indexer;
 	private final String identifier;
 }

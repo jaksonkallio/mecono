@@ -52,7 +52,7 @@ public class ResponseParcel extends DestinationParcel {
 			// There are a few things we'd like to do upon a successful send with a good response
 			// - Mark the path as successful
 			// - Update the response value in the parcel history archive
-			if(responding_to.isSuccessful()){
+			if(responding_to.hasResponse()){
 				DestinationParcel original_parcel = responding_to.getOriginalParcel();
 				PathStats path_used = original_parcel.getOutboundActualPath();
 				path_used.success();

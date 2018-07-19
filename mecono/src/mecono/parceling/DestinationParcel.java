@@ -539,7 +539,13 @@ public class DestinationParcel extends Parcel {
 		// TODO: Payload encryption operation.
 		return plaintext_payload;
 	}
+     
+	public boolean requiresStaleBeforeResend(){
+		return true;
+	}
 
+	public static final long RESEND_COOLDOWN = 30000;
+		
 	private String payload;
 	private Node destination;
 	private long time_received = 0;
@@ -556,7 +562,7 @@ public class DestinationParcel extends Parcel {
 	private ParcelType parcel_type = ParcelType.UNKNOWN;
 	private final TransferDirection direction;
 	private ResponseParcel response;
-
+        
 	public enum TransferDirection {
 		OUTBOUND, INBOUND
 	};

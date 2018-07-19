@@ -52,5 +52,7 @@ public class DataParcel extends DestinationParcel {
 		return json_content;
 	}
 
+	public static final long RESEND_COOLDOWN = 10000;
+	
 	private String message = "";
 }

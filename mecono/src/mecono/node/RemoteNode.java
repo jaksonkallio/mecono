@@ -81,11 +81,15 @@ public class RemoteNode implements Node {
 	}
 	
 	public long getLastPinged(){
+		if(getIdealPath() == null){
+			return 0;
+		}
+		
 		return getIdealPath().getLastUse();
 	}
 
 	public boolean isOnline() {
-		return ((Protocol.getEpochMinute() - last_ping_time) < indexer.offline_successful_ping_threshold);
+		return Protocol.elapsedMillis(getLastPinged()) < ONLINE_THRESHOLD;
 	}
 
 	public boolean isReady() {
@@ -152,6 +156,8 @@ public class RemoteNode implements Node {
 			}
 		});
 	}
+	
+	public final static long ONLINE_THRESHOLD = 30000;
 
 	private final String address;
 	private String label;

@@ -92,10 +92,10 @@ public class SentParcel {
 	private void actionFromData() {
 		// TODO: What to do after data was successfully received remotely
 	}
-
-	public boolean isSuccessful(){
-		return getResponseParcel() != null;
-	}
+        
+        public boolean hasResponse(){
+            return getResponseParcel() != null;
+        }
 	
 	private ParcelType determineResponseType() {
 		switch (original_parcel.getParcelType()) {

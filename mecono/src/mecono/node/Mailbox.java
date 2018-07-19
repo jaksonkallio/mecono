@@ -184,7 +184,7 @@ public class Mailbox {
 			SentParcel sent_parcel = sent_parcels.get(i);
 			
 			// Check if it was successful
-			if(sent_parcel.isSuccessful()){
+			if(sent_parcel.hasResponse()){
 				if(Protocol.elapsedMillis(sent_parcel.getResponseParcel().getTimeReceived()) > sent_parcel.getOriginalParcel().getResendCooldown()){
 					getOwner().nodeLog(ErrorStatus.GOOD, LogLevel.COMMON, "Sent parcel was responded to successfully and cooldown reached, erased from cache");
 					// Remove successful sent/receive parcel combos
@@ -197,6 +197,10 @@ public class Mailbox {
 				}
 			}
 		}
+	}
+	
+	public boolean inOutbox(DestinationParcel parcel){
+		return outbox.contains(parcel);
 	}
 
 	public ParcelHistoryArchive getParcelHistoryArchive(){
@@ -238,8 +242,8 @@ public class Mailbox {
 					FindParcel find = new FindParcel(this, TransferDirection.OUTBOUND);
 					find.setTarget(node);
 					find.setDestination(consultant);
-
-					if (!expectingResponse(find)) {
+					
+					if (!inOutbox(find) && !expectingResponse(find)) {
 						owner.nodeLog(1, "Consulting " + find.getDestination().getAddress() + " for path to " + find.getTarget().getAddress());
 						placeInOutbox(find);
 					}
@@ -254,7 +258,9 @@ public class Mailbox {
 	 */
 	private boolean expectingResponse(DestinationParcel parcel) {
 		for (SentParcel existing_action : sent_parcels) {
-			if (existing_action.getOriginalParcel().equals(parcel)) {
+			DestinationParcel original_parcel = existing_action.getOriginalParcel();
+			
+			if (original_parcel.equals(parcel) && !original_parcel.hasResponse() && Protocol.elapsedMillis(original_parcel.getTimeSent()) < original_parcel.RESEND_COOLDOWN) {
 				return true;
 			}
 		}

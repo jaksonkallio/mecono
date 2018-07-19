@@ -24,7 +24,7 @@ public class PingResponseParcel extends ResponseParcel {
 		
 		SentParcel sent_parcel = getSentParcel();
 		
-		if(sent_parcel.isSuccessful()){
+		if(sent_parcel.hasResponse()){
 			long ping = sent_parcel.getPing();
 			PingParcel original_parcel = (PingParcel) sent_parcel.getOriginalParcel();
 			PathStats used_path = original_parcel.getOutboundActualPath();
