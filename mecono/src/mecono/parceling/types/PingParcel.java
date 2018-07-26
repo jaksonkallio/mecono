@@ -52,4 +52,5 @@ public class PingParcel extends DestinationParcel {
 	}
 
 	public static final long RESEND_COOLDOWN = 2000;
+	public static final boolean REQUIRE_ONLINE_PATH = false;
 }

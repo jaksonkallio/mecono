@@ -64,10 +64,6 @@ public class Mailbox {
 		}
 	}
 
-	private void enqueueOutbound(ForeignParcel parcel) {
-		forward_queue.offer(parcel);
-	}
-
 	/**
 	 * Gets the owner of the mailbox.
 	 *

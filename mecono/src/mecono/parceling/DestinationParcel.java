@@ -157,7 +157,7 @@ public class DestinationParcel extends Parcel {
 			throw new BadProtocolException("Cannot send when transfer direction is not outbound");
 		}
 		
-		if (getActualPath() == null || getOutboundActualPath() == null || (requiresOnlinePath() && !getOutboundActualPath().online())) {
+		if (getActualPath() == null || getOutboundActualPath() == null || (REQUIRE_ONLINE_PATH && !getOutboundActualPath().online())) {
 			return false;
 		}
 
@@ -312,7 +312,7 @@ public class DestinationParcel extends Parcel {
 	}
 
 	public SentParcel getUponResponseAction() {
-		return new SentParcel(mailbox, this);
+		return new SentParcel(this);
 	}
 
 	public void setParcelType(ParcelType parcel_type) {
@@ -539,12 +539,11 @@ public class DestinationParcel extends Parcel {
 		// TODO: Payload encryption operation.
 		return plaintext_payload;
 	}
-     
-	public boolean requiresStaleBeforeResend(){
-		return true;
-	}
 
 	public static final long RESEND_COOLDOWN = 30000;
+	public static final long STALE_TIME = 60000;
+	public static final boolean REQUIRE_ONLINE_PATH = true;
+	public static final boolean CONSULT_WHEN_PATH_UNKNOWN = true;
 		
 	private String payload;
 	private Node destination;

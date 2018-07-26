@@ -11,10 +11,8 @@ import mecono.protocol.Protocol;
  */
 public class SentParcel {
 
-	public SentParcel(Mailbox mailbox, DestinationParcel original_parcel) {
-		this.mailbox = mailbox;
+	public SentParcel(DestinationParcel original_parcel) {
 		this.original_parcel = original_parcel;
-		this.response_type = determineResponseType();
 		this.original_time_sent = Protocol.getEpochMilliSecond();
 	}
 
@@ -93,9 +91,17 @@ public class SentParcel {
 		// TODO: What to do after data was successfully received remotely
 	}
         
-        public boolean hasResponse(){
-            return getResponseParcel() != null;
-        }
+	public boolean hasResponse(){
+		return getResponseParcel() != null;
+	}
+	
+	public boolean isSent(){
+		return is_sent;
+	}
+	
+	public void updateLastSendAttempt(){
+		last_send_attempt = Protocol.getEpochMilliSecond();
+	}
 	
 	private ParcelType determineResponseType() {
 		switch (original_parcel.getParcelType()) {
@@ -109,11 +115,19 @@ public class SentParcel {
 				return ParcelType.UNKNOWN;
 		}
 	}
+	
+	public boolean isStale(){
+		return (Protocol.elapsedMillis(original_time_sent) > original_parcel.STALE_TIME);
+	}
+	
+	public boolean readyResend(){
+		return (Protocol.elapsedMillis(last_send_attempt) > original_parcel.RESEND_COOLDOWN);
+	}
 
-	private final Mailbox mailbox;
 	private final DestinationParcel original_parcel;
 	private ResponseParcel response_parcel;
 	private boolean responded = false;
+	private boolean is_sent = false;
+	private long last_send_attempt = 0;
 	private final long original_time_sent;
-	private final ParcelType response_type;
 }
