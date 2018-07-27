@@ -7,6 +7,7 @@ import java.util.Queue;
 import mecono.parceling.DestinationParcel;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.Handshake;
+import mecono.parceling.types.FindParcel;
 import mecono.parceling.types.PingParcel;
 
 /**
@@ -77,7 +78,40 @@ public class HandshakeHistory {
 	}
 	
 	private void consultPath(RemoteNode target){
+		ArrayList<RemoteNode> consult_list = new ArrayList<>();
+		SelfNode self = mailbox.getOwner();
 		
+		// A neighbor has an implicitly defined path, so it can never be the target of a search.
+		if (!self.isNeighbor(target)) {
+			for (Neighbor neighbor : self.getNeighbors()) {
+				// Add every community member to the consult list.
+				if (!consult_list.contains(neighbor.getNode())) {
+					consult_list.add(neighbor.getNode());
+				}
+			}
+
+			for (RemoteNode trusted_node : self.getTrustedNodes()) {
+				if (!consult_list.contains(trusted_node)) {
+					// Add all trusted nodes to the consult list.
+					consult_list.add(trusted_node);
+				}
+			}
+
+			// Now consult the nodes
+			for (RemoteNode consultant : consult_list) {
+				if (!consultant.equals(target)) {
+					// Only consult a node if the consultant is NOT the node we're looking for.
+					FindParcel find = new FindParcel(mailbox, DestinationParcel.TransferDirection.OUTBOUND);
+					find.setTarget(target);
+					find.setDestination(consultant);
+					
+					if (!alreadyPending(find)) {
+						self.nodeLog(1, "Consulting " + find.getDestination().getAddress() + " for path to " + find.getTarget().getAddress());
+						enqueueSend(find);
+					}
+				}
+			}
+		}
 	}
 	
 	private boolean alreadyPending(DestinationParcel parcel){
