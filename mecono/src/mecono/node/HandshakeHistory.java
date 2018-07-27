@@ -24,7 +24,9 @@ public class HandshakeHistory {
 	}
 	
 	public void enqueueSend(Handshake handshake){
-		pending.add(handshake);
+		if(!alreadyPending(handshake.getOriginalParcel())){
+			pending.add(handshake);
+		}
 	}
 	
 	public void enqueueSend(DestinationParcel parcel){
@@ -71,10 +73,7 @@ public class HandshakeHistory {
 	private void pingPath(Path path){
 		PingParcel ping = new PingParcel(mailbox, DestinationParcel.TransferDirection.OUTBOUND);
 		ping.setDestination((RemoteNode) path.getLastStop());
-		
-		if(!alreadyPending(ping)){
-			enqueueSend(ping);
-		}
+		enqueueSend(ping);
 	}
 	
 	private void consultPath(RemoteNode target){
@@ -104,11 +103,8 @@ public class HandshakeHistory {
 					FindParcel find = new FindParcel(mailbox, DestinationParcel.TransferDirection.OUTBOUND);
 					find.setTarget(target);
 					find.setDestination(consultant);
-					
-					if (!alreadyPending(find)) {
-						self.nodeLog(1, "Consulting " + find.getDestination().getAddress() + " for path to " + find.getTarget().getAddress());
-						enqueueSend(find);
-					}
+					self.nodeLog(1, "Consulting " + find.getDestination().getAddress() + " for path to " + find.getTarget().getAddress());
+					enqueueSend(find);
 				}
 			}
 		}

@@ -122,79 +122,15 @@ public class Mailbox {
 		}
 		
 		RemoteNode pinned_node = pinned_nodes.get(i);
-		if(Protocol.elapsedSeconds(pinned_node.getLastPinged()) >= getOwner().PINNED_NODE_RE_PING_TIME){
-			pingRemote(pinned_node);
+		if(Protocol.elapsedSeconds(pinned_node.getLastPinged()) >= getOwner().PINNED_NODE_PING_RATE){
+			//pingRemote(pinned_node);
 		}
 	}
 
 	public int getPinnedNodeCount(){
 		return pinned_nodes.size();
 	}
-	
-	public void processOutboxItem(int i) {
-		DestinationParcel parcel = outbox.get(i);
-		//getOwner().nodeLog(0, "Attemping to send "+parcel.toString());
-		RemoteNode destination = (RemoteNode) parcel.getDestination();
 
-		try {
-			if(!destination.isOnline() && parcel.requiresOnlinePath()){
-				pingRemote(destination);
-			}
-			
-			if (parcel.readyToSend()) {
-				// Give to the network controller for sending
-				try {
-					forward_queue.offer(parcel.constructForeignParcel());
-					parcel.setUsedPath();
-					parcel.setIsSent();
-					parcel.setTimeSent();
-					parcel.getOutboundActualPath().pending();
-					parcel_history_archive.addParcelHistoryItem(parcel);
-					outbox.remove(i);
-				} catch (UnknownResponsibilityException | MissingParcelDetailsException | BadProtocolException ex) {
-					getOwner().nodeLog(2, "Could not hand off to network controller: " + ex.getMessage());
-				}
-			} else if (!parcel.pathKnown() && parcel.consultWhenPathUnknown()) {
-				consultTrustedForPath(destination);
-			}
-		} catch (MissingParcelDetailsException | BadProtocolException | BadPathException ex) {
-			getOwner().nodeLog(2, "Could not send parcel: " + ex.getMessage());
-		}
-	}
-	
-	public void pingRemote(RemoteNode remote){
-		PingParcel ping_parcel = new PingParcel(this, TransferDirection.OUTBOUND);
-		ping_parcel.setDestination(remote);
-		
-		if(!expectingResponse(ping_parcel)){
-			try {
-				ping_parcel.placeInOutbox();
-			} catch (MissingParcelDetailsException | BadProtocolException ex) {
-				getOwner().nodeLog(ErrorStatus.FAIL, LogLevel.COMMON, "Could not ping remote", ex.getMessage());
-			}
-		}
-	}
-	
-	public void cleanSentParcel(int i){
-		if(i < sent_parcels.size() && i >= 0){
-			Handshake sent_parcel = sent_parcels.get(i);
-			
-			// Check if it was successful
-			if(sent_parcel.hasResponse()){
-				if(Protocol.elapsedMillis(sent_parcel.getResponseParcel().getTimeReceived()) > sent_parcel.getOriginalParcel().getResendCooldown()){
-					getOwner().nodeLog(ErrorStatus.GOOD, LogLevel.COMMON, "Sent parcel was responded to successfully and cooldown reached, erased from cache");
-					// Remove successful sent/receive parcel combos
-					sent_parcels.remove(i);
-				}
-			}else{
-				if(Protocol.elapsedMillis(sent_parcel.getOriginalParcel().getTimeCreated()) > sent_parcel.getOriginalParcel().getResponseWaitExpiry()){
-					getOwner().nodeLog(ErrorStatus.FAIL, LogLevel.ATTENTION, "Response wait expiry ("+sent_parcel.getOriginalParcel().getResponseWaitExpiry()+"ms) reached for original parcel", sent_parcel.getOriginalParcel().toString());
-					sent_parcels.remove(i);
-				}
-			}
-		}
-	}
-	
 	public boolean inOutbox(DestinationParcel parcel){
 		return outbox.contains(parcel);
 	}
@@ -207,47 +143,10 @@ public class Mailbox {
 		return sent_parcels.size();
 	}
 
-	/**
-	 * Consult trusted nodes for a path to a specific node.
-	 *
-	 * @param node Target node to look for.
-	 */
-	private void consultTrustedForPath(RemoteNode node) {
-		ArrayList<RemoteNode> consult_list = new ArrayList<>();
-
-		// A neighbor has an implicitly defined path, so it can never be the target of a search.
-		if (!owner.isNeighbor(node)) {
-			for (Neighbor neighbor : getOwner().getNeighbors()) {
-				// Add every community member to the consult list.
-				if (!consult_list.contains(neighbor.getNode())) {
-					consult_list.add(neighbor.getNode());
-				}
-			}
-
-			for (RemoteNode trusted_node : getOwner().getTrustedNodes()) {
-				if (!consult_list.contains(trusted_node)) {
-					// Add all trusted nodes to the consult list.
-					consult_list.add(trusted_node);
-				}
-			}
-
-			// Now consult the nodes
-			for (RemoteNode consultant : consult_list) {
-				if (!consultant.equals(node)) {
-					// Only consult a node if the consultant is NOT the node we're looking for.
-					FindParcel find = new FindParcel(this, TransferDirection.OUTBOUND);
-					find.setTarget(node);
-					find.setDestination(consultant);
-					
-					if (!inOutbox(find) && !expectingResponse(find)) {
-						owner.nodeLog(1, "Consulting " + find.getDestination().getAddress() + " for path to " + find.getTarget().getAddress());
-						placeInOutbox(find);
-					}
-				}
-			}
-		}
+	public HandshakeHistory getHandshakeHistory(){
+		return handshake_history;
 	}
-
+	
 	/**
 	 * Checks if there is an active signal out in the network that we are
 	 * expecting a response to. Used to protect against spamming the network.
@@ -293,6 +192,7 @@ public class Mailbox {
 	private final SelfNode owner; // The selfnode that runs the mailbox
 	private final MailboxWorker worker;
 	private final ArrayList<Handshake> sent_parcels = new ArrayList<>();
+	private final HandshakeHistory handshake_history = new HandshakeHistory(this);
 	private final NetworkController network_controller;
 	private final ArrayList<RemoteNode> pinned_nodes = new ArrayList<>();
 	private final Queue<ForeignParcel> forward_queue = new LinkedBlockingQueue<>(); // The forward queue is made up of foreign parcels ready to be sent.

@@ -47,21 +47,11 @@ public class MailboxWorker implements Runnable {
 		counters[1] = -1; // Sent parcel
 		counters[2] = -1; // Pinned nodes
 
+		HandshakeHistory handshakes = mailbox.getHandshakeHistory();
 
 		while (working) {
-			if (counters[0] >= 0) {
-				mailbox.processOutboxItem(counters[0]);
-				counters[0]--;
-			} else {
-				counters[0] = mailbox.getOutboxCount() - 1;
-			}
-			
-			if (counters[1] >= 0) {
-				mailbox.cleanSentParcel(counters[1]);
-				counters[1]--;
-			} else {
-				counters[1] = mailbox.getSentParcelCount() - 1;
-			}
+			handshakes.attemptSend();
+			handshakes.prune();
 			
 			if (counters[2] >= 0) {
 				mailbox.pingPinnedNode(counters[2]);
