@@ -5,7 +5,7 @@ import mecono.node.PathStats;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.ParcelType;
 import mecono.parceling.ResponseParcel;
-import mecono.parceling.SentParcel;
+import mecono.parceling.Handshake;
 import mecono.protocol.BadProtocolException;
 
 /**
@@ -22,7 +22,7 @@ public class PingResponseParcel extends ResponseParcel {
 	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
 		super.onReceiveAction();
 		
-		SentParcel sent_parcel = getSentParcel();
+		Handshake sent_parcel = getSentParcel();
 		
 		if(sent_parcel.hasResponse()){
 			long ping = sent_parcel.getPing();

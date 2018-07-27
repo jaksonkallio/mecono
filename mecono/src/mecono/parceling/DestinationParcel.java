@@ -316,8 +316,8 @@ public class DestinationParcel extends Parcel {
 		return ParcelType.UNKNOWN;
 	}
 
-	public SentParcel getUponResponseAction() {
-		return new SentParcel(this);
+	public Handshake getUponResponseAction() {
+		return new Handshake(this);
 	}
 
 	public void setParcelType(ParcelType parcel_type) {

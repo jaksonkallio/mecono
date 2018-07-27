@@ -9,9 +9,9 @@ import mecono.protocol.Protocol;
  * initially sending out a signal.
  * @author jak
  */
-public class SentParcel {
+public class Handshake {
 
-	public SentParcel(DestinationParcel original_parcel) {
+	public Handshake(DestinationParcel original_parcel) {
 		this.original_parcel = original_parcel;
 		this.original_time_sent = Protocol.getEpochMilliSecond();
 	}
@@ -23,7 +23,7 @@ public class SentParcel {
 
 	@Override
 	public boolean equals(Object o) {
-		SentParcel other = (SentParcel) o;
+		Handshake other = (Handshake) o;
 		return (this.getOriginalParcel().equals(other.getOriginalParcel()));
 	}
 

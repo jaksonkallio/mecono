@@ -7,7 +7,7 @@ import java.util.Queue;
 import mecono.parceling.BadPathException;
 import mecono.parceling.DestinationParcel;
 import mecono.parceling.MissingParcelDetailsException;
-import mecono.parceling.SentParcel;
+import mecono.parceling.Handshake;
 import mecono.protocol.BadProtocolException;
 
 /**
@@ -23,20 +23,20 @@ public class SentParcelHistory {
 	
 	}
 	
-	public void enqueueSend(SentParcel parcel){
-		pending.add(parcel);
+	public void enqueueSend(Handshake handshake){
+		pending.add(handshake);
 	}
 	
 	public void enqueueSend(DestinationParcel parcel){
 		if(parcel.getTransferDirection() == DestinationParcel.TransferDirection.OUTBOUND){
-			SentParcel sent_parcel = new SentParcel(parcel);
-			enqueueSend(sent_parcel);
+			Handshake handshake = new Handshake(parcel);
+			enqueueSend(handshake);
 		}	
 	}
 	
 	public void attemptSend(){
 		if(send_cursor < pending.size()){
-			SentParcel send = pending.get(send_cursor);
+			Handshake send = pending.get(send_cursor);
 			
 			// First check consists of readiness based on outbound information
 			// Must be unsent, must not be stale, and must be ready to resend
@@ -50,9 +50,11 @@ public class SentParcelHistory {
 					if(original_parcel.pathKnown()){
 						if(original_parcel.pathOnline()){
 							
+						}else{
+							pingPath(original_parcel.getOutboundActualPath());
 						}
 					}else{
-						
+						consultPath(((RemoteNode) original_parcel.getDestination()));
 					}
 				} catch(MissingParcelDetailsException ex){
 				
@@ -64,8 +66,16 @@ public class SentParcelHistory {
 		send_cursor = (send_cursor + 1) % pending.size();
 	}
 	
+	private void pingPath(PathStats path){
+	
+	}
+	
+	private void consultPath(RemoteNode target){
+	
+	}
+	
 	private int send_cursor = 0;
-	private final List<SentParcel> pending = new ArrayList<>();
-	private final Queue<SentParcel> completed = new LinkedList<>();
+	private final List<Handshake> pending = new ArrayList<>();
+	private final Queue<Handshake> completed = new LinkedList<>();
 	private final Mailbox mailbox;
 }

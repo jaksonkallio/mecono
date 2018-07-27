@@ -5,7 +5,7 @@ import mecono.protocol.UnknownResponsibilityException;
 import mecono.parceling.Parcel;
 import mecono.parceling.ForeignParcel;
 import mecono.parceling.MissingParcelDetailsException;
-import mecono.parceling.SentParcel;
+import mecono.parceling.Handshake;
 import mecono.parceling.types.FindParcel;
 import mecono.parceling.DestinationParcel;
 import java.util.ArrayList;
@@ -177,7 +177,7 @@ public class Mailbox {
 	
 	public void cleanSentParcel(int i){
 		if(i < sent_parcels.size() && i >= 0){
-			SentParcel sent_parcel = sent_parcels.get(i);
+			Handshake sent_parcel = sent_parcels.get(i);
 			
 			// Check if it was successful
 			if(sent_parcel.hasResponse()){
@@ -253,7 +253,7 @@ public class Mailbox {
 	 * expecting a response to. Used to protect against spamming the network.
 	 */
 	private boolean expectingResponse(DestinationParcel parcel) {
-		for (SentParcel existing_action : sent_parcels) {
+		for (Handshake existing_action : sent_parcels) {
 			DestinationParcel original_parcel = existing_action.getOriginalParcel();
 			
 			if (original_parcel.equals(parcel) && !original_parcel.hasResponse() && Protocol.elapsedMillis(original_parcel.getTimeSent()) < original_parcel.RESEND_COOLDOWN) {
@@ -280,8 +280,8 @@ public class Mailbox {
 		}
 	}
 
-	public SentParcel getSentParcel(String unique_id) {
-		for (SentParcel sent_parcel : sent_parcels) {
+	public Handshake getSentParcel(String unique_id) {
+		for (Handshake sent_parcel : sent_parcels) {
 			if (sent_parcel.getOriginalParcel().getUniqueID().equals(unique_id)) {
 				return sent_parcel;
 			}
@@ -292,7 +292,7 @@ public class Mailbox {
 
 	private final SelfNode owner; // The selfnode that runs the mailbox
 	private final MailboxWorker worker;
-	private final ArrayList<SentParcel> sent_parcels = new ArrayList<>();
+	private final ArrayList<Handshake> sent_parcels = new ArrayList<>();
 	private final NetworkController network_controller;
 	private final ArrayList<RemoteNode> pinned_nodes = new ArrayList<>();
 	private final Queue<ForeignParcel> forward_queue = new LinkedBlockingQueue<>(); // The forward queue is made up of foreign parcels ready to be sent.

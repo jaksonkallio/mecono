@@ -35,7 +35,7 @@ public class ResponseParcel extends DestinationParcel {
 		return respond_to_id;
 	}
 	
-	public SentParcel getSentParcel(){
+	public Handshake getSentParcel(){
 		return mailbox.getSentParcel(getRespondedID());
 	}
 	
@@ -44,7 +44,7 @@ public class ResponseParcel extends DestinationParcel {
 		super.onReceiveAction();
 		
 		// Update the sent parcel
-		SentParcel responding_to = getSentParcel();
+		Handshake responding_to = getSentParcel();
 		
 		if(responding_to != null){
 			responding_to.giveResponse(this);
