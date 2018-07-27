@@ -296,15 +296,11 @@ public class SelfNode implements Node {
 	 * @param message
 	 */
 	public void sendDataParcel(RemoteNode destination, String message) {
-		try {
-			nodeLog(0, "Attempting to send data: " + message + " to " + destination.getAddress());
-			DataParcel parcel = new DataParcel(getMailbox(), TransferDirection.OUTBOUND);
-			parcel.setDestination(destination);
-			parcel.setMessage(message);
-			parcel.placeInOutbox();
-		} catch (BadProtocolException | MissingParcelDetailsException ex) {
-			nodeLog(2, "Cannot send data parcel: " + ex.getMessage());
-		}
+		nodeLog(0, "Attempting to send data: " + message + " to " + destination.getAddress());
+		DataParcel parcel = new DataParcel(getMailbox(), TransferDirection.OUTBOUND);
+		parcel.setDestination(destination);
+		parcel.setMessage(message);
+		getMailbox().getHandshakeHistory().enqueueSend(parcel); // Send the response
 	}
 
 	/**

@@ -36,7 +36,7 @@ public class PingParcel extends DestinationParcel {
 		PingResponseParcel response = new PingResponseParcel(mailbox, TransferDirection.OUTBOUND);
 		response.setRespondedID(getUniqueID());
 		response.setDestination((RemoteNode) getOriginator()); // Set the destination to the person that contacted us (a response)
-		response.placeInOutbox(); // Send the response
+		getMailbox().getHandshakeHistory().enqueueSend(response); // Send the response
 	}
 
 	/**

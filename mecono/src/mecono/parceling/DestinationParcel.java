@@ -350,32 +350,6 @@ public class DestinationParcel extends Parcel {
 		return in_outbox;
 	}
 
-	/**
-	 * Place the parcel in the outbox. A destination parcel can only be in the
-	 * outbox if (1) the originator is the self node and (2) the destination is
-	 * not the self node.
-	 *
-	 * @throws mecono.protocol.BadProtocolException
-	 * @throws mecono.parceling.MissingParcelDetailsException
-	 */
-	public void placeInOutbox() throws BadProtocolException, MissingParcelDetailsException {
-		if (!isInOutbox()) {
-			if (!originatorIsSelf()) {
-				throw new BadProtocolException("The self node is not the originator of the parcel to send.");
-			}
-
-			if (getDestination().equals(mailbox.getOwner())) {
-				throw new BadProtocolException("The destination of a parcel to send cannot be the self node.");
-			}
-
-			if (getDestination().equals(getOriginator())) {
-				throw new BadProtocolException("The destination cannot be the parcel's originator.");
-			}
-
-			mailbox.placeInOutbox(this);
-		}
-	}
-
 	public final TransferDirection getTransferDirection() {
 		return direction;
 	}
