@@ -83,6 +83,10 @@ public class Path {
 	public int getPathLength() {
 		return stops.size();
 	}
+	
+	public Node getLastStop(){
+		return getStop(getPathLength() - 1);
+	}
 
 	/**
 	 * Gets a subpath between two stops, inclusive.
