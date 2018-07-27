@@ -153,7 +153,7 @@ public class SimGUI {
 		});
 
 		view_outbox.setOnAction(event -> {
-			appendNodeConsole(selected_node.getMailbox().listOutbox());
+			appendNodeConsole(selected_node.getMailbox().getHandshakeHistory().listPending());
 		});
 
 		active_node_actions.getChildren().addAll(get_node_info, discovered_nodes_button, send_from_node, view_outbox, toggle_online);

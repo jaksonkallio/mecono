@@ -94,7 +94,7 @@ public abstract class SimNetwork {
 		int sum = 0;
 		
 		for(SimSelfNode node : getNodeSet()){
-			sum += node.getMailbox().getOutboxCount();
+			sum += node.getMailbox().getHandshakeHistory().getPendingCount();
 		}
 		
 		return sum;

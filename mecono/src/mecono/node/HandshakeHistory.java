@@ -84,6 +84,10 @@ public class HandshakeHistory {
 		return construct;
 	}
 	
+	public int getPendingCount(){
+		return pending.size();
+	}
+	
 	private void pingPath(Path path){
 		PingParcel ping = new PingParcel(mailbox, DestinationParcel.TransferDirection.OUTBOUND);
 		ping.setDestination((RemoteNode) path.getLastStop());
