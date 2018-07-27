@@ -70,6 +70,20 @@ public class HandshakeHistory {
 		send_cursor = (send_cursor + 1) % pending.size();
 	}
 	
+	public String listPending() {
+		String construct = "No parcels in outbox.";
+
+		if (pending.size() > 0) {
+			construct = "";
+
+			for (Handshake handshake : pending) {
+				construct += "\n-- " + handshake.getOriginalParcel().toString();
+			}
+		}
+
+		return construct;
+	}
+	
 	private void pingPath(Path path){
 		PingParcel ping = new PingParcel(mailbox, DestinationParcel.TransferDirection.OUTBOUND);
 		ping.setDestination((RemoteNode) path.getLastStop());

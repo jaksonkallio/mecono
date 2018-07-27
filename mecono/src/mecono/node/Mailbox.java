@@ -76,33 +76,9 @@ public class Mailbox {
 	public MailboxWorker getWorker() {
 		return worker;
 	}
-
-	public int getOutboxCount() {
-		return outbox.size();
-	}
-
+	
 	public NetworkController getNetworkController() {
 		return network_controller;
-	}
-
-	public void placeInOutbox(DestinationParcel parcel) {
-		sent_parcels.add(parcel.getUponResponseAction());
-		parcel.setInOutbox();
-		outbox.add(parcel);
-	}
-
-	public String listOutbox() {
-		String construct = "No parcels in outbox.";
-
-		if (outbox.size() > 0) {
-			construct = "";
-
-			for (DestinationParcel parcel : outbox) {
-				construct += "\n-- " + parcel.toString();
-			}
-		}
-
-		return construct;
 	}
 	
 	public void processForwardQueue(){
@@ -129,10 +105,6 @@ public class Mailbox {
 
 	public int getPinnedNodeCount(){
 		return pinned_nodes.size();
-	}
-
-	public boolean inOutbox(DestinationParcel parcel){
-		return outbox.contains(parcel);
 	}
 
 	public ParcelHistoryArchive getParcelHistoryArchive(){
@@ -196,7 +168,6 @@ public class Mailbox {
 	private final NetworkController network_controller;
 	private final ArrayList<RemoteNode> pinned_nodes = new ArrayList<>();
 	private final Queue<ForeignParcel> forward_queue = new LinkedBlockingQueue<>(); // The forward queue is made up of foreign parcels ready to be sent.
-	private final ArrayList<DestinationParcel> outbox = new ArrayList<>(); // The outbox is made up of destination parcels that are waiting for the right conditions to send
 	private final Queue<JSONObject> inbound_queue = new LinkedBlockingQueue<>(); // The inbound queue is made up of received JSON objects that need to be processed
 	private final ParcelHistoryArchive parcel_history_archive = new ParcelHistoryArchive();
 }
