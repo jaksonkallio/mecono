@@ -154,7 +154,7 @@ public class Mailbox {
 				} catch (UnknownResponsibilityException | MissingParcelDetailsException | BadProtocolException ex) {
 					getOwner().nodeLog(2, "Could not hand off to network controller: " + ex.getMessage());
 				}
-			} else if (!parcel.isActualPathKnown() && parcel.consultWhenPathUnknown()) {
+			} else if (!parcel.pathKnown() && parcel.consultWhenPathUnknown()) {
 				consultTrustedForPath(destination);
 			}
 		} catch (MissingParcelDetailsException | BadProtocolException | BadPathException ex) {

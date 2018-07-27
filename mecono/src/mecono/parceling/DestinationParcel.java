@@ -163,7 +163,12 @@ public class DestinationParcel extends Parcel {
 
 		return true;
 	}
-
+	
+	public boolean pathOnline(){
+		return getOutboundActualPath() != null
+				&& (!REQUIRE_ONLINE_PATH || getOutboundActualPath().online());
+	}
+	
 	public long getTimeReceived() {
 		return time_received;
 	}
@@ -438,7 +443,7 @@ public class DestinationParcel extends Parcel {
 		// We only want to construct foreign parcels if we are the originator
 		if (originatorIsSelf()) {
 			// Only construct the foreign parcel if the path is completely built.
-			if (isActualPathKnown()) {
+			if (pathKnown()) {
 				ForeignParcel outbound_foreign_parcel = new ForeignParcel(mailbox, getActualPath(), encryptAsPayload().toString());
 				// The path history will contain current node + next node
 				Path new_path_history = getActualPath().getSubpath(0);
@@ -485,7 +490,7 @@ public class DestinationParcel extends Parcel {
 		return actual_path;
 	}
 
-	public boolean isActualPathKnown() throws MissingParcelDetailsException {
+	public boolean pathKnown() throws MissingParcelDetailsException {
 		return getActualPath() != null;
 	}
 

@@ -47,10 +47,14 @@ public class SentParcelHistory {
 				
 				try {
 					// Second check consists of readiness based on the actual parcel metadata
-					if(original_parcel.readyToSend()){
+					if(original_parcel.pathKnown()){
+						if(original_parcel.pathOnline()){
+							
+						}
+					}else{
 						
 					}
-				} catch(BadProtocolException | MissingParcelDetailsException | BadPathException ex){
+				} catch(MissingParcelDetailsException ex){
 				
 				}
 			}

@@ -48,7 +48,7 @@ public class PingParcel extends DestinationParcel {
 	 */
 	@Override
 	public boolean readyToSend() throws MissingParcelDetailsException {
-		return isActualPathKnown();
+		return pathKnown();
 	}
 
 	public static final long RESEND_COOLDOWN = 2000;
