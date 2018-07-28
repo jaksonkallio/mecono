@@ -127,7 +127,7 @@ public class Mailbox {
 		for (Handshake existing_action : sent_parcels) {
 			DestinationParcel original_parcel = existing_action.getOriginalParcel();
 			
-			if (original_parcel.equals(parcel) && !original_parcel.hasResponse() && Protocol.elapsedMillis(original_parcel.getTimeSent()) < original_parcel.RESEND_COOLDOWN) {
+			if (original_parcel.equals(parcel) && !original_parcel.hasResponse() && Protocol.elapsedMillis(original_parcel.getTimeSent()) < original_parcel.getResendCooldown()) {
 				return true;
 			}
 		}
@@ -139,6 +139,10 @@ public class Mailbox {
 		if (serialized_parcel != null) {
 			inbound_queue.offer(serialized_parcel);
 		}
+	}
+	
+	public void enqueueForward(ForeignParcel foreign){
+		forward_queue.offer(foreign);
 	}
 
 	public void processInboundQueue() {

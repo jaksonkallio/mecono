@@ -51,6 +51,11 @@ public class PingParcel extends DestinationParcel {
 		return pathKnown();
 	}
 
-	public static final long RESEND_COOLDOWN = 2000;
-	public static final boolean REQUIRE_ONLINE_PATH = false;
+	public static long getResendCooldown(){
+		return 2000;
+	}
+	
+	public static boolean getRequireOnlinePath(){
+		return false;
+	}
 }

@@ -117,11 +117,11 @@ public class Handshake {
 	}
 	
 	public boolean isStale(){
-		return (Protocol.elapsedMillis(original_time_sent) > original_parcel.STALE_TIME);
+		return (Protocol.elapsedMillis(original_time_sent) > original_parcel.getStaleTime());
 	}
 	
 	public boolean readyResend(){
-		return (Protocol.elapsedMillis(last_send_attempt) > original_parcel.RESEND_COOLDOWN);
+		return (Protocol.elapsedMillis(last_send_attempt) > original_parcel.getResendCooldown());
 	}
 
 	private final DestinationParcel original_parcel;

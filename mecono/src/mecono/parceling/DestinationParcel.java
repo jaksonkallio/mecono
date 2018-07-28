@@ -157,7 +157,7 @@ public class DestinationParcel extends Parcel {
 			throw new BadProtocolException("Cannot send when transfer direction is not outbound");
 		}
 		
-		if (getActualPath() == null || getOutboundActualPath() == null || (REQUIRE_ONLINE_PATH && !getOutboundActualPath().online())) {
+		if (getActualPath() == null || getOutboundActualPath() == null || (getRequireOnlinePath() && !getOutboundActualPath().online())) {
 			return false;
 		}
 
@@ -166,7 +166,7 @@ public class DestinationParcel extends Parcel {
 	
 	public boolean pathOnline(){
 		return getOutboundActualPath() != null
-				&& (!REQUIRE_ONLINE_PATH || getOutboundActualPath().online());
+				&& (!getRequireOnlinePath() || getOutboundActualPath().online());
 	}
 	
 	public long getTimeReceived() {
@@ -191,14 +191,6 @@ public class DestinationParcel extends Parcel {
 	
 	public boolean hasResponse(){
 		return response != null;
-	}
-	
-	/**
-	 * Cooldown before sending another parcel of this type, after receiving a response.
-	 * @return 
-	 */
-	public long getResendCooldown(){
-		return 600 * 1000l;
 	}
 
 	public static Path unserializeActualPath(JSONArray actual_path_json, SelfNode relative_self) throws BadProtocolException {
@@ -518,11 +510,22 @@ public class DestinationParcel extends Parcel {
 		// TODO: Payload encryption operation.
 		return plaintext_payload;
 	}
-
-	public static final long RESEND_COOLDOWN = 30000;
-	public static final long STALE_TIME = 60000;
-	public static final boolean REQUIRE_ONLINE_PATH = true;
-	public static final boolean CONSULT_WHEN_PATH_UNKNOWN = true;
+	
+	public static long getResendCooldown(){
+		return 30000;
+	}
+	
+	public static long getStaleTime(){
+		return 60000;
+	}
+	
+	public static boolean getRequireOnlinePath(){
+		return true;
+	}
+	
+	public static boolean getConsultUnknownPath(){
+		return true;
+	}
 		
 	private String payload;
 	private Node destination;
