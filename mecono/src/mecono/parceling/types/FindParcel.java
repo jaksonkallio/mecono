@@ -24,7 +24,7 @@ public class FindParcel extends DestinationParcel {
 	public boolean equals(Object o) {
 		if(o instanceof FindParcel){
 			FindParcel other = (FindParcel) o;
-			return other.getTarget() == this.getTarget() && super.equals(other);
+			return other.getTarget().equals(this.getTarget()) && super.equals(other);
 		}
 
 		return false;

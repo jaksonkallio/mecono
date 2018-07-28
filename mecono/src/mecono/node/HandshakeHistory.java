@@ -25,6 +25,7 @@ public class HandshakeHistory {
 	
 	public void enqueueSend(Handshake handshake){
 		if(!alreadyPending(handshake.getOriginalParcel())){
+			mailbox.getOwner().nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.COMMON, "Enqueued parcel for send", handshake.getOriginalParcel().toString());
 			pending.add(handshake);
 		}
 	}
@@ -67,7 +68,9 @@ public class HandshakeHistory {
 		}
 		
 		// Increment the cursor
-		send_cursor = (send_cursor + 1) % pending.size();
+		if(pending.size() > 0){
+			send_cursor = (send_cursor + 1) % pending.size();
+		}
 	}
 	
 	public String listPending() {
@@ -121,7 +124,6 @@ public class HandshakeHistory {
 					FindParcel find = new FindParcel(mailbox, DestinationParcel.TransferDirection.OUTBOUND);
 					find.setTarget(target);
 					find.setDestination(consultant);
-					self.nodeLog(1, "Consulting " + find.getDestination().getAddress() + " for path to " + find.getTarget().getAddress());
 					enqueueSend(find);
 				}
 			}
