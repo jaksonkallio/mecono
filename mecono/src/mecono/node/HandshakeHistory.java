@@ -9,6 +9,8 @@ import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.Handshake;
 import mecono.parceling.types.FindParcel;
 import mecono.parceling.types.PingParcel;
+import mecono.protocol.BadProtocolException;
+import mecono.protocol.UnknownResponsibilityException;
 
 /**
  * The Sent Parcel History is a complete archive of recently sent, or queued to be sent, parcels into the Mecono network.
@@ -53,6 +55,17 @@ public class HandshakeHistory {
 					if(original_parcel.pathKnown()){
 						if(original_parcel.pathOnline()){
 							// Send
+							try {
+								mailbox.enqueueForward(original_parcel.constructForeignParcel());
+								original_parcel.setUsedPath();
+								original_parcel.setIsSent();
+								original_parcel.setTimeSent();
+								original_parcel.getOutboundActualPath().pending();
+								pending.remove(send_cursor);
+								send_cursor = 0;
+							} catch (UnknownResponsibilityException | MissingParcelDetailsException | BadProtocolException ex) {
+								mailbox.getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Could not send parcel through network controller:", ex.getMessage());
+							}
 						}else{
 							// Ping the destination
 							pingPath(original_parcel.getActualPath());
