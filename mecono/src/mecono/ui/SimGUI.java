@@ -40,6 +40,15 @@ public class SimGUI {
 	public void appendGlobalConsole(String new_line) {
 		consoleAppend(global_console, new_line);
 	}
+	
+	public void stop(){
+		stopGUITimers();
+	}
+	
+	public void stopGUITimers(){
+		network_stats_refresh_timer.cancel();
+		network_stats_refresh_timer.purge();
+	}
 
 	private void nodeSelected() {
 		selected_node = node_list.getSelectionModel().getSelectedItem();
@@ -171,9 +180,7 @@ public class SimGUI {
 	}
 	
 	private void startSimulatedNetworkStatisticsRefresher(){
-		Timer timer = new java.util.Timer();
-
-		timer.schedule(new TimerTask() {
+		network_stats_refresh_timer.schedule(new TimerTask() {
 			public void run() {
 				 Platform.runLater(new Runnable() {
 					public void run() {
@@ -201,6 +208,7 @@ public class SimGUI {
 	}
 
 	private final SimNetwork sim_network;
+	private Timer network_stats_refresh_timer = new java.util.Timer();
 	private final HBox main_container = new HBox();
 	private final VBox column_1 = new VBox();
 	private final VBox[] columns = {new VBox(), new VBox(), new VBox()};

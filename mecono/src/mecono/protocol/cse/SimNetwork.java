@@ -42,7 +42,7 @@ public abstract class SimNetwork {
 		}
 	}
 
-	public void stopMailboxWorkers() {
+	private void stopMailboxWorkers() {
 		for (SimSelfNode node : node_set) {
 			node.getMailbox().getWorker().stopWorking();
 			node.nodeLog(0, "Stopped sim node mailbox worker");
@@ -126,28 +126,6 @@ public abstract class SimNetwork {
 		return (count_success / Math.max(1, (count_fail + count_success)));
 	}
 
-	/*private void memberOutboxProcess() {
-		for (SimSelfNode node : members) {
-			for (int i = 0; i < node.getMailbox().getOutboxCount(); i++) {
-				node.getMailbox().processOutboxItem(i);
-			}
-		}
-	}
-
-	private void generateRandomNeighborships() {
-		// For each member, generate neighbors
-		for (SimSelfNode node1 : members) {
-			int n = ((int) (Math.random() * ((maximum_neighbor_count - minimum_neighbor_count) + 1))) + minimum_neighbor_count;
-
-			// Repeat neighbor adding with random node N times
-			for (int i = 0; i < n; i++) {
-				// The other node is the RemoteNode, built from their memory controller and a String address.
-				SimSelfNode node2 = members.get((int) (Math.random() * members.size()));
-				createNeighborship(node1, node2);
-			}
-		}
-	}*/
-
 	protected void createNeighborship(SimSelfNode node1, SimSelfNode node2) {
 		RemoteNode node2_remote = node1.getMemoryController().loadRemoteNode(node2.getAddress());
 		RemoteNode node1_remote = node2.getMemoryController().loadRemoteNode(node1.getAddress());
@@ -169,6 +147,11 @@ public abstract class SimNetwork {
 	
 	public ArrayList<ArrayList<Integer>> getParcelSet(){
 		return parcel_set;
+	}
+	
+	public void stop(){
+		stopMailboxWorkers();
+		sim_gui.stop();
 	}
 	
 	protected void addSampleParcel(int n1, int n2){

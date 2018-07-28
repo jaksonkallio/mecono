@@ -42,7 +42,7 @@ public class Mecono extends Application {
 
 		if (simulated_network) {
 			System.out.println("Stopping threads...");
-			sim.stopMailboxWorkers();
+			sim.stop();
 		}
 
 		System.out.println("Mecono ended successully");
