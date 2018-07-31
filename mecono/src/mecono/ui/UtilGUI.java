@@ -11,7 +11,7 @@ package mecono.ui;
  */
 public class UtilGUI {
 	public static String formatPercentage(double percent){
-		percent = ((int) (percent * 1000)) / 10;
+		percent = (double) ((int) (percent*1000)) / 10;
 		return percent + "%";
 	}
 }
