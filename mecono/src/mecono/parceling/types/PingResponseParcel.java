@@ -22,7 +22,7 @@ public class PingResponseParcel extends ResponseParcel {
 	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
 		super.onReceiveAction();
 		
-		Handshake sent_parcel = getTriggerParcel();
+		Handshake sent_parcel = getHandshake();
 		
 		if(sent_parcel.hasResponse()){
 			long ping = sent_parcel.getPing();

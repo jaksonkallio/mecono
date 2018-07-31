@@ -7,6 +7,7 @@ import java.util.Queue;
 import mecono.parceling.DestinationParcel;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.Handshake;
+import mecono.parceling.ResponseParcel;
 import mecono.parceling.types.FindParcel;
 import mecono.parceling.types.PingParcel;
 import mecono.protocol.BadProtocolException;
@@ -62,6 +63,7 @@ public class HandshakeHistory {
 								original_parcel.setTimeSent();
 								original_parcel.getOutboundActualPath().pending();
 								pending.remove(send_cursor);
+								completed.offer(handshake);
 								send_cursor = 0;
 							} catch (UnknownResponsibilityException | MissingParcelDetailsException | BadProtocolException ex) {
 								mailbox.getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Could not send parcel through network controller:", ex.getMessage());
@@ -86,10 +88,10 @@ public class HandshakeHistory {
 		}
 	}
 	
-	public Handshake lookup(String unique_id){
-		for(Handshake handshake : pending){
-			if(handshake.getTriggerParcel().getUniqueID().equals(unique_id)){
-			
+	public Handshake lookup(ResponseParcel response){
+		for(Handshake handshake : completed){
+			if(handshake.getTriggerParcel().getUniqueID().equals(response.getRespondedID())){
+				return handshake;
 			}
 		}
 		
