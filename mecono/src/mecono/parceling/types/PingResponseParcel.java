@@ -22,11 +22,11 @@ public class PingResponseParcel extends ResponseParcel {
 	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
 		super.onReceiveAction();
 		
-		Handshake sent_parcel = getSentParcel();
+		Handshake sent_parcel = getTriggerParcel();
 		
 		if(sent_parcel.hasResponse()){
 			long ping = sent_parcel.getPing();
-			PingParcel original_parcel = (PingParcel) sent_parcel.getOriginalParcel();
+			PingParcel original_parcel = (PingParcel) sent_parcel.getTriggerParcel();
 			PathStats used_path = original_parcel.getOutboundActualPath();
 			
 			used_path.setPing(ping);
@@ -40,6 +40,11 @@ public class PingResponseParcel extends ResponseParcel {
 	
 	@Override
 	public boolean requiresOnlinePath(){
+		return false;
+	}
+	
+	@Override
+	public boolean getRequireOnlinePath(){
 		return false;
 	}
 }

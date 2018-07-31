@@ -125,7 +125,7 @@ public class Mailbox {
 	 */
 	private boolean expectingResponse(DestinationParcel parcel) {
 		for (Handshake existing_action : sent_parcels) {
-			DestinationParcel original_parcel = existing_action.getOriginalParcel();
+			DestinationParcel original_parcel = existing_action.getTriggerParcel();
 			
 			if (original_parcel.equals(parcel) && !original_parcel.hasResponse() && Protocol.elapsedMillis(original_parcel.getTimeSent()) < original_parcel.getResendCooldown()) {
 				return true;
@@ -153,16 +153,6 @@ public class Mailbox {
 				getOwner().nodeLog(2, "Could not receive parcel", ex.getMessage());
 			}
 		}
-	}
-
-	public Handshake getSentParcel(String unique_id) {
-		for (Handshake sent_parcel : sent_parcels) {
-			if (sent_parcel.getOriginalParcel().getUniqueID().equals(unique_id)) {
-				return sent_parcel;
-			}
-		}
-
-		return null;
 	}
 
 	private final SelfNode owner; // The selfnode that runs the mailbox

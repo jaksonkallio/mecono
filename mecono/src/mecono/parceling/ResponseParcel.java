@@ -35,8 +35,8 @@ public class ResponseParcel extends DestinationParcel {
 		return respond_to_id;
 	}
 	
-	public Handshake getSentParcel(){
-		return mailbox.getSentParcel(getRespondedID());
+	public Handshake getTriggerParcel(){
+		return mailbox.getHandshakeHistory().lookup(getRespondedID());
 	}
 	
 	@Override
@@ -44,7 +44,7 @@ public class ResponseParcel extends DestinationParcel {
 		super.onReceiveAction();
 		
 		// Update the sent parcel
-		Handshake responding_to = getSentParcel();
+		Handshake responding_to = getTriggerParcel();
 		
 		if(responding_to != null){
 			responding_to.giveResponse(this);
@@ -53,7 +53,7 @@ public class ResponseParcel extends DestinationParcel {
 			// - Mark the path as successful
 			// - Update the response value in the parcel history archive
 			if(responding_to.hasResponse()){
-				DestinationParcel original_parcel = responding_to.getOriginalParcel();
+				DestinationParcel original_parcel = responding_to.getTriggerParcel();
 				PathStats path_used = original_parcel.getOutboundActualPath();
 				path_used.success();
 				ParcelHistoryArchive parcel_history_archive = getMailbox().getParcelHistoryArchive();

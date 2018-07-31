@@ -26,8 +26,8 @@ public class HandshakeHistory {
 	}
 	
 	public void enqueueSend(Handshake handshake){
-		if(!alreadyPending(handshake.getOriginalParcel())){
-			mailbox.getOwner().nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.COMMON, "Enqueued parcel for send", handshake.getOriginalParcel().toString());
+		if(!alreadyPending(handshake.getTriggerParcel())){
+			mailbox.getOwner().nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.COMMON, "Enqueued parcel for send", handshake.getTriggerParcel().toString());
 			pending.add(handshake);
 		}
 	}
@@ -48,7 +48,7 @@ public class HandshakeHistory {
 			if(!handshake.isSent()
 					&& !handshake.isStale()
 					&& handshake.readyResend()){
-				DestinationParcel original_parcel = handshake.getOriginalParcel();
+				DestinationParcel original_parcel = handshake.getTriggerParcel();
 				
 				try {
 					// Second check consists of readiness based on the actual parcel metadata
@@ -86,6 +86,16 @@ public class HandshakeHistory {
 		}
 	}
 	
+	public Handshake lookup(String unique_id){
+		for(Handshake handshake : pending){
+			if(handshake.getTriggerParcel().getUniqueID().equals(unique_id)){
+			
+			}
+		}
+		
+		return null;
+	}
+	
 	public String listPending() {
 		String construct = "No parcels in outbox.";
 
@@ -93,7 +103,7 @@ public class HandshakeHistory {
 			construct = "";
 
 			for (Handshake handshake : pending) {
-				construct += "\n-- " + handshake.getOriginalParcel().toString();
+				construct += "\n-- " + handshake.getTriggerParcel().toString();
 			}
 		}
 
@@ -145,7 +155,7 @@ public class HandshakeHistory {
 	
 	private boolean alreadyPending(DestinationParcel parcel){
 		for(Handshake handshake : pending){
-			if(handshake.getOriginalParcel().equals(parcel)){
+			if(handshake.getTriggerParcel().equals(parcel)){
 				return true;
 			}
 		}

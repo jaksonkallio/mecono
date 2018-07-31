@@ -18,13 +18,13 @@ public class Handshake {
 
 	@Override
 	public String toString() {
-		return "Awaiting " + getResponseType() + " after sending " + getOriginalParcel().getUniqueID();
+		return "Awaiting " + getResponseType() + " after sending " + getTriggerParcel().getUniqueID();
 	}
 
 	@Override
 	public boolean equals(Object o) {
 		Handshake other = (Handshake) o;
-		return (this.getOriginalParcel().equals(other.getOriginalParcel()));
+		return (this.getTriggerParcel().equals(other.getTriggerParcel()));
 	}
 
 	public void giveResponse(ResponseParcel response_parcel) {
@@ -59,7 +59,7 @@ public class Handshake {
 		}
 	}
 
-	public DestinationParcel getOriginalParcel() {
+	public DestinationParcel getTriggerParcel() {
 		return original_parcel;
 	}
 
