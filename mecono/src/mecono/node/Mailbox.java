@@ -58,9 +58,9 @@ public class Mailbox {
 			// Do any required action
 			parcel.onReceiveAction();
 		} catch (MissingParcelDetailsException | BadProtocolException ex) {
-			getOwner().nodeLog(2, "Could not handle received parcel: " + ex.getMessage());
+			getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Could not handle received parcel", ex.getMessage());
 		} catch (BadPathException ex) {
-			getOwner().nodeLog(2, "Cannot learn path from received parcel: " + ex.getMessage());
+			getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Cannot learn path from received parcel", ex.getMessage());
 		}
 	}
 

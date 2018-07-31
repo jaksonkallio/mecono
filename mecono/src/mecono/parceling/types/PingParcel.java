@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import mecono.node.Mailbox;
 import mecono.node.Path;
 import mecono.node.RemoteNode;
+import mecono.node.SelfNode;
 import mecono.parceling.DestinationParcel;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.ParcelType;
@@ -37,6 +38,7 @@ public class PingParcel extends DestinationParcel {
 		response.setRespondedID(getUniqueID());
 		response.setDestination((RemoteNode) getOriginator()); // Set the destination to the person that contacted us (a response)
 		getMailbox().getHandshakeHistory().enqueueSend(response); // Send the response
+		getMailbox().getOwner().nodeLog(SelfNode.ErrorStatus.GOOD, SelfNode.LogLevel.VERBOSE, "Responding with parcel", response.toString());
 	}
 
 	/**
