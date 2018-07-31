@@ -20,6 +20,7 @@ import mecono.node.Neighbor;
 import mecono.node.Path;
 import mecono.node.PathStats;
 import mecono.node.RemoteNode;
+import mecono.parceling.ParcelType;
 import mecono.protocol.cse.SimNetwork;
 
 /**
@@ -188,7 +189,7 @@ public class SimGUI {
 					}
 				});
 			}
-		}, 20, 500);
+		}, 20, 250);
 	}
 	
 	private void buildSimNetworkOverview(){
@@ -203,8 +204,8 @@ public class SimGUI {
 	
 	private void updateSimulatedNetworkStats(){
 		outbox_count.setText("Outbox Count: " + sim_network.parcelsInOutbox());
-		success_ping_rate.setText("Successful Ping Rate: " + UtilGUI.formatPercentage(sim_network.successfulPingRate()));
-		success_data_rate.setText("Successful Data Rate: " + UtilGUI.formatPercentage(sim_network.successfulDataRate()));
+		success_ping_rate.setText("Successful Ping Rate: " + UtilGUI.formatPercentage(sim_network.averageSuccessRate(ParcelType.PING)));
+		success_data_rate.setText("Successful Data Rate: " + UtilGUI.formatPercentage(sim_network.averageSuccessRate(ParcelType.DATA)));
 	}
 
 	private final SimNetwork sim_network;

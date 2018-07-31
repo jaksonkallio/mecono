@@ -7,6 +7,7 @@ import java.util.Queue;
 import mecono.parceling.DestinationParcel;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.Handshake;
+import mecono.parceling.ParcelType;
 import mecono.parceling.ResponseParcel;
 import mecono.parceling.types.FindParcel;
 import mecono.parceling.types.PingParcel;
@@ -38,6 +39,25 @@ public class HandshakeHistory {
 			Handshake handshake = new Handshake(parcel);
 			enqueueSend(handshake);
 		}	
+	}
+	
+	public int count(boolean has_response, ParcelType parcel_type){
+		int count = 0;
+		
+		for(Handshake handshake : completed){
+			if(handshake.hasResponse() == has_response && handshake.getTriggerParcel().getParcelType() == parcel_type){
+				count++;
+			}
+		}
+
+		return count;
+	}
+	
+	public double successRate(ParcelType parcel_type){
+		int count_success = count(true, parcel_type);
+		int count_fail = count(false, parcel_type);
+		
+		return (count_success / Math.max(1, (count_fail + count_success)));
 	}
 	
 	public void attemptSend(){

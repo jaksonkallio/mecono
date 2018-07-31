@@ -6,6 +6,7 @@ import mecono.node.Neighbor;
 import mecono.node.RemoteNode;
 import java.util.ArrayList;
 import java.util.Arrays;
+import mecono.node.HandshakeHistory;
 import mecono.node.ParcelHistoryArchive;
 import mecono.parceling.ParcelType;
 
@@ -100,32 +101,22 @@ public abstract class SimNetwork {
 		return sum;
 	}
 	
-	public double successfulPingRate(){
+	public double averageSuccessRate(ParcelType parcel_type){
 		int count_success = 0;
 		int count_fail = 0;
 		
 		for(SimSelfNode node : getNodeSet()){
-			ParcelHistoryArchive pha = node.getMailbox().getParcelHistoryArchive();
-			count_success += pha.getCount(true, ParcelType.PING);
-			count_fail += pha.getCount(false, ParcelType.PING);
+			HandshakeHistory handshake_history = node.getMailbox().getHandshakeHistory();
+			count_success += handshake_history.count(true, parcel_type);
+			count_fail += handshake_history.count(false, parcel_type);
 		}
+				
+		int denominator = Math.max(1, (count_fail + count_success));
+		double rate = ((double) count_success) / ((double) denominator);
 		
-		return (count_success / Math.max(1, (count_fail + count_success)));
+		return rate;
 	}
 	
-	public double successfulDataRate(){
-		int count_success = 0;
-		int count_fail = 0;
-		
-		for(SimSelfNode node : getNodeSet()){
-			ParcelHistoryArchive pha = node.getMailbox().getParcelHistoryArchive();
-			count_success += pha.getCount(true, ParcelType.DATA);
-			count_fail += pha.getCount(false, ParcelType.DATA);
-		}
-		
-		return (count_success / Math.max(1, (count_fail + count_success)));
-	}
-
 	protected void createNeighborship(SimSelfNode node1, SimSelfNode node2) {
 		RemoteNode node2_remote = node1.getMemoryController().loadRemoteNode(node2.getAddress());
 		RemoteNode node1_remote = node2.getMemoryController().loadRemoteNode(node1.getAddress());
