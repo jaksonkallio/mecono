@@ -90,18 +90,17 @@ public class DestinationParcel extends Parcel {
 			if (getTransferDirection() == TransferDirection.OUTBOUND) {
 				str += "[Destination: " + getDestination().getAddress() + "]";
 
-				Path outward_path = getActualPath();
+				PathStats path = getOutboundActualPath();
+				
 
-				if (outward_path == null) {
+				if (path == null) {
 					str += "[Unknown Path]";
 				} else {
-					str += outward_path.toString();
-				}
-
-				if (readyToSend()) {
-					str += "[Ready]";
-				} else {
-					str += "[Not Ready]";
+					str += path.getPath().toString();
+					
+					if (getRequireOnlinePath() && !path.online()) {
+						str += "[Path Offline]";
+					}
 				}
 			} else {
 				str += "[Origin: " + getOriginator().getAddress() + "]";
@@ -109,12 +108,6 @@ public class DestinationParcel extends Parcel {
 
 		} catch (MissingParcelDetailsException ex) {
 			str += "[Insufficient Details: " + ex.getMessage() + "]";
-		} catch (BadProtocolException | BadPathException ex) {
-			if (getTransferDirection() == TransferDirection.OUTBOUND) {
-				str += "[Illegal to Send: " + ex.getMessage() + "]";
-			} else {
-				str += "[Illegal: " + ex.getMessage() + "]";
-			}
 		}
 
 		return str;
@@ -511,19 +504,19 @@ public class DestinationParcel extends Parcel {
 		return plaintext_payload;
 	}
 	
-	public static long getResendCooldown(){
+	public long getResendCooldown(){
 		return 30000;
 	}
 	
-	public static long getStaleTime(){
+	public long getStaleTime(){
 		return 60000;
 	}
 	
-	public static boolean getRequireOnlinePath(){
+	public boolean getRequireOnlinePath(){
 		return true;
 	}
 	
-	public static boolean getConsultUnknownPath(){
+	public boolean getConsultUnknownPath(){
 		return true;
 	}
 		

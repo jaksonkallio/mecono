@@ -51,11 +51,13 @@ public class PingParcel extends DestinationParcel {
 		return pathKnown();
 	}
 
-	public static long getResendCooldown(){
+	@Override
+	public long getResendCooldown(){
 		return 2000;
 	}
 	
-	public static boolean getRequireOnlinePath(){
+	@Override
+	public boolean getRequireOnlinePath(){
 		return false;
 	}
 }
