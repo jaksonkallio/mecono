@@ -1,6 +1,7 @@
 package mecono.parceling;
 
 import java.util.ArrayList;
+import javafx.beans.property.SimpleStringProperty;
 import mecono.protocol.BadProtocolException;
 import mecono.node.Mailbox;
 import mecono.node.Node;
@@ -17,6 +18,7 @@ import mecono.parceling.types.FindResponseParcel;
 import mecono.parceling.types.PingParcel;
 import mecono.parceling.types.PingResponseParcel;
 import mecono.protocol.UnknownResponsibilityException;
+import mecono.ui.UtilGUI;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -278,6 +280,28 @@ public class DestinationParcel extends Parcel {
 	public Node getDestination() {
 		return destination;
 	}
+	
+	public String getDestinationAddressString(){
+		return destination.getAddress();
+	}
+	
+	public String getOutboundActualPathString(){
+		PathStats outbound_path = getOutboundActualPath();
+		if(outbound_path != null){
+			return outbound_path.getPath().toString();
+		}
+		
+		return "unknown";
+	}
+	
+	public String getPathOnlineString(){
+		PathStats outbound_path = getOutboundActualPath();
+		if(outbound_path != null){
+			return UtilGUI.getBooleanString(outbound_path.online());
+		}
+		
+		return "unknown";
+	}
 
 	public void setDestination(RemoteNode destination) {
 		if (!isInOutbox() && getTransferDirection() == TransferDirection.OUTBOUND) {
@@ -299,6 +323,10 @@ public class DestinationParcel extends Parcel {
 
 	public ParcelType getParcelType() {
 		return ParcelType.UNKNOWN;
+	}
+	
+	public String getParcelTypeString(){
+		return getParcelType().name();
 	}
 
 	public Handshake getUponResponseAction() {
@@ -364,7 +392,7 @@ public class DestinationParcel extends Parcel {
 	public String getUniqueID() {
 		return unique_id;
 	}
-
+	
 	public void setUniqueID(String unique_id) {
 		this.unique_id = unique_id;
 	}
