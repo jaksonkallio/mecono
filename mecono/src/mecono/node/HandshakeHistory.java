@@ -1,6 +1,7 @@
 package mecono.node;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -116,6 +117,10 @@ public class HandshakeHistory {
 		}
 		
 		return null;
+	}
+	
+	public List getPendingParcels(){
+		return pending;
 	}
 	
 	public String listPending() {
