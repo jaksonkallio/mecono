@@ -39,9 +39,7 @@ public class NodeDashboard extends Stage {
 	
 	private TabPane genTabs(){
 		TabPane tabs = new TabPane();
-		Collection<Tab> tab_list = new ArrayList<>();
-		
-		tabs.getTabs().addAll(tab_list);
+		tabs.getTabs().addAll(genOutboxTab(), genComposeTab(), genNodesTab(), genConfigTab());
 		
 		return tabs;
 	}
