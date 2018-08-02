@@ -5,6 +5,8 @@
  */
 package mecono.ui;
 
+import javafx.scene.text.Font;
+
 /**
  *
  * @author sabreok
@@ -14,4 +16,6 @@ public class UtilGUI {
 		percent = (double) ((int) (percent*1000)) / 10;
 		return percent + "%";
 	}
+	
+	public static final Font TITLE_FONT = new Font("Arial", 16);
 }
