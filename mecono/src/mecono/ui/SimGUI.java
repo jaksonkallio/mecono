@@ -45,11 +45,22 @@ public class SimGUI {
 	
 	public void stop(){
 		stopGUITimers();
+		closeOpenedNodeDashboards();
+	}
+	
+	public void closeOpenedNodeDashboards(){
+		for(NodeDashboard node_dashboard : opened_node_dashboards){
+			node_dashboard.close();
+		}
 	}
 	
 	public void stopGUITimers(){
 		network_stats_refresh_timer.cancel();
 		network_stats_refresh_timer.purge();
+		
+		for(NodeDashboard node_dashboard : opened_node_dashboards){
+			node_dashboard.stopGUITimers();
+		}
 	}
 
 	private void nodeSelected() {
@@ -168,7 +179,7 @@ public class SimGUI {
 		});
 		
 		open_node_dashboard.setOnAction(event -> {
-			Stage dashboard = new NodeDashboard(selected_node);
+			opened_node_dashboards.add(new NodeDashboard(selected_node));
 		});
 
 		active_node_actions.getChildren().addAll(get_node_info, discovered_nodes_button, send_from_node, view_outbox, toggle_online, open_node_dashboard);
@@ -240,6 +251,7 @@ public class SimGUI {
 	private final Insets left_inset = new Insets(0, 0, 0, 10);
 	private final Font console_font = new Font("Monospaced Regular", 12);
 	private SimSelfNode selected_node;
+	private final ArrayList<NodeDashboard> opened_node_dashboards = new ArrayList<>();
 	
 	// Simulated network statistics
 	private final Label success_data_rate = new Label();

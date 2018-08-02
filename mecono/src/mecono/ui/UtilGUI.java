@@ -17,5 +17,13 @@ public class UtilGUI {
 		return percent + "%";
 	}
 	
+	public static String getBooleanString(boolean bool){
+		if(bool){
+			return "true";
+		}else{
+			return "false";
+		}
+	}
+	
 	public static final Font TITLE_FONT = new Font("Arial", 16);
 }

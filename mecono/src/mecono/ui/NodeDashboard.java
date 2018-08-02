@@ -8,6 +8,9 @@ package mecono.ui;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
@@ -16,6 +19,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mecono.node.HandshakeHistory;
@@ -36,6 +40,17 @@ public class NodeDashboard extends Stage {
 		show();
 	}
 	
+	@Override
+	public void close(){
+		super.close();
+		
+		stopGUITimers();
+	}
+	
+	public void stopGUITimers(){
+		stopOutboxUpdateTimer();
+	}
+	
 	private VBox genMainContainer(){
 		VBox main_container = new VBox();
 		Label node_title = new Label("Node: " + self_node.getAddress());
@@ -54,39 +69,81 @@ public class NodeDashboard extends Stage {
 	}
 	
 	private Tab genOutboxTab(){
-		Tab tab = new Tab("Outbox");
-		TableView table = new TableView();
 		TableColumn id_column = new TableColumn("ID");
 		TableColumn type_column = new TableColumn("Type");
 		TableColumn destination_column = new TableColumn("Destination");
 		TableColumn path_column = new TableColumn("Path");
 		TableColumn path_online_column = new TableColumn("Path Online?");
 		
-		table.getColumns().addAll(id_column, type_column, destination_column, path_column, path_online_column);
-		tab.setContent(table);
+		id_column.setCellValueFactory(new PropertyValueFactory<DestinationParcel, String>("uniqueID"));
+		type_column.setCellValueFactory(new PropertyValueFactory<DestinationParcel, String>("parcelTypeString"));
+		destination_column.setCellValueFactory(new PropertyValueFactory<DestinationParcel, String>("destinationAddressString"));
+		path_column.setCellValueFactory(new PropertyValueFactory<DestinationParcel, String>("outboundActualPathString"));
+		path_online_column.setCellValueFactory(new PropertyValueFactory<DestinationParcel, String>("pathOnlineString"));
 		
-		return tab;
+		outbox_table.getColumns().addAll(id_column, type_column, destination_column, path_column, path_online_column);
+		outbox_tab.setContent(outbox_table);
+		startOutboxUpdateTimer();
+		
+		return outbox_tab;
 	}
 	
-	private ObservableList<Handshake> getObservablePendingCollection(){
+	private ObservableList<DestinationParcel> getObservablePendingCollection(){
 		HandshakeHistory handshake_history = self_node.getMailbox().getHandshakeHistory();
-		ArrayList<Handshake> pending = (ArrayList) handshake_history.getPendingParcels();
-		ObservableList<Handshake> observable_pending = FXCollections.observableArrayList(pending);
+		List<Handshake> handshakes = handshake_history.getPendingParcels();
+		ArrayList<DestinationParcel> pending = new ArrayList<>();
+		
+		for(Handshake handshake : handshakes){
+			pending.add(handshake.getTriggerParcel());
+		}
+		
+		ObservableList<DestinationParcel> observable_pending = FXCollections.observableArrayList(pending);
 		
 		return observable_pending;
 	}
 	
 	private Tab genComposeTab(){
-		return null;
+		return new Tab();
 	}
 	
 	private Tab genNodesTab(){
-		return null;
+		return new Tab();
 	}
 	
 	private Tab genConfigTab(){
-		return null;
+		return new Tab();
+	}
+	
+	private void updateOutboxTable(){
+		if(outbox_tab.isSelected()){
+			outbox_table.setItems(getObservablePendingCollection());
+		}
+	}
+	
+	private void startOutboxUpdateTimer(){
+		outbox_refresh_timer_active = true;
+		outbox_refresh_timer.schedule(new TimerTask() {
+			public void run() {
+				 Platform.runLater(new Runnable() {
+					public void run() {
+						updateOutboxTable();
+					}
+				});
+			}
+		}, 20, 250);
+	}
+	
+	private void stopOutboxUpdateTimer(){
+		if(outbox_refresh_timer_active){
+			outbox_refresh_timer.cancel();
+			outbox_refresh_timer.purge();
+			outbox_refresh_timer_active = false;
+		}
 	}
 	
 	private SelfNode self_node;
+	private Timer outbox_refresh_timer = new java.util.Timer();
+	private boolean outbox_refresh_timer_active = false;
+	private TableView outbox_table = new TableView();
+	private Tab outbox_tab = new Tab("Outbox");
 }
