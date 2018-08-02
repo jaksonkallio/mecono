@@ -16,6 +16,7 @@ import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
 import mecono.node.Neighbor;
 import mecono.node.Path;
 import mecono.node.PathStats;
@@ -165,8 +166,12 @@ public class SimGUI {
 		view_outbox.setOnAction(event -> {
 			appendNodeConsole(selected_node.getMailbox().getHandshakeHistory().listPending());
 		});
+		
+		open_node_dashboard.setOnAction(event -> {
+			Stage dashboard = new NodeDashboard(selected_node);
+		});
 
-		active_node_actions.getChildren().addAll(get_node_info, discovered_nodes_button, send_from_node, view_outbox, toggle_online);
+		active_node_actions.getChildren().addAll(get_node_info, discovered_nodes_button, send_from_node, view_outbox, toggle_online, open_node_dashboard);
 		active_node_area.getChildren().addAll(global_console, active_node_label, node_console, active_node_actions);
 	}
 
@@ -224,6 +229,7 @@ public class SimGUI {
 	private final Button toggle_online = new Button("Toggle Online");
 	private final Button start_simulation = new Button("Start Simulation");
 	private final Button view_outbox = new Button("View Outbox");
+	private final Button open_node_dashboard = new Button("Open Dashboard");
 	private final VBox active_node_actions = new VBox(10);
 	private final VBox active_node_area = new VBox(10);
 	private final Label attribution = new Label("Made by Jakson Kallio");
