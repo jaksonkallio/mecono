@@ -29,11 +29,16 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mecono.node.HandshakeHistory;
 import mecono.node.Mailbox;
+import mecono.node.RemoteNode;
 import mecono.node.SelfNode;
 import mecono.parceling.DestinationParcel;
+import mecono.parceling.DestinationParcel.TransferDirection;
 import mecono.parceling.Handshake;
 import mecono.parceling.Parcel;
 import mecono.parceling.ParcelType;
+import mecono.parceling.types.DataParcel;
+import mecono.parceling.types.FindParcel;
+import mecono.parceling.types.PingParcel;
 
 /**
  *
@@ -124,7 +129,7 @@ public class NodeDashboard extends Stage {
 		parcel_type_select.getItems().setAll(observable_pending);
 		
 		arb_message.setPrefRowCount(1);
-		arb_message.setPromptText("Arbitrary Message (only for DATA parcels)");
+		arb_message.setPromptText("Extra Data (only for DATA/FIND parcels)");
 		dest_address.setPromptText("Destination node address");
 		
 		send_button.setOnAction(event -> {
@@ -133,7 +138,7 @@ public class NodeDashboard extends Stage {
 			}
 		});
 		
-		compose_form.getChildren().addAll(arb_message, dest_address, parcel_type_select, send_button);
+		compose_form.getChildren().addAll(dest_address, arb_message, parcel_type_select, send_button);
 		compose_form.setPadding(UtilGUI.STD_PADDING);
 		compose_form.setSpacing(UtilGUI.STD_SPACING);
 		compose_tab.setContent(compose_form);
@@ -142,7 +147,27 @@ public class NodeDashboard extends Stage {
 	}
 	
 	private void composeSendMessage(String message, ParcelType parcel_type, String dest_address){
-		System.out.println("message: "+message+", parcel_type: "+parcel_type+", dest_address: "+dest_address);
+		self_node.nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.ATTENTION, "Message composed", parcel_type.name()+" parcel to "+dest_address+" with data \""+message+"\"");
+		
+		Mailbox mailbox = self_node.getMailbox();
+		RemoteNode destination = self_node.getMemoryController().loadRemoteNode(dest_address);
+
+		DestinationParcel parcel = new DestinationParcel(mailbox, TransferDirection.OUTBOUND);
+		
+		// Cases where additional payload data is needed
+		if(parcel_type == ParcelType.DATA){
+			parcel = new DataParcel(mailbox, TransferDirection.OUTBOUND);
+			((DataParcel) parcel).setMessage(message);
+		}else if(parcel_type == ParcelType.FIND){
+			parcel = new FindParcel(mailbox, TransferDirection.OUTBOUND);
+			RemoteNode target = self_node.getMemoryController().loadRemoteNode(message);
+			((FindParcel) parcel).setTarget(target);
+		}else if(parcel_type == ParcelType.PING){
+			parcel = new PingParcel(mailbox, TransferDirection.OUTBOUND);
+		}
+		
+		parcel.setDestination(destination);
+		mailbox.getHandshakeHistory().enqueueSend(parcel);
 	}
 	
 	private Tab genNodesTab(){
