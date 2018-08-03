@@ -5,6 +5,7 @@
  */
 package mecono.ui;
 
+import javafx.geometry.Insets;
 import javafx.scene.text.Font;
 
 /**
@@ -26,4 +27,6 @@ public class UtilGUI {
 	}
 	
 	public static final Font TITLE_FONT = new Font("Arial", 16);
+	public static final Insets STD_PADDING = new Insets(10, 10, 10, 10);
+	public static final int STD_SPACING = 10;
 }

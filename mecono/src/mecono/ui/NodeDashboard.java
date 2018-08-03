@@ -14,12 +14,16 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -28,6 +32,8 @@ import mecono.node.Mailbox;
 import mecono.node.SelfNode;
 import mecono.parceling.DestinationParcel;
 import mecono.parceling.Handshake;
+import mecono.parceling.Parcel;
+import mecono.parceling.ParcelType;
 
 /**
  *
@@ -104,15 +110,47 @@ public class NodeDashboard extends Stage {
 	}
 	
 	private Tab genComposeTab(){
-		return new Tab();
+		VBox compose_form = new VBox();
+		TextArea arb_message = new TextArea();
+		TextField dest_address = new TextField();
+		Button send_button = new Button("Send");
+		ComboBox<ParcelType> parcel_type_select = new ComboBox<>();
+		
+		ArrayList<ParcelType> parcel_type_list = new ArrayList<>();
+		parcel_type_list.add(ParcelType.PING);
+		parcel_type_list.add(ParcelType.FIND);
+		parcel_type_list.add(ParcelType.DATA);
+		ObservableList<ParcelType> observable_pending = FXCollections.observableArrayList(parcel_type_list);
+		parcel_type_select.getItems().setAll(observable_pending);
+		
+		arb_message.setPrefRowCount(1);
+		arb_message.setPromptText("Arbitrary Message (only for DATA parcels)");
+		dest_address.setPromptText("Destination node address");
+		
+		send_button.setOnAction(event -> {
+			if(dest_address.getText().length() > 0 && parcel_type_select.getSelectionModel().getSelectedItem() != null){
+				composeSendMessage(arb_message.getText(), parcel_type_select.getSelectionModel().getSelectedItem(), dest_address.getText());
+			}
+		});
+		
+		compose_form.getChildren().addAll(arb_message, dest_address, parcel_type_select, send_button);
+		compose_form.setPadding(UtilGUI.STD_PADDING);
+		compose_form.setSpacing(UtilGUI.STD_SPACING);
+		compose_tab.setContent(compose_form);
+		
+		return compose_tab;
+	}
+	
+	private void composeSendMessage(String message, ParcelType parcel_type, String dest_address){
+		System.out.println("message: "+message+", parcel_type: "+parcel_type+", dest_address: "+dest_address);
 	}
 	
 	private Tab genNodesTab(){
-		return new Tab();
+		return nodes_tab;
 	}
 	
 	private Tab genConfigTab(){
-		return new Tab();
+		return config_tab;
 	}
 	
 	private void updateOutboxTable(){
@@ -147,4 +185,7 @@ public class NodeDashboard extends Stage {
 	private boolean outbox_refresh_timer_active = false;
 	private TableView outbox_table = new TableView();
 	private Tab outbox_tab = new Tab("Outbox");
+	private Tab compose_tab = new Tab("Compose");
+	private Tab nodes_tab = new Tab("Nodes");
+	private Tab config_tab = new Tab("Configuration");
 }
