@@ -66,12 +66,6 @@ public class SimGUI {
 	private void nodeSelected() {
 		selected_node = node_list.getSelectionModel().getSelectedItem();
 		active_node_label.setText("Selected Node " + selected_node.getAddressLabel());
-		node_console.setText("");
-		appendNodeConsole("Selected node " + selected_node.getAddressLabel() + ".");
-	}
-
-	private void appendNodeConsole(String new_line) {
-		consoleAppend(node_console, new_line);
 	}
 
 	private synchronized void consoleAppend(TextArea console, String new_line) {
@@ -115,75 +109,15 @@ public class SimGUI {
 		global_console.setEditable(false);
 		global_console.setWrapText(true);
 		global_console.setFont(console_font);
-		node_console.setPrefHeight(200);
-		node_console.setEditable(false);
-		node_console.setWrapText(true);
-		node_console.setFont(console_font);
 		active_node_area.setPrefWidth(600);
 		active_node_area.setPadding(left_inset);
-
-		get_node_info.setOnAction(event -> {
-			ArrayList<Neighbor> neighbors = selected_node.getNeighbors();
-			String neighbors_str = "";
-			for (Neighbor neighbor : neighbors) {
-				if (!neighbors_str.equals("")) {
-					neighbors_str += ", ";
-				}
-
-				neighbors_str += neighbor.getNode().getAddress();
-			}
-
-			String str = "";
-			str += "Address: " + selected_node.getAddress();
-			str += "\nNeighbors: " + selected_node.getNeighborCount() + " (" + neighbors_str + ")";
-			str += "\nSuccessful Sends: " + selected_node.parcelHistoryCount(true);
-			str += "\nFailed Sends: " + selected_node.parcelHistoryCount(false);
-
-			appendNodeConsole(str);
-		});
-
-		discovered_nodes_button.setOnAction(event -> {
-			ArrayList<RemoteNode> discovered_nodes = selected_node.getMemoryController().getNodeMemory();
-			StringBuilder discovered_nodes_str = new StringBuilder();
-
-			int discovered_nodes_count = 0;
-			for (RemoteNode node : discovered_nodes) {
-				int known_paths = 0;
-
-				discovered_nodes_count++;
-
-				discovered_nodes_str.append("-- ");
-				discovered_nodes_str.append(node.getAddress());
-				discovered_nodes_str.append("\n");
-
-				for (PathStats path : node.getPathsTo()) {
-					known_paths++;
-					discovered_nodes_str.append("  -- ");
-					discovered_nodes_str.append(path.toString());
-					discovered_nodes_str.append("\n");
-				}
-
-				discovered_nodes_str.append("  -- ");
-				discovered_nodes_str.append(known_paths);
-				discovered_nodes_str.append(" known paths\n");
-			}
-			discovered_nodes_str.append("-- ");
-			discovered_nodes_str.append(discovered_nodes_count);
-			discovered_nodes_str.append(" discovered nodes\n");
-
-			appendNodeConsole(discovered_nodes_str.toString());
-		});
-
-		view_outbox.setOnAction(event -> {
-			appendNodeConsole(selected_node.getMailbox().getHandshakeHistory().listPending());
-		});
 		
 		open_node_dashboard.setOnAction(event -> {
 			opened_node_dashboards.add(new NodeDashboard(selected_node));
 		});
 
-		active_node_actions.getChildren().addAll(get_node_info, discovered_nodes_button, send_from_node, view_outbox, toggle_online, open_node_dashboard);
-		active_node_area.getChildren().addAll(global_console, active_node_label, node_console, active_node_actions);
+		active_node_actions.getChildren().addAll(open_node_dashboard);
+		active_node_area.getChildren().addAll(global_console, active_node_label, active_node_actions);
 	}
 
 	private void buildInfoBar() {
@@ -232,14 +166,8 @@ public class SimGUI {
 	private final ListView<SimSelfNode> node_list = new ListView<>();
 	private final ObservableList<SimSelfNode> node_items = FXCollections.observableArrayList();
 	private final Label active_node_label = new Label("Selected Node");
-	private final TextArea node_console = new TextArea();
 	private final TextArea global_console = new TextArea();
-	private final Button get_node_info = new Button("Node Info");
-	private final Button discovered_nodes_button = new Button("Discovered Nodes");
-	private final Button send_from_node = new Button("Send From");
-	private final Button toggle_online = new Button("Toggle Online");
 	private final Button start_simulation = new Button("Start Simulation");
-	private final Button view_outbox = new Button("View Outbox");
 	private final Button open_node_dashboard = new Button("Open Dashboard");
 	private final VBox active_node_actions = new VBox(10);
 	private final VBox active_node_area = new VBox(10);
