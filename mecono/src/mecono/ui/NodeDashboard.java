@@ -29,6 +29,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mecono.node.HandshakeHistory;
 import mecono.node.Mailbox;
+import mecono.node.MemoryController;
 import mecono.node.RemoteNode;
 import mecono.node.SelfNode;
 import mecono.parceling.DestinationParcel;
@@ -61,6 +62,7 @@ public class NodeDashboard extends Stage {
 	
 	public void stopGUITimers(){
 		stopOutboxUpdateTimer();
+		stopNodesUpdateTimer();
 	}
 	
 	private VBox genMainContainer(){
@@ -173,14 +175,19 @@ public class NodeDashboard extends Stage {
 	private Tab genNodesTab(){
 		TableColumn address_column = new TableColumn("Address");
 		TableColumn ping_column = new TableColumn("Ping");
-		TableColumn successes_column = new TableColumn("Successes");
-		TableColumn fails_column = new TableColumn("Failures");
+		TableColumn successes_column = new TableColumn("Success");
+		TableColumn reliability_column = new TableColumn("Reliability");
 		TableColumn path_count_column = new TableColumn("Path Count");
 		TableColumn pinned_column = new TableColumn("Pinned");
 		
-		address_column.setCellValueFactory(new PropertyValueFactory<DestinationParcel, String>("uniqueID"));
+		address_column.setCellValueFactory(new PropertyValueFactory<RemoteNode, String>("address"));
+		ping_column.setCellValueFactory(new PropertyValueFactory<RemoteNode, String>("onlineString"));
+		successes_column.setCellValueFactory(new PropertyValueFactory<RemoteNode, String>("successesString"));
+		reliability_column.setCellValueFactory(new PropertyValueFactory<RemoteNode, String>("reliabilityString"));
+		path_count_column.setCellValueFactory(new PropertyValueFactory<RemoteNode, String>("pathCountString"));
+		pinned_column.setCellValueFactory(new PropertyValueFactory<RemoteNode, String>("pinnedString"));
 		
-		nodes_table.getColumns().addAll(address_column, ping_column, successes_column, fails_column, path_count_column, pinned_column);
+		nodes_table.getColumns().addAll(address_column, ping_column, successes_column, reliability_column, path_count_column, pinned_column);
 		nodes_tab.setContent(nodes_table);
 		startNodesUpdateTimer();
 		
@@ -188,7 +195,7 @@ public class NodeDashboard extends Stage {
 	}
 	
 	private ObservableList<RemoteNode> getObservableNodesCollection(){
-		return null;
+		return FXCollections.observableArrayList(self_node.getMemoryController().getNodeMemory());
 	}
 	
 	private Tab genConfigTab(){
@@ -208,29 +215,33 @@ public class NodeDashboard extends Stage {
 	}
 	
 	private void startOutboxUpdateTimer(){
-		outbox_refresh_timer_active = true;
-		outbox_refresh_timer.schedule(new TimerTask() {
-			public void run() {
-				 Platform.runLater(new Runnable() {
-					public void run() {
-						updateOutboxTable();
-					}
-				});
-			}
-		}, 20, 250);
+		if(!outbox_refresh_timer_active){
+			outbox_refresh_timer_active = true;
+			outbox_refresh_timer.schedule(new TimerTask() {
+				public void run() {
+					 Platform.runLater(new Runnable() {
+						public void run() {
+							updateOutboxTable();
+						}
+					});
+				}
+			}, 20, 250);
+		}
 	}
 	
 	private void startNodesUpdateTimer(){
-		nodes_refresh_timer_active = true;
-		nodes_refresh_timer.schedule(new TimerTask() {
-			public void run() {
-				 Platform.runLater(new Runnable() {
-					public void run() {
-						updateNodesTable();
-					}
-				});
-			}
-		}, 20, 250);
+		if(!nodes_refresh_timer_active){
+			nodes_refresh_timer_active = true;
+			nodes_refresh_timer.schedule(new TimerTask() {
+				public void run() {
+					 Platform.runLater(new Runnable() {
+						public void run() {
+							updateNodesTable();
+						}
+					});
+				}
+			}, 20, 250);
+		}
 	}
 	
 	private void stopOutboxUpdateTimer(){

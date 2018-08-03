@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Set;
 import mecono.parceling.BadPathException;
+import mecono.ui.UtilGUI;
 
 /**
  *
@@ -30,14 +31,6 @@ public class RemoteNode implements Node {
 
 	public boolean isAdversarial() {
 		return adversarial;
-	}
-
-	public void logResult(boolean endpoint) {
-		if (endpoint) {
-			endpoint_uses++;
-		} else {
-			instrumental_uses++;
-		}
 	}
 
 	public void learnPath(Path path, RemoteNode learned_from) throws BadPathException {
@@ -157,12 +150,48 @@ public class RemoteNode implements Node {
 		});
 	}
 	
+	public String getOnlineString(){
+		PathStats ideal_path = getIdealPath();
+		
+		if(ideal_path != null){
+			if(ideal_path.online()){
+				return ""+ideal_path.getPing();
+			}else{
+				return "offline";
+			}
+		}
+		
+		return "unknown path";
+	}
+	
+	public String getSuccessesString(){
+		PathStats ideal_path = getIdealPath();
+		
+		if(ideal_path != null){
+			return ""+ideal_path.successes();
+		}
+		
+		return "never";
+	}
+	
+	public String getReliabilityString(){
+		PathStats ideal_path = getIdealPath();
+		
+		if(ideal_path != null){
+			return UtilGUI.formatPercentage(getIdealPath().reliability());
+		}
+		
+		return "untested";
+	}
+	
+	public String getPinnedString(){
+		return UtilGUI.getBooleanString(indexer.isPinned(this));
+	}
+	
 	public final static long ONLINE_THRESHOLD = 30000;
 
 	private final String address;
 	private String label;
-	private int instrumental_uses = 0; // Successful signals sent across this node
-	private int endpoint_uses = 0; // Successful signals sent to this node
 	private boolean adversarial; // Flagged as an adversarial node.
 	private int ping;
 	private int last_ping_time; // Time of the last ping, in minutes.
