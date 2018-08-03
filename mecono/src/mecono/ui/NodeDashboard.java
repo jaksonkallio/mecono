@@ -171,7 +171,24 @@ public class NodeDashboard extends Stage {
 	}
 	
 	private Tab genNodesTab(){
+		TableColumn address_column = new TableColumn("Address");
+		TableColumn ping_column = new TableColumn("Ping");
+		TableColumn successes_column = new TableColumn("Successes");
+		TableColumn fails_column = new TableColumn("Failures");
+		TableColumn path_count_column = new TableColumn("Path Count");
+		TableColumn pinned_column = new TableColumn("Pinned");
+		
+		address_column.setCellValueFactory(new PropertyValueFactory<DestinationParcel, String>("uniqueID"));
+		
+		nodes_table.getColumns().addAll(address_column, ping_column, successes_column, fails_column, path_count_column, pinned_column);
+		nodes_tab.setContent(nodes_table);
+		startNodesUpdateTimer();
+		
 		return nodes_tab;
+	}
+	
+	private ObservableList<RemoteNode> getObservableNodesCollection(){
+		return null;
 	}
 	
 	private Tab genConfigTab(){
@@ -181,6 +198,12 @@ public class NodeDashboard extends Stage {
 	private void updateOutboxTable(){
 		if(outbox_tab.isSelected()){
 			outbox_table.setItems(getObservablePendingCollection());
+		}
+	}
+	
+	private void updateNodesTable(){
+		if(nodes_tab.isSelected()){
+			nodes_table.setItems(getObservableNodesCollection());
 		}
 	}
 	
@@ -197,6 +220,19 @@ public class NodeDashboard extends Stage {
 		}, 20, 250);
 	}
 	
+	private void startNodesUpdateTimer(){
+		nodes_refresh_timer_active = true;
+		nodes_refresh_timer.schedule(new TimerTask() {
+			public void run() {
+				 Platform.runLater(new Runnable() {
+					public void run() {
+						updateNodesTable();
+					}
+				});
+			}
+		}, 20, 250);
+	}
+	
 	private void stopOutboxUpdateTimer(){
 		if(outbox_refresh_timer_active){
 			outbox_refresh_timer.cancel();
@@ -205,10 +241,21 @@ public class NodeDashboard extends Stage {
 		}
 	}
 	
+	private void stopNodesUpdateTimer(){
+		if(nodes_refresh_timer_active){
+			nodes_refresh_timer.cancel();
+			nodes_refresh_timer.purge();
+			nodes_refresh_timer_active = false;
+		}
+	}
+	
 	private SelfNode self_node;
 	private Timer outbox_refresh_timer = new java.util.Timer();
+	private Timer nodes_refresh_timer = new java.util.Timer();
 	private boolean outbox_refresh_timer_active = false;
+	private boolean nodes_refresh_timer_active = false;
 	private TableView outbox_table = new TableView();
+	private TableView nodes_table = new TableView();
 	private Tab outbox_tab = new Tab("Outbox");
 	private Tab compose_tab = new Tab("Compose");
 	private Tab nodes_tab = new Tab("Nodes");
