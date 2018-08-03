@@ -17,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -64,7 +65,7 @@ public class NodeDashboard extends Stage {
 	private TabPane genTabs(){
 		TabPane tabs = new TabPane();
 		tabs.getTabs().addAll(genOutboxTab(), genComposeTab(), genNodesTab(), genConfigTab());
-		
+		tabs.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
 		return tabs;
 	}
 	
