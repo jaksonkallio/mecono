@@ -115,8 +115,12 @@ public class SimGUI {
 		open_node_dashboard.setOnAction(event -> {
 			opened_node_dashboards.add(new NodeDashboard(selected_node));
 		});
+		
+		open_visual_network_map.setOnAction(event -> {
+			VisualNetworkMap vis_net_map = new VisualNetworkMap(sim_network);
+		});
 
-		active_node_actions.getChildren().addAll(open_node_dashboard);
+		active_node_actions.getChildren().addAll(open_node_dashboard, open_visual_network_map);
 		active_node_area.getChildren().addAll(global_console, active_node_label, active_node_actions);
 	}
 
@@ -169,6 +173,7 @@ public class SimGUI {
 	private final TextArea global_console = new TextArea();
 	private final Button start_simulation = new Button("Start Simulation");
 	private final Button open_node_dashboard = new Button("Open Dashboard");
+	private final Button open_visual_network_map = new Button("Open Visual Network Map");
 	private final VBox active_node_actions = new VBox(10);
 	private final VBox active_node_area = new VBox(10);
 	private final Label attribution = new Label("Made by Jakson Kallio");
