@@ -54,7 +54,7 @@ public class CSEv2 extends SimNetwork {
 		}
 	}
 	
-	private final int node_count = 100;
+	private final int node_count = 50;
 	
 	// https://www.random.org/integers/?num=50&min=0&max=4&col=1&base=10&format=plain&rnd=new
 	// https://delim.co/

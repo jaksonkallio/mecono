@@ -37,6 +37,12 @@ public class VisualNetworkMap extends Stage {
 		return main_container;
 	}
 	
+	private void genMapEdges(){
+		for(MapNode map_node : map_nodes){
+			map_node.genEdges();
+		}
+	}
+	
 	private Pane genMap(){
 		Pane map_canvas = new Pane();
 		
@@ -45,14 +51,16 @@ public class VisualNetworkMap extends Stage {
 			map_nodes.add(new MapNode(node));
 		}
 		
-		for(MapNode map_node : map_nodes){
-			map_canvas.getChildren().add(map_node.getVisualNode());
-		}
-		
+		genMapEdges();
+	
 		for(MapEdge map_edge : map_edges){
 			map_canvas.getChildren().add(map_edge.getEdge());
 		}
 		
+		for(MapNode map_node : map_nodes){
+			map_canvas.getChildren().add(map_node.getVisualNode());
+		}
+
 		return map_canvas;
 	}
 	
@@ -66,9 +74,26 @@ public class VisualNetworkMap extends Stage {
 		return null;
 	}
 	
+	private int genRandomScatterOffset(){
+		return ((int)(Math.random() * (6))) * 10;
+	}
+	
 	private class MapNode {
 		public MapNode(SimSelfNode node){
 			this.node = node;
+			this.scatter_x = genRandomScatterOffset();
+			this.scatter_y = genRandomScatterOffset();
+		}
+		
+		public void genEdges(){
+			for(Neighbor neighbor : node.getNeighbors()){
+				Node neighbor_node = neighbor.getNode();
+				MapEdge map_edge = new MapEdge(this, lookupMapNode(neighbor_node));
+				
+				if(!map_edges.contains(map_edge)){
+					map_edges.add(map_edge);
+				}
+			}
 		}
 		
 		@Override
@@ -89,21 +114,23 @@ public class VisualNetworkMap extends Stage {
 		}
 		
 		public int getCellX(){
-			int list_index = map_nodes.indexOf(this);
-			return list_index % cells_row;
+			return getNodeIndex() % cells_row;
 		}
 		
 		public int getX(){
-			return (getCellX() + 1) * node_hor_spacing;
+			return ((getCellX() + 1) * node_hor_spacing) + scatter_x;
 		}
 		
 		public int getCellY(){
-			int list_index = map_nodes.indexOf(this);
-			return (int) (list_index / cells_row);
+			return (int) (getNodeIndex() / cells_row);
+		}
+		
+		public int getNodeIndex(){
+			return map_nodes.indexOf(this);
 		}
 		
 		public int getY(){
-			return (getCellY() + 1) * node_ver_spacing;
+			return ((getCellY() + 1) * node_ver_spacing) + scatter_y;
 		}
 		
 		public Pane getVisualNode(){
@@ -116,21 +143,14 @@ public class VisualNetworkMap extends Stage {
 			vis_node_circle.setStroke(Color.BLACK);
 			vis_node_circle.setFill(Color.WHITE);
 			
-			for(Neighbor neighbor : node.getNeighbors()){
-				Node neighbor_node = neighbor.getNode();
-				MapEdge map_edge = new MapEdge(this, lookupMapNode(neighbor_node));
-				
-				if(!map_edges.contains(map_edge)){
-					map_edges.add(map_edge);
-				}
-			}
-			
 			stack.getChildren().addAll(vis_node_circle, vis_node_label);
 			
 			return stack;
 		}
 		
 		private final SimSelfNode node;
+		private final int scatter_x;
+		private final int scatter_y;
 	}
 	
 	private class MapEdge {
@@ -144,7 +164,7 @@ public class VisualNetworkMap extends Stage {
 			if(o instanceof MapEdge){
 				MapEdge other = (MapEdge) o;
 				
-				if(other.getNode(1).equals(this.getNode(1)) && other.getNode(2).equals(this.getNode(2))){
+				if(other.getNode(1).equals(this.getNode(1)) && other.getNode(2).equals(this.getNode(2)) || (other.getNode(2).equals(this.getNode(1)) && other.getNode(1).equals(this.getNode(2)))){
 					return true;
 				}
 			}
@@ -178,10 +198,10 @@ public class VisualNetworkMap extends Stage {
 	private final ArrayList<MapNode> map_nodes = new ArrayList<>();
 	private final ArrayList<MapEdge> map_edges = new ArrayList<>();
 	private final SimNetwork sim;
-	private final int cells_row = 8;
+	private final int cells_row = 5;
 	private final int win_width = 800;
 	private final int win_height = 800;
 	private final int node_hor_spacing = win_width / (cells_row + 1);
-	private final int node_ver_spacing = 40;
-	private final int node_radius = 10;
+	private final int node_ver_spacing = 60;
+	private final int node_radius = 15;
 }
