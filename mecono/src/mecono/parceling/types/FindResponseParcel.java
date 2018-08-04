@@ -100,9 +100,9 @@ public class FindResponseParcel extends ResponseParcel implements Response {
 
 		return unserialized_target_answers;
 	}
-
+	
 	@Override
-	public boolean requiresOnlinePath() {
+	public boolean getRequireOnlinePath(){
 		return false;
 	}
 
