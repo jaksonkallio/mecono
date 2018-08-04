@@ -164,6 +164,14 @@ public class RemoteNode implements Node {
 		return "unknown path";
 	}
 	
+	public long getTimeLastConsulted(){
+		return last_consulted;
+	}
+	
+	public void updateTimeLastConsulted(){
+		last_consulted = Protocol.getEpochMilliSecond();
+	}
+	
 	public String getSuccessesString(){
 		PathStats ideal_path = getIdealPath();
 		
@@ -194,6 +202,7 @@ public class RemoteNode implements Node {
 	private String label;
 	private boolean adversarial; // Flagged as an adversarial node.
 	private int ping;
+	private long last_consulted; // Time of last consultation for a path
 	private int last_ping_time; // Time of the last ping, in minutes.
 	private ArrayList<PathStats> paths_to = new ArrayList<>();
 	private ArrayList<RemoteNode> neighbors; // This node's neighbors, used only for community members.

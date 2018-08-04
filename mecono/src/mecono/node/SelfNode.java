@@ -461,6 +461,7 @@ public class SelfNode implements Node {
 	public final double path_reliability_rating_bonus = 0.10;
 	public final int MAX_PATH_HIST_LENGTH = 30; // Only forward a foreign parcel if the path history has fewer than this many stops.
 	public final long PINNED_NODE_PING_RATE = 120; // Contact pinned nodes every X seconds. Should probably be less than online threshold.
+	public final long CONSULTATION_COOLDOWN = 30000; // Time between consultations to reduce spam
 	public final boolean FORWARD_WHEN_BLACKLISTED_IN_HISTORY = true;
 	public final int SENT_NO_RESPONSE_TIMEOUT = 60; // If no response in X seconds, consider the transfer failed.
 	public final int SENT_SUCCESS_TIMEOUT = 30; // After X seconds, clear out an old sent parcel. This will allow a future congruent parcel to be sent.

@@ -13,6 +13,7 @@ import mecono.parceling.ResponseParcel;
 import mecono.parceling.types.FindParcel;
 import mecono.parceling.types.PingParcel;
 import mecono.protocol.BadProtocolException;
+import mecono.protocol.Protocol;
 import mecono.protocol.UnknownResponsibilityException;
 
 /**
@@ -169,12 +170,13 @@ public class HandshakeHistory {
 
 			// Now consult the nodes
 			for (RemoteNode consultant : consult_list) {
-				if (!consultant.equals(target)) {
+				if (!consultant.equals(target) && Protocol.elapsedMillis(consultant.getTimeLastConsulted()) > mailbox.getOwner().CONSULTATION_COOLDOWN) {
 					// Only consult a node if the consultant is NOT the node we're looking for.
 					FindParcel find = new FindParcel(mailbox, DestinationParcel.TransferDirection.OUTBOUND);
 					find.setTarget(target);
 					find.setDestination(consultant);
 					enqueueSend(find);
+					consultant.updateTimeLastConsulted();
 				}
 			}
 		}
