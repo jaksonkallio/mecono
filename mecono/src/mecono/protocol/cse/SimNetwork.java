@@ -136,6 +136,10 @@ public abstract class SimNetwork {
 		return node_set;
 	}
 	
+	public int getNodeCount(){
+		return getNodeSet().size();
+	}
+	
 	public ArrayList<ArrayList<Integer>> getParcelSet(){
 		return parcel_set;
 	}

@@ -6,6 +6,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -26,8 +27,9 @@ import mecono.protocol.cse.SimNetwork;
 public class VisualNetworkMap extends Stage {
 	public VisualNetworkMap(SimNetwork sim){
 		this.sim = sim;
+		cells_row = (int) Math.sqrt(sim.getNodeCount());
 		setTitle("Visual Network Map");
-		setScene(new Scene(genMainContainer(), 800, 800));
+		setScene(new Scene(genMainContainer(), win_height, win_width));
 		show();
 	}
 	
@@ -43,7 +45,7 @@ public class VisualNetworkMap extends Stage {
 		}
 	}
 	
-	private Pane genMap(){
+	private ScrollPane genMap(){
 		Pane map_canvas = new Pane();
 		
 		map_nodes.clear();
@@ -61,7 +63,9 @@ public class VisualNetworkMap extends Stage {
 			map_canvas.getChildren().add(map_node.getVisualNode());
 		}
 
-		return map_canvas;
+		ScrollPane scroll_pane = new ScrollPane();
+		scroll_pane.setContent(map_canvas);
+		return scroll_pane;
 	}
 	
 	private MapNode lookupMapNode(Node node){
@@ -75,7 +79,7 @@ public class VisualNetworkMap extends Stage {
 	}
 	
 	private int genRandomScatterOffset(){
-		return ((int)(Math.random() * (6))) * 10;
+		return (-2 + ((int)(Math.random() * (5)))) * 10;
 	}
 	
 	private class MapNode {
@@ -118,7 +122,15 @@ public class VisualNetworkMap extends Stage {
 		}
 		
 		public int getX(){
-			return ((getCellX() + 1) * node_hor_spacing) + scatter_x;
+			int offset = 0;
+			
+			if(getCellX() == 0){
+				offset = node_spacing / 2;
+			}else{
+				offset = ((getCellX() + 1) * node_spacing);
+			}
+			
+			return offset + scatter_x;
 		}
 		
 		public int getCellY(){
@@ -130,13 +142,22 @@ public class VisualNetworkMap extends Stage {
 		}
 		
 		public int getY(){
-			return ((getCellY() + 1) * node_ver_spacing) + scatter_y;
+			int offset = 0;
+			
+			if(getCellY() == 0){
+				offset = node_spacing / 2;
+			}else{
+				offset = ((getCellY() + 1) * node_spacing);
+			}
+			
+			return offset + scatter_y;
 		}
 		
 		public Pane getVisualNode(){
-			Pane stack = new Pane();
+			StackPane stack = new StackPane();
 			Circle vis_node_circle = new Circle();
 			Label vis_node_label = new Label(node.getAddress());
+			
 			vis_node_label.setFont(UtilGUI.MICRO_LABEL);
 			vis_node_circle.setRadius(node_radius);
 			stack.relocate(getX(), getY());
@@ -144,6 +165,7 @@ public class VisualNetworkMap extends Stage {
 			vis_node_circle.setFill(Color.WHITE);
 			
 			stack.getChildren().addAll(vis_node_circle, vis_node_label);
+			StackPane.setAlignment(vis_node_label, Pos.CENTER);
 			
 			return stack;
 		}
@@ -175,10 +197,10 @@ public class VisualNetworkMap extends Stage {
 		public Line getEdge(){
 			Line vis_edge = new Line();
 			
-			vis_edge.setStartX(node1.getX());
-			vis_edge.setStartY(node1.getY());
-			vis_edge.setEndX(node2.getX());
-			vis_edge.setEndY(node2.getY());
+			vis_edge.setStartX(node1.getX() + node_radius);
+			vis_edge.setStartY(node1.getY() + node_radius);
+			vis_edge.setEndX(node2.getX() + node_radius);
+			vis_edge.setEndY(node2.getY() + node_radius);
 			
 			return vis_edge;
 		}
@@ -198,10 +220,10 @@ public class VisualNetworkMap extends Stage {
 	private final ArrayList<MapNode> map_nodes = new ArrayList<>();
 	private final ArrayList<MapEdge> map_edges = new ArrayList<>();
 	private final SimNetwork sim;
-	private final int cells_row = 5;
+	private final int cells_row;
 	private final int win_width = 800;
 	private final int win_height = 800;
-	private final int node_hor_spacing = win_width / (cells_row + 1);
-	private final int node_ver_spacing = 60;
+	//private final int node_hor_spacing = win_width / (cells_row + 1);
+	private final int node_spacing = 100;
 	private final int node_radius = 15;
 }
