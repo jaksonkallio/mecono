@@ -1,9 +1,13 @@
 package mecono.parceling.types;
 
+import java.util.ArrayList;
 import mecono.node.Mailbox;
+import mecono.node.Path;
+import mecono.node.RemoteNode;
 import mecono.parceling.DestinationParcel;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.ParcelType;
+import mecono.protocol.BadProtocolException;
 import org.json.JSONObject;
 
 /**
@@ -34,6 +38,18 @@ public class DataParcel extends DestinationParcel {
 
 		return false;
 	}
+	
+	@Override
+	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
+		super.onReceiveAction();
+
+		RemoteNode originator = (RemoteNode) getOriginator();
+
+		DataReceiptParcel response = new DataReceiptParcel(mailbox, TransferDirection.OUTBOUND);
+		response.setRespondedID(getUniqueID());
+		response.setDestination(originator); // Set the destination to the person that contacted us (a response)
+		getMailbox().getHandshakeHistory().enqueueSend(response); // Send the response
+	}
 
 	public void setMessage(String message) {
 		if (!isInOutbox()) {
@@ -44,7 +60,7 @@ public class DataParcel extends DestinationParcel {
 	public String getMessage() {
 		return message;
 	}
-
+	
 	@Override
 	public JSONObject getSerializedContent() {
 		JSONObject json_content = new JSONObject();
