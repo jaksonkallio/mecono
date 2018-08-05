@@ -2,11 +2,13 @@ package mecono.ui;
 
 
 import java.util.ArrayList;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -76,6 +78,17 @@ public class VisualNetworkMap extends Stage {
 		}
 		
 		return null;
+	}
+	
+	private ArrayList<MapEdge> lookupEdges(MapNode map_node){
+		ArrayList<MapEdge> found_edges = new ArrayList<>();
+		for(MapEdge map_edge : map_edges){
+			if(map_edge.containsNode(map_node)){
+				found_edges.add(map_edge);
+			}
+		}
+		
+		return found_edges;
 	}
 	
 	private int genRandomScatterOffset(){
@@ -153,8 +166,16 @@ public class VisualNetworkMap extends Stage {
 			return offset + scatter_y;
 		}
 		
+		private void highlightEdges(boolean switch_to){
+			ArrayList<MapEdge> connected_edges = lookupEdges(this);
+			
+			for(MapEdge map_edge : connected_edges){
+				map_edge.setHighlighted(switch_to);
+			}
+		}
+		
 		public Pane getVisualNode(){
-			StackPane stack = new StackPane();
+			stack.getChildren().clear();
 			Circle vis_node_circle = new Circle();
 			Label vis_node_label = new Label(node.getAddress());
 			
@@ -163,6 +184,22 @@ public class VisualNetworkMap extends Stage {
 			stack.relocate(getX(), getY());
 			vis_node_circle.setStroke(Color.BLACK);
 			vis_node_circle.setFill(Color.WHITE);
+			
+			vis_node_circle.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    vis_node_circle.setFill(Color.AQUAMARINE);
+					highlightEdges(true);
+                }
+            });
+
+            vis_node_circle.setOnMouseExited(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    vis_node_circle.setFill(Color.WHITE);
+					highlightEdges(false);
+                }
+            });
 			
 			stack.getChildren().addAll(vis_node_circle, vis_node_label);
 			StackPane.setAlignment(vis_node_label, Pos.CENTER);
@@ -173,6 +210,7 @@ public class VisualNetworkMap extends Stage {
 		private final SimSelfNode node;
 		private final int scatter_x;
 		private final int scatter_y;
+		private final StackPane stack = new StackPane();
 	}
 	
 	private class MapEdge {
@@ -195,14 +233,21 @@ public class VisualNetworkMap extends Stage {
 		}
 		
 		public Line getEdge(){
-			Line vis_edge = new Line();
-			
+			vis_edge.setStroke(Color.DARKGRAY);
 			vis_edge.setStartX(node1.getX() + node_radius);
 			vis_edge.setStartY(node1.getY() + node_radius);
 			vis_edge.setEndX(node2.getX() + node_radius);
 			vis_edge.setEndY(node2.getY() + node_radius);
 			
 			return vis_edge;
+		}
+		
+		public void setHighlighted(boolean switch_to){
+			if(switch_to){
+				vis_edge.setStroke(Color.BLUE);
+			}else{
+				vis_edge.setStroke(Color.DARKGRAY);
+			}
 		}
 		
 		public MapNode getNode(int i){
@@ -213,8 +258,13 @@ public class VisualNetworkMap extends Stage {
 			return node2;
 		}
 		
+		public boolean containsNode(MapNode node){
+			return (node.equals(node1) || node.equals(node2));
+		}
+		
 		private final MapNode node1;
 		private final MapNode node2;
+		Line vis_edge = new Line();
 	}
 	
 	private final ArrayList<MapNode> map_nodes = new ArrayList<>();
