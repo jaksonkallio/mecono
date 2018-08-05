@@ -66,9 +66,14 @@ public class DestinationParcel extends Parcel {
 
 	@Override
 	public boolean equals(Object o) {
-		DestinationParcel other = (DestinationParcel) o;
-
-		return this.getDestination().equals(other.getDestination());
+		if(o instanceof DestinationParcel){
+			DestinationParcel other = (DestinationParcel) o;
+			if(this.getDestination().equals(other.getDestination()) && this.getParcelType() == other.getParcelType()){
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	@Override
