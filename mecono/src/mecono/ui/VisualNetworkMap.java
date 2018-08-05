@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
@@ -18,7 +17,6 @@ import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import mecono.node.Neighbor;
 import mecono.node.Node;
-import mecono.node.RemoteNode;
 import mecono.node.SimSelfNode;
 import mecono.protocol.cse.SimNetwork;
 
