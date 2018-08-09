@@ -164,7 +164,7 @@ public class RemoteNode implements Node {
 		
 		if(ideal_path != null){
 			if(ideal_path.online()){
-				return ""+ideal_path.getPing();
+				return ideal_path.getPing()+"ms";
 			}else{
 				return "offline";
 			}
