@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Set;
 import mecono.parceling.BadPathException;
+import mecono.parceling.DestinationParcel.TransferDirection;
+import mecono.parceling.types.PingParcel;
 import mecono.ui.UtilGUI;
 
 /**
@@ -40,6 +42,13 @@ public class RemoteNode implements Node {
 				// If this path isn't already known
 				PathStats path_stats = new PathStats(path, indexer, learned_from);
 				paths_to.add(path_stats);
+				
+				// If this is the first learned path, we should ping this node
+				if(paths_to.size() == 1){
+					PingParcel initial_ping = new PingParcel(indexer.getMailbox(), TransferDirection.OUTBOUND);
+					initial_ping.setDestination(this);
+					indexer.getMailbox().getHandshakeHistory().enqueueSend(initial_ping);
+				}
 			}
 		}
 	}
