@@ -1,4 +1,4 @@
-![Mecono logo](https://github.com/jaksonkallio/mecono/blob/master/brand/logo.png)
+<img src="https://github.com/jaksonkallio/mecono/blob/master/brand/logo.png" alt="mecono logo" width="200px"/>
 
 # Mecono: Decenetralized Internet Access
 
