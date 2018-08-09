@@ -1,4 +1,4 @@
-<img src="https://github.com/jaksonkallio/mecono/blob/master/brand/logo.png" alt="mecono logo" width="200px"/>
+<img src="https://github.com/jaksonkallio/mecono/blob/master/brand/logo.png" alt="mecono logo" width="400px"/>
 
 # Mecono: Decenetralized Internet Access
 
