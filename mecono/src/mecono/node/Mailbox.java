@@ -144,6 +144,18 @@ public class Mailbox {
 	public void enqueueForward(ForeignParcel foreign){
 		forward_queue.offer(foreign);
 	}
+	
+	public void pingPinnedNodes(){
+		for(RemoteNode pinned : owner.getPinnedNodes()){
+			PathStats ideal_path = pinned.getIdealPath();
+			
+			if(ideal_path != null && !ideal_path.online()){
+				PingParcel ping = new PingParcel(this, TransferDirection.OUTBOUND);
+				ping.setDestination(pinned);
+				getHandshakeHistory().enqueueSend(ping);
+			}
+		}
+	}
 
 	public void processInboundQueue() {
 		if (inbound_queue.size() > 0) {

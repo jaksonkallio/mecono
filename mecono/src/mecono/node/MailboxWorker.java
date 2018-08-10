@@ -50,6 +50,7 @@ public class MailboxWorker implements Runnable {
 		HandshakeHistory handshakes = mailbox.getHandshakeHistory();
 
 		while (working) {
+			mailbox.pingPinnedNodes();
 			handshakes.attemptSend();
 			handshakes.prune();
 			

@@ -369,6 +369,16 @@ public class SelfNode implements Node {
 		return trusted_nodes;
 	}
 
+	public ArrayList<RemoteNode> getPinnedNodes(){
+		ArrayList<RemoteNode> all_pinned_nodes = pinned_nodes;
+		
+		for(Neighbor neighbor : getNeighbors()){
+			all_pinned_nodes.add(neighbor.getNode());
+		}
+		
+		return all_pinned_nodes;
+	}
+	
 	/**
 	 * Parcel history statistics.
 	 *
