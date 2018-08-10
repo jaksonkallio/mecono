@@ -83,7 +83,6 @@ public class HandshakeHistory {
 								original_parcel.setUsedPath();
 								original_parcel.setIsSent();
 								original_parcel.setTimeSent();
-								original_parcel.getOutboundActualPath().pending();
 								pending.remove(send_cursor);
 								completed.offer(handshake);
 								send_cursor = 0;

@@ -74,22 +74,16 @@ public class PathStats {
 	}
 
 	public void success() {
-		pending--;
 		successes++;
 		markUsed();
 	}
 
 	public void failure() {
-		pending--;
 		failures++;
 	}
 
-	public void pending() {
-		pending++;
-	}
-
 	public int totalUses() {
-		return successes + failures + pending;
+		return successes + failures;
 	}
 
 	public boolean online() {
@@ -155,12 +149,11 @@ public class PathStats {
 	}
 
 	public static final int PATH_TESTED_EXPIRY = 120; // X minutes since last use before path is marked as not online
-	public static final double PATH_RELIABILITY_BONUS = 0.05; // X minutes since last use before path is marked as not online
+	public static final double PATH_RELIABILITY_BONUS = 0.05;
 
 	private final Path path;
 	private int successes = 0;
 	private int failures = 0;
-	private int pending = 0;
 	private long ping;
 	private final RemoteNode learned_from;
 	private long last_used = 0; // Epoch millis timestamp of last successful use
