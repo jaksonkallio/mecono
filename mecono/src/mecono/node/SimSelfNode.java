@@ -26,6 +26,11 @@ public class SimSelfNode extends SelfNode {
 	public void receiveRawString(String raw_parcel) {
 		mailbox.getNetworkController().receiveData(raw_parcel);
 	}
+	
+	public void messageReceived(String message){
+		super.messageReceived(message);
+		getSimNetwork().refillSampleParcels();
+	}
 
 	@Override
 	public synchronized String nodeLog(int importance, String message) {

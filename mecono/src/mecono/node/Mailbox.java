@@ -54,7 +54,6 @@ public class Mailbox {
 		try {
 			// Learn path
 			getOwner().learnPath(parcel.getActualPath(), null);
-			System.out.println(parcel.getActualPath().toString());
 			
 			// Do any required action
 			parcel.onReceiveAction();

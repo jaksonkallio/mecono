@@ -213,6 +213,10 @@ public class SelfNode implements Node {
 		return memory_controller;
 	}
 
+	public void messageReceived(String message){
+		nodeLog(ErrorStatus.GOOD, LogLevel.ATTENTION, "Message received via Mecono network", message);
+	}
+	
 	/**
 	 * Takes in a path and updates all remote node's paths mentioned.
 	 *
@@ -235,7 +239,6 @@ public class SelfNode implements Node {
 			if (path.getStop(i).equals(this)) {
 				// We don't want there to be multiple instances of a self node in a path
 				if (self_node_found) {
-					System.out.println(path.getStop(i).getAddress()+"=="+this.getAddress());
 					throw new BadPathException("Self node included twice in one path");
 				}
 

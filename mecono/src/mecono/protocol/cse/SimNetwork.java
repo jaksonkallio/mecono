@@ -54,6 +54,8 @@ public abstract class SimNetwork {
 
 	protected abstract void initEnvironment();
 
+	public void refillSampleParcels(){};
+	
 	/*public final void initializeRandomEnvironment() {
 		if (!initialized) {
 			generateSimSelfNodes(mesh_size);

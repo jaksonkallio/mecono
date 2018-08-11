@@ -25,7 +25,7 @@ public class CSEv2 extends SimNetwork {
 	protected final void initEnvironment() {
 		createNodes();
 		createNeighborships();
-		createParcels();
+		refillSampleParcels();
 		distributeSampleParcels();
 	}
 	
@@ -35,7 +35,7 @@ public class CSEv2 extends SimNetwork {
 		}
 	}
 	
-	private void createParcels(){
+	public void refillSampleParcels(){
 		while(parcelsInOutbox(ParcelType.DATA) < constant_parcel_count){
 			int origin_index = sample_parcel_rand.nextInt(node_set.size());
 			int destination_index = sample_parcel_rand.nextInt(node_set.size());

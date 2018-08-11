@@ -43,11 +43,12 @@ public class DataParcel extends DestinationParcel {
 	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
 		super.onReceiveAction();
 
-		RemoteNode originator = (RemoteNode) getOriginator();
-
+		mailbox.getOwner().messageReceived(this.getMessage());
+		
+		RemoteNode received_originator = (RemoteNode) getOriginator();
 		DataReceiptParcel response = new DataReceiptParcel(mailbox, TransferDirection.OUTBOUND);
 		response.setRespondedID(getUniqueID());
-		response.setDestination(originator); // Set the destination to the person that contacted us (a response)
+		response.setDestination(received_originator); // Set the destination to the person that contacted us (a response)
 		getMailbox().getHandshakeHistory().enqueueSend(response); // Send the response
 	}
 
