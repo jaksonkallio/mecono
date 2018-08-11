@@ -11,16 +11,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
-import javafx.stage.Stage;
-import mecono.node.Neighbor;
-import mecono.node.Path;
-import mecono.node.PathStats;
-import mecono.node.RemoteNode;
 import mecono.parceling.ParcelType;
 import mecono.protocol.cse.SimNetwork;
 
@@ -85,7 +79,7 @@ public class SimGUI {
 	}
 
 	private void buildNodeList() {
-		for (SimSelfNode node : sim_network.getMembers()) {
+		for (SimSelfNode node : sim_network.getNodeSet()) {
 			node_items.add(node);
 		}
 
@@ -152,14 +146,17 @@ public class SimGUI {
 		sim_stats.setText("Sim Net Stats");
 		columns[2].getChildren().add(sim_stats);
 		columns[2].getChildren().add(new Label("Version: " + sim_network.getVersionLabel()));
-		columns[2].getChildren().addAll(outbox_count, success_ping_rate, success_data_rate);
+		columns[2].getChildren().addAll(outbox_count_data, outbox_count_find, outbox_count_ping, success_data_rate, success_find_rate, success_ping_rate);
 		startSimulatedNetworkStatisticsRefresher();
 	}
 	
 	private void updateSimulatedNetworkStats(){
-		outbox_count.setText("Outbox Count: " + sim_network.parcelsInOutbox());
-		success_ping_rate.setText("Successful Ping Rate: " + UtilGUI.formatPercentage(sim_network.averageSuccessRate(ParcelType.PING)));
-		success_data_rate.setText("Successful Data Rate: " + UtilGUI.formatPercentage(sim_network.averageSuccessRate(ParcelType.DATA)));
+		outbox_count_data.setText("Outbox Count (Data): " + sim_network.parcelsInOutbox(ParcelType.DATA));
+		outbox_count_find.setText("Outbox Count (Find): " + sim_network.parcelsInOutbox(ParcelType.FIND));
+		outbox_count_ping.setText("Outbox Count (Ping): " + sim_network.parcelsInOutbox(ParcelType.PING));
+		success_ping_rate.setText("Success Rate (Ping): " + UtilGUI.formatPercentage(sim_network.averageSuccessRate(ParcelType.PING)));
+		success_find_rate.setText("Success Rate (Find): " + UtilGUI.formatPercentage(sim_network.averageSuccessRate(ParcelType.FIND)));
+		success_data_rate.setText("Success Rate (Data): " + UtilGUI.formatPercentage(sim_network.averageSuccessRate(ParcelType.DATA)));
 	}
 
 	private final SimNetwork sim_network;
@@ -188,6 +185,9 @@ public class SimGUI {
 	
 	// Simulated network statistics
 	private final Label success_data_rate = new Label();
-	private final Label outbox_count = new Label();
+	private final Label success_find_rate = new Label();
 	private final Label success_ping_rate = new Label();
+	private final Label outbox_count_data = new Label();
+	private final Label outbox_count_find = new Label();
+	private final Label outbox_count_ping = new Label();
 }

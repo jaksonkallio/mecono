@@ -17,14 +17,12 @@ import mecono.parceling.ParcelType;
 public abstract class SimNetwork {
 
 	public SimNetwork() {
-		init();
+	}
+	
+	protected final void startGUI(){
 		this.sim_gui = new SimGUI(this);
 	}
 	
-	private void init(){
-		initEnvironment();
-	}
-
 	public SimGUI getSimGUI() {
 		return sim_gui;
 	}
@@ -86,16 +84,12 @@ public abstract class SimNetwork {
 
 		return null;
 	}
-
-	public ArrayList<SimSelfNode> getMembers() {
-		return node_set;
-	}
 	
-	public int parcelsInOutbox(){
+	public int parcelsInOutbox(ParcelType parcel_type){
 		int sum = 0;
 		
 		for(SimSelfNode node : getNodeSet()){
-			sum += node.getMailbox().getHandshakeHistory().getPendingCount();
+			sum += node.getMailbox().getHandshakeHistory().count(false, true, parcel_type);
 		}
 		
 		return sum;
@@ -165,6 +159,6 @@ public abstract class SimNetwork {
 	// Simulation Preferences
 	protected final ArrayList<SimSelfNode> node_set = new ArrayList<>();
 	protected final ArrayList<ArrayList<Integer>> parcel_set = new ArrayList<>();
-	private final SimGUI sim_gui;
+	private SimGUI sim_gui;
 	private boolean is_started = false;
 }

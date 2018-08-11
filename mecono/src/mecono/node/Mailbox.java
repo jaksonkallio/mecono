@@ -54,12 +54,14 @@ public class Mailbox {
 		try {
 			// Learn path
 			getOwner().learnPath(parcel.getActualPath(), null);
+			System.out.println(parcel.getActualPath().toString());
 			
 			// Do any required action
 			parcel.onReceiveAction();
 		} catch (MissingParcelDetailsException | BadProtocolException ex) {
 			getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Could not handle received parcel", ex.getMessage());
 		} catch (BadPathException ex) {
+			
 			getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Cannot learn path from received parcel", ex.getMessage());
 		}
 	}

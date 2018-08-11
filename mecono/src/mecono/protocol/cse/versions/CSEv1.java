@@ -13,7 +13,7 @@ import mecono.protocol.cse.SimNetwork;
 public class CSEv1 extends SimNetwork {
 	@Override
 	public void initEnvironment() {
-		ArrayList<SimSelfNode> members = getMembers();
+		ArrayList<SimSelfNode> members = getNodeSet();
 		members.clear();
 		String test_addr_suffix = "eee";
 

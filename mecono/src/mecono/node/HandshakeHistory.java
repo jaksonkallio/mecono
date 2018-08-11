@@ -44,10 +44,19 @@ public class HandshakeHistory {
 	}
 	
 	public int count(boolean has_response, ParcelType parcel_type){
+		return count(has_response, false, parcel_type);
+	}
+	
+	public int count(boolean has_response, boolean pending_list, ParcelType parcel_type){
 		int count = 0;
+		List<Handshake> status = completed;
 		
-		for(Handshake handshake : completed){
-			if(handshake.hasResponse() == has_response && handshake.getTriggerParcel().getParcelType() == parcel_type){
+		if(pending_list){
+			status = pending;
+		}
+		
+		for(Handshake handshake : status){
+			if(handshake.hasResponse() == has_response && (parcel_type == null || handshake.getTriggerParcel().getParcelType() == parcel_type)){
 				count++;
 			}
 		}
@@ -84,7 +93,7 @@ public class HandshakeHistory {
 								original_parcel.setIsSent();
 								original_parcel.setTimeSent();
 								pending.remove(send_cursor);
-								completed.offer(handshake);
+								completed.add(handshake);
 								send_cursor = 0;
 							} catch (UnknownResponsibilityException | MissingParcelDetailsException | BadProtocolException ex) {
 								mailbox.getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Could not send parcel through network controller:", ex.getMessage());
@@ -193,6 +202,6 @@ public class HandshakeHistory {
 	
 	private int send_cursor = 0;
 	private final List<Handshake> pending = new ArrayList<>();
-	private final Queue<Handshake> completed = new LinkedList<>();
+	private final List<Handshake> completed = new LinkedList<>();
 	private final Mailbox mailbox;
 }

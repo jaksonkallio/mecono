@@ -347,8 +347,10 @@ public class SelfNode implements Node {
 	 * @param node
 	 */
 	public void addNeighbor(Neighbor node) {
-		neighbors.add(node);
-		node.getNode().getIdealPath();
+		if(!neighbors.contains(node) && !node.equals(this)){
+			neighbors.add(node);
+			node.getNode().getIdealPath();
+		}
 	}
 
 	/**

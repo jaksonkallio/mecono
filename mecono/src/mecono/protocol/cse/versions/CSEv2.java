@@ -1,7 +1,12 @@
 package mecono.protocol.cse.versions;
 
+import java.util.Random;
 import mecono.node.NodeAddress;
+import mecono.node.RemoteNode;
 import mecono.node.SimSelfNode;
+import mecono.parceling.DestinationParcel.TransferDirection;
+import mecono.parceling.ParcelType;
+import mecono.parceling.types.DataParcel;
 import mecono.protocol.cse.SimNetwork;
 
 /**
@@ -9,9 +14,15 @@ import mecono.protocol.cse.SimNetwork;
  * @author sabreok
  */
 public class CSEv2 extends SimNetwork {
+	
+	public CSEv2(){
+		super();
+		initEnvironment();
+		startGUI();
+	}
 
 	@Override
-	protected void initEnvironment() {
+	protected final void initEnvironment() {
 		createNodes();
 		createNeighborships();
 		createParcels();
@@ -25,42 +36,40 @@ public class CSEv2 extends SimNetwork {
 	}
 	
 	private void createParcels(){
-		int standard_dest_offset = 7;
-		
-		if(standard_dest_offset % 2 == 1){
-			for(int i = 0; i < PARCEL_COUNT; i++){
-				if(i % 2 == 0){
-					addSampleParcel(i, ((i + standard_dest_offset) % node_count));
-				}
+		while(parcelsInOutbox(ParcelType.DATA) < constant_parcel_count){
+			int origin_index = sample_parcel_rand.nextInt(node_set.size());
+			int destination_index = sample_parcel_rand.nextInt(node_set.size());
+			
+			if(origin_index != destination_index){
+				SimSelfNode origin = node_set.get(origin_index);
+				RemoteNode destination = origin.getMemoryController().loadRemoteNode(node_set.get(destination_index).getAddress());
+				DataParcel data = new DataParcel(origin.getMailbox(), TransferDirection.OUTBOUND);
+				data.setDestination(destination);
+				data.setMessage("sample_parcel_"+parcel_counter);
+				origin.getMailbox().getHandshakeHistory().enqueueSend(data);
+				parcel_counter++;
 			}
 		}
 	}
 	
-	private void createNeighborships(){
-		int[][] neighborships = {
-			{0,3,1,4,3,1,3,4,1,3,0,3,0,3,3,2,3,1,3,2,1,4,0,3,3,2,0,1,1,3,2,1,0,2,1,2,4,1,4,2,4,1,3,3,0,0,4,4,4,4},
-			{3,0,0,0,0,4,0,3,0,1,1,1,0,4,1,1,0,2,0,3,2,0,3,0,4,0,1,3,0,4,4,4,4,1,3,0,0,0,0,3,0,3,0,2,3,1,3,0,3,1},
-			{0,4,2,0,0,0,2,0,0,2,3,0,3,0,0,3,1,0,0,4,0,3,1,0,0,3,0,0,0,1,1,3,3,0,2,0,0,0,0,0,2,4,0,0,4,4,4,1,0,3},
-			{1,0,0,1,1,0,0,0,3,0,0,0,0,0,0,0,4,0,2,0,0,1,2,4,2,0,3,0,4,0,0,2,0,2,0,4,0,0,1,0,0,0,0,0,1,0,0,2,0,2}
-		};
-		
-		for(int i = 0; i < neighborships.length; i++){
-			for(int j = 0; j < neighborships[i].length; j++){
-				if(neighborships[i][j] != 0){
-					int neighbor_id = (j + neighborships[i][j]) % neighborships[i].length;
-					createNeighborship(node_set.get(j), node_set.get(neighbor_id));
-				}
+	private void createNeighborships(){		
+		for(int i = 0; i < node_set.size(); i++){
+			int neighbor_count = Math.max(min_neighbors, ((Math.abs(neighborship_rand.nextInt())) % max_neighbors));
+			
+			for(int j = 0; j < neighbor_count; j++){
+				int neighbor_index = (i + (Math.abs(neighborship_rand.nextInt()) % max_neighbor_distance)) % node_set.size();
+				createNeighborship(node_set.get(i), node_set.get(neighbor_index));
 			}
 		}
 	}
+	
+	private int parcel_counter = 0;
 	
 	private final int node_count = 50;
-	
-	// https://www.random.org/integers/?num=50&min=0&max=4&col=1&base=10&format=plain&rnd=new
-	// https://delim.co/
-	
-	// https://www.random.org/integer-sets/?sets=50&num=2&min=0&max=99&commas=on&order=index&format=html&rnd=new
-	// http://textmechanic.com/text-tools/basic-text-tools/find-and-replace-text/
-	
-	public final int PARCEL_COUNT = 50;
+	private final int max_neighbors = 6;
+	private final int min_neighbors = 2;
+	private final int max_neighbor_distance = 8;
+	private final int constant_parcel_count = 20; // If there are fewer than this many parcels in outboxes, create more
+	private final Random neighborship_rand = new Random(158848213);
+	private final Random sample_parcel_rand = new Random(181209178);
 }
