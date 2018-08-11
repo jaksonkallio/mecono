@@ -235,6 +235,7 @@ public class SelfNode implements Node {
 			if (path.getStop(i).equals(this)) {
 				// We don't want there to be multiple instances of a self node in a path
 				if (self_node_found) {
+					System.out.println(path.getStop(i).getAddress()+"=="+this.getAddress());
 					throw new BadPathException("Self node included twice in one path");
 				}
 

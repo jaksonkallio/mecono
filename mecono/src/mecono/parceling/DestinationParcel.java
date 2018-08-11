@@ -44,6 +44,19 @@ public class DestinationParcel extends Parcel {
 		setTimeCreated();
 	}
 
+	public boolean validSend(){
+		try {
+			if(getTransferDirection() != TransferDirection.OUTBOUND) return false;
+			if(getDestination() == null) return false;
+			if(getDestination().equals(mailbox.getOwner())) return false;
+			if(!getOriginator().equals(mailbox.getOwner())) return false;
+		}catch(MissingParcelDetailsException ex){
+			return false;
+		}
+		
+		return true;
+	}
+	
 	public final void setTimeCreated() {
 		setTimeCreated(Protocol.getEpochMilliSecond());
 	}

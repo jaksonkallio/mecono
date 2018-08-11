@@ -37,7 +37,7 @@ public class HandshakeHistory {
 	}
 	
 	public void enqueueSend(DestinationParcel parcel){
-		if(parcel.getTransferDirection() == DestinationParcel.TransferDirection.OUTBOUND){
+		if(parcel.validSend()){
 			Handshake handshake = new Handshake(parcel);
 			enqueueSend(handshake);
 		}	
