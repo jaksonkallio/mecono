@@ -157,27 +157,12 @@ public class HandshakeHistory {
 	}
 	
 	private void consultPath(RemoteNode target){
-		ArrayList<RemoteNode> consult_list = new ArrayList<>();
 		SelfNode self = mailbox.getOwner();
 		
 		// A neighbor has an implicitly defined path, so it can never be the target of a search.
 		if (!self.isNeighbor(target)) {
-			for (Neighbor neighbor : self.getNeighbors()) {
-				// Add every community member to the consult list.
-				if (!consult_list.contains(neighbor.getNode())) {
-					consult_list.add(neighbor.getNode());
-				}
-			}
-
-			for (RemoteNode trusted_node : self.getTrustedNodes()) {
-				if (!consult_list.contains(trusted_node)) {
-					// Add all trusted nodes to the consult list.
-					consult_list.add(trusted_node);
-				}
-			}
-
 			// Now consult the nodes
-			for (RemoteNode consultant : consult_list) {
+			for (RemoteNode consultant : self.getPinnedNodes()) {
 				if (!consultant.equals(target) && Protocol.elapsedMillis(consultant.getTimeLastConsulted()) > mailbox.getOwner().CONSULTATION_COOLDOWN) {
 					// Only consult a node if the consultant is NOT the node we're looking for.
 					FindParcel find = new FindParcel(mailbox, DestinationParcel.TransferDirection.OUTBOUND);
