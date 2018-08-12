@@ -65,7 +65,7 @@ public class CSEv2 extends SimNetwork {
 	
 	private int parcel_counter = 0;
 	
-	private final int node_count = 50;
+	private final int node_count = 100;
 	private final int max_neighbors = 6;
 	private final int min_neighbors = 2;
 	private final int max_neighbor_distance = 8;
