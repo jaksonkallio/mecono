@@ -11,7 +11,6 @@ public enum ParcelType {
 	FIND_RESPONSE, // A response with information about requested node.
 	DATA, // Normal data
 	DATA_RECEIPT, // Receipt that data was received.
-	COMMUNITY, // Re-verify neighborships occasionally.
-	COMMUNITY_RESPONSE, // Response with the signature.
+	ANNC, // Announce existence. There are no ANNC responses (we just use pings for that)
 	UNKNOWN // Undefined or not known
 }

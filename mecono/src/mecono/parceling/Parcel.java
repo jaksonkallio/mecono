@@ -153,10 +153,8 @@ public abstract class Parcel {
 				return ParcelType.DATA;
 			case "DATA_RECEIPT":
 				return ParcelType.DATA_RECEIPT;
-			case "COMMUNITY":
-				return ParcelType.COMMUNITY;
-			case "COMMUNITY_RESPONSE":
-				return ParcelType.COMMUNITY_RESPONSE;
+			case "ANNC":
+				return ParcelType.ANNC;
 			default:
 				return ParcelType.UNKNOWN;
 		}
