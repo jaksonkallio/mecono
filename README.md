@@ -1,6 +1,6 @@
 <img src="https://github.com/jaksonkallio/mecono/blob/master/brand/logo.png" alt="mecono logo" width="400px"/>
 
-# Mecono: Decenetralized Internet Access
+# Mecono: Decentralized Internet Access
 
 ## What is Mecono?
 
