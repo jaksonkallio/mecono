@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700|Questrial');
+
+/* RESETS */
+* {
+	box-sizing: border-box;
+}
+*:focus {
+	outline: none;
+}
+html, body, div{
+	padding: 0px;
+	margin: 0px;
+}
+a {
+	text-decoration: none;
+}
+
+/* BODY */
+.section.top {
+	
+}
