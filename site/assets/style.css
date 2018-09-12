@@ -16,6 +16,37 @@ a {
 }
 
 /* BODY */
+body{
+	font-size: 14px;
+	color: #2f3542;
+	font-family: 'Open Sans', sans-serif;
+}
+
+.section.top .headline, .section.description {
+	font-family: 'Questrial', sans-serif;
+}
+.section {
+	padding: 40px 0px;
+}
+
 .section.top {
-	
+	background: #5352ed;
+	padding: 100px 0px;
+}
+.section.top .headline, .section.description {
+	width: 500px;
+	margin: 0px auto;
+}
+.section.top .headline {
+	font-size: 4em;
+	max-width: calc(100%);
+	position: relative;
+	color: #ffffff;
+}
+.section strong {
+	color: #ff6b81;
+}
+
+.section.description {
+	font-size: 2em;
 }
