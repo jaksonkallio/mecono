@@ -33,7 +33,7 @@ body{
 	background: #5352ed;
 	padding: 100px 0px;
 }
-.section.top .headline, .section.description {
+.section.top .headline, .contents{
 	width: 500px;
 	margin: 0px auto;
 }
@@ -48,5 +48,21 @@ body{
 }
 
 .section.description {
-	font-size: 2em;
+	height: 300px;
+}
+.section.description .contents {
+	width: 800px;
+	font-size: 0;
+}
+.section.description p {
+	display: inline-block;
+	width: calc(60%);
+	font-size: 28px;
+	padding-left: 20px;
+	vertical-align: middle;
+}
+.section.description .mesh-img {
+	display: inline-block;
+	width: calc(40%);
+	vertical-align: middle;
 }
