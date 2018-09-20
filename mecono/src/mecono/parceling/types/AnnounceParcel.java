@@ -7,6 +7,7 @@ package mecono.parceling.types;
 
 import mecono.node.Mailbox;
 import mecono.node.Path;
+import mecono.parceling.BadPathException;
 import mecono.parceling.DestinationParcel;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.protocol.BadProtocolException;
@@ -25,10 +26,21 @@ public class AnnounceParcel extends DestinationParcel {
 	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
 		super.onReceiveAction();
 		
+		try {
+			getMailbox().getOwner().learnPath(getAnnounceChain(), null);
+		}catch(BadPathException ex){
+			//TODO: getMailbox().getOwner().nodeLog();
+		}
+		
+		
 	}
 	
 	public void setAnnounceChain(Path announce_chain){
 		this.announce_chain = announce_chain;
+	}
+	
+	private Path getAnnounceChain(){
+		return announce_chain;
 	}
 	
 	private Path announce_chain;
