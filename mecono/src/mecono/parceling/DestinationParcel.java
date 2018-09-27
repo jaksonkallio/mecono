@@ -11,6 +11,7 @@ import mecono.protocol.Protocol;
 import mecono.node.RemoteNode;
 import mecono.node.SelfNode;
 import static mecono.parceling.Parcel.parseParcelType;
+import mecono.parceling.types.AnnounceParcel;
 import mecono.parceling.types.DataParcel;
 import mecono.parceling.types.DataReceiptParcel;
 import mecono.parceling.types.FindParcel;
@@ -271,6 +272,10 @@ public class DestinationParcel extends Parcel {
 				break;
 			case DATA_RECEIPT:
 				parcel = new DataReceiptParcel(relative_self.getMailbox(), DestinationParcel.TransferDirection.INBOUND);
+				
+				break;
+			case ANNC:
+				parcel = new AnnounceParcel(relative_self.getMailbox(), DestinationParcel.TransferDirection.INBOUND);
 				break;
 			default:
 				parcel = new DestinationParcel(relative_self.getMailbox(), DestinationParcel.TransferDirection.INBOUND);

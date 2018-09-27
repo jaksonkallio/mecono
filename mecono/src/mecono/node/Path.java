@@ -134,6 +134,10 @@ public class Path {
 
 		return null;
 	}
+	
+	public void addStop(Node node){
+		stops.add(node);
+	}
 
 	/**
 	 * Finds the intermediate path. Path excluding origin and destination.
@@ -172,6 +176,8 @@ public class Path {
 		return path_str.toString();
 	}
 
+	
+	
 	/**
 	 * Regenerates the serialized identifier.
 	 *

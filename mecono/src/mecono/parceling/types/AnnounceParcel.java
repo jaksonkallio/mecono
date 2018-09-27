@@ -18,8 +18,9 @@ import mecono.protocol.BadProtocolException;
  */
 public class AnnounceParcel extends DestinationParcel {
 	
-	public AnnounceParcel(Mailbox mailbox, TransferDirection direction) {
+	public AnnounceParcel(Mailbox mailbox, TransferDirection direction) throws BadProtocolException, MissingParcelDetailsException {
 		super(mailbox, direction);
+		setAnnounceChainFromHistory();
 	}
 	
 	@Override
@@ -28,6 +29,7 @@ public class AnnounceParcel extends DestinationParcel {
 		
 		try {
 			getMailbox().getOwner().learnPath(getAnnounceChain(), null);
+			
 		}catch(BadPathException ex){
 			//TODO: getMailbox().getOwner().nodeLog();
 		}
@@ -35,12 +37,24 @@ public class AnnounceParcel extends DestinationParcel {
 		
 	}
 	
-	public void setAnnounceChain(Path announce_chain){
-		this.announce_chain = announce_chain;
+	private void setAnnounceChainFromHistory() throws BadProtocolException, MissingParcelDetailsException {
+		// Verify that the last stop is us
+		if(!announce_chain.getLastStop().equals(getMailbox().getOwner())){
+			throw new BadProtocolException("Received announce parcel with an invalid last stop");
+		}
+		
+		// TODO: Check signatures to verify that the path is signed by each node
+		
+		announce_chain = new Path(getPathHistory());
+		announce_chain.addStop(getMailbox().getOwner());
 	}
 	
 	private Path getAnnounceChain(){
 		return announce_chain;
+	}
+	
+	private int getAnnounceChainLength(){
+		return announce_chain.getPathLength();
 	}
 	
 	private Path announce_chain;
