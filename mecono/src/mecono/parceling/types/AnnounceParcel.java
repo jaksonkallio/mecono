@@ -6,6 +6,7 @@
 package mecono.parceling.types;
 
 import mecono.node.Mailbox;
+import mecono.node.Neighbor;
 import mecono.node.Path;
 import mecono.parceling.BadPathException;
 import mecono.parceling.DestinationParcel;
@@ -30,6 +31,9 @@ public class AnnounceParcel extends DestinationParcel {
 		try {
 			getMailbox().getOwner().learnPath(getAnnounceChain(), null);
 			
+			for(Neighbor neighbor : getMailbox().getOwner().getNeighbors()){
+				// Create a new forwarded announce parcel
+			}
 		}catch(BadPathException ex){
 			//TODO: getMailbox().getOwner().nodeLog();
 		}
@@ -46,7 +50,6 @@ public class AnnounceParcel extends DestinationParcel {
 		// TODO: Check signatures to verify that the path is signed by each node
 		
 		announce_chain = new Path(getPathHistory());
-		announce_chain.addStop(getMailbox().getOwner());
 	}
 	
 	private Path getAnnounceChain(){
