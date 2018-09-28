@@ -53,10 +53,6 @@ public class RemoteNode implements Node {
 		}
 	}
 
-	public ArrayList<RemoteNode> getNeighbors() {
-		return neighbors;
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof Node) {
@@ -66,10 +62,6 @@ public class RemoteNode implements Node {
 		}
 
 		return false;
-	}
-
-	public int getNeighborCount() {
-		return neighbors.size();
 	}
 
 	public void updateSuccessfulPing(int ping) {
@@ -213,8 +205,6 @@ public class RemoteNode implements Node {
 	private int ping;
 	private long last_consulted; // Time of last consultation for a path
 	private int last_ping_time; // Time of the last ping, in minutes.
-	private ArrayList<PathStats> paths_to = new ArrayList<>();
-	private ArrayList<RemoteNode> neighbors; // This node's neighbors, used only for community members.
-	private SelfNode indexer;
-	private int max_paths = 100; // Only keep the best x paths.
+	private final ArrayList<PathStats> paths_to = new ArrayList<>();
+	private final SelfNode indexer;
 }
