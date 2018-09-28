@@ -17,75 +17,78 @@ import mecono.protocol.Protocol;
 import mecono.protocol.UnknownResponsibilityException;
 
 /**
- * The Sent Parcel History is a complete archive of recently sent, or queued to be sent, parcels into the Mecono network.
+ * The Sent Parcel History is a complete archive of recently sent, or queued to
+ * be sent, parcels into the Mecono network.
+ *
  * @author Jakson
  */
 public class HandshakeHistory {
-	public HandshakeHistory(Mailbox mailbox){
+
+	public HandshakeHistory(Mailbox mailbox) {
 		this.mailbox = mailbox;
 	}
-	
-	public void prune(){
-	
+
+	public void prune() {
+
 	}
-	
-	public void enqueueSend(Handshake handshake){
-		if(!alreadyPending(handshake.getTriggerParcel())){
+
+	public void enqueueSend(Handshake handshake) {
+		if (!alreadyPending(handshake.getTriggerParcel())) {
 			mailbox.getOwner().nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.COMMON, "Enqueued parcel for send", handshake.getTriggerParcel().toString());
 			pending.add(handshake);
 		}
 	}
-	
-	public void enqueueSend(DestinationParcel parcel){
-		if(parcel.validSend()){
+
+	public void enqueueSend(DestinationParcel parcel) {
+		if (parcel.validSend()) {
 			Handshake handshake = new Handshake(parcel);
 			enqueueSend(handshake);
-		}	
+		}
 	}
-	
-	public int count(boolean has_response, ParcelType parcel_type){
+
+	public int count(boolean has_response, ParcelType parcel_type) {
 		return count(has_response, false, parcel_type);
 	}
-	
-	public int count(boolean has_response, boolean pending_list, ParcelType parcel_type){
+
+	public int count(boolean has_response, boolean pending_list, ParcelType parcel_type) {
 		int count = 0;
 		List<Handshake> status = completed;
-		
-		if(pending_list){
+
+		if (pending_list) {
 			status = pending;
 		}
-		
-		for(Handshake handshake : status){
-			if(handshake.hasResponse() == has_response && (parcel_type == null || handshake.getTriggerParcel().getParcelType() == parcel_type)){
+
+		for (Handshake handshake : status) {
+			if (handshake.hasResponse() == has_response && (parcel_type == null || handshake.getTriggerParcel().getParcelType() == parcel_type)) {
 				count++;
 			}
 		}
 
 		return count;
 	}
-	
-	public double successRate(ParcelType parcel_type){
+
+	public double successRate(ParcelType parcel_type) {
 		int count_success = count(true, parcel_type);
 		int count_fail = count(false, parcel_type);
-		
+
 		return (count_success / Math.max(1, (count_fail + count_success)));
 	}
-	
-	public void attemptSend(){
-		if(send_cursor < pending.size()){
+
+	public void attemptSend() {
+		if (send_cursor < pending.size()) {
 			Handshake handshake = pending.get(send_cursor);
-			
+
 			// First check consists of readiness based on outbound information
 			// Must be unsent, must not be stale, and must be ready to resend
-			if(!handshake.isSent()
+			if (!handshake.isSent()
 					&& !handshake.isStale()
-					&& handshake.readyResend()){
+					&& handshake.readyResend()) {
 				DestinationParcel original_parcel = handshake.getTriggerParcel();
-				
+
 				try {
 					// Second check consists of readiness based on the actual parcel metadata
-					if(original_parcel.pathKnown()){
-						if(original_parcel.pathOnline()){
+					if (original_parcel.pathKnown()) {
+						if (original_parcel.pathOnline()) {
 							// Send
 							try {
 								mailbox.enqueueForward(original_parcel.constructForeignParcel());
@@ -98,40 +101,40 @@ public class HandshakeHistory {
 							} catch (UnknownResponsibilityException | MissingParcelDetailsException | BadProtocolException ex) {
 								mailbox.getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Could not send parcel through network controller:", ex.getMessage());
 							}
-						}else{
+						} else {
 							// Ping the destination
 							pingPath(original_parcel.getActualPath());
 						}
-					}else{
+					} else {
 						// Consult for a path to the destination
 						consultPath(((RemoteNode) original_parcel.getDestination()));
 					}
-				} catch(MissingParcelDetailsException ex){
-					
+				} catch (MissingParcelDetailsException ex) {
+
 				}
 			}
 		}
-		
+
 		// Increment the cursor
-		if(pending.size() > 0){
+		if (pending.size() > 0) {
 			send_cursor = (send_cursor + 1) % pending.size();
 		}
 	}
-	
-	public Handshake lookup(ResponseParcel response){
-		for(Handshake handshake : completed){
-			if(handshake.getTriggerParcel().getUniqueID().equals(response.getRespondedID())){
+
+	public Handshake lookup(ResponseParcel response) {
+		for (Handshake handshake : completed) {
+			if (handshake.getTriggerParcel().getUniqueID().equals(response.getRespondedID())) {
 				return handshake;
 			}
 		}
-		
+
 		return null;
 	}
-	
-	public List getPendingParcels(){
+
+	public List getPendingParcels() {
 		return pending;
 	}
-	
+
 	public String listPending() {
 		String construct = "No parcels in outbox.";
 
@@ -145,20 +148,20 @@ public class HandshakeHistory {
 
 		return construct;
 	}
-	
-	public int getPendingCount(){
+
+	public int getPendingCount() {
 		return pending.size();
 	}
-	
-	private void pingPath(Path path){
+
+	private void pingPath(Path path) {
 		PingParcel ping = new PingParcel(mailbox, DestinationParcel.TransferDirection.OUTBOUND);
 		ping.setDestination((RemoteNode) path.getLastStop());
 		enqueueSend(ping);
 	}
-	
-	private void consultPath(RemoteNode target){
+
+	private void consultPath(RemoteNode target) {
 		SelfNode self = mailbox.getOwner();
-		
+
 		// A neighbor has an implicitly defined path, so it can never be the target of a search.
 		if (!self.isNeighbor(target)) {
 			// Now consult the nodes
@@ -174,17 +177,17 @@ public class HandshakeHistory {
 			}
 		}
 	}
-	
-	private boolean alreadyPending(DestinationParcel parcel){
-		for(Handshake handshake : pending){
-			if(handshake.getTriggerParcel().equals(parcel)){
+
+	private boolean alreadyPending(DestinationParcel parcel) {
+		for (Handshake handshake : pending) {
+			if (handshake.getTriggerParcel().equals(parcel)) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	private int send_cursor = 0;
 	private final List<Handshake> pending = new ArrayList<>();
 	private final List<Handshake> completed = new LinkedList<>();

@@ -11,6 +11,7 @@ import mecono.protocol.cse.SimNetwork;
  * @author jak
  */
 public class CSEv1 extends SimNetwork {
+
 	@Override
 	public void initEnvironment() {
 		ArrayList<SimSelfNode> members = getNodeSet();

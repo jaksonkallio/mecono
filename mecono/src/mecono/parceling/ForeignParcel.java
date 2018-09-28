@@ -39,14 +39,14 @@ public class ForeignParcel extends Parcel {
 	@Override
 	public String toString() {
 		String str = "Foreign Parcel";
-		
+
 		try {
-			str += "[PathHistory: "+getPathHistory().toString()+"]";
-			str += "[NextNode: "+getNextNode().getAddress()+"]";
-		}catch(MissingParcelDetailsException ex){
+			str += "[PathHistory: " + getPathHistory().toString() + "]";
+			str += "[NextNode: " + getNextNode().getAddress() + "]";
+		} catch (MissingParcelDetailsException ex) {
 			mailbox.getOwner().nodeLog(ErrorStatus.FAIL, LogLevel.VERBOSE, "Unknown path history");
 		}
-		
+
 		return str;
 	}
 
@@ -63,7 +63,7 @@ public class ForeignParcel extends Parcel {
 	public RemoteNode getNextNode() throws MissingParcelDetailsException {
 		return next_node;
 	}
-	
+
 	public void setNextNode(RemoteNode next) {
 		this.next_node = next;
 	}
@@ -81,7 +81,7 @@ public class ForeignParcel extends Parcel {
 			}
 			// ...along with the next node in the path
 			serialized_path_history.put(getNextNode().getAddress());
-			
+
 			serialized_parcel.put("path_history", serialized_path_history);
 			serialized_parcel.put("payload", payload);
 		} catch (MissingParcelDetailsException ex) {

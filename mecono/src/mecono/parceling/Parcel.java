@@ -74,36 +74,36 @@ public abstract class Parcel {
 		}
 
 		Path actual_path = null;
-		
+
 		if (json_parcel.getJSONObject("payload").has("actual_path")) {
 			actual_path = DestinationParcel.unserializeActualPath(json_parcel.getJSONObject("payload").getJSONArray("actual_path"), relative_self);
 		}
-		
-		if(actual_path != null && actual_path.getStop(actual_path.getPathLength() - 1).equals(relative_self)){
+
+		if (actual_path != null && actual_path.getStop(actual_path.getPathLength() - 1).equals(relative_self)) {
 			// Destination parcel
 			DestinationParcel base_parcel = new DestinationParcel(relative_self.getMailbox(), TransferDirection.INBOUND);
 			return DestinationParcel.unserialize(json_parcel, relative_self);
 		} else {
 			// Foreign parcel
-			if(json_parcel.has("path_history")){
+			if (json_parcel.has("path_history")) {
 				Path path_history = DestinationParcel.unserializeActualPath(json_parcel.getJSONArray("path_history"), relative_self);
-				if(json_parcel.has("payload")){
+				if (json_parcel.has("payload")) {
 					String payload_string = json_parcel.getJSONObject("payload").toString();
 					ForeignParcel parcel = new ForeignParcel(relative_self.getMailbox(), path_history, payload_string);
-					
+
 					int i = 0;
-					for(Node stop : actual_path.getStops()){
-						if(stop.equals(relative_self) && i <= (actual_path.getPathLength() - 1)){
+					for (Node stop : actual_path.getStops()) {
+						if (stop.equals(relative_self) && i <= (actual_path.getPathLength() - 1)) {
 							parcel.setNextNode((RemoteNode) actual_path.getStop(i + 1));
 						}
 						i++;
 					}
-					
+
 					return parcel;
-				}else{
+				} else {
 					throw new MissingParcelDetailsException("Missing encrypted payload");
 				}
-			}else{
+			} else {
 				throw new MissingParcelDetailsException("Foreign parcel lacking path history");
 			}
 		}

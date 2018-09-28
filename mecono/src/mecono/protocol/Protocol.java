@@ -33,11 +33,11 @@ public class Protocol {
 	public static int elapsedMinutes(int since) {
 		return getEpochMinute() - since;
 	}
-	
+
 	public static long elapsedSeconds(long since) {
 		return getEpochSecond() - since;
 	}
-	
+
 	public static long elapsedMillis(long since) {
 		return getEpochMilliSecond() - since;
 	}

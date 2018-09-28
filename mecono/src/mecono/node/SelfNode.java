@@ -73,10 +73,10 @@ public class SelfNode implements Node {
 	 * Get the shortened address label for quick reference.
 	 */
 	public String getAddressLabel() {
-		if(getAddress().length() > 4){
+		if (getAddress().length() > 4) {
 			return getAddress().substring(0, 4);
 		}
-		
+
 		return getAddress();
 	}
 
@@ -213,10 +213,10 @@ public class SelfNode implements Node {
 		return memory_controller;
 	}
 
-	public void messageReceived(String message){
+	public void messageReceived(String message) {
 		nodeLog(ErrorStatus.GOOD, LogLevel.ATTENTION, "Message received via Mecono network", message);
 	}
-	
+
 	/**
 	 * Takes in a path and updates all remote node's paths mentioned.
 	 *
@@ -351,7 +351,7 @@ public class SelfNode implements Node {
 	 * @param node
 	 */
 	public void addNeighbor(Neighbor node) {
-		if(!neighbors.contains(node) && !this.equals(node.getNode())){
+		if (!neighbors.contains(node) && !this.equals(node.getNode())) {
 			neighbors.add(node);
 			node.getNode().getIdealPath();
 		}
@@ -375,16 +375,16 @@ public class SelfNode implements Node {
 		return trusted_nodes;
 	}
 
-	public ArrayList<RemoteNode> getPinnedNodes(){
+	public ArrayList<RemoteNode> getPinnedNodes() {
 		ArrayList<RemoteNode> all_pinned_nodes = pinned_nodes;
-		
-		for(Neighbor neighbor : getNeighbors()){
+
+		for (Neighbor neighbor : getNeighbors()) {
 			all_pinned_nodes.add(neighbor.getNode());
 		}
-		
+
 		return all_pinned_nodes;
 	}
-	
+
 	/**
 	 * Parcel history statistics.
 	 *

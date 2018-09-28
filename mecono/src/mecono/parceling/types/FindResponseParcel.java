@@ -44,7 +44,7 @@ public class FindResponseParcel extends ResponseParcel implements Response {
 	@Override
 	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
 		super.onReceiveAction();
-		
+
 		for (Path target_answer : getTargetAnswers()) {
 			mailbox.getOwner().nodeLog(SelfNode.ErrorStatus.GOOD, SelfNode.LogLevel.VERBOSE, "Target answer: " + target_answer.toString());
 
@@ -100,9 +100,9 @@ public class FindResponseParcel extends ResponseParcel implements Response {
 
 		return unserialized_target_answers;
 	}
-	
+
 	@Override
-	public boolean getRequireOnlinePath(){
+	public boolean getRequireOnlinePath() {
 		return false;
 	}
 

@@ -53,18 +53,17 @@ public class MailboxWorker implements Runnable {
 			mailbox.pingPinnedNodes();
 			handshakes.attemptSend();
 			handshakes.prune();
-			
+
 			if (counters[2] >= 0) {
 				mailbox.pingPinnedNode(counters[2]);
 				counters[2]--;
 			} else {
 				counters[2] = mailbox.getPinnedNodeCount() - 1;
 			}
-			
-			
+
 			mailbox.processInboundQueue();
 			mailbox.processForwardQueue();
-			
+
 			try {
 				long delay = (long) (((int) (Math.random() * 50)) + 1000 * (1 - mailbox.getOwner().NODE_PERFORMANCE_MODIFIER));
 				Thread.sleep(delay);

@@ -45,48 +45,56 @@ public class DestinationParcel extends Parcel {
 		setTimeCreated();
 	}
 
-	public boolean validSend(){
+	public boolean validSend() {
 		try {
-			if(getTransferDirection() != TransferDirection.OUTBOUND) return false;
-			if(getDestination() == null) return false;
-			if(getDestination().equals(mailbox.getOwner())) return false;
-			if(!getOriginator().equals(mailbox.getOwner())) return false;
-		}catch(MissingParcelDetailsException ex){
+			if (getTransferDirection() != TransferDirection.OUTBOUND) {
+				return false;
+			}
+			if (getDestination() == null) {
+				return false;
+			}
+			if (getDestination().equals(mailbox.getOwner())) {
+				return false;
+			}
+			if (!getOriginator().equals(mailbox.getOwner())) {
+				return false;
+			}
+		} catch (MissingParcelDetailsException ex) {
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	public final void setTimeCreated() {
 		setTimeCreated(Protocol.getEpochMilliSecond());
 	}
 
-	public void setTimeSent(){
+	public void setTimeSent() {
 		this.time_sent = Protocol.getEpochMilliSecond();
 	}
-	
+
 	public final void setTimeCreated(long time_created) {
 		this.time_created = time_created;
 	}
 
-	public void setTimeReceived(){
+	public void setTimeReceived() {
 		this.time_received = Protocol.getEpochMilliSecond();
 	}
-	
+
 	public final long getTimeCreated() {
 		return time_created;
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		if(o instanceof DestinationParcel){
+		if (o instanceof DestinationParcel) {
 			DestinationParcel other = (DestinationParcel) o;
-			if(this.getDestination().equals(other.getDestination()) && this.getParcelType() == other.getParcelType()){
+			if (this.getDestination().equals(other.getDestination()) && this.getParcelType() == other.getParcelType()) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -112,13 +120,12 @@ public class DestinationParcel extends Parcel {
 				str += "[Destination: " + getDestination().getAddress() + "]";
 
 				PathStats path = getOutboundActualPath();
-				
 
 				if (path == null) {
 					str += "[Unknown Path]";
 				} else {
 					str += path.getPath().toString();
-					
+
 					if (getRequireOnlinePath() && !path.online()) {
 						str += "[Path Offline]";
 					}
@@ -170,50 +177,51 @@ public class DestinationParcel extends Parcel {
 		if (getTransferDirection() != TransferDirection.OUTBOUND) {
 			throw new BadProtocolException("Cannot send when transfer direction is not outbound");
 		}
-		
+
 		if (getActualPath() == null || getOutboundActualPath() == null || (getRequireOnlinePath() && !getOutboundActualPath().online())) {
 			return false;
 		}
 
 		return true;
 	}
-	
-	public boolean pathOnline(){
+
+	public boolean pathOnline() {
 		return getOutboundActualPath() != null
 				&& (!getRequireOnlinePath() || getOutboundActualPath().online());
 	}
-	
+
 	public long getTimeReceived() {
 		return time_received;
 	}
-	
+
 	public long getTimeSent() {
 		return time_sent;
 	}
-	
+
 	/**
 	 * How long to wait for a response.
-	 * @return 
+	 *
+	 * @return
 	 */
-	public long getResponseWaitExpiry(){
+	public long getResponseWaitExpiry() {
 		return 600 * 1000l;
 	}
-	
-	public void setResponse(ResponseParcel response){
+
+	public void setResponse(ResponseParcel response) {
 		this.response = response;
 	}
-	
-	public boolean hasResponse(){
+
+	public boolean hasResponse() {
 		return response != null;
 	}
 
 	public static Path unserializeActualPath(JSONArray actual_path_json, SelfNode relative_self) throws BadProtocolException {
 		ArrayList<Node> stops = new ArrayList<>();
 		for (int i = 0; i < actual_path_json.length(); i++) {
-			if(!Node.isValidAddress(actual_path_json.getString(i))){
+			if (!Node.isValidAddress(actual_path_json.getString(i))) {
 				throw new BadProtocolException("Invalid address");
 			}
-			
+
 			stops.add(relative_self.getMemoryController().loadRemoteNode(actual_path_json.getString(i)));
 		}
 		return new Path(stops);
@@ -272,7 +280,7 @@ public class DestinationParcel extends Parcel {
 				break;
 			case DATA_RECEIPT:
 				parcel = new DataReceiptParcel(relative_self.getMailbox(), DestinationParcel.TransferDirection.INBOUND);
-				
+
 				break;
 			case ANNC:
 				parcel = new AnnounceParcel(relative_self.getMailbox(), DestinationParcel.TransferDirection.INBOUND);
@@ -280,21 +288,21 @@ public class DestinationParcel extends Parcel {
 			default:
 				parcel = new DestinationParcel(relative_self.getMailbox(), DestinationParcel.TransferDirection.INBOUND);
 		}
-		
+
 		if (payload_json.has("unique_id") && Parcel.validUniqueID(payload_json.getString("unique_id"))) {
 			parcel.setUniqueID(payload_json.getString("unique_id"));
 		} else {
 			throw new MissingParcelDetailsException("Missing unique ID");
 		}
-		
-		if(parcel instanceof ResponseParcel){
+
+		if (parcel instanceof ResponseParcel) {
 			if (payload_json.has("responding_to") && Parcel.validUniqueID(payload_json.getString("responding_to"))) {
 				((ResponseParcel) parcel).setRespondedID(payload_json.getString("responding_to"));
-			}else{
+			} else {
 				throw new MissingParcelDetailsException("Response parcel missing valid responding-to field");
 			}
 		}
-		
+
 		parcel.setActualPath(DestinationParcel.unserializeActualPath(payload_json.getJSONArray("actual_path"), relative_self));
 
 		return parcel;
@@ -303,26 +311,26 @@ public class DestinationParcel extends Parcel {
 	public Node getDestination() {
 		return destination;
 	}
-	
-	public String getDestinationAddressString(){
+
+	public String getDestinationAddressString() {
 		return destination.getAddress();
 	}
-	
-	public String getOutboundActualPathString(){
+
+	public String getOutboundActualPathString() {
 		PathStats outbound_path = getOutboundActualPath();
-		if(outbound_path != null){
+		if (outbound_path != null) {
 			return outbound_path.getPath().toString();
 		}
-		
+
 		return "unknown";
 	}
-	
-	public String getPathOnlineString(){
+
+	public String getPathOnlineString() {
 		PathStats outbound_path = getOutboundActualPath();
-		if(outbound_path != null){
+		if (outbound_path != null) {
 			return UtilGUI.getBooleanString(outbound_path.online());
 		}
-		
+
 		return "unknown";
 	}
 
@@ -347,8 +355,8 @@ public class DestinationParcel extends Parcel {
 	public ParcelType getParcelType() {
 		return ParcelType.UNKNOWN;
 	}
-	
-	public String getParcelTypeString(){
+
+	public String getParcelTypeString() {
 		return getParcelType().name();
 	}
 
@@ -415,7 +423,7 @@ public class DestinationParcel extends Parcel {
 	public String getUniqueID() {
 		return unique_id;
 	}
-	
+
 	public void setUniqueID(String unique_id) {
 		this.unique_id = unique_id;
 	}
@@ -473,17 +481,17 @@ public class DestinationParcel extends Parcel {
 			this.actual_path = actual_path;
 		}
 	}
-	
-	public void setIsSent(){
-		if(!isSent()){
+
+	public void setIsSent() {
+		if (!isSent()) {
 			this.is_sent = true;
 		}
 	}
-	
-	public boolean isSent(){
+
+	public boolean isSent() {
 		return is_sent;
 	}
-	
+
 	public Path getActualPath() throws MissingParcelDetailsException {
 		if (direction == TransferDirection.OUTBOUND && !isSent()) {
 			if (destination == null) {
@@ -554,23 +562,23 @@ public class DestinationParcel extends Parcel {
 		// TODO: Payload encryption operation.
 		return plaintext_payload;
 	}
-	
-	public long getResendCooldown(){
+
+	public long getResendCooldown() {
 		return 30000;
 	}
-	
-	public long getStaleTime(){
+
+	public long getStaleTime() {
 		return 60000;
 	}
-	
-	public boolean getRequireOnlinePath(){
+
+	public boolean getRequireOnlinePath() {
 		return true;
 	}
-	
-	public boolean getConsultUnknownPath(){
+
+	public boolean getConsultUnknownPath() {
 		return true;
 	}
-		
+
 	private String payload;
 	private Node destination;
 	private long time_received = 0;
@@ -587,7 +595,7 @@ public class DestinationParcel extends Parcel {
 	private ParcelType parcel_type = ParcelType.UNKNOWN;
 	private final TransferDirection direction;
 	private ResponseParcel response;
-        
+
 	public enum TransferDirection {
 		OUTBOUND, INBOUND
 	};

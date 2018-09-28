@@ -54,13 +54,13 @@ public class Mailbox {
 		try {
 			// Learn path
 			getOwner().learnPath(parcel.getActualPath(), null);
-			
+
 			// Do any required action
 			parcel.onReceiveAction();
 		} catch (MissingParcelDetailsException | BadProtocolException ex) {
 			getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Could not handle received parcel", ex.getMessage());
 		} catch (BadPathException ex) {
-			
+
 			getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Cannot learn path from received parcel", ex.getMessage());
 		}
 	}
@@ -77,13 +77,13 @@ public class Mailbox {
 	public MailboxWorker getWorker() {
 		return worker;
 	}
-	
+
 	public NetworkController getNetworkController() {
 		return network_controller;
 	}
-	
-	public void processForwardQueue(){
-		if(forward_queue.size() > 0){
+
+	public void processForwardQueue() {
+		if (forward_queue.size() > 0) {
 			ForeignParcel parcel = forward_queue.poll();
 			try {
 				network_controller.sendParcel(parcel);
@@ -92,34 +92,34 @@ public class Mailbox {
 			}
 		}
 	}
-	
-	public void pingPinnedNode(int i){
-		if(pinned_nodes == null){
+
+	public void pingPinnedNode(int i) {
+		if (pinned_nodes == null) {
 			return;
 		}
-		
+
 		RemoteNode pinned_node = pinned_nodes.get(i);
-		if(Protocol.elapsedSeconds(pinned_node.getLastPinged()) >= getOwner().PINNED_NODE_PING_RATE){
+		if (Protocol.elapsedSeconds(pinned_node.getLastPinged()) >= getOwner().PINNED_NODE_PING_RATE) {
 			//pingRemote(pinned_node);
 		}
 	}
 
-	public int getPinnedNodeCount(){
+	public int getPinnedNodeCount() {
 		return pinned_nodes.size();
 	}
 
-	public ParcelHistoryArchive getParcelHistoryArchive(){
+	public ParcelHistoryArchive getParcelHistoryArchive() {
 		return parcel_history_archive;
 	}
-	
-	public int getSentParcelCount(){
+
+	public int getSentParcelCount() {
 		return sent_parcels.size();
 	}
 
-	public HandshakeHistory getHandshakeHistory(){
+	public HandshakeHistory getHandshakeHistory() {
 		return handshake_history;
 	}
-	
+
 	/**
 	 * Checks if there is an active signal out in the network that we are
 	 * expecting a response to. Used to protect against spamming the network.
@@ -127,7 +127,7 @@ public class Mailbox {
 	private boolean expectingResponse(DestinationParcel parcel) {
 		for (Handshake existing_action : sent_parcels) {
 			DestinationParcel original_parcel = existing_action.getTriggerParcel();
-			
+
 			if (original_parcel.equals(parcel) && !original_parcel.hasResponse() && Protocol.elapsedMillis(original_parcel.getTimeSent()) < original_parcel.getResendCooldown()) {
 				return true;
 			}
@@ -141,16 +141,16 @@ public class Mailbox {
 			inbound_queue.offer(serialized_parcel);
 		}
 	}
-	
-	public void enqueueForward(ForeignParcel foreign){
+
+	public void enqueueForward(ForeignParcel foreign) {
 		forward_queue.offer(foreign);
 	}
-	
-	public void pingPinnedNodes(){
-		for(RemoteNode pinned : owner.getPinnedNodes()){
+
+	public void pingPinnedNodes() {
+		for (RemoteNode pinned : owner.getPinnedNodes()) {
 			PathStats ideal_path = pinned.getIdealPath();
-			
-			if(ideal_path != null && !ideal_path.online()){
+
+			if (ideal_path != null && !ideal_path.online()) {
 				PingParcel ping = new PingParcel(this, TransferDirection.OUTBOUND);
 				ping.setDestination(pinned);
 				getHandshakeHistory().enqueueSend(ping);

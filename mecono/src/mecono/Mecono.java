@@ -53,30 +53,30 @@ public class Mecono extends Application {
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
-		for(int i = 0; i < (args.length - 1); i++){
+		for (int i = 0; i < (args.length - 1); i++) {
 			System.out.println("Startup parameter: " + args[i] + "=" + args[i + 1]);
-			switch(args[i]){
+			switch (args[i]) {
 				case "--cse":
 					simulated_network = true;
 					cse_version = 1;
-					
+
 					try {
 						cse_version = Integer.parseInt(args[i + 1]);
-					} catch(NumberFormatException ex){
+					} catch (NumberFormatException ex) {
 						System.out.println("Bad startup parameter");
 					}
-					
+
 					break;
 			}
 		}
-		
+
 		getSimNetwork();
-		
+
 		launch();
 	}
-	
-	private static void getSimNetwork(){
-		switch(cse_version){
+
+	private static void getSimNetwork() {
+		switch (cse_version) {
 			case 1:
 				sim = new CSEv1();
 				break;
@@ -91,11 +91,11 @@ public class Mecono extends Application {
 
 	public static String getVersion() {
 		String v_str = "v" + PROTOCOL_VERSION + "." + IMPLEMENTATION_VERSION;
-		
-		if(simulated_network){
+
+		if (simulated_network) {
 			v_str += " (CSE v" + cse_version + ")";
 		}
-		
+
 		return v_str;
 	}
 
@@ -107,11 +107,11 @@ public class Mecono extends Application {
 	public static boolean simulated_network = false;
 	public static boolean sandbox = false;
 	public static int cse_version;
-	
+
 	// The implementation version is the current state of the software that interacts with the underlying protocol
 	// This includes GUI, simulations, data organization techniques, etc.
 	public static final int IMPLEMENTATION_VERSION = 1;
-	
+
 	// The protocol version is the current state of the underlying protocol that connects with other nodes
 	// If this is different from another node, they will not be able to communicate at all
 	public static final int PROTOCOL_VERSION = 1;

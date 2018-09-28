@@ -12,17 +12,17 @@ public class Neighbor {
 		this.network_port = network_port;
 	}
 
-	public boolean equals(Object o){
-		if(o instanceof Neighbor){
+	public boolean equals(Object o) {
+		if (o instanceof Neighbor) {
 			Neighbor other = (Neighbor) o;
-			if(this.getNode().equals(other.getNode())){
+			if (this.getNode().equals(other.getNode())) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	public int getPort() {
 		return network_port;
 	}

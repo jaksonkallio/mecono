@@ -83,8 +83,8 @@ public class Path {
 	public int getPathLength() {
 		return stops.size();
 	}
-	
-	public Node getLastStop(){
+
+	public Node getLastStop() {
 		return getStop(getPathLength() - 1);
 	}
 
@@ -134,8 +134,8 @@ public class Path {
 
 		return null;
 	}
-	
-	public void addStop(Node node){
+
+	public void addStop(Node node) {
 		stops.add(node);
 	}
 
@@ -176,8 +176,6 @@ public class Path {
 		return path_str.toString();
 	}
 
-	
-	
 	/**
 	 * Regenerates the serialized identifier.
 	 *

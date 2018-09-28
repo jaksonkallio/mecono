@@ -42,9 +42,9 @@ public class RemoteNode implements Node {
 				// If this path isn't already known
 				PathStats path_stats = new PathStats(path, indexer, learned_from);
 				paths_to.add(path_stats);
-				
+
 				// If this is the first learned path, we should ping this node
-				if(paths_to.size() == 1){
+				if (paths_to.size() == 1) {
 					PingParcel initial_ping = new PingParcel(indexer.getMailbox(), TransferDirection.OUTBOUND);
 					initial_ping.setDestination(this);
 					indexer.getMailbox().getHandshakeHistory().enqueueSend(initial_ping);
@@ -81,12 +81,12 @@ public class RemoteNode implements Node {
 		this.ping = ping;
 		last_ping_time = Protocol.getEpochMinute();
 	}
-	
-	public long getLastPinged(){
-		if(getIdealPath() == null){
+
+	public long getLastPinged() {
+		if (getIdealPath() == null) {
 			return 0;
 		}
-		
+
 		return getIdealPath().getLastUse();
 	}
 
@@ -158,53 +158,53 @@ public class RemoteNode implements Node {
 			}
 		});
 	}
-	
-	public String getOnlineString(){
+
+	public String getOnlineString() {
 		PathStats ideal_path = getIdealPath();
-		
-		if(ideal_path != null){
-			if(ideal_path.online()){
-				return ideal_path.getPing()+"ms";
-			}else{
+
+		if (ideal_path != null) {
+			if (ideal_path.online()) {
+				return ideal_path.getPing() + "ms";
+			} else {
 				return "offline";
 			}
 		}
-		
+
 		return "unknown path";
 	}
-	
-	public long getTimeLastConsulted(){
+
+	public long getTimeLastConsulted() {
 		return last_consulted;
 	}
-	
-	public void updateTimeLastConsulted(){
+
+	public void updateTimeLastConsulted() {
 		last_consulted = Protocol.getEpochMilliSecond();
 	}
-	
-	public String getSuccessesString(){
+
+	public String getSuccessesString() {
 		PathStats ideal_path = getIdealPath();
-		
-		if(ideal_path != null){
-			return ""+ideal_path.successes();
+
+		if (ideal_path != null) {
+			return "" + ideal_path.successes();
 		}
-		
+
 		return "never";
 	}
-	
-	public String getReliabilityString(){
+
+	public String getReliabilityString() {
 		PathStats ideal_path = getIdealPath();
-		
-		if(ideal_path != null){
+
+		if (ideal_path != null) {
 			return UtilGUI.formatPercentage(getIdealPath().reliability());
 		}
-		
+
 		return "untested";
 	}
-	
-	public String getPinnedString(){
+
+	public String getPinnedString() {
 		return UtilGUI.getBooleanString(indexer.isPinned(this));
 	}
-	
+
 	public final static long ONLINE_THRESHOLD = 30000;
 
 	private final String address;

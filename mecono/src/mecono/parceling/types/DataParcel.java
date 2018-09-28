@@ -38,13 +38,13 @@ public class DataParcel extends DestinationParcel {
 
 		return false;
 	}
-	
+
 	@Override
 	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
 		super.onReceiveAction();
 
 		mailbox.getOwner().messageReceived(this.getMessage());
-		
+
 		RemoteNode received_originator = (RemoteNode) getOriginator();
 		DataReceiptParcel response = new DataReceiptParcel(mailbox, TransferDirection.OUTBOUND);
 		response.setRespondedID(getUniqueID());
@@ -61,7 +61,7 @@ public class DataParcel extends DestinationParcel {
 	public String getMessage() {
 		return message;
 	}
-	
+
 	@Override
 	public JSONObject getSerializedContent() {
 		JSONObject json_content = new JSONObject();
@@ -70,6 +70,6 @@ public class DataParcel extends DestinationParcel {
 	}
 
 	public static final long RESEND_COOLDOWN = 10000;
-	
+
 	private String message = "";
 }

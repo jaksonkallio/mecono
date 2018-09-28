@@ -31,9 +31,9 @@ public class PingParcel extends DestinationParcel {
 	}
 
 	@Override
-	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException{
+	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
 		super.onReceiveAction();
-		
+
 		PingResponseParcel response = new PingResponseParcel(mailbox, TransferDirection.OUTBOUND);
 		response.setRespondedID(getUniqueID());
 		response.setDestination((RemoteNode) getOriginator()); // Set the destination to the person that contacted us (a response)
@@ -54,12 +54,12 @@ public class PingParcel extends DestinationParcel {
 	}
 
 	@Override
-	public long getResendCooldown(){
+	public long getResendCooldown() {
 		return 2000;
 	}
-	
+
 	@Override
-	public boolean getRequireOnlinePath(){
+	public boolean getRequireOnlinePath() {
 		return false;
 	}
 }

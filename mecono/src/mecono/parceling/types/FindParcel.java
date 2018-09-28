@@ -22,7 +22,7 @@ public class FindParcel extends DestinationParcel {
 
 	@Override
 	public boolean equals(Object o) {
-		if(o instanceof FindParcel){
+		if (o instanceof FindParcel) {
 			FindParcel other = (FindParcel) o;
 			return other.getTarget().equals(this.getTarget()) && super.equals(other);
 		}

@@ -46,180 +46,181 @@ import mecono.parceling.types.PingParcel;
  * @author Jakson
  */
 public class NodeDashboard extends Stage {
-	public NodeDashboard(SelfNode self_node){
+
+	public NodeDashboard(SelfNode self_node) {
 		this.self_node = self_node;
 		setTitle("Node Dashboard");
 		setScene(new Scene(genMainContainer(), 800, 400));
 		show();
 	}
-	
+
 	@Override
-	public void close(){
+	public void close() {
 		super.close();
-		
+
 		stopGUITimers();
 	}
-	
-	public void stopGUITimers(){
+
+	public void stopGUITimers() {
 		stopOutboxUpdateTimer();
 		stopNodesUpdateTimer();
 	}
-	
-	private VBox genMainContainer(){
+
+	private VBox genMainContainer() {
 		VBox main_container = new VBox();
 		Label node_title = new Label("Node: " + self_node.getAddress());
 		node_title.setFont(UtilGUI.TITLE_FONT);
-		
+
 		main_container.getChildren().addAll(node_title, genTabs());
-		
+
 		return main_container;
 	}
-	
-	private TabPane genTabs(){
+
+	private TabPane genTabs() {
 		TabPane tabs = new TabPane();
 		tabs.getTabs().addAll(genOutboxTab(), genComposeTab(), genNodesTab(), genConfigTab());
 		tabs.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
 		return tabs;
 	}
-	
-	private Tab genOutboxTab(){
+
+	private Tab genOutboxTab() {
 		TableColumn id_column = new TableColumn("ID");
 		TableColumn type_column = new TableColumn("Type");
 		TableColumn destination_column = new TableColumn("Destination");
 		TableColumn path_column = new TableColumn("Path");
 		TableColumn path_online_column = new TableColumn("Path Online?");
-		
+
 		id_column.setCellValueFactory(new PropertyValueFactory<DestinationParcel, String>("uniqueID"));
 		type_column.setCellValueFactory(new PropertyValueFactory<DestinationParcel, String>("parcelTypeString"));
 		destination_column.setCellValueFactory(new PropertyValueFactory<DestinationParcel, String>("destinationAddressString"));
 		path_column.setCellValueFactory(new PropertyValueFactory<DestinationParcel, String>("outboundActualPathString"));
 		path_online_column.setCellValueFactory(new PropertyValueFactory<DestinationParcel, String>("pathOnlineString"));
-		
+
 		outbox_table.getColumns().addAll(id_column, type_column, destination_column, path_column, path_online_column);
 		outbox_tab.setContent(outbox_table);
 		startOutboxUpdateTimer();
-		
+
 		return outbox_tab;
 	}
-	
-	private ObservableList<DestinationParcel> getObservablePendingCollection(){
+
+	private ObservableList<DestinationParcel> getObservablePendingCollection() {
 		HandshakeHistory handshake_history = self_node.getMailbox().getHandshakeHistory();
 		List<Handshake> handshakes = handshake_history.getPendingParcels();
 		ArrayList<DestinationParcel> pending = new ArrayList<>();
-		
-		for(Handshake handshake : handshakes){
+
+		for (Handshake handshake : handshakes) {
 			pending.add(handshake.getTriggerParcel());
 		}
-		
+
 		ObservableList<DestinationParcel> observable_pending = FXCollections.observableArrayList(pending);
-		
+
 		return observable_pending;
 	}
-	
-	private Tab genComposeTab(){
+
+	private Tab genComposeTab() {
 		VBox compose_form = new VBox();
 		TextArea arb_message = new TextArea();
 		TextField dest_address = new TextField();
 		Button send_button = new Button("Send");
 		ComboBox<ParcelType> parcel_type_select = new ComboBox<>();
-		
+
 		ArrayList<ParcelType> parcel_type_list = new ArrayList<>();
 		parcel_type_list.add(ParcelType.PING);
 		parcel_type_list.add(ParcelType.FIND);
 		parcel_type_list.add(ParcelType.DATA);
 		ObservableList<ParcelType> observable_pending = FXCollections.observableArrayList(parcel_type_list);
 		parcel_type_select.getItems().setAll(observable_pending);
-		
+
 		arb_message.setPrefRowCount(1);
 		arb_message.setPromptText("Extra Data (only for DATA/FIND parcels)");
 		dest_address.setPromptText("Destination node address");
-		
+
 		send_button.setOnAction(event -> {
-			if(dest_address.getText().length() > 0 && parcel_type_select.getSelectionModel().getSelectedItem() != null){
+			if (dest_address.getText().length() > 0 && parcel_type_select.getSelectionModel().getSelectedItem() != null) {
 				composeSendMessage(arb_message.getText(), parcel_type_select.getSelectionModel().getSelectedItem(), dest_address.getText());
 			}
 		});
-		
+
 		compose_form.getChildren().addAll(dest_address, arb_message, parcel_type_select, send_button);
 		compose_form.setPadding(UtilGUI.STD_PADDING);
 		compose_form.setSpacing(UtilGUI.STD_SPACING);
 		compose_tab.setContent(compose_form);
-		
+
 		return compose_tab;
 	}
-	
-	private void composeSendMessage(String message, ParcelType parcel_type, String dest_address){
-		self_node.nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.ATTENTION, "Message composed", parcel_type.name()+" parcel to "+dest_address+" with data \""+message+"\"");
-		
+
+	private void composeSendMessage(String message, ParcelType parcel_type, String dest_address) {
+		self_node.nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.ATTENTION, "Message composed", parcel_type.name() + " parcel to " + dest_address + " with data \"" + message + "\"");
+
 		Mailbox mailbox = self_node.getMailbox();
 		RemoteNode destination = self_node.getMemoryController().loadRemoteNode(dest_address);
 
 		DestinationParcel parcel = new DestinationParcel(mailbox, TransferDirection.OUTBOUND);
-		
+
 		// Cases where additional payload data is needed
-		if(parcel_type == ParcelType.DATA){
+		if (parcel_type == ParcelType.DATA) {
 			parcel = new DataParcel(mailbox, TransferDirection.OUTBOUND);
 			((DataParcel) parcel).setMessage(message);
-		}else if(parcel_type == ParcelType.FIND){
+		} else if (parcel_type == ParcelType.FIND) {
 			parcel = new FindParcel(mailbox, TransferDirection.OUTBOUND);
 			RemoteNode target = self_node.getMemoryController().loadRemoteNode(message);
 			((FindParcel) parcel).setTarget(target);
-		}else if(parcel_type == ParcelType.PING){
+		} else if (parcel_type == ParcelType.PING) {
 			parcel = new PingParcel(mailbox, TransferDirection.OUTBOUND);
 		}
-		
+
 		parcel.setDestination(destination);
 		mailbox.getHandshakeHistory().enqueueSend(parcel);
 	}
-	
-	private Tab genNodesTab(){
+
+	private Tab genNodesTab() {
 		TableColumn address_column = new TableColumn("Address");
 		TableColumn ping_column = new TableColumn("Ping");
 		TableColumn successes_column = new TableColumn("Success");
 		TableColumn reliability_column = new TableColumn("Reliability");
 		TableColumn path_count_column = new TableColumn("Path Count");
 		TableColumn pinned_column = new TableColumn("Pinned");
-		
+
 		address_column.setCellValueFactory(new PropertyValueFactory<RemoteNode, String>("address"));
 		ping_column.setCellValueFactory(new PropertyValueFactory<RemoteNode, String>("onlineString"));
 		successes_column.setCellValueFactory(new PropertyValueFactory<RemoteNode, String>("successesString"));
 		reliability_column.setCellValueFactory(new PropertyValueFactory<RemoteNode, String>("reliabilityString"));
 		path_count_column.setCellValueFactory(new PropertyValueFactory<RemoteNode, String>("pathCountString"));
 		pinned_column.setCellValueFactory(new PropertyValueFactory<RemoteNode, String>("pinnedString"));
-		
+
 		nodes_table.getColumns().addAll(address_column, ping_column, successes_column, reliability_column, path_count_column, pinned_column);
 		nodes_tab.setContent(nodes_table);
 		startNodesUpdateTimer();
-		
+
 		return nodes_tab;
 	}
-	
-	private ObservableList<RemoteNode> getObservableNodesCollection(){
+
+	private ObservableList<RemoteNode> getObservableNodesCollection() {
 		return FXCollections.observableArrayList(self_node.getMemoryController().getNodeMemory());
 	}
-	
-	private Tab genConfigTab(){
+
+	private Tab genConfigTab() {
 		return config_tab;
 	}
-	
-	private void updateOutboxTable(){
-		if(outbox_tab.isSelected()){
+
+	private void updateOutboxTable() {
+		if (outbox_tab.isSelected()) {
 			outbox_table.setItems(getObservablePendingCollection());
 		}
 	}
-	
-	private void updateNodesTable(){
-		if(nodes_tab.isSelected()){
+
+	private void updateNodesTable() {
+		if (nodes_tab.isSelected()) {
 			nodes_table.setItems(getObservableNodesCollection());
 		}
 	}
-	
-	private void startOutboxUpdateTimer(){
-		if(!outbox_refresh_timer_active){
+
+	private void startOutboxUpdateTimer() {
+		if (!outbox_refresh_timer_active) {
 			outbox_refresh_timer_active = true;
 			outbox_refresh_timer.schedule(new TimerTask() {
 				public void run() {
-					 Platform.runLater(new Runnable() {
+					Platform.runLater(new Runnable() {
 						public void run() {
 							updateOutboxTable();
 						}
@@ -228,13 +229,13 @@ public class NodeDashboard extends Stage {
 			}, 20, 250);
 		}
 	}
-	
-	private void startNodesUpdateTimer(){
-		if(!nodes_refresh_timer_active){
+
+	private void startNodesUpdateTimer() {
+		if (!nodes_refresh_timer_active) {
 			nodes_refresh_timer_active = true;
 			nodes_refresh_timer.schedule(new TimerTask() {
 				public void run() {
-					 Platform.runLater(new Runnable() {
+					Platform.runLater(new Runnable() {
 						public void run() {
 							updateNodesTable();
 						}
@@ -243,23 +244,23 @@ public class NodeDashboard extends Stage {
 			}, 20, 250);
 		}
 	}
-	
-	private void stopOutboxUpdateTimer(){
-		if(outbox_refresh_timer_active){
+
+	private void stopOutboxUpdateTimer() {
+		if (outbox_refresh_timer_active) {
 			outbox_refresh_timer.cancel();
 			outbox_refresh_timer.purge();
 			outbox_refresh_timer_active = false;
 		}
 	}
-	
-	private void stopNodesUpdateTimer(){
-		if(nodes_refresh_timer_active){
+
+	private void stopNodesUpdateTimer() {
+		if (nodes_refresh_timer_active) {
 			nodes_refresh_timer.cancel();
 			nodes_refresh_timer.purge();
 			nodes_refresh_timer_active = false;
 		}
 	}
-	
+
 	private SelfNode self_node;
 	private Timer outbox_refresh_timer = new java.util.Timer();
 	private Timer nodes_refresh_timer = new java.util.Timer();

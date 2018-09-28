@@ -36,23 +36,23 @@ public class SimGUI {
 	public void appendGlobalConsole(String new_line) {
 		consoleAppend(global_console, new_line);
 	}
-	
-	public void stop(){
+
+	public void stop() {
 		stopGUITimers();
 		closeOpenedNodeDashboards();
 	}
-	
-	public void closeOpenedNodeDashboards(){
-		for(NodeDashboard node_dashboard : opened_node_dashboards){
+
+	public void closeOpenedNodeDashboards() {
+		for (NodeDashboard node_dashboard : opened_node_dashboards) {
 			node_dashboard.close();
 		}
 	}
-	
-	public void stopGUITimers(){
+
+	public void stopGUITimers() {
 		network_stats_refresh_timer.cancel();
 		network_stats_refresh_timer.purge();
-		
-		for(NodeDashboard node_dashboard : opened_node_dashboards){
+
+		for (NodeDashboard node_dashboard : opened_node_dashboards) {
 			node_dashboard.stopGUITimers();
 		}
 	}
@@ -90,7 +90,7 @@ public class SimGUI {
 		node_list.getSelectionModel().selectedItemProperty().addListener(event -> {
 			nodeSelected();
 		});
-		
+
 		buildInfoBar();
 		start_simulation.setOnAction(event -> {
 			sim_network.startMailboxWorkers();
@@ -105,11 +105,11 @@ public class SimGUI {
 		global_console.setFont(console_font);
 		active_node_area.setPrefWidth(600);
 		active_node_area.setPadding(left_inset);
-		
+
 		open_node_dashboard.setOnAction(event -> {
 			opened_node_dashboards.add(new NodeDashboard(selected_node));
 		});
-		
+
 		open_visual_network_map.setOnAction(event -> {
 			VisualNetworkMap vis_net_map = new VisualNetworkMap(sim_network);
 		});
@@ -123,15 +123,15 @@ public class SimGUI {
 		info_bar.getChildren().addAll(attribution, sim_stats);
 		info_bar.setPadding(top_inset);
 	}
-	
-	private Label generateStatLabel(String label, String value){
+
+	private Label generateStatLabel(String label, String value) {
 		return new Label(label + ": " + value);
 	}
-	
-	private void startSimulatedNetworkStatisticsRefresher(){
+
+	private void startSimulatedNetworkStatisticsRefresher() {
 		network_stats_refresh_timer.schedule(new TimerTask() {
 			public void run() {
-				 Platform.runLater(new Runnable() {
+				Platform.runLater(new Runnable() {
 					public void run() {
 						updateSimulatedNetworkStats();
 					}
@@ -139,8 +139,8 @@ public class SimGUI {
 			}
 		}, 20, 250);
 	}
-	
-	private void buildSimNetworkOverview(){
+
+	private void buildSimNetworkOverview() {
 		columns[2].setPrefWidth(300);
 		columns[2].setPadding(hor_insets);
 		sim_stats.setText("Sim Net Stats");
@@ -149,8 +149,8 @@ public class SimGUI {
 		columns[2].getChildren().addAll(outbox_count_data, outbox_count_find, outbox_count_ping, success_data_rate, success_find_rate, success_ping_rate);
 		startSimulatedNetworkStatisticsRefresher();
 	}
-	
-	private void updateSimulatedNetworkStats(){
+
+	private void updateSimulatedNetworkStats() {
 		outbox_count_data.setText("Outbox Count (Data): " + sim_network.parcelsInOutbox(ParcelType.DATA));
 		outbox_count_find.setText("Outbox Count (Find): " + sim_network.parcelsInOutbox(ParcelType.FIND));
 		outbox_count_ping.setText("Outbox Count (Ping): " + sim_network.parcelsInOutbox(ParcelType.PING));
@@ -182,7 +182,7 @@ public class SimGUI {
 	private final Font console_font = new Font("Monospaced Regular", 12);
 	private SimSelfNode selected_node;
 	private final ArrayList<NodeDashboard> opened_node_dashboards = new ArrayList<>();
-	
+
 	// Simulated network statistics
 	private final Label success_data_rate = new Label();
 	private final Label success_find_rate = new Label();

@@ -13,7 +13,7 @@ public class DataReceiptParcel extends ResponseParcel {
 	public DataReceiptParcel(Mailbox mailbox, TransferDirection direction) {
 		super(mailbox, direction);
 	}
-	
+
 	@Override
 	public ParcelType getParcelType() {
 		return ParcelType.DATA_RECEIPT;

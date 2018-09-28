@@ -90,19 +90,19 @@ public class Handshake {
 	private void actionFromData() {
 		// TODO: What to do after data was successfully received remotely
 	}
-        
-	public boolean hasResponse(){
+
+	public boolean hasResponse() {
 		return getResponseParcel() != null;
 	}
-	
-	public boolean isSent(){
+
+	public boolean isSent() {
 		return is_sent;
 	}
-	
-	public void updateLastSendAttempt(){
+
+	public void updateLastSendAttempt() {
 		last_send_attempt = Protocol.getEpochMilliSecond();
 	}
-	
+
 	private ParcelType determineResponseType() {
 		switch (original_parcel.getParcelType()) {
 			case PING:
@@ -115,12 +115,12 @@ public class Handshake {
 				return ParcelType.UNKNOWN;
 		}
 	}
-	
-	public boolean isStale(){
+
+	public boolean isStale() {
 		return (Protocol.elapsedMillis(original_time_sent) > original_parcel.getStaleTime());
 	}
-	
-	public boolean readyResend(){
+
+	public boolean readyResend() {
 		return (Protocol.elapsedMillis(last_send_attempt) > original_parcel.getResendCooldown());
 	}
 

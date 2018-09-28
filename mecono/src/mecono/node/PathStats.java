@@ -68,8 +68,8 @@ public class PathStats {
 	public void markUsed() {
 		last_used = Protocol.getEpochSecond();
 	}
-	
-	public long getLastUse(){
+
+	public long getLastUse() {
 		return last_used;
 	}
 
@@ -97,12 +97,12 @@ public class PathStats {
 	public int failures() {
 		return failures;
 	}
-	
-	public void setPing(long ping){
+
+	public void setPing(long ping) {
 		this.ping = ping;
 	}
-	
-	public long getPing(){
+
+	public long getPing() {
 		return ping;
 	}
 

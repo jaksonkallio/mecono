@@ -26,8 +26,8 @@ public class SimSelfNode extends SelfNode {
 	public void receiveRawString(String raw_parcel) {
 		mailbox.getNetworkController().receiveData(raw_parcel);
 	}
-	
-	public void messageReceived(String message){
+
+	public void messageReceived(String message) {
 		super.messageReceived(message);
 		getSimNetwork().refillSampleParcels();
 	}
@@ -43,10 +43,10 @@ public class SimSelfNode extends SelfNode {
 		return construct;
 	}
 
-	public SimNetwork getSimNetwork(){
+	public SimNetwork getSimNetwork() {
 		return sim_network;
 	}
-	
+
 	private boolean adversarial_node = false;
 	private SimNetwork sim_network;
 }
