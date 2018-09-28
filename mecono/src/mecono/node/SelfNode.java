@@ -1,12 +1,9 @@
 package mecono.node;
 
-import mecono.parceling.ParcelType;
 import mecono.parceling.types.DataParcel;
-import mecono.parceling.MissingParcelDetailsException;
 import java.util.ArrayList;
 import mecono.parceling.BadPathException;
 import mecono.parceling.DestinationParcel.TransferDirection;
-import mecono.protocol.BadProtocolException;
 
 /**
  *
@@ -14,12 +11,6 @@ import mecono.protocol.BadProtocolException;
  */
 public class SelfNode implements Node {
 
-	/**
-	 * Build a self node using a label and the node address it shall use.
-	 *
-	 * @param label
-	 * @param address
-	 */
 	public SelfNode(String label, NodeAddress address) {
 		this.label = label;
 		this.address = address;
@@ -28,42 +19,24 @@ public class SelfNode implements Node {
 		nodeLog(0, "SelfNode \"" + getAddressLabel() + "\" started.");
 	}
 
-	/**
-	 * Build a self node using a label, and the node's address will be generated
-	 * randomly.
-	 *
-	 * @param label
-	 */
 	public SelfNode(String label) {
 		this(label, new NodeAddress());
 	}
 
-	/**
-	 * Build a self node using a default label and randomly generated address.
-	 */
 	public SelfNode() {
 		this("Unnamed");
 	}
 
-	/**
-	 * Convert the self node to a string representation.
-	 */
 	@Override
 	public String toString() {
 		return getAddressLabel();
 	}
 
-	/**
-	 * Generate a new node address and set it.
-	 */
 	public void generateNewAddress() {
 		address = new NodeAddress();
 		nodeLog(0, "SelfNode \"" + getAddressLabel() + "\" now uses address \"" + getAddress() + "\".");
 	}
 
-	/**
-	 * Get the node address.
-	 */
 	@Override
 	public String getAddress() {
 		return address.getAddressString();
@@ -80,9 +53,6 @@ public class SelfNode implements Node {
 		return getAddress();
 	}
 
-	/**
-	 * Get the label of the node.
-	 */
 	@Override
 	public String getLabel() {
 		if (label.equals("")) {
@@ -142,7 +112,7 @@ public class SelfNode implements Node {
 	/**
 	 * Log a message to the node's log.
 	 *
-	 * @param importance
+	 * @param error_status
 	 * @param log_level
 	 * @param message
 	 * @return
@@ -385,44 +355,6 @@ public class SelfNode implements Node {
 		return all_pinned_nodes;
 	}
 
-	/**
-	 * Parcel history statistics.
-	 *
-	 * @param successful
-	 * @return The number of successful/failed parcels.
-	 */
-	public int parcelHistoryCount(boolean successful) {
-		int sum = 0;
-
-		for (ParcelType parcel_type : ParcelType.values()) {
-			sum += parcelHistoryCount(parcel_type, successful);
-		}
-
-		return sum;
-	}
-
-	/**
-	 * Parcel history statistics for a certain parcel type.
-	 *
-	 * @param parcel_type
-	 * @param successful
-	 * @return The number of successful/failed parcels of this type.
-	 */
-	public int parcelHistoryCount(ParcelType parcel_type, boolean successful) {
-		for (HistoricParcelType historic_parcel_type : parcel_type_history) {
-			if (historic_parcel_type.getParcelType() == parcel_type) {
-				if (successful) {
-					return historic_parcel_type.getSuccesses();
-				} else {
-					return historic_parcel_type.getFailures();
-				}
-
-			}
-		}
-
-		return 0;
-	}
-
 	public boolean isTrusted(RemoteNode node) {
 		return trusted_nodes.contains(node);
 	}
@@ -435,37 +367,9 @@ public class SelfNode implements Node {
 	private String label;
 	protected final Mailbox mailbox;
 	private MemoryController memory_controller; // The memory controller to load/save different paths, nodes, etc.
-	private ArrayList<Neighbor> neighbors = new ArrayList<>();
-	private ArrayList<RemoteNode> trusted_nodes = new ArrayList<>();
-	private ArrayList<RemoteNode> pinned_nodes = new ArrayList<>();
-	private ArrayList<HistoricParcelType> parcel_type_history = new ArrayList<>();
-
-	private class HistoricParcelType {
-
-		public HistoricParcelType(ParcelType parcel_type) {
-			this.parcel_type = parcel_type;
-		}
-
-		public int getSuccesses() {
-			return successes;
-		}
-
-		public int getFailures() {
-			return fails;
-		}
-
-		public int getTotal() {
-			return getSuccesses() + getFailures();
-		}
-
-		public ParcelType getParcelType() {
-			return parcel_type;
-		}
-
-		private int successes;
-		private int fails;
-		private ParcelType parcel_type;
-	}
+	private final ArrayList<Neighbor> neighbors = new ArrayList<>(); // Neighbors are directly connected nodes
+	private final ArrayList<RemoteNode> trusted_nodes = new ArrayList<>(); // Trusted nodes are friends of self
+	private final ArrayList<RemoteNode> pinned_nodes = new ArrayList<>(); // Pinned nodes are nodes that should always have an available connection.
 
 	// Node preferences
 	public static final int MIN_LOG_LEVEL = 1;
