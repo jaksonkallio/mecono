@@ -3,7 +3,7 @@ package mecono.node;
 import mecono.parceling.types.DataParcel;
 import java.util.ArrayList;
 import mecono.parceling.BadPathException;
-import mecono.parceling.DestinationParcel.TransferDirection;
+import mecono.parceling.Parcel.TransferDirection;
 
 /**
  *

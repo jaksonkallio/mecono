@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import mecono.node.Mailbox;
 import mecono.node.Path;
 import mecono.node.RemoteNode;
-import mecono.parceling.DestinationParcel;
+import mecono.parceling.Parcel;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.ParcelType;
 import mecono.protocol.BadProtocolException;
@@ -14,10 +14,10 @@ import org.json.JSONObject;
  *
  * @author jak
  */
-public class DataParcel extends DestinationParcel {
+public class DataParcel extends Parcel {
 
 	public DataParcel(Mailbox mailbox, TransferDirection direction) {
-		super(mailbox, direction);
+		super(mailbox);
 	}
 
 	@Override

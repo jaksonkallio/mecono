@@ -7,14 +7,14 @@ import mecono.parceling.ForeignParcel;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.Handshake;
 import mecono.parceling.types.FindParcel;
-import mecono.parceling.DestinationParcel;
+import mecono.parceling.Parcel;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import mecono.node.SelfNode.ErrorStatus;
 import mecono.node.SelfNode.LogLevel;
 import mecono.parceling.BadPathException;
-import mecono.parceling.DestinationParcel.TransferDirection;
+import mecono.parceling.Parcel.TransferDirection;
 import mecono.parceling.ParcelType;
 import mecono.parceling.types.PingParcel;
 import mecono.protocol.Protocol;
@@ -35,8 +35,8 @@ public class Mailbox {
 	}
 
 	public void receiveParcel(Parcel parcel) {
-		if (parcel instanceof DestinationParcel) {
-			processDestinationParcel((DestinationParcel) parcel);
+		if (parcel instanceof Parcel) {
+			processParcel((Parcel) parcel);
 			getOwner().nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.VERBOSE, "Mailbox received destination parcel");
 		} else if (parcel instanceof ForeignParcel) {
 			forward_queue.offer((ForeignParcel) parcel);
@@ -48,7 +48,7 @@ public class Mailbox {
 		}
 	}
 
-	public void processDestinationParcel(DestinationParcel parcel) {
+	public void processParcel(Parcel parcel) {
 		getOwner().nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.COMMON, "Processing received destination parcel", parcel.toString());
 
 		try {
@@ -124,9 +124,9 @@ public class Mailbox {
 	 * Checks if there is an active signal out in the network that we are
 	 * expecting a response to. Used to protect against spamming the network.
 	 */
-	private boolean expectingResponse(DestinationParcel parcel) {
+	private boolean expectingResponse(Parcel parcel) {
 		for (Handshake existing_action : sent_parcels) {
-			DestinationParcel original_parcel = existing_action.getTriggerParcel();
+			Parcel original_parcel = existing_action.getTriggerParcel();
 
 			if (original_parcel.equals(parcel) && !original_parcel.hasResponse() && Protocol.elapsedMillis(original_parcel.getTimeSent()) < original_parcel.getResendCooldown()) {
 				return true;

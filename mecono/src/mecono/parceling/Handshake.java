@@ -11,7 +11,7 @@ import mecono.protocol.Protocol;
  */
 public class Handshake {
 
-	public Handshake(DestinationParcel original_parcel) {
+	public Handshake(Parcel original_parcel) {
 		this.original_parcel = original_parcel;
 		this.original_time_sent = Protocol.getEpochMilliSecond();
 	}
@@ -59,7 +59,7 @@ public class Handshake {
 		}
 	}
 
-	public DestinationParcel getTriggerParcel() {
+	public Parcel getTriggerParcel() {
 		return original_parcel;
 	}
 
@@ -124,7 +124,7 @@ public class Handshake {
 		return (Protocol.elapsedMillis(last_send_attempt) > original_parcel.getResendCooldown());
 	}
 
-	private final DestinationParcel original_parcel;
+	private final Parcel original_parcel;
 	private ResponseParcel response_parcel;
 	private boolean responded = false;
 	private boolean is_sent = false;

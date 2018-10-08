@@ -12,10 +12,10 @@ import org.json.JSONObject;
  *
  * @author jak
  */
-public class ResponseParcel extends DestinationParcel {
+public class ResponseParcel extends Parcel {
 
 	public ResponseParcel(Mailbox mailbox, TransferDirection direction) {
-		super(mailbox, direction);
+		super(mailbox);
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class ResponseParcel extends DestinationParcel {
 			// - Mark the path as successful
 			// - Update the response value in the parcel history archive
 			if (responding_to.hasResponse()) {
-				DestinationParcel original_parcel = responding_to.getTriggerParcel();
+				Parcel original_parcel = responding_to.getTriggerParcel();
 				PathStats path_used = original_parcel.getOutboundActualPath();
 				path_used.success();
 				ParcelHistoryArchive parcel_history_archive = getMailbox().getParcelHistoryArchive();

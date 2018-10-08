@@ -32,8 +32,8 @@ import mecono.node.Mailbox;
 import mecono.node.MemoryController;
 import mecono.node.RemoteNode;
 import mecono.node.SelfNode;
-import mecono.parceling.DestinationParcel;
-import mecono.parceling.DestinationParcel.TransferDirection;
+import mecono.parceling.Parcel;
+import mecono.parceling.Parcel.TransferDirection;
 import mecono.parceling.Handshake;
 import mecono.parceling.Parcel;
 import mecono.parceling.ParcelType;
@@ -90,11 +90,11 @@ public class NodeDashboard extends Stage {
 		TableColumn path_column = new TableColumn("Path");
 		TableColumn path_online_column = new TableColumn("Path Online?");
 
-		id_column.setCellValueFactory(new PropertyValueFactory<DestinationParcel, String>("uniqueID"));
-		type_column.setCellValueFactory(new PropertyValueFactory<DestinationParcel, String>("parcelTypeString"));
-		destination_column.setCellValueFactory(new PropertyValueFactory<DestinationParcel, String>("destinationAddressString"));
-		path_column.setCellValueFactory(new PropertyValueFactory<DestinationParcel, String>("outboundActualPathString"));
-		path_online_column.setCellValueFactory(new PropertyValueFactory<DestinationParcel, String>("pathOnlineString"));
+		id_column.setCellValueFactory(new PropertyValueFactory<Parcel, String>("uniqueID"));
+		type_column.setCellValueFactory(new PropertyValueFactory<Parcel, String>("parcelTypeString"));
+		destination_column.setCellValueFactory(new PropertyValueFactory<Parcel, String>("destinationAddressString"));
+		path_column.setCellValueFactory(new PropertyValueFactory<Parcel, String>("outboundActualPathString"));
+		path_online_column.setCellValueFactory(new PropertyValueFactory<Parcel, String>("pathOnlineString"));
 
 		outbox_table.getColumns().addAll(id_column, type_column, destination_column, path_column, path_online_column);
 		outbox_tab.setContent(outbox_table);
@@ -103,16 +103,16 @@ public class NodeDashboard extends Stage {
 		return outbox_tab;
 	}
 
-	private ObservableList<DestinationParcel> getObservablePendingCollection() {
+	private ObservableList<Parcel> getObservablePendingCollection() {
 		HandshakeHistory handshake_history = self_node.getMailbox().getHandshakeHistory();
 		List<Handshake> handshakes = handshake_history.getPendingParcels();
-		ArrayList<DestinationParcel> pending = new ArrayList<>();
+		ArrayList<Parcel> pending = new ArrayList<>();
 
 		for (Handshake handshake : handshakes) {
 			pending.add(handshake.getTriggerParcel());
 		}
 
-		ObservableList<DestinationParcel> observable_pending = FXCollections.observableArrayList(pending);
+		ObservableList<Parcel> observable_pending = FXCollections.observableArrayList(pending);
 
 		return observable_pending;
 	}
@@ -155,7 +155,7 @@ public class NodeDashboard extends Stage {
 		Mailbox mailbox = self_node.getMailbox();
 		RemoteNode destination = self_node.getMemoryController().loadRemoteNode(dest_address);
 
-		DestinationParcel parcel = new DestinationParcel(mailbox, TransferDirection.OUTBOUND);
+		Parcel parcel = new Parcel(mailbox);
 
 		// Cases where additional payload data is needed
 		if (parcel_type == ParcelType.DATA) {

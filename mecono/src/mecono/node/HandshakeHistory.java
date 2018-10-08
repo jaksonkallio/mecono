@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import mecono.parceling.DestinationParcel;
+import mecono.parceling.Parcel;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.Handshake;
 import mecono.parceling.ParcelType;
@@ -39,7 +39,7 @@ public class HandshakeHistory {
 		}
 	}
 
-	public void enqueueSend(DestinationParcel parcel) {
+	public void enqueueSend(Parcel parcel) {
 		if (parcel.validSend()) {
 			Handshake handshake = new Handshake(parcel);
 			enqueueSend(handshake);
@@ -83,7 +83,7 @@ public class HandshakeHistory {
 			if (!handshake.isSent()
 					&& !handshake.isStale()
 					&& handshake.readyResend()) {
-				DestinationParcel original_parcel = handshake.getTriggerParcel();
+				Parcel original_parcel = handshake.getTriggerParcel();
 
 				try {
 					// Second check consists of readiness based on the actual parcel metadata
@@ -154,7 +154,7 @@ public class HandshakeHistory {
 	}
 
 	private void pingPath(Path path) {
-		PingParcel ping = new PingParcel(mailbox, DestinationParcel.TransferDirection.OUTBOUND);
+		PingParcel ping = new PingParcel(mailbox, Parcel.TransferDirection.OUTBOUND);
 		ping.setDestination((RemoteNode) path.getLastStop());
 		enqueueSend(ping);
 	}
@@ -168,7 +168,7 @@ public class HandshakeHistory {
 			for (RemoteNode consultant : self.getPinnedNodes()) {
 				if (!consultant.equals(target) && Protocol.elapsedMillis(consultant.getTimeLastConsulted()) > mailbox.getOwner().CONSULTATION_COOLDOWN) {
 					// Only consult a node if the consultant is NOT the node we're looking for.
-					FindParcel find = new FindParcel(mailbox, DestinationParcel.TransferDirection.OUTBOUND);
+					FindParcel find = new FindParcel(mailbox, Parcel.TransferDirection.OUTBOUND);
 					find.setTarget(target);
 					find.setDestination(consultant);
 					enqueueSend(find);
@@ -178,7 +178,7 @@ public class HandshakeHistory {
 		}
 	}
 
-	private boolean alreadyPending(DestinationParcel parcel) {
+	private boolean alreadyPending(Parcel parcel) {
 		for (Handshake handshake : pending) {
 			if (handshake.getTriggerParcel().equals(parcel)) {
 				return true;

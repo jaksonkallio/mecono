@@ -9,7 +9,7 @@ import mecono.node.Mailbox;
 import mecono.node.Neighbor;
 import mecono.node.Path;
 import mecono.parceling.BadPathException;
-import mecono.parceling.DestinationParcel;
+import mecono.parceling.Parcel;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.protocol.BadProtocolException;
 
@@ -17,10 +17,10 @@ import mecono.protocol.BadProtocolException;
  *
  * @author sabreok
  */
-public class AnnounceParcel extends DestinationParcel {
+public class AnnounceParcel extends Parcel {
 
 	public AnnounceParcel(Mailbox mailbox, TransferDirection direction) throws BadProtocolException, MissingParcelDetailsException {
-		super(mailbox, direction);
+		super(mailbox);
 		setAnnounceChainFromHistory();
 	}
 
@@ -47,7 +47,7 @@ public class AnnounceParcel extends DestinationParcel {
 		}
 
 		// TODO: Check signatures to verify that the path is signed by each node
-		announce_chain = new Path(getPathHistory());
+		announce_chain = new Path(getPath());
 	}
 
 	private Path getAnnounceChain() {

@@ -4,7 +4,7 @@ import java.util.Random;
 import mecono.node.NodeAddress;
 import mecono.node.RemoteNode;
 import mecono.node.SimSelfNode;
-import mecono.parceling.DestinationParcel.TransferDirection;
+import mecono.parceling.Parcel.TransferDirection;
 import mecono.parceling.ParcelType;
 import mecono.parceling.types.DataParcel;
 import mecono.protocol.cse.SimNetwork;

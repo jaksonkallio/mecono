@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Set;
 import mecono.parceling.BadPathException;
-import mecono.parceling.DestinationParcel.TransferDirection;
+import mecono.parceling.Parcel.TransferDirection;
 import mecono.parceling.types.PingParcel;
 import mecono.ui.UtilGUI;
 
