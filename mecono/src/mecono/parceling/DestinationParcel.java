@@ -99,12 +99,12 @@ public class DestinationParcel extends Parcel {
 	}
 
 	@Override
-	public Path getPathHistory() throws MissingParcelDetailsException {
+	public Path getPath() throws MissingParcelDetailsException {
 		if (getTransferDirection() == TransferDirection.OUTBOUND) {
 			return new Path(new ArrayList<Node>());
 		}
 
-		return super.getPathHistory();
+		return super.getPath();
 	}
 
 	@Override
@@ -437,7 +437,7 @@ public class DestinationParcel extends Parcel {
 		JSONObject serialized = new JSONObject();
 
 		try {
-			serialized.put("path_history", getPathHistory());
+			serialized.put("path_history", getPath());
 			serialized.put("destination", getDestination().getAddress());
 			serialized.put("parcel_type", Parcel.getParcelTypeCode(parcel_type));
 			serialized.put("unique_id", getUniqueID());
@@ -466,7 +466,7 @@ public class DestinationParcel extends Parcel {
 				// The path history will contain current node + next node
 				Path new_path_history = getActualPath().getSubpath(0);
 				outbound_foreign_parcel.setNextNode((RemoteNode) getActualPath().getStop(1));
-				outbound_foreign_parcel.setPathHistory(new_path_history);
+				outbound_foreign_parcel.setPath(new_path_history);
 				return outbound_foreign_parcel;
 			} else {
 				throw new BadProtocolException("Cannot construct a foreign parcel without a path.");
@@ -539,11 +539,6 @@ public class DestinationParcel extends Parcel {
 		}
 	}
 
-	/**
-	 * Encrypt this destination parcel as a payload.
-	 *
-	 * @return
-	 */
 	protected JSONObject encryptAsPayload() throws MissingParcelDetailsException {
 		JSONObject plaintext_payload = new JSONObject();
 		JSONArray actual_path = new JSONArray();

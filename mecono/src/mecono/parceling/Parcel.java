@@ -35,20 +35,20 @@ public abstract class Parcel {
 	 */
 	public abstract Node getOriginator() throws MissingParcelDetailsException;
 
-	public final void setPathHistory(Path path_history) {
-		this.path_history = path_history;
+	public final void setPath(Path path) {
+		this.path = path;
 	}
 
 	public static boolean validUniqueID(String unique_id) {
 		return unique_id.length() == 6;
 	}
 
-	public Path getPathHistory() throws MissingParcelDetailsException {
-		if (path_history == null) {
+	public Path getPath() throws MissingParcelDetailsException {
+		if (path == null) {
 			throw new MissingParcelDetailsException("No path history was supplied");
 		}
 
-		return path_history;
+		return path;
 	}
 
 	/**
@@ -162,5 +162,5 @@ public abstract class Parcel {
 
 	protected final Mailbox mailbox;
 	protected Node originator;
-	private Path path_history;
+	private Path path;
 }

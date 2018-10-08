@@ -21,19 +21,14 @@ import org.json.JSONObject;
  */
 public class ForeignParcel extends Parcel {
 
-	public ForeignParcel(Mailbox mailbox, Path path_history, String payload) {
+	public ForeignParcel(Mailbox mailbox, Path path, String payload) {
 		super(mailbox);
-		setPathHistory(path_history);
+		setPath(path);
 		this.payload = payload;
 	}
 
-	/**
-	 * Gets the next node.
-	 *
-	 * @return RemoteNode The next node
-	 */
-	public RemoteNode getNextDestination() {
-		return (RemoteNode) path_history.getStop(path_history.getPathLength() - 1);
+	public RemoteNode getNextDestination() throws MissingParcelDetailsException {
+		return (RemoteNode) getPath().getStop(getPath().getPathLength() - 1);
 	}
 
 	@Override
@@ -41,7 +36,7 @@ public class ForeignParcel extends Parcel {
 		String str = "Foreign Parcel";
 
 		try {
-			str += "[PathHistory: " + getPathHistory().toString() + "]";
+			str += "[PathHistory: " + getPath().toString() + "]";
 			str += "[NextNode: " + getNextNode().getAddress() + "]";
 		} catch (MissingParcelDetailsException ex) {
 			mailbox.getOwner().nodeLog(ErrorStatus.FAIL, LogLevel.VERBOSE, "Unknown path history");
@@ -55,8 +50,8 @@ public class ForeignParcel extends Parcel {
 	 *
 	 * @return Integer Hop count
 	 */
-	public int getHopCount() {
-		return (path_history.getPathLength() - 2);
+	public int getHopCount() throws MissingParcelDetailsException {
+		return (getPath().getPathLength() - 2);
 	}
 
 	@Override
@@ -74,7 +69,7 @@ public class ForeignParcel extends Parcel {
 		JSONArray serialized_path_history = new JSONArray();
 
 		try {
-			ArrayList<Node> stops = getPathHistory().getStops();
+			ArrayList<Node> stops = getPath().getStops();
 			// Add a copy of the path history...
 			for (Node stop : stops) {
 				serialized_path_history.put(stop.getAddress());
@@ -92,11 +87,11 @@ public class ForeignParcel extends Parcel {
 	}
 
 	@Override
-	public Node getOriginator() {
-		return path_history.getStop(0);
+	public Node getOriginator() throws MissingParcelDetailsException {
+		return getPath().getStop(0);
 	}
 
 	private String payload;
-	private Path path_history;
+	private Path path;
 	private RemoteNode next_node;
 }
