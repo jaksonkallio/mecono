@@ -14,8 +14,8 @@ import mecono.protocol.BadProtocolException;
  */
 public class PingResponseParcel extends ResponseParcel {
 
-	public PingResponseParcel(Mailbox mailbox, TransferDirection direction) {
-		super(mailbox, direction);
+	public PingResponseParcel(Mailbox mailbox) {
+		super(mailbox);
 	}
 
 	@Override

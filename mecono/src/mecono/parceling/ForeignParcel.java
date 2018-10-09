@@ -39,7 +39,7 @@ public class ForeignParcel extends Parcel {
 			str += "[PathHistory: " + getPath().toString() + "]";
 			str += "[NextNode: " + getNextNode().getAddress() + "]";
 		} catch (MissingParcelDetailsException ex) {
-			mailbox.getOwner().nodeLog(ErrorStatus.FAIL, LogLevel.VERBOSE, "Unknown path history");
+			getMailbox().getOwner().nodeLog(ErrorStatus.FAIL, LogLevel.VERBOSE, "Unknown path history");
 		}
 
 		return str;
@@ -80,7 +80,7 @@ public class ForeignParcel extends Parcel {
 			serialized_parcel.put("path_history", serialized_path_history);
 			serialized_parcel.put("payload", payload);
 		} catch (MissingParcelDetailsException ex) {
-			mailbox.getOwner().nodeLog(2, "Could not serialize parcel: " + ex.getMessage());
+			getMailbox().getOwner().nodeLog(2, "Could not serialize parcel: " + ex.getMessage());
 		}
 
 		return serialized_parcel;

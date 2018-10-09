@@ -1,21 +1,14 @@
 package mecono.node;
 
 import mecono.protocol.BadProtocolException;
-import mecono.protocol.UnknownResponsibilityException;
-import mecono.parceling.Parcel;
 import mecono.parceling.ForeignParcel;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.Handshake;
-import mecono.parceling.types.FindParcel;
 import mecono.parceling.Parcel;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
-import mecono.node.SelfNode.ErrorStatus;
-import mecono.node.SelfNode.LogLevel;
 import mecono.parceling.BadPathException;
-import mecono.parceling.Parcel.TransferDirection;
-import mecono.parceling.ParcelType;
 import mecono.parceling.types.PingParcel;
 import mecono.protocol.Protocol;
 import org.json.JSONObject;
@@ -151,7 +144,7 @@ public class Mailbox {
 			PathStats ideal_path = pinned.getIdealPath();
 
 			if (ideal_path != null && !ideal_path.online()) {
-				PingParcel ping = new PingParcel(this, TransferDirection.OUTBOUND);
+				PingParcel ping = new PingParcel(this);
 				ping.setDestination(pinned);
 				getHandshakeHistory().enqueueSend(ping);
 			}

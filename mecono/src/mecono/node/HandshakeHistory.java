@@ -154,7 +154,7 @@ public class HandshakeHistory {
 	}
 
 	private void pingPath(Path path) {
-		PingParcel ping = new PingParcel(mailbox, Parcel.TransferDirection.OUTBOUND);
+		PingParcel ping = new PingParcel(mailbox);
 		ping.setDestination((RemoteNode) path.getLastStop());
 		enqueueSend(ping);
 	}
@@ -168,7 +168,7 @@ public class HandshakeHistory {
 			for (RemoteNode consultant : self.getPinnedNodes()) {
 				if (!consultant.equals(target) && Protocol.elapsedMillis(consultant.getTimeLastConsulted()) > mailbox.getOwner().CONSULTATION_COOLDOWN) {
 					// Only consult a node if the consultant is NOT the node we're looking for.
-					FindParcel find = new FindParcel(mailbox, Parcel.TransferDirection.OUTBOUND);
+					FindParcel find = new FindParcel(mailbox);
 					find.setTarget(target);
 					find.setDestination(consultant);
 					enqueueSend(find);

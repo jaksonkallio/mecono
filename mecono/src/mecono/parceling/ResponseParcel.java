@@ -14,7 +14,7 @@ import org.json.JSONObject;
  */
 public class ResponseParcel extends Parcel {
 
-	public ResponseParcel(Mailbox mailbox, TransferDirection direction) {
+	public ResponseParcel(Mailbox mailbox) {
 		super(mailbox);
 	}
 
@@ -36,7 +36,7 @@ public class ResponseParcel extends Parcel {
 	}
 
 	public Handshake getHandshake() {
-		return mailbox.getHandshakeHistory().lookup(this);
+		return getMailbox().getHandshakeHistory().lookup(this);
 	}
 
 	@Override

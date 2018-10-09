@@ -16,7 +16,7 @@ import org.json.JSONObject;
  */
 public class DataParcel extends Parcel {
 
-	public DataParcel(Mailbox mailbox, TransferDirection direction) {
+	public DataParcel(Mailbox mailbox) {
 		super(mailbox);
 	}
 
@@ -43,10 +43,10 @@ public class DataParcel extends Parcel {
 	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
 		super.onReceiveAction();
 
-		mailbox.getOwner().messageReceived(this.getMessage());
+		getMailbox().getOwner().messageReceived(this.getMessage());
 
 		RemoteNode received_originator = (RemoteNode) getOriginator();
-		DataReceiptParcel response = new DataReceiptParcel(mailbox, TransferDirection.OUTBOUND);
+		DataReceiptParcel response = new DataReceiptParcel(getMailbox());
 		response.setRespondedID(getUniqueID());
 		response.setDestination(received_originator); // Set the destination to the person that contacted us (a response)
 		getMailbox().getHandshakeHistory().enqueueSend(response); // Send the response

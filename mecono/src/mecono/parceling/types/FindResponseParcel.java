@@ -19,8 +19,8 @@ import org.json.JSONObject;
  */
 public class FindResponseParcel extends ResponseParcel implements Response {
 
-	public FindResponseParcel(Mailbox mailbox, TransferDirection direction) {
-		super(mailbox, direction);
+	public FindResponseParcel(Mailbox mailbox) {
+		super(mailbox);
 	}
 
 	public void setTargetAnswers(ArrayList<Path> target_answers) {
@@ -46,11 +46,11 @@ public class FindResponseParcel extends ResponseParcel implements Response {
 		super.onReceiveAction();
 
 		for (Path target_answer : getTargetAnswers()) {
-			mailbox.getOwner().nodeLog(SelfNode.ErrorStatus.GOOD, SelfNode.LogLevel.VERBOSE, "Target answer: " + target_answer.toString());
+			getMailbox().getOwner().nodeLog(SelfNode.ErrorStatus.GOOD, SelfNode.LogLevel.VERBOSE, "Target answer: " + target_answer.toString());
 
 			// A protocol policy is to only return paths that start with self node
 			if (target_answer.getStop(0).equals(getOriginator())) {
-				mailbox.getOwner().learnUsingPathExtension(target_answer, (RemoteNode) getOriginator());
+				getMailbox().getOwner().learnUsingPathExtension(target_answer, (RemoteNode) getOriginator());
 			}
 		}
 	}

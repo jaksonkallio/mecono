@@ -16,7 +16,7 @@ import org.json.JSONObject;
  */
 public class FindParcel extends Parcel {
 
-	public FindParcel(Mailbox mailbox, TransferDirection direction) {
+	public FindParcel(Mailbox mailbox) {
 		super(mailbox);
 	}
 
@@ -52,7 +52,7 @@ public class FindParcel extends Parcel {
 			throw new MissingParcelDetailsException("Unknown find target");
 		}
 
-		FindResponseParcel response = new FindResponseParcel(mailbox, TransferDirection.OUTBOUND);
+		FindResponseParcel response = new FindResponseParcel(getMailbox());
 		RemoteNode target = getTarget();
 		response.setRespondedID(getUniqueID());
 		ArrayList<Path> available_paths = Path.convertToRawPaths(target.getPathsTo());

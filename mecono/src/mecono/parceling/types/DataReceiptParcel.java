@@ -10,8 +10,8 @@ import mecono.parceling.ResponseParcel;
  */
 public class DataReceiptParcel extends ResponseParcel {
 
-	public DataReceiptParcel(Mailbox mailbox, TransferDirection direction) {
-		super(mailbox, direction);
+	public DataReceiptParcel(Mailbox mailbox) {
+		super(mailbox);
 	}
 
 	@Override

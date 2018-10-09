@@ -159,14 +159,14 @@ public class NodeDashboard extends Stage {
 
 		// Cases where additional payload data is needed
 		if (parcel_type == ParcelType.DATA) {
-			parcel = new DataParcel(mailbox, TransferDirection.OUTBOUND);
+			parcel = new DataParcel(mailbox);
 			((DataParcel) parcel).setMessage(message);
 		} else if (parcel_type == ParcelType.FIND) {
-			parcel = new FindParcel(mailbox, TransferDirection.OUTBOUND);
+			parcel = new FindParcel(mailbox);
 			RemoteNode target = self_node.getMemoryController().loadRemoteNode(message);
 			((FindParcel) parcel).setTarget(target);
 		} else if (parcel_type == ParcelType.PING) {
-			parcel = new PingParcel(mailbox, TransferDirection.OUTBOUND);
+			parcel = new PingParcel(mailbox);
 		}
 
 		parcel.setDestination(destination);

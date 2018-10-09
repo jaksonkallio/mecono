@@ -45,7 +45,7 @@ public class RemoteNode implements Node {
 
 				// If this is the first learned path, we should ping this node
 				if (paths_to.size() == 1) {
-					PingParcel initial_ping = new PingParcel(indexer.getMailbox(), TransferDirection.OUTBOUND);
+					PingParcel initial_ping = new PingParcel(indexer.getMailbox());
 					initial_ping.setDestination(this);
 					indexer.getMailbox().getHandshakeHistory().enqueueSend(initial_ping);
 				}

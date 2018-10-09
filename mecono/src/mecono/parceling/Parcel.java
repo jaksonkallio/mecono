@@ -26,16 +26,16 @@ public class Parcel {
 		this.mailbox = mailbox;
 	}
 
-	/**
-	 * Which node originated this parcel, supposedly.
-	 *
-	 * @return RemoteNode Originator node object.
-	 */
+	// Gets the originator of a parcel
 	public Node getOriginator() throws MissingParcelDetailsException {
-		return getPath().getStop(0);
+		if(originator != null){
+			return originator;
+		}
+		
+		throw new MissingParcelDetailsException("Originator not set");
 	}
 
-	public final void setPath(Path path) {
+	public void setPath(Path path) {
 		this.path = path;
 	}
 
@@ -45,7 +45,7 @@ public class Parcel {
 
 	public Path getPath() throws MissingParcelDetailsException {
 		if (path == null) {
-			throw new MissingParcelDetailsException("No path history was supplied");
+			throw new MissingParcelDetailsException("No known path");
 		}
 
 		return path;
@@ -139,8 +139,12 @@ public class Parcel {
 	public boolean equals(Object o) {
 		if (o instanceof Parcel) {
 			Parcel other = (Parcel) o;
-			if (this.getDestination().equals(other.getDestination()) && this.getParcelType() == other.getParcelType()) {
-				return true;
+			try {
+				if (this.getDestination().equals(other.getDestination()) && this.getParcelType() == other.getParcelType() && this.getUniqueID().equals(other.getUniqueID())) {
+					return true;
+				}
+			}catch(MissingParcelDetailsException ex){
+				return false;
 			}
 		}
 
@@ -286,13 +290,13 @@ public class Parcel {
 
 		switch (parseParcelType(payload_json.getString("parcel_type"))) {
 			case PING:
-				parcel = new PingParcel(relative_self.getMailbox(), Parcel.TransferDirection.INBOUND);
+				parcel = new PingParcel(relative_self.getMailbox());
 				break;
 			case PING_RESPONSE:
-				parcel = new PingResponseParcel(relative_self.getMailbox(), Parcel.TransferDirection.INBOUND);
+				parcel = new PingResponseParcel(relative_self.getMailbox());
 				break;
 			case FIND:
-				parcel = new FindParcel(relative_self.getMailbox(), Parcel.TransferDirection.INBOUND);
+				parcel = new FindParcel(relative_self.getMailbox());
 
 				if (content_json.has("target")) {
 					((FindParcel) parcel).setTarget(relative_self.getMemoryController().loadRemoteNode(content_json.getString("target")));
@@ -302,14 +306,14 @@ public class Parcel {
 
 				break;
 			case FIND_RESPONSE:
-				parcel = new FindResponseParcel(relative_self.getMailbox(), Parcel.TransferDirection.INBOUND);
+				parcel = new FindResponseParcel(relative_self.getMailbox());
 				if (content_json.has("target_answers")) {
 					((FindResponseParcel) parcel).setTargetAnswers(content_json.getJSONArray("target_answers"));
 				}
 
 				break;
 			case DATA:
-				parcel = new DataParcel(relative_self.getMailbox(), Parcel.TransferDirection.INBOUND);
+				parcel = new DataParcel(relative_self.getMailbox());
 
 				if (content_json.has("message")) {
 					((DataParcel) parcel).setMessage(content_json.getString("message"));
@@ -319,11 +323,11 @@ public class Parcel {
 
 				break;
 			case DATA_RECEIPT:
-				parcel = new DataReceiptParcel(relative_self.getMailbox(), Parcel.TransferDirection.INBOUND);
+				parcel = new DataReceiptParcel(relative_self.getMailbox());
 
 				break;
 			case ANNC:
-				parcel = new AnnounceParcel(relative_self.getMailbox(), Parcel.TransferDirection.INBOUND);
+				parcel = new AnnounceParcel(relative_self.getMailbox());
 				break;
 			default:
 				parcel = new Parcel(relative_self.getMailbox());
@@ -348,12 +352,12 @@ public class Parcel {
 		return parcel;
 	}
 
-	public Node getDestination() {
-		return destination;
-	}
-
-	public String getDestinationAddressString() {
-		return destination.getAddress();
+	public Node getDestination() throws MissingParcelDetailsException {
+		if(destination != null){
+			return destination;
+		}
+		
+		throw new MissingParcelDetailsException("Missing destination");
 	}
 
 	public String getOutboundActualPathString() {
@@ -576,11 +580,16 @@ public class Parcel {
 	public boolean getConsultUnknownPath() {
 		return true;
 	}
+	
+	public enum TransferDirection {
+		OUTBOUND, INBOUND
+	};
+
 
 	private String payload;
 	private Node destination;
+	private Node originator;
 	private long time_received = 0;
-
 	private boolean in_outbox;
 	private String unique_id;
 	private String signature;
@@ -592,12 +601,6 @@ public class Parcel {
 	private PathStats outbound_actual_path;
 	private ParcelType parcel_type = ParcelType.UNKNOWN;
 	private ResponseParcel response;
-
-	public enum TransferDirection {
-		OUTBOUND, INBOUND
-	};
-
-	protected final Mailbox mailbox;
-	protected Node originator;
+	private final Mailbox mailbox;
 	private Path path;
 }

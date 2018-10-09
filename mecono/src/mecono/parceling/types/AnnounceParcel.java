@@ -19,7 +19,7 @@ import mecono.protocol.BadProtocolException;
  */
 public class AnnounceParcel extends Parcel {
 
-	public AnnounceParcel(Mailbox mailbox, TransferDirection direction) throws BadProtocolException, MissingParcelDetailsException {
+	public AnnounceParcel(Mailbox mailbox) throws BadProtocolException, MissingParcelDetailsException {
 		super(mailbox);
 		setAnnounceChainFromHistory();
 	}

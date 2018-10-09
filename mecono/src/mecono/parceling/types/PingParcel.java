@@ -14,7 +14,7 @@ import mecono.protocol.BadProtocolException;
  */
 public class PingParcel extends Parcel {
 
-	public PingParcel(Mailbox mailbox, TransferDirection direction) {
+	public PingParcel(Mailbox mailbox) {
 		super(mailbox);
 	}
 
@@ -32,7 +32,7 @@ public class PingParcel extends Parcel {
 	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
 		super.onReceiveAction();
 
-		PingResponseParcel response = new PingResponseParcel(mailbox, TransferDirection.OUTBOUND);
+		PingResponseParcel response = new PingResponseParcel(getMailbox());
 		response.setRespondedID(getUniqueID());
 		response.setDestination((RemoteNode) getOriginator()); // Set the destination to the person that contacted us (a response)
 		getMailbox().getHandshakeHistory().enqueueSend(response); // Send the response

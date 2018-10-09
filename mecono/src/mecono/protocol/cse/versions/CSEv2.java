@@ -43,7 +43,7 @@ public class CSEv2 extends SimNetwork {
 			if (origin_index != destination_index) {
 				SimSelfNode origin = node_set.get(origin_index);
 				RemoteNode destination = origin.getMemoryController().loadRemoteNode(node_set.get(destination_index).getAddress());
-				DataParcel data = new DataParcel(origin.getMailbox(), TransferDirection.OUTBOUND);
+				DataParcel data = new DataParcel(origin.getMailbox());
 				data.setDestination(destination);
 				data.setMessage("sample_parcel_" + parcel_counter);
 				origin.getMailbox().getHandshakeHistory().enqueueSend(data);
