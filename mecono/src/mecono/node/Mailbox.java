@@ -28,16 +28,11 @@ public class Mailbox {
 	}
 
 	public void receiveParcel(Parcel parcel) {
-		if (parcel instanceof Parcel) {
-			processParcel((Parcel) parcel);
+		if (parcel != null) {
+			processParcel(parcel);
 			getOwner().nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.VERBOSE, "Mailbox received destination parcel");
-		} else if (parcel instanceof ForeignParcel) {
-			forward_queue.offer((ForeignParcel) parcel);
-			getOwner().nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.COMMON, "Mailbox received foreign parcel", ((ForeignParcel) parcel).toString());
-		} else if (parcel == null) {
+		}else{
 			getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Mailbox received null parcel from network controller");
-		} else {
-			getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Mailbox received parcel with unknown classification");
 		}
 	}
 
