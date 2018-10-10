@@ -7,6 +7,7 @@ import mecono.node.RemoteNode;
 import mecono.parceling.Parcel;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.ParcelType;
+import mecono.parceling.Payload;
 import mecono.protocol.BadProtocolException;
 import org.json.JSONObject;
 
@@ -14,10 +15,10 @@ import org.json.JSONObject;
  *
  * @author jak
  */
-public class DataParcel extends Parcel {
+public class DataParcel extends Payload {
 
-	public DataParcel(Mailbox mailbox) {
-		super(mailbox);
+	public DataParcel(Parcel parcel) {
+		super(parcel);
 	}
 
 	@Override
@@ -30,7 +31,7 @@ public class DataParcel extends Parcel {
 		if (o instanceof DataParcel) {
 			DataParcel other = (DataParcel) o;
 			try {
-				return (other.getMessage().equals(this.getMessage()) && other.getDestination().equals(this.getDestination()) && other.getOriginator().equals(this.getOriginator()));
+				return (other.getMessage().equals(this.getMessage()) && other.getParcel().getDestination().equals(this.getParcel().getDestination()) && other.getParcel().getOriginator().equals(this.getParcel().getOriginator()));
 			} catch (MissingParcelDetailsException ex) {
 				return false;
 			}
@@ -43,17 +44,17 @@ public class DataParcel extends Parcel {
 	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
 		super.onReceiveAction();
 
-		getMailbox().getOwner().messageReceived(this.getMessage());
+		getParcel().getMailbox().getOwner().messageReceived(this.getMessage());
 
-		RemoteNode received_originator = (RemoteNode) getOriginator();
-		DataReceiptParcel response = new DataReceiptParcel(getMailbox());
-		response.setRespondedID(getUniqueID());
+		RemoteNode received_originator = (RemoteNode) getParcel().getOriginator();
+		DataReceiptParcel response = new DataReceiptParcel(getParcel().getMailbox());
+		response.setRespondedID(getParcel().getUniqueID());
 		response.setDestination(received_originator); // Set the destination to the person that contacted us (a response)
-		getMailbox().getHandshakeHistory().enqueueSend(response); // Send the response
+		getParcel().getMailbox().getHandshakeHistory().enqueueSend(response); // Send the response
 	}
 
 	public void setMessage(String message) {
-		if (!isInOutbox()) {
+		if (!getParcel().isInOutbox()) {
 			this.message = message;
 		}
 	}
@@ -63,7 +64,7 @@ public class DataParcel extends Parcel {
 	}
 
 	@Override
-	public JSONObject getSerializedContent() {
+	public JSONObject serializeContent() {
 		JSONObject json_content = new JSONObject();
 		json_content = json_content.put("message", message);
 		return json_content;
