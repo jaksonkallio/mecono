@@ -34,6 +34,10 @@ public class Parcel {
 		
 		throw new MissingParcelDetailsException("Originator not set");
 	}
+	
+	public void setOriginator(Node originator) throws MissingParcelDetailsException {
+		this.originator = originator;
+	}
 
 	public void setPath(Path path) {
 		this.path = path;
@@ -378,10 +382,8 @@ public class Parcel {
 		return "unknown";
 	}
 
-	public void setDestination(RemoteNode destination) {
-		if (!isInOutbox() && getTransferDirection() == TransferDirection.OUTBOUND) {
-			this.destination = destination;
-		}
+	public void setDestination(Node destination) {
+		this.destination = destination;
 	}
 
 	public boolean consultWhenPathUnknown() {
@@ -438,8 +440,16 @@ public class Parcel {
 		return in_outbox;
 	}
 
-	public final TransferDirection getTransferDirection() {
-		return null;
+	public final TransferDirection getTransferDirection() throws MissingParcelDetailsException {
+		if(getOriginator().equals(getMailbox().getOwner())){
+			return TransferDirection.OUTBOUND;
+		}
+		
+		if(getDestination().equals(getMailbox().getOwner())){
+			return TransferDirection.INBOUND;
+		}
+		
+		return TransferDirection.FORWARD;
 	}
 
 	public void setInOutbox() {
@@ -493,9 +503,9 @@ public class Parcel {
 	}
 
 	public void setActualPath(Path actual_path) {
-		if (getTransferDirection() == TransferDirection.INBOUND) {
+		/*if (getTransferDirection() == TransferDirection.INBOUND) {
 			this.actual_path = actual_path;
-		}
+		}*/
 	}
 
 	public void setIsSent() {
@@ -582,7 +592,7 @@ public class Parcel {
 	}
 	
 	public enum TransferDirection {
-		OUTBOUND, INBOUND
+		OUTBOUND, INBOUND, FORWARD
 	};
 
 
