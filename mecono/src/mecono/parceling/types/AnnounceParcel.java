@@ -8,30 +8,34 @@ package mecono.parceling.types;
 import mecono.node.Mailbox;
 import mecono.node.Neighbor;
 import mecono.node.Path;
+import mecono.node.SelfNode;
 import mecono.parceling.BadPathException;
 import mecono.parceling.Parcel;
 import mecono.parceling.MissingParcelDetailsException;
+import mecono.parceling.Payload;
 import mecono.protocol.BadProtocolException;
 
 /**
  *
  * @author sabreok
  */
-public class AnnounceParcel extends Parcel {
+public class AnnounceParcel extends Payload {
 
-	public AnnounceParcel(Mailbox mailbox) throws BadProtocolException, MissingParcelDetailsException {
-		super(mailbox);
+	public AnnounceParcel(Parcel parcel) throws BadProtocolException, MissingParcelDetailsException {
+		super(parcel);
 		setAnnounceChainFromHistory();
 	}
 
 	@Override
 	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
 		super.onReceiveAction();
+		
+		SelfNode self = getParcel().getMailbox().getOwner();
 
 		try {
-			getMailbox().getOwner().learnPath(getAnnounceChain(), null);
+			self.learnPath(getAnnounceChain(), null);
 
-			for (Neighbor neighbor : getMailbox().getOwner().getNeighbors()) {
+			for (Neighbor neighbor : self.getNeighbors()) {
 				// Create a new forwarded announce parcel
 			}
 		} catch (BadPathException ex) {
@@ -42,12 +46,12 @@ public class AnnounceParcel extends Parcel {
 
 	private void setAnnounceChainFromHistory() throws BadProtocolException, MissingParcelDetailsException {
 		// Verify that the last stop is us
-		if (!announce_chain.getLastStop().equals(getMailbox().getOwner())) {
+		if (!announce_chain.getLastStop().equals(getParcel().getMailbox().getOwner())) {
 			throw new BadProtocolException("Received announce parcel with an invalid last stop");
 		}
 
 		// TODO: Check signatures to verify that the path is signed by each node
-		announce_chain = new Path(getPath());
+		announce_chain = new Path(getParcel().getPath());
 	}
 
 	private Path getAnnounceChain() {

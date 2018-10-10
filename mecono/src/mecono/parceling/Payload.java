@@ -1,12 +1,13 @@
 package mecono.parceling;
 
+import mecono.protocol.BadProtocolException;
 import org.json.JSONObject;
 
 /**
  *
  * @author jak
  */
-public class Payload {
+public abstract class Payload {
 	public Payload(Parcel parcel){
 		this.parcel = parcel;
 	}
@@ -14,19 +15,26 @@ public class Payload {
 	public JSONObject serialize() {
 		JSONObject serialized = new JSONObject();
 
-		try {
-			serialized.put("path_history", parcel.getPath());
-			serialized.put("destination", parcel.getDestination().getAddress());
-			serialized.put("parcel_type", Parcel.getParcelTypeCode(parcel.getParcelType()));
-			serialized.put("unique_id", parcel.getUniqueID());
-			serialized.put("actual_path", parcel.getActualPath());
-			serialized.put("content", parcel.getSerializedContent());
-			serialized.put("signature", parcel.getSignature());
-		} catch (MissingParcelDetailsException ex) {
-			parcel.getMailbox().getOwner().nodeLog(2, "Could not serialized payload: " + ex.getMessage());
-		}
+		serialized.put("parcel_type", Parcel.getParcelTypeCode(parcel.getParcelType()));
+		serialized.put("unique_id", parcel.getUniqueID());
+		serialized.put("content", serializeContent());
+		serialized.put("signature", parcel.getSignature());
 
 		return serialized;
+	}
+	
+	public JSONObject serializeContent(){
+		return new JSONObject();
+	}
+	
+	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
+		if (parcel.getTransferDirection() != Parcel.TransferDirection.INBOUND) {
+			throw new BadProtocolException("The parcel isn't inbound");
+		}
+	}
+	
+	public Parcel getParcel(){
+		return parcel;
 	}
 	
 	private final Parcel parcel;
