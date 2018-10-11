@@ -9,6 +9,7 @@ import mecono.parceling.Parcel;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.Handshake;
 import mecono.parceling.ParcelType;
+import mecono.parceling.Payload;
 import mecono.parceling.ResponseParcel;
 import mecono.parceling.types.FindParcel;
 import mecono.parceling.types.PingParcel;
@@ -120,10 +121,11 @@ public class HandshakeHistory {
 			send_cursor = (send_cursor + 1) % pending.size();
 		}
 	}
-
-	public Handshake lookup(ResponseParcel response) {
+	
+	// Find a handshake using a response parcel
+	public Handshake lookup(Parcel response) {
 		for (Handshake handshake : completed) {
-			if (handshake.getTriggerParcel().getUniqueID().equals(response.getRespondedID())) {
+			if (handshake.getTriggerParcel().getUniqueID().equals(response.getUniqueID())) {
 				return handshake;
 			}
 		}
@@ -168,8 +170,10 @@ public class HandshakeHistory {
 			for (RemoteNode consultant : self.getPinnedNodes()) {
 				if (!consultant.equals(target) && Protocol.elapsedMillis(consultant.getTimeLastConsulted()) > mailbox.getOwner().CONSULTATION_COOLDOWN) {
 					// Only consult a node if the consultant is NOT the node we're looking for.
-					FindParcel find = new FindParcel(mailbox);
-					find.setTarget(target);
+					Parcel find = new Parcel(mailbox);
+					FindParcel find_payload = new FindParcel();
+					find.setPayload(find_payload);
+					find_payload.setTarget(target);
 					find.setDestination(consultant);
 					enqueueSend(find);
 					consultant.updateTimeLastConsulted();

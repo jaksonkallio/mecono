@@ -1,17 +1,17 @@
 package mecono.parceling.types;
 
-import mecono.node.Mailbox;
+import mecono.parceling.Parcel;
 import mecono.parceling.ParcelType;
-import mecono.parceling.ResponseParcel;
+import mecono.parceling.ResponsePayload;
 
 /**
  *
  * @author jak
  */
-public class DataReceiptParcel extends ResponseParcel {
+public class DataReceiptParcel extends ResponsePayload {
 
-	public DataReceiptParcel(Mailbox mailbox) {
-		super(mailbox);
+	public DataReceiptParcel(Parcel parcel) {
+		super(parcel);
 	}
 
 	@Override

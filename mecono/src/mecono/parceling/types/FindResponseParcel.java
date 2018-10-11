@@ -7,8 +7,7 @@ import mecono.node.RemoteNode;
 import mecono.node.SelfNode;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.ParcelType;
-import mecono.parceling.Response;
-import mecono.parceling.ResponseParcel;
+import mecono.parceling.ResponsePayload;
 import mecono.protocol.BadProtocolException;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,11 +16,7 @@ import org.json.JSONObject;
  *
  * @author jak
  */
-public class FindResponseParcel extends ResponseParcel implements Response {
-
-	public FindResponseParcel(Mailbox mailbox) {
-		super(mailbox);
-	}
+public class FindResponseParcel extends ResponsePayload {
 
 	public void setTargetAnswers(ArrayList<Path> target_answers) {
 		if (this.target_answers.isEmpty()) {
@@ -46,11 +41,11 @@ public class FindResponseParcel extends ResponseParcel implements Response {
 		super.onReceiveAction();
 
 		for (Path target_answer : getTargetAnswers()) {
-			getMailbox().getOwner().nodeLog(SelfNode.ErrorStatus.GOOD, SelfNode.LogLevel.VERBOSE, "Target answer: " + target_answer.toString());
+			getParcel().getMailbox().getOwner().nodeLog(SelfNode.ErrorStatus.GOOD, SelfNode.LogLevel.VERBOSE, "Target answer: " + target_answer.toString());
 
 			// A protocol policy is to only return paths that start with self node
-			if (target_answer.getStop(0).equals(getOriginator())) {
-				getMailbox().getOwner().learnUsingPathExtension(target_answer, (RemoteNode) getOriginator());
+			if (target_answer.getStop(0).equals(getParcel().getOriginator())) {
+				getParcel().getMailbox().getOwner().learnUsingPathExtension(target_answer, (RemoteNode) getParcel().getOriginator());
 			}
 		}
 	}
@@ -79,7 +74,7 @@ public class FindResponseParcel extends ResponseParcel implements Response {
 	}
 
 	@Override
-	public JSONObject getSerializedContent() {
+	public JSONObject serializeContent() {
 		JSONObject json_content = new JSONObject();
 		JSONArray target_answer_array = new JSONArray();
 
@@ -95,14 +90,14 @@ public class FindResponseParcel extends ResponseParcel implements Response {
 		ArrayList<Path> unserialized_target_answers = new ArrayList<>();
 
 		for (int i = 0; i < target_answers_json.length(); i++) {
-			unserialized_target_answers.add(Path.unserialize(target_answers_json.getString(i), getMailbox().getOwner()));
+			unserialized_target_answers.add(Path.unserialize(target_answers_json.getString(i), getParcel().getMailbox().getOwner()));
 		}
 
 		return unserialized_target_answers;
 	}
 
 	@Override
-	public boolean getRequireOnlinePath() {
+	public boolean requiresOnlinePath() {
 		return false;
 	}
 

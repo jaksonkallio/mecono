@@ -7,6 +7,7 @@ import mecono.node.RemoteNode;
 import mecono.parceling.Parcel;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.ParcelType;
+import mecono.parceling.Payload;
 import mecono.protocol.BadProtocolException;
 import org.json.JSONObject;
 
@@ -14,11 +15,7 @@ import org.json.JSONObject;
  *
  * @author jak
  */
-public class FindParcel extends Parcel {
-
-	public FindParcel(Mailbox mailbox) {
-		super(mailbox);
-	}
+public class FindParcel extends Payload {
 
 	@Override
 	public boolean equals(Object o) {
@@ -46,19 +43,19 @@ public class FindParcel extends Parcel {
 	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
 		super.onReceiveAction();
 
-		RemoteNode originator = (RemoteNode) getOriginator();
+		RemoteNode originator = (RemoteNode) getParcel().getOriginator();
 
 		if (getTarget() == null) {
 			throw new MissingParcelDetailsException("Unknown find target");
 		}
 
-		FindResponseParcel response = new FindResponseParcel(getMailbox());
+		FindResponseParcel response = new FindResponseParcel(getParcel().getMailbox());
 		RemoteNode target = getTarget();
-		response.setRespondedID(getUniqueID());
+		response.setRespondedID(getParcel().getUniqueID());
 		ArrayList<Path> available_paths = Path.convertToRawPaths(target.getPathsTo());
 		response.setTargetAnswers(available_paths); // Set response to our answer
 		response.setDestination(originator); // Set the destination to the person that contacted us (a response)
-		getMailbox().getHandshakeHistory().enqueueSend(response); // Send the response
+		getParcel().getMailbox().getHandshakeHistory().enqueueSend(response); // Send the response
 	}
 
 	public void setTarget(RemoteNode target) {
@@ -70,7 +67,7 @@ public class FindParcel extends Parcel {
 	}
 
 	@Override
-	public JSONObject getSerializedContent() {
+	public JSONObject serializeContent() {
 		JSONObject json_content = new JSONObject();
 		json_content = json_content.put("target", getTarget().getAddress());
 		return json_content;

@@ -42,6 +42,10 @@ public class Parcel {
 	public void setPath(Path path) {
 		this.path = path;
 	}
+	
+	public Handshake getHandshake() {
+		return getMailbox().getHandshakeHistory().lookup(this);
+	}
 
 	public static boolean validUniqueID(String unique_id) {
 		return unique_id.length() == 6;
@@ -274,6 +278,15 @@ public class Parcel {
 		}
 		return new Path(stops);
 	}
+	
+	public void setPayload(Payload payload){
+		this.payload = payload;
+		getPayload().setParcel(this);
+	}
+	
+	public Payload getPayload(){
+		return payload;
+	}
 
 	public static Parcel unserialize(JSONObject parcel_json, SelfNode relative_self) throws MissingParcelDetailsException, BadProtocolException {
 		Parcel parcel;
@@ -293,7 +306,7 @@ public class Parcel {
 		}
 
 		switch (parseParcelType(payload_json.getString("parcel_type"))) {
-			case PING:
+			/*case PING:
 				parcel = new PingParcel(relative_self.getMailbox());
 				break;
 			case PING_RESPONSE:
@@ -332,7 +345,7 @@ public class Parcel {
 				break;
 			case ANNC:
 				parcel = new AnnounceParcel(relative_self.getMailbox());
-				break;
+				break;*/
 			default:
 				parcel = new Parcel(relative_self.getMailbox());
 		}
@@ -385,11 +398,7 @@ public class Parcel {
 	public void setDestination(Node destination) {
 		this.destination = destination;
 	}
-
-	public boolean consultWhenPathUnknown() {
-		return true;
-	}
-
+	
 	public boolean isFinalDest() {
 		return destination.equals(mailbox.getOwner());
 	}
@@ -454,15 +463,6 @@ public class Parcel {
 
 	public void setInOutbox() {
 		in_outbox = true;
-	}
-
-	/**
-	 * Whether this kind of parcel can be sent without a valid/tested path.
-	 *
-	 * @return
-	 */
-	public boolean requiresOnlinePath() {
-		return mailbox.getOwner().require_tested_path_before_send;
 	}
 
 	public String getUniqueID() {
@@ -595,8 +595,6 @@ public class Parcel {
 		OUTBOUND, INBOUND, FORWARD
 	};
 
-
-	private String payload;
 	private Node destination;
 	private Node originator;
 	private long time_received = 0;
@@ -607,6 +605,7 @@ public class Parcel {
 	private long time_created;
 	private long time_sent;
 	private Path actual_path;
+	private Payload payload;
 	private Path used_path;
 	private PathStats outbound_actual_path;
 	private ParcelType parcel_type = ParcelType.UNKNOWN;

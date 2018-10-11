@@ -8,7 +8,11 @@ import org.json.JSONObject;
  * @author jak
  */
 public abstract class Payload {
-	public Payload(Parcel parcel){
+	public Payload(){
+		
+	}
+	
+	public void setParcel(Parcel parcel){
 		this.parcel = parcel;
 	}
 	
@@ -41,5 +45,13 @@ public abstract class Payload {
 		return parcel;
 	}
 	
-	private final Parcel parcel;
+	public boolean consultWhenPathUnknown() {
+		return true;
+	}
+
+	public boolean requiresOnlinePath() {
+		return true;
+	}
+	
+	private Parcel parcel;
 }
