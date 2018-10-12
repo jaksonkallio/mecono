@@ -27,15 +27,15 @@ public class Handshake {
 		return (this.getTriggerParcel().equals(other.getTriggerParcel()));
 	}
 
-	public void giveResponse(ResponseParcel response_parcel) {
-		if (getResponseType() == response_parcel.getParcelType() && original_parcel.getUniqueID().equals(response_parcel.getRespondedID())) {
+	public void giveResponse(Parcel response_parcel) {
+		if (getResponseType() == response_parcel.getParcelType() && original_parcel.getUniqueID().equals(((ResponsePayload) response_parcel.getPayload()).getRespondedID())) {
 			this.response_parcel = response_parcel;
 			responded = true;
 			response_parcel.setTimeReceived();
 		}
 	}
 
-	public ResponseParcel getResponseParcel() {
+	public Parcel getResponseParcel() {
 		return response_parcel;
 	}
 
@@ -125,7 +125,7 @@ public class Handshake {
 	}
 
 	private final Parcel original_parcel;
-	private ResponseParcel response_parcel;
+	private Parcel response_parcel;
 	private boolean responded = false;
 	private boolean is_sent = false;
 	private long last_send_attempt = 0;
