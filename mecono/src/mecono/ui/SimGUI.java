@@ -15,7 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
-import mecono.parceling.ParcelType;
+import mecono.parceling.PayloadType;
 import mecono.protocol.cse.SimNetwork;
 
 /**
@@ -151,12 +151,12 @@ public class SimGUI {
 	}
 
 	private void updateSimulatedNetworkStats() {
-		outbox_count_data.setText("Outbox Count (Data): " + sim_network.parcelsInOutbox(ParcelType.DATA));
-		outbox_count_find.setText("Outbox Count (Find): " + sim_network.parcelsInOutbox(ParcelType.FIND));
-		outbox_count_ping.setText("Outbox Count (Ping): " + sim_network.parcelsInOutbox(ParcelType.PING));
-		success_ping_rate.setText("Success Rate (Ping): " + UtilGUI.formatPercentage(sim_network.averageSuccessRate(ParcelType.PING)));
-		success_find_rate.setText("Success Rate (Find): " + UtilGUI.formatPercentage(sim_network.averageSuccessRate(ParcelType.FIND)));
-		success_data_rate.setText("Success Rate (Data): " + UtilGUI.formatPercentage(sim_network.averageSuccessRate(ParcelType.DATA)));
+		outbox_count_data.setText("Outbox Count (Data): " + sim_network.parcelsInOutbox(PayloadType.DATA));
+		outbox_count_find.setText("Outbox Count (Find): " + sim_network.parcelsInOutbox(PayloadType.FIND));
+		outbox_count_ping.setText("Outbox Count (Ping): " + sim_network.parcelsInOutbox(PayloadType.PING));
+		success_ping_rate.setText("Success Rate (Ping): " + UtilGUI.formatPercentage(sim_network.averageSuccessRate(PayloadType.PING)));
+		success_find_rate.setText("Success Rate (Find): " + UtilGUI.formatPercentage(sim_network.averageSuccessRate(PayloadType.FIND)));
+		success_data_rate.setText("Success Rate (Data): " + UtilGUI.formatPercentage(sim_network.averageSuccessRate(PayloadType.DATA)));
 	}
 
 	private final SimNetwork sim_network;

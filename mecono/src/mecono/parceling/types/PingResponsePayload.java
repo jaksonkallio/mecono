@@ -3,7 +3,7 @@ package mecono.parceling.types;
 import mecono.node.Mailbox;
 import mecono.node.PathStats;
 import mecono.parceling.MissingParcelDetailsException;
-import mecono.parceling.ParcelType;
+import mecono.parceling.PayloadType;
 import mecono.parceling.ResponseParcel;
 import mecono.parceling.Handshake;
 import mecono.parceling.Parcel;
@@ -32,8 +32,8 @@ public class PingResponsePayload extends ResponsePayload {
 	}
 
 	@Override
-	public ParcelType getParcelType() {
-		return ParcelType.PING_RESPONSE;
+	public PayloadType getParcelType() {
+		return PayloadType.PING_RESPONSE;
 	}
 
 	@Override

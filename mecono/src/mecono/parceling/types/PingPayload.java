@@ -4,7 +4,7 @@ import mecono.node.RemoteNode;
 import mecono.node.SelfNode;
 import mecono.parceling.Parcel;
 import mecono.parceling.MissingParcelDetailsException;
-import mecono.parceling.ParcelType;
+import mecono.parceling.PayloadType;
 import mecono.parceling.Payload;
 import mecono.protocol.BadProtocolException;
 
@@ -15,8 +15,8 @@ import mecono.protocol.BadProtocolException;
 public class PingPayload extends Payload {
 
 	@Override
-	public ParcelType getParcelType() {
-		return ParcelType.PING;
+	public PayloadType getParcelType() {
+		return PayloadType.PING;
 	}
 
 	@Override

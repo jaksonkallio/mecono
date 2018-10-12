@@ -3,7 +3,7 @@ package mecono.node;
 import java.util.LinkedList;
 import java.util.Queue;
 import mecono.parceling.Parcel;
-import mecono.parceling.ParcelType;
+import mecono.parceling.PayloadType;
 import mecono.parceling.ResponseParcel;
 
 // Contains metadata about the parcels that were successfully sent into the network.
@@ -23,7 +23,7 @@ public class ParcelHistoryArchive {
 		}
 	}
 
-	public double getCount(boolean has_response, ParcelType parcel_type) {
+	public double getCount(boolean has_response, PayloadType parcel_type) {
 		int count = 0;
 
 		for (Parcel parcel_item : parcel_history) {

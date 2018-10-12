@@ -50,7 +50,7 @@ public class Handshake {
 				case PING_RESPONSE:
 					actionFromPing();
 					break;
-				case DATA_RECEIPT:
+				case DATA_RESPONSE:
 					actionFromData();
 					break;
 				default:
@@ -71,7 +71,7 @@ public class Handshake {
 		return Math.max(0, (getResponseParcel().getTimeCreated() - original_time_sent));
 	}
 
-	public ParcelType getResponseType() {
+	public PayloadType getResponseType() {
 		if (responded) {
 			return response_parcel.getParcelType();
 		} else {
@@ -103,16 +103,16 @@ public class Handshake {
 		last_send_attempt = Protocol.getEpochMilliSecond();
 	}
 
-	private ParcelType determineResponseType() {
+	private PayloadType determineResponseType() {
 		switch (original_parcel.getParcelType()) {
 			case PING:
-				return ParcelType.PING_RESPONSE;
+				return PayloadType.PING_RESPONSE;
 			case FIND:
-				return ParcelType.FIND_RESPONSE;
+				return PayloadType.FIND_RESPONSE;
 			case DATA:
-				return ParcelType.DATA_RECEIPT;
+				return PayloadType.DATA_RESPONSE;
 			default:
-				return ParcelType.UNKNOWN;
+				return PayloadType.UNKNOWN;
 		}
 	}
 

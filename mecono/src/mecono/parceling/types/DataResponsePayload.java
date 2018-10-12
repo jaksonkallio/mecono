@@ -1,7 +1,7 @@
 package mecono.parceling.types;
 
 import mecono.parceling.Parcel;
-import mecono.parceling.ParcelType;
+import mecono.parceling.PayloadType;
 import mecono.parceling.ResponsePayload;
 
 /**
@@ -11,7 +11,7 @@ import mecono.parceling.ResponsePayload;
 public class DataResponsePayload extends ResponsePayload {
 	
 	@Override
-	public ParcelType getParcelType() {
-		return ParcelType.DATA_RECEIPT;
+	public PayloadType getParcelType() {
+		return PayloadType.DATA_RESPONSE;
 	}
 }

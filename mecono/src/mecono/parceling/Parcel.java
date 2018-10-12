@@ -60,7 +60,7 @@ public class Parcel implements MeconoSerializable {
 		return null;
 	}
 
-	public static int getParcelTypeCode(ParcelType target) {
+	public static int getParcelTypeCode(PayloadType target) {
 		for (int i = 0; i < Protocol.parcel_type_codes.length; i++) {
 			if (Protocol.parcel_type_codes[i] == target) {
 				return i;
@@ -69,24 +69,24 @@ public class Parcel implements MeconoSerializable {
 		return -1;
 	}
 
-	public static ParcelType parseParcelType(String parcel_type) {
+	public static PayloadType parseParcelType(String parcel_type) {
 		switch (parcel_type) {
 			case "PING":
-				return ParcelType.PING;
+				return PayloadType.PING;
 			case "PING_RESPONSE":
-				return ParcelType.PING_RESPONSE;
+				return PayloadType.PING_RESPONSE;
 			case "FIND":
-				return ParcelType.FIND;
+				return PayloadType.FIND;
 			case "FIND_RESPONSE":
-				return ParcelType.FIND_RESPONSE;
+				return PayloadType.FIND_RESPONSE;
 			case "DATA":
-				return ParcelType.DATA;
+				return PayloadType.DATA;
 			case "DATA_RECEIPT":
-				return ParcelType.DATA_RECEIPT;
+				return PayloadType.DATA_RESPONSE;
 			case "ANNC":
-				return ParcelType.ANNC;
+				return PayloadType.ANNC;
 			default:
-				return ParcelType.UNKNOWN;
+				return PayloadType.UNKNOWN;
 		}
 	}
 
@@ -332,7 +332,7 @@ public class Parcel implements MeconoSerializable {
 				}
 
 				break;
-			case DATA_RECEIPT:
+			case DATA_RESPONSE:
 				parcel = new DataReceiptParcel(relative_self.getMailbox());
 
 				break;
@@ -400,8 +400,8 @@ public class Parcel implements MeconoSerializable {
 		return getOriginator() != null && getOriginator().equals(mailbox.getOwner());
 	}
 
-	public ParcelType getParcelType() {
-		return ParcelType.UNKNOWN;
+	public PayloadType getParcelType() {
+		return PayloadType.UNKNOWN;
 	}
 
 	public String getParcelTypeString() {
@@ -412,26 +412,26 @@ public class Parcel implements MeconoSerializable {
 		return new Handshake(this);
 	}
 
-	public void setParcelType(ParcelType parcel_type) {
+	public void setParcelType(PayloadType parcel_type) {
 		if (!isInOutbox()) {
 			this.parcel_type = parcel_type;
 		}
 	}
 
-	public static ParcelType unserializePalletType(String representation) throws BadProtocolException {
+	public static PayloadType unserializePalletType(String representation) throws BadProtocolException {
 		switch (representation) {
 			case "p":
-				return ParcelType.PING;
+				return PayloadType.PING;
 			case "pr":
-				return ParcelType.PING_RESPONSE;
+				return PayloadType.PING_RESPONSE;
 			case "d":
-				return ParcelType.DATA;
+				return PayloadType.DATA;
 			case "dr":
-				return ParcelType.DATA_RECEIPT;
+				return PayloadType.DATA_RESPONSE;
 			case "f":
-				return ParcelType.FIND;
+				return PayloadType.FIND;
 			case "fr":
-				return ParcelType.FIND_RESPONSE;
+				return PayloadType.FIND_RESPONSE;
 			default:
 				throw new BadProtocolException("Unknown pallet type.");
 		}
@@ -595,7 +595,7 @@ public class Parcel implements MeconoSerializable {
 	private Payload payload;
 	private Path used_path;
 	private PathStats outbound_actual_path;
-	private ParcelType parcel_type = ParcelType.UNKNOWN;
+	private PayloadType parcel_type = PayloadType.UNKNOWN;
 	private ResponseParcel response;
 	private final Mailbox mailbox;
 	private Path path;

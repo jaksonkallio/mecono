@@ -6,7 +6,7 @@ import mecono.node.Path;
 import mecono.node.RemoteNode;
 import mecono.parceling.Parcel;
 import mecono.parceling.MissingParcelDetailsException;
-import mecono.parceling.ParcelType;
+import mecono.parceling.PayloadType;
 import mecono.parceling.Payload;
 import mecono.protocol.BadProtocolException;
 import org.json.JSONObject;
@@ -18,8 +18,8 @@ import org.json.JSONObject;
 public class DataPayload extends Payload {
 	
 	@Override
-	public ParcelType getParcelType() {
-		return ParcelType.DATA;
+	public PayloadType getParcelType() {
+		return PayloadType.DATA;
 	}
 
 	@Override

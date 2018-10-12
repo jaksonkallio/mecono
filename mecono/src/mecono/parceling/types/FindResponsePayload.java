@@ -6,7 +6,7 @@ import mecono.node.Path;
 import mecono.node.RemoteNode;
 import mecono.node.SelfNode;
 import mecono.parceling.MissingParcelDetailsException;
-import mecono.parceling.ParcelType;
+import mecono.parceling.PayloadType;
 import mecono.parceling.ResponsePayload;
 import mecono.protocol.BadProtocolException;
 import org.json.JSONArray;
@@ -69,8 +69,8 @@ public class FindResponsePayload extends ResponsePayload {
 	}
 
 	@Override
-	public ParcelType getParcelType() {
-		return ParcelType.FIND_RESPONSE;
+	public PayloadType getParcelType() {
+		return PayloadType.FIND_RESPONSE;
 	}
 
 	@Override

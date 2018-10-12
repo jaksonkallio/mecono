@@ -5,7 +5,7 @@ import mecono.node.NodeAddress;
 import mecono.node.RemoteNode;
 import mecono.node.SimSelfNode;
 import mecono.parceling.Parcel.TransferDirection;
-import mecono.parceling.ParcelType;
+import mecono.parceling.PayloadType;
 import mecono.parceling.types.DataPayload;
 import mecono.protocol.cse.SimNetwork;
 
@@ -36,7 +36,7 @@ public class CSEv2 extends SimNetwork {
 	}
 
 	public void refillSampleParcels() {
-		while (parcelsInOutbox(ParcelType.DATA) < constant_parcel_count) {
+		while (parcelsInOutbox(PayloadType.DATA) < constant_parcel_count) {
 			int origin_index = sample_parcel_rand.nextInt(node_set.size());
 			int destination_index = sample_parcel_rand.nextInt(node_set.size());
 

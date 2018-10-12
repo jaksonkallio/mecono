@@ -36,7 +36,7 @@ import mecono.parceling.Parcel;
 import mecono.parceling.Parcel.TransferDirection;
 import mecono.parceling.Handshake;
 import mecono.parceling.Parcel;
-import mecono.parceling.ParcelType;
+import mecono.parceling.PayloadType;
 import mecono.parceling.types.DataPayload;
 import mecono.parceling.types.FindPayload;
 import mecono.parceling.types.PingPayload;
@@ -122,13 +122,13 @@ public class NodeDashboard extends Stage {
 		TextArea arb_message = new TextArea();
 		TextField dest_address = new TextField();
 		Button send_button = new Button("Send");
-		ComboBox<ParcelType> parcel_type_select = new ComboBox<>();
+		ComboBox<PayloadType> parcel_type_select = new ComboBox<>();
 
-		ArrayList<ParcelType> parcel_type_list = new ArrayList<>();
-		parcel_type_list.add(ParcelType.PING);
-		parcel_type_list.add(ParcelType.FIND);
-		parcel_type_list.add(ParcelType.DATA);
-		ObservableList<ParcelType> observable_pending = FXCollections.observableArrayList(parcel_type_list);
+		ArrayList<PayloadType> parcel_type_list = new ArrayList<>();
+		parcel_type_list.add(PayloadType.PING);
+		parcel_type_list.add(PayloadType.FIND);
+		parcel_type_list.add(PayloadType.DATA);
+		ObservableList<PayloadType> observable_pending = FXCollections.observableArrayList(parcel_type_list);
 		parcel_type_select.getItems().setAll(observable_pending);
 
 		arb_message.setPrefRowCount(1);
@@ -149,7 +149,7 @@ public class NodeDashboard extends Stage {
 		return compose_tab;
 	}
 
-	private void composeSendMessage(String message, ParcelType parcel_type, String dest_address) {
+	private void composeSendMessage(String message, PayloadType parcel_type, String dest_address) {
 		self_node.nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.ATTENTION, "Message composed", parcel_type.name() + " parcel to " + dest_address + " with data \"" + message + "\"");
 
 		Mailbox mailbox = self_node.getMailbox();
@@ -158,14 +158,14 @@ public class NodeDashboard extends Stage {
 		Parcel parcel = new Parcel(mailbox);
 
 		// Cases where additional payload data is needed
-		if (parcel_type == ParcelType.DATA) {
+		if (parcel_type == PayloadType.DATA) {
 			parcel = new DataPayload(mailbox);
 			((DataPayload) parcel).setMessage(message);
-		} else if (parcel_type == ParcelType.FIND) {
+		} else if (parcel_type == PayloadType.FIND) {
 			parcel = new FindPayload(mailbox);
 			RemoteNode target = self_node.getMemoryController().loadRemoteNode(message);
 			((FindPayload) parcel).setTarget(target);
-		} else if (parcel_type == ParcelType.PING) {
+		} else if (parcel_type == PayloadType.PING) {
 			parcel = new PingPayload(mailbox);
 		}
 

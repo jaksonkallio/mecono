@@ -8,7 +8,7 @@ import java.util.Queue;
 import mecono.parceling.Parcel;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.Handshake;
-import mecono.parceling.ParcelType;
+import mecono.parceling.PayloadType;
 import mecono.parceling.Payload;
 import mecono.parceling.ResponseParcel;
 import mecono.parceling.types.FindPayload;
@@ -47,11 +47,11 @@ public class HandshakeHistory {
 		}
 	}
 
-	public int count(boolean has_response, ParcelType parcel_type) {
+	public int count(boolean has_response, PayloadType parcel_type) {
 		return count(has_response, false, parcel_type);
 	}
 
-	public int count(boolean has_response, boolean pending_list, ParcelType parcel_type) {
+	public int count(boolean has_response, boolean pending_list, PayloadType parcel_type) {
 		int count = 0;
 		List<Handshake> status = completed;
 
@@ -68,7 +68,7 @@ public class HandshakeHistory {
 		return count;
 	}
 
-	public double successRate(ParcelType parcel_type) {
+	public double successRate(PayloadType parcel_type) {
 		int count_success = count(true, parcel_type);
 		int count_fail = count(false, parcel_type);
 

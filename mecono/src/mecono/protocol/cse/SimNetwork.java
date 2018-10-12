@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import mecono.node.HandshakeHistory;
 import mecono.node.ParcelHistoryArchive;
-import mecono.parceling.ParcelType;
+import mecono.parceling.PayloadType;
 
 /**
  *
@@ -90,7 +90,7 @@ public abstract class SimNetwork {
 		return null;
 	}
 
-	public int parcelsInOutbox(ParcelType parcel_type) {
+	public int parcelsInOutbox(PayloadType parcel_type) {
 		int sum = 0;
 
 		for (SimSelfNode node : getNodeSet()) {
@@ -100,7 +100,7 @@ public abstract class SimNetwork {
 		return sum;
 	}
 
-	public double averageSuccessRate(ParcelType parcel_type) {
+	public double averageSuccessRate(PayloadType parcel_type) {
 		int count_success = 0;
 		int count_fail = 0;
 

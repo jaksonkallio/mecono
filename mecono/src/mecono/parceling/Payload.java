@@ -16,8 +16,8 @@ public abstract class Payload {
 		this.parcel = parcel;
 	}
 	
-	public ParcelType getParcelType(){
-		return ParcelType.UNKNOWN;
+	public PayloadType getParcelType(){
+		return PayloadType.UNKNOWN;
 	}
 	
 	public JSONObject serialize() {
