@@ -9,18 +9,11 @@ import mecono.node.PathStats;
 import mecono.protocol.Protocol;
 import mecono.node.RemoteNode;
 import mecono.node.SelfNode;
-import mecono.parceling.types.AnnounceParcel;
-import mecono.parceling.types.DataParcel;
-import mecono.parceling.types.DataReceiptParcel;
-import mecono.parceling.types.FindParcel;
-import mecono.parceling.types.FindResponseParcel;
-import mecono.parceling.types.PingParcel;
-import mecono.parceling.types.PingResponseParcel;
 import mecono.protocol.UnknownResponsibilityException;
 import mecono.ui.UtilGUI;
 import org.json.*;
 
-public class Parcel {
+public class Parcel implements MeconoSerializable {
 
 	public Parcel(Mailbox mailbox) {
 		this.mailbox = mailbox;
@@ -59,11 +52,6 @@ public class Parcel {
 		return path;
 	}
 
-	/**
-	 * Gets the next node in the path.
-	 *
-	 * @return
-	 */
 	public RemoteNode getNextNode() throws MissingParcelDetailsException {
 		return null;
 	}
@@ -195,6 +183,11 @@ public class Parcel {
 
 	public Mailbox getMailbox() {
 		return mailbox;
+	}
+
+	@Override
+	public Parcel deserialize() {
+		return null;
 	}
 
 	private void generateUniqueID() {

@@ -1,6 +1,5 @@
 package mecono.parceling.types;
 
-import mecono.node.Mailbox;
 import mecono.node.RemoteNode;
 import mecono.node.SelfNode;
 import mecono.parceling.Parcel;
@@ -29,9 +28,11 @@ public class PingParcel extends Payload {
 	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
 		super.onReceiveAction();
 
-		PingResponseParcel response = new PingResponseParcel(getParcel().getMailbox());
-		response.setRespondedID(getParcel().getUniqueID());
-		response.setDestination((RemoteNode) getParcel().getOriginator()); // Set the destination to the person that contacted us (a response)
+		Parcel parcel = new Parcel(getParcel().getMailbox());
+		PingResponseParcel response_payload = new PingResponseParcel();
+		parcel.setPayload(response_payload);
+		response_payload.setRespondedID(getParcel().getUniqueID());
+		parcel.setDestination((RemoteNode) getParcel().getOriginator()); // Set the destination to the person that contacted us (a response)
 		getParcel().getMailbox().getHandshakeHistory().enqueueSend(response); // Send the response
 		getParcel().getMailbox().getOwner().nodeLog(SelfNode.ErrorStatus.GOOD, SelfNode.LogLevel.VERBOSE, "Responding with parcel", response.toString());
 	}
