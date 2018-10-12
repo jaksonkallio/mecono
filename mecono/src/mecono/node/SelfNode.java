@@ -3,6 +3,7 @@ package mecono.node;
 import mecono.parceling.types.DataPayload;
 import java.util.ArrayList;
 import mecono.parceling.BadPathException;
+import mecono.parceling.Parcel;
 import mecono.parceling.Parcel.TransferDirection;
 
 /**
@@ -271,9 +272,12 @@ public class SelfNode implements Node {
 	 */
 	public void sendDataParcel(RemoteNode destination, String message) {
 		nodeLog(0, "Attempting to send data: " + message + " to " + destination.getAddress());
-		DataPayload parcel = new DataPayload(getMailbox());
+		Parcel parcel = new Parcel(getMailbox());
+		DataPayload payload = new DataPayload();
+		parcel.setPayload(payload);
+		
 		parcel.setDestination(destination);
-		parcel.setMessage(message);
+		payload.setMessage(message);
 		getMailbox().getHandshakeHistory().enqueueSend(parcel); // Send the response
 	}
 
