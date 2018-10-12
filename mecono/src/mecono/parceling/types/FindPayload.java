@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import mecono.node.Path;
 import mecono.node.RemoteNode;
 import mecono.parceling.MissingParcelDetailsException;
+import mecono.parceling.Parcel;
 import mecono.parceling.PayloadType;
 import mecono.parceling.Payload;
 import mecono.protocol.BadProtocolException;
@@ -47,13 +48,15 @@ public class FindPayload extends Payload {
 			throw new MissingParcelDetailsException("Unknown find target");
 		}
 
-		FindResponsePayload response = new FindResponsePayload(getParcel().getMailbox());
-		RemoteNode target = getTarget();
-		response.setRespondedID(getParcel().getUniqueID());
-		ArrayList<Path> available_paths = Path.convertToRawPaths(target.getPathsTo());
-		response.setTargetAnswers(available_paths); // Set response to our answer
-		response.setDestination(originator); // Set the destination to the person that contacted us (a response)
-		getParcel().getMailbox().getHandshakeHistory().enqueueSend(response); // Send the response
+		Parcel parcel = new Parcel(getParcel().getMailbox());
+		FindResponsePayload payload = new FindResponsePayload();
+		parcel.setPayload(payload);
+		
+		payload.setRespondedID(getParcel().getUniqueID());
+		ArrayList<Path> available_paths = Path.convertToRawPaths(getTarget().getPathsTo());
+		payload.setTargetAnswers(available_paths); // Set response to our answer
+		parcel.setDestination(originator); // Set the destination to the person that contacted us (a response)
+		getParcel().getMailbox().getHandshakeHistory().enqueueSend(parcel); // Send the response
 	}
 
 	public void setTarget(RemoteNode target) {
