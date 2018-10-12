@@ -1,10 +1,8 @@
 package mecono.parceling.types;
 
 import java.util.ArrayList;
-import mecono.node.Mailbox;
 import mecono.node.Path;
 import mecono.node.RemoteNode;
-import mecono.parceling.Parcel;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.PayloadType;
 import mecono.parceling.Payload;

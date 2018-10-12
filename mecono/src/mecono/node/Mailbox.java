@@ -137,9 +137,11 @@ public class Mailbox {
 			PathStats ideal_path = pinned.getIdealPath();
 
 			if (ideal_path != null && !ideal_path.online()) {
-				PingPayload ping = new PingPayload(this);
-				ping.setDestination(pinned);
-				getHandshakeHistory().enqueueSend(ping);
+				Parcel parcel = new Parcel(this);
+				PingPayload payload = new PingPayload();
+				parcel.setPayload(payload);
+				parcel.setDestination(pinned);
+				getHandshakeHistory().enqueueSend(parcel);
 			}
 		}
 	}
