@@ -41,12 +41,15 @@ public class DataPayload extends Payload {
 		super.onReceiveAction();
 
 		getParcel().getMailbox().getOwner().messageReceived(this.getMessage());
+		
+		Parcel parcel = new Parcel(getParcel().getMailbox());
+		DataResponsePayload payload = new DataResponsePayload();
+		parcel.setPayload(payload);
 
-		RemoteNode received_originator = (RemoteNode) getParcel().getOriginator();
-		DataResponsePayload response = new DataResponsePayload(getParcel().getMailbox());
-		response.setRespondedID(getParcel().getUniqueID());
-		response.setDestination(received_originator); // Set the destination to the person that contacted us (a response)
-		getParcel().getMailbox().getHandshakeHistory().enqueueSend(response); // Send the response
+		payload.setRespondedID(getParcel().getUniqueID());
+		parcel.setDestination((RemoteNode) getParcel().getOriginator()); // Set the destination to the person that contacted us (a response)
+		
+		getParcel().getMailbox().getHandshakeHistory().enqueueSend(parcel); // Send the response
 	}
 
 	public void setMessage(String message) {
