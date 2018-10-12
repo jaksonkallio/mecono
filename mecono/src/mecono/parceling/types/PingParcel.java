@@ -33,7 +33,7 @@ public class PingParcel extends Payload {
 		parcel.setPayload(response_payload);
 		response_payload.setRespondedID(getParcel().getUniqueID());
 		parcel.setDestination((RemoteNode) getParcel().getOriginator()); // Set the destination to the person that contacted us (a response)
-		getParcel().getMailbox().getHandshakeHistory().enqueueSend(response); // Send the response
-		getParcel().getMailbox().getOwner().nodeLog(SelfNode.ErrorStatus.GOOD, SelfNode.LogLevel.VERBOSE, "Responding with parcel", response.toString());
+		getParcel().getMailbox().getHandshakeHistory().enqueueSend(parcel); // Send the response
+		getParcel().getMailbox().getOwner().nodeLog(SelfNode.ErrorStatus.GOOD, SelfNode.LogLevel.VERBOSE, "Responding with parcel", parcel.toString());
 	}
 }

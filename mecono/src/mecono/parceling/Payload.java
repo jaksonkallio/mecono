@@ -50,6 +50,10 @@ public abstract class Payload {
 	}
 
 	public boolean requiresOnlinePath() {
+		return getRequireOnlinePath();
+	}
+	
+	public boolean getRequireOnlinePath() {
 		return true;
 	}
 	

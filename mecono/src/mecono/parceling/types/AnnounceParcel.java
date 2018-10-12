@@ -5,7 +5,6 @@
  */
 package mecono.parceling.types;
 
-import mecono.node.Mailbox;
 import mecono.node.Neighbor;
 import mecono.node.Path;
 import mecono.node.SelfNode;
@@ -21,8 +20,7 @@ import mecono.protocol.BadProtocolException;
  */
 public class AnnounceParcel extends Payload {
 
-	public AnnounceParcel(Parcel parcel) throws BadProtocolException, MissingParcelDetailsException {
-		super(parcel);
+	public AnnounceParcel() throws BadProtocolException, MissingParcelDetailsException {
 		setAnnounceChainFromHistory();
 	}
 

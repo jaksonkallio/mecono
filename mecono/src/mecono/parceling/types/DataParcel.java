@@ -16,11 +16,7 @@ import org.json.JSONObject;
  * @author jak
  */
 public class DataParcel extends Payload {
-
-	public DataParcel(Parcel parcel) {
-		super(parcel);
-	}
-
+	
 	@Override
 	public ParcelType getParcelType() {
 		return ParcelType.DATA;
@@ -64,7 +60,7 @@ public class DataParcel extends Payload {
 	}
 
 	@Override
-	public JSONObject serializeContent() {
+	public JSONObject serialize() {
 		JSONObject json_content = new JSONObject();
 		json_content = json_content.put("message", message);
 		return json_content;
