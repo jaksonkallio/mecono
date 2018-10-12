@@ -550,12 +550,6 @@ public class Parcel {
 		return used_path;
 	}
 
-	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
-		if (getTransferDirection() != TransferDirection.INBOUND) {
-			throw new BadProtocolException("The parcel isn't inbound");
-		}
-	}
-
 	protected JSONObject encryptAsPayload() throws MissingParcelDetailsException {
 		JSONObject plaintext_payload = new JSONObject();
 		JSONArray actual_path = new JSONArray();

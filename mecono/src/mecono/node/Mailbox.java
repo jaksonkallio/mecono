@@ -30,7 +30,6 @@ public class Mailbox {
 	public void receiveParcel(Parcel parcel) {
 		if (parcel != null) {
 			processParcel(parcel);
-			getOwner().nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.VERBOSE, "Mailbox received destination parcel");
 		}else{
 			getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Mailbox received null parcel from network controller");
 		}
@@ -41,14 +40,13 @@ public class Mailbox {
 
 		try {
 			// Learn path
-			getOwner().learnPath(parcel.getActualPath(), null);
+			getOwner().learnPath(parcel.getPath(), null);
 
 			// Do any required action
-			parcel.onReceiveAction();
+			parcel.getPayload().onReceiveAction();
 		} catch (MissingParcelDetailsException | BadProtocolException ex) {
 			getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Could not handle received parcel", ex.getMessage());
 		} catch (BadPathException ex) {
-
 			getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Cannot learn path from received parcel", ex.getMessage());
 		}
 	}
