@@ -8,7 +8,7 @@ import mecono.parceling.ResponsePayload;
  *
  * @author jak
  */
-public class DataReceiptParcel extends ResponsePayload {
+public class DataResponsePayload extends ResponsePayload {
 	
 	@Override
 	public ParcelType getParcelType() {

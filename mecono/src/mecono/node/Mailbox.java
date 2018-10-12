@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import mecono.parceling.BadPathException;
-import mecono.parceling.types.PingParcel;
+import mecono.parceling.types.PingPayload;
 import mecono.protocol.Protocol;
 import org.json.JSONObject;
 
@@ -137,7 +137,7 @@ public class Mailbox {
 			PathStats ideal_path = pinned.getIdealPath();
 
 			if (ideal_path != null && !ideal_path.online()) {
-				PingParcel ping = new PingParcel(this);
+				PingPayload ping = new PingPayload(this);
 				ping.setDestination(pinned);
 				getHandshakeHistory().enqueueSend(ping);
 			}

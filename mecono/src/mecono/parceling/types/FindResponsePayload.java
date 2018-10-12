@@ -16,7 +16,7 @@ import org.json.JSONObject;
  *
  * @author jak
  */
-public class FindResponseParcel extends ResponsePayload {
+public class FindResponsePayload extends ResponsePayload {
 
 	public void setTargetAnswers(ArrayList<Path> target_answers) {
 		if (this.target_answers.isEmpty()) {

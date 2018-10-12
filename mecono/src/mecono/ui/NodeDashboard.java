@@ -37,9 +37,9 @@ import mecono.parceling.Parcel.TransferDirection;
 import mecono.parceling.Handshake;
 import mecono.parceling.Parcel;
 import mecono.parceling.ParcelType;
-import mecono.parceling.types.DataParcel;
-import mecono.parceling.types.FindParcel;
-import mecono.parceling.types.PingParcel;
+import mecono.parceling.types.DataPayload;
+import mecono.parceling.types.FindPayload;
+import mecono.parceling.types.PingPayload;
 
 /**
  *
@@ -159,14 +159,14 @@ public class NodeDashboard extends Stage {
 
 		// Cases where additional payload data is needed
 		if (parcel_type == ParcelType.DATA) {
-			parcel = new DataParcel(mailbox);
-			((DataParcel) parcel).setMessage(message);
+			parcel = new DataPayload(mailbox);
+			((DataPayload) parcel).setMessage(message);
 		} else if (parcel_type == ParcelType.FIND) {
-			parcel = new FindParcel(mailbox);
+			parcel = new FindPayload(mailbox);
 			RemoteNode target = self_node.getMemoryController().loadRemoteNode(message);
-			((FindParcel) parcel).setTarget(target);
+			((FindPayload) parcel).setTarget(target);
 		} else if (parcel_type == ParcelType.PING) {
-			parcel = new PingParcel(mailbox);
+			parcel = new PingPayload(mailbox);
 		}
 
 		parcel.setDestination(destination);

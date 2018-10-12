@@ -11,8 +11,8 @@ import mecono.parceling.Handshake;
 import mecono.parceling.ParcelType;
 import mecono.parceling.Payload;
 import mecono.parceling.ResponseParcel;
-import mecono.parceling.types.FindParcel;
-import mecono.parceling.types.PingParcel;
+import mecono.parceling.types.FindPayload;
+import mecono.parceling.types.PingPayload;
 import mecono.protocol.BadProtocolException;
 import mecono.protocol.Protocol;
 import mecono.protocol.UnknownResponsibilityException;
@@ -156,7 +156,9 @@ public class HandshakeHistory {
 	}
 
 	private void pingPath(Path path) {
-		PingParcel ping = new PingParcel(mailbox);
+		Parcel ping = new Parcel(mailbox);
+		PingPayload ping_payload = new PingPayload();
+		ping.setPayload(ping_payload);
 		ping.setDestination((RemoteNode) path.getLastStop());
 		enqueueSend(ping);
 	}
@@ -171,7 +173,7 @@ public class HandshakeHistory {
 				if (!consultant.equals(target) && Protocol.elapsedMillis(consultant.getTimeLastConsulted()) > mailbox.getOwner().CONSULTATION_COOLDOWN) {
 					// Only consult a node if the consultant is NOT the node we're looking for.
 					Parcel find = new Parcel(mailbox);
-					FindParcel find_payload = new FindParcel();
+					FindPayload find_payload = new FindPayload();
 					find.setPayload(find_payload);
 					find_payload.setTarget(target);
 					find.setDestination(consultant);

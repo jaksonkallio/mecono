@@ -14,7 +14,7 @@ import mecono.protocol.BadProtocolException;
  *
  * @author jak
  */
-public class PingResponseParcel extends ResponsePayload {
+public class PingResponsePayload extends ResponsePayload {
 
 	@Override
 	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {

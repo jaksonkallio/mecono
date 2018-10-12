@@ -15,7 +15,7 @@ import org.json.JSONObject;
  *
  * @author jak
  */
-public class DataParcel extends Payload {
+public class DataPayload extends Payload {
 	
 	@Override
 	public ParcelType getParcelType() {
@@ -24,8 +24,8 @@ public class DataParcel extends Payload {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof DataParcel) {
-			DataParcel other = (DataParcel) o;
+		if (o instanceof DataPayload) {
+			DataPayload other = (DataPayload) o;
 			try {
 				return (other.getMessage().equals(this.getMessage()) && other.getParcel().getDestination().equals(this.getParcel().getDestination()) && other.getParcel().getOriginator().equals(this.getParcel().getOriginator()));
 			} catch (MissingParcelDetailsException ex) {
@@ -43,7 +43,7 @@ public class DataParcel extends Payload {
 		getParcel().getMailbox().getOwner().messageReceived(this.getMessage());
 
 		RemoteNode received_originator = (RemoteNode) getParcel().getOriginator();
-		DataReceiptParcel response = new DataReceiptParcel(getParcel().getMailbox());
+		DataResponsePayload response = new DataResponsePayload(getParcel().getMailbox());
 		response.setRespondedID(getParcel().getUniqueID());
 		response.setDestination(received_originator); // Set the destination to the person that contacted us (a response)
 		getParcel().getMailbox().getHandshakeHistory().enqueueSend(response); // Send the response

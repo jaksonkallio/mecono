@@ -15,12 +15,12 @@ import org.json.JSONObject;
  *
  * @author jak
  */
-public class FindParcel extends Payload {
+public class FindPayload extends Payload {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof FindParcel) {
-			FindParcel other = (FindParcel) o;
+		if (o instanceof FindPayload) {
+			FindPayload other = (FindPayload) o;
 			return other.getTarget().equals(this.getTarget()) && super.equals(other);
 		}
 
@@ -49,7 +49,7 @@ public class FindParcel extends Payload {
 			throw new MissingParcelDetailsException("Unknown find target");
 		}
 
-		FindResponseParcel response = new FindResponseParcel(getParcel().getMailbox());
+		FindResponsePayload response = new FindResponsePayload(getParcel().getMailbox());
 		RemoteNode target = getTarget();
 		response.setRespondedID(getParcel().getUniqueID());
 		ArrayList<Path> available_paths = Path.convertToRawPaths(target.getPathsTo());

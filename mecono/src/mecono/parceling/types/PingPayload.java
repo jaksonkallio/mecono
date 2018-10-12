@@ -12,7 +12,7 @@ import mecono.protocol.BadProtocolException;
  *
  * @author jak
  */
-public class PingParcel extends Payload {
+public class PingPayload extends Payload {
 
 	@Override
 	public ParcelType getParcelType() {
@@ -29,7 +29,7 @@ public class PingParcel extends Payload {
 		super.onReceiveAction();
 
 		Parcel parcel = new Parcel(getParcel().getMailbox());
-		PingResponseParcel response_payload = new PingResponseParcel();
+		PingResponsePayload response_payload = new PingResponsePayload();
 		parcel.setPayload(response_payload);
 		response_payload.setRespondedID(getParcel().getUniqueID());
 		parcel.setDestination((RemoteNode) getParcel().getOriginator()); // Set the destination to the person that contacted us (a response)

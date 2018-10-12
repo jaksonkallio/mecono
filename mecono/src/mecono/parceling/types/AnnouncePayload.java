@@ -18,9 +18,9 @@ import mecono.protocol.BadProtocolException;
  *
  * @author sabreok
  */
-public class AnnounceParcel extends Payload {
+public class AnnouncePayload extends Payload {
 
-	public AnnounceParcel() throws BadProtocolException, MissingParcelDetailsException {
+	public AnnouncePayload() throws BadProtocolException, MissingParcelDetailsException {
 		setAnnounceChainFromHistory();
 	}
 
