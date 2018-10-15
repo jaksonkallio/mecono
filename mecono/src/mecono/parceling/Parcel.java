@@ -63,7 +63,20 @@ public class Parcel implements MeconoSerializable {
 		return null;
 	}
 
-	public JSONObject serialize() {
+	@Override
+	public JSONObject serialize(){
+		JSONObject parcel_json = new JSONObject();
+		
+		try {
+			parcel_json.put("path", getPath().serialize());
+			parcel_json.put("payload", getPayload().serialize());
+			parcel_json.put("signature", getSignature());
+			
+			return parcel_json;
+		}catch(MissingParcelDetailsException ex){
+			getMailbox().getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Could not serialize parcel", ex.getMessage());
+		}
+		
 		return null;
 	}
 
