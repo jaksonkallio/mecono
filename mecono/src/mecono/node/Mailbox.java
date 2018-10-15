@@ -155,6 +155,11 @@ public class Mailbox {
 			}
 		}
 	}
+	
+	public final long getParcelNonce(){
+		parcel_nonce_counter++;
+		return parcel_nonce_counter;
+	}
 
 	private final SelfNode owner; // The selfnode that runs the mailbox
 	private final MailboxWorker worker;
@@ -165,4 +170,5 @@ public class Mailbox {
 	private final Queue<ForeignParcel> forward_queue = new LinkedBlockingQueue<>(); // The forward queue is made up of foreign parcels ready to be sent.
 	private final Queue<JSONObject> inbound_queue = new LinkedBlockingQueue<>(); // The inbound queue is made up of received JSON objects that need to be processed
 	private final ParcelHistoryArchive parcel_history_archive = new ParcelHistoryArchive();
+	private long parcel_nonce_counter = 0;
 }

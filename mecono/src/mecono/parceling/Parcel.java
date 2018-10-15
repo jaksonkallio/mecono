@@ -2,6 +2,7 @@ package mecono.parceling;
 
 import java.util.ArrayList;
 import java.util.List;
+import mecono.node.CryptoManager;
 import mecono.protocol.BadProtocolException;
 import mecono.node.Mailbox;
 import mecono.node.Node;
@@ -18,6 +19,7 @@ public class Parcel implements MeconoSerializable {
 
 	public Parcel(Mailbox mailbox) {
 		this.mailbox = mailbox;
+		this.nonce = getMailbox().getParcelNonce();
 	}
 
 	// Gets the originator of a parcel
@@ -69,6 +71,7 @@ public class Parcel implements MeconoSerializable {
 		
 		try {
 			parcel_json.put("path", getPath().serialize());
+			parcel_json.put("nonce", getNonce());
 			parcel_json.put("payload", getPayload().serialize());
 			parcel_json.put("signature", getSignature());
 			
@@ -201,7 +204,7 @@ public class Parcel implements MeconoSerializable {
 		return str;
 	}
 
-	public Mailbox getMailbox() {
+	public final Mailbox getMailbox() {
 		return mailbox;
 	}
 
@@ -485,8 +488,23 @@ public class Parcel implements MeconoSerializable {
 	public void setUniqueID(String unique_id) {
 		this.unique_id = unique_id;
 	}
-
-	public String getSignature() {
+	
+	public long getNonce(){
+		return nonce;
+	}
+	
+	public String getSignature() throws MissingParcelDetailsException {
+		if(getTransferDirection() == TransferDirection.OUTBOUND){
+			CryptoManager cm = getMailbox().getOwner().getCryptoManager();
+			StringBuilder message = new StringBuilder();
+			message.append(getNonce());
+			message.append(",");
+			message.append(path.serialize());
+			message.append(",");
+			message.append(getPayload().getEncryptedPayload());
+			signature = cm.sign(message.toString());
+		}
+		
 		return signature;
 	}
 
@@ -619,4 +637,5 @@ public class Parcel implements MeconoSerializable {
 	private ResponseParcel response;
 	private final Mailbox mailbox;
 	private Path path;
+	private final long nonce;
 }

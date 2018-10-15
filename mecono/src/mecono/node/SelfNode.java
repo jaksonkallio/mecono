@@ -16,6 +16,7 @@ public class SelfNode implements Node {
 		this.label = label;
 		this.address = address;
 		this.memory_controller = new MemoryController(this);
+		this.crypto_manager = new CryptoManager();
 		mailbox = new Mailbox(this);
 		nodeLog(0, "SelfNode \"" + getAddressLabel() + "\" started.");
 	}
@@ -62,7 +63,7 @@ public class SelfNode implements Node {
 			return label;
 		}
 	}
-
+	
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof Node) {
@@ -318,6 +319,10 @@ public class SelfNode implements Node {
 	public int getNeighborCount() {
 		return neighbors.size();
 	}
+	
+	public CryptoManager getCryptoManager(){
+		return crypto_manager;
+	}
 
 	/**
 	 * Add a neighbor.
@@ -374,6 +379,7 @@ public class SelfNode implements Node {
 	private final ArrayList<Neighbor> neighbors = new ArrayList<>(); // Neighbors are directly connected nodes
 	private final ArrayList<RemoteNode> trusted_nodes = new ArrayList<>(); // Trusted nodes are friends of self
 	private final ArrayList<RemoteNode> pinned_nodes = new ArrayList<>(); // Pinned nodes are nodes that should always have an available connection.
+	private final CryptoManager crypto_manager; // Crypto Manager handles cryptography
 
 	// Node preferences
 	public static final int MIN_LOG_LEVEL = 1;

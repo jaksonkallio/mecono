@@ -26,7 +26,6 @@ public abstract class Payload {
 		serialized.put("parcel_type", Parcel.getParcelTypeCode(parcel.getParcelType()));
 		serialized.put("unique_id", parcel.getUniqueID());
 		serialized.put("content", serializeContent());
-		serialized.put("signature", parcel.getSignature());
 
 		return serialized;
 	}
@@ -39,6 +38,10 @@ public abstract class Payload {
 		if (parcel.getTransferDirection() != Parcel.TransferDirection.INBOUND) {
 			throw new BadProtocolException("The parcel isn't inbound");
 		}
+	}
+	
+	public String getEncryptedPayload(){
+		return "ENCRYPTEDPAYLOAD";
 	}
 	
 	public Parcel getParcel(){
