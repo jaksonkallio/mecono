@@ -1,6 +1,7 @@
 package mecono.parceling;
 
 import java.util.ArrayList;
+import java.util.List;
 import mecono.protocol.BadProtocolException;
 import mecono.node.Mailbox;
 import mecono.node.Node;
@@ -52,7 +53,13 @@ public class Parcel implements MeconoSerializable {
 		return path;
 	}
 
-	public RemoteNode getNextNode() throws MissingParcelDetailsException {
+	public Node getNextNode() throws MissingParcelDetailsException {
+		for(int i = 0; i < (getPath().getPathLength() - 1); i++){
+			if(getPath().getStop(i).equals(getMailbox().getOwner())){
+				return getPath().getStop(i + 1);
+			}
+		}
+		
 		return null;
 	}
 
