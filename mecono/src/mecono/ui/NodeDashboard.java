@@ -158,7 +158,7 @@ public class NodeDashboard extends Stage {
 		Parcel parcel = new Parcel(mailbox);
 
 		// Cases where additional payload data is needed
-		if (parcel_type == PayloadType.DATA) {
+		/*if (parcel_type == PayloadType.DATA) {
 			parcel = new DataPayload(mailbox);
 			((DataPayload) parcel).setMessage(message);
 		} else if (parcel_type == PayloadType.FIND) {
@@ -167,7 +167,7 @@ public class NodeDashboard extends Stage {
 			((FindPayload) parcel).setTarget(target);
 		} else if (parcel_type == PayloadType.PING) {
 			parcel = new PingPayload(mailbox);
-		}
+		}*/
 
 		parcel.setDestination(destination);
 		mailbox.getHandshakeHistory().enqueueSend(parcel);
