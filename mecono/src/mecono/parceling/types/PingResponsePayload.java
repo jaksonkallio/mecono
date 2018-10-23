@@ -1,10 +1,8 @@
 package mecono.parceling.types;
 
-import mecono.node.Mailbox;
 import mecono.node.PathStats;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.PayloadType;
-import mecono.parceling.ResponseParcel;
 import mecono.parceling.Handshake;
 import mecono.parceling.Parcel;
 import mecono.parceling.ResponsePayload;
