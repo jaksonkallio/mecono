@@ -7,7 +7,7 @@ import mecono.node.RemoteNode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import mecono.node.HandshakeHistory;
-import mecono.node.ParcelHistoryArchive;
+import mecono.node.ParcelHistoryStats;
 import mecono.parceling.PayloadType;
 
 /**

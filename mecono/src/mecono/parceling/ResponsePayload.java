@@ -1,6 +1,6 @@
 package mecono.parceling;
 
-import mecono.node.ParcelHistoryArchive;
+import mecono.node.ParcelHistoryStats;
 import mecono.node.PathStats;
 import mecono.node.SelfNode;
 import mecono.protocol.BadProtocolException;

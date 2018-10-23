@@ -1,16 +1,12 @@
 package mecono.node;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import mecono.parceling.Parcel;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.Handshake;
 import mecono.parceling.PayloadType;
-import mecono.parceling.Payload;
-import mecono.parceling.ResponseParcel;
 import mecono.parceling.types.FindPayload;
 import mecono.parceling.types.PingPayload;
 import mecono.protocol.BadProtocolException;

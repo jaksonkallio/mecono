@@ -92,7 +92,7 @@ public class Mailbox {
 		return pinned_nodes.size();
 	}
 
-	public ParcelHistoryArchive getParcelHistoryArchive() {
+	public ParcelHistoryStats getParcelHistoryArchive() {
 		return parcel_history_archive;
 	}
 
@@ -112,7 +112,7 @@ public class Mailbox {
 		for (Handshake existing_action : sent_parcels) {
 			Parcel original_parcel = existing_action.getTriggerParcel();
 
-			if (original_parcel.equals(parcel) && !original_parcel.hasResponse() && Protocol.elapsedMillis(original_parcel.getTimeSent()) < original_parcel.getResendCooldown()) {
+			if (original_parcel.equals(parcel) && !existing_action.hasResponse() && Protocol.elapsedMillis(original_parcel.getTimeSent()) < original_parcel.getResendCooldown()) {
 				return true;
 			}
 		}
@@ -167,6 +167,6 @@ public class Mailbox {
 	private final ArrayList<RemoteNode> pinned_nodes = new ArrayList<>();
 	private final Queue<ForeignParcel> forward_queue = new LinkedBlockingQueue<>(); // The forward queue is made up of foreign parcels ready to be sent.
 	private final Queue<JSONObject> inbound_queue = new LinkedBlockingQueue<>(); // The inbound queue is made up of received JSON objects that need to be processed
-	private final ParcelHistoryArchive parcel_history_archive = new ParcelHistoryArchive();
+	private final ParcelHistoryStats parcel_history_archive = new ParcelHistoryStats();
 	private long parcel_nonce_counter = 0;
 }
