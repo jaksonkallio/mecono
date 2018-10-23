@@ -4,7 +4,7 @@ import java.util.Random;
 import mecono.node.NodeAddress;
 import mecono.node.RemoteNode;
 import mecono.node.SimSelfNode;
-import mecono.parceling.Parcel.TransferDirection;
+import mecono.parceling.Parcel;
 import mecono.parceling.PayloadType;
 import mecono.parceling.types.DataPayload;
 import mecono.protocol.cse.SimNetwork;
@@ -43,10 +43,13 @@ public class CSEv2 extends SimNetwork {
 			if (origin_index != destination_index) {
 				SimSelfNode origin = node_set.get(origin_index);
 				RemoteNode destination = origin.getMemoryController().loadRemoteNode(node_set.get(destination_index).getAddress());
-				DataPayload data = new DataPayload(origin.getMailbox());
-				data.setDestination(destination);
+				Parcel parcel = new Parcel(origin.getMailbox());
+				DataPayload data = new DataPayload();
+				parcel.setPayload(data);
+				
+				parcel.setDestination(destination);
 				data.setMessage("sample_parcel_" + parcel_counter);
-				origin.getMailbox().getHandshakeHistory().enqueueSend(data);
+				origin.getMailbox().getHandshakeHistory().enqueueSend(parcel);
 				parcel_counter++;
 			}
 		}
