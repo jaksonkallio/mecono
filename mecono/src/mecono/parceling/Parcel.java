@@ -305,14 +305,6 @@ public class Parcel implements MeconoSerializable {
 		return 600 * 1000l;
 	}
 
-	public void setResponse(ResponseParcel response) {
-		this.response = response;
-	}
-
-	public boolean hasResponse() {
-		return response != null;
-	}
-
 	public static Path unserializeActualPath(JSONArray actual_path_json, SelfNode relative_self) throws BadProtocolException {
 		ArrayList<Node> stops = new ArrayList<>();
 		for (int i = 0; i < actual_path_json.length(); i++) {
@@ -402,13 +394,13 @@ public class Parcel implements MeconoSerializable {
 			throw new MissingParcelDetailsException("Missing unique ID");
 		}
 
-		if (parcel instanceof ResponseParcel) {
+		/*if (parcel instanceof ResponseParcel) {
 			if (payload_json.has("responding_to") && Parcel.validUniqueID(payload_json.getString("responding_to"))) {
 				((ResponseParcel) parcel).setRespondedID(payload_json.getString("responding_to"));
 			} else {
 				throw new MissingParcelDetailsException("Response parcel missing valid responding-to field");
 			}
-		}
+		}*/
 
 		parcel.setActualPath(Parcel.unserializeActualPath(payload_json.getJSONArray("actual_path"), relative_self));
 
@@ -463,12 +455,6 @@ public class Parcel implements MeconoSerializable {
 
 	public Handshake getUponResponseAction() {
 		return new Handshake(this);
-	}
-
-	public void setParcelType(PayloadType parcel_type) {
-		if (!isInOutbox()) {
-			this.parcel_type = parcel_type;
-		}
 	}
 
 	public static PayloadType unserializePalletType(String representation) throws BadProtocolException {
@@ -663,8 +649,6 @@ public class Parcel implements MeconoSerializable {
 	private Payload payload;
 	private Path used_path;
 	private PathStats outbound_actual_path;
-	private PayloadType parcel_type = PayloadType.UNKNOWN;
-	private ResponseParcel response;
 	private final Mailbox mailbox;
 	private Path path;
 	private final long nonce;
