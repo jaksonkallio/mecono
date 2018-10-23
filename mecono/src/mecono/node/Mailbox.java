@@ -39,15 +39,13 @@ public class Mailbox {
 		getOwner().nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.COMMON, "Processing received destination parcel", parcel.toString());
 
 		try {
-			// Learn path
-			getOwner().learnPath(parcel.getPath(), null);
-
-			// Do any required action
-			parcel.getPayload().onReceiveAction();
+			// Do the required action as defined by the Parcel
+			// Parcel will call onReceiveAction for the Payload, and the specific action is different based on the Payload type
+			// onReceiveMetaAction hands off responsibility to the Parcel (transmission meta-data), then onReceiveAction is customized for the type of Payload (actual content)
+			// The two are separated because the Mailbox shouldn't be responsible for the contents/meta of a Parcel
+			parcel.onReceiveMetaAction();
 		} catch (MissingParcelDetailsException | BadProtocolException ex) {
-			getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Could not handle received parcel", ex.getMessage());
-		} catch (BadPathException ex) {
-			getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Cannot learn path from received parcel", ex.getMessage());
+			getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Could not process received parcel", ex.getMessage());
 		}
 	}
 

@@ -200,6 +200,14 @@ public class RemoteNode implements Node {
 	public String getPinnedString() {
 		return UtilGUI.getBooleanString(indexer.isPinned(this));
 	}
+	
+	public void markAssist(){
+		assists++;
+	}
+	
+	public int getAssists(){
+		return assists;
+	}
 
 	public final static long ONLINE_THRESHOLD = 30000;
 
@@ -211,4 +219,5 @@ public class RemoteNode implements Node {
 	private int last_ping_time; // Time of the last ping, in minutes.
 	private final ArrayList<PathStats> paths_to = new ArrayList<>();
 	private final SelfNode indexer;
+	private int assists;
 }

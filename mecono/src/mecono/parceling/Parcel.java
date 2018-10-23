@@ -153,6 +153,36 @@ public class Parcel implements MeconoSerializable {
 	public final long getTimeCreated() {
 		return time_created;
 	}
+	
+	public void onReceiveMetaAction() throws BadProtocolException, MissingParcelDetailsException {
+		if (getTransferDirection() != Parcel.TransferDirection.INBOUND) {
+			throw new BadProtocolException("The parcel isn't inbound");
+		}
+		
+		try {
+			// Learn the path
+			getMailbox().getOwner().learnPath(getPath(), (RemoteNode) getOriginator());
+		} catch (BadPathException ex) {
+			getMailbox().getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Cannot learn path from received parcel", ex.getMessage());
+		}
+		
+		// Mark path as successfully assisting this parcel
+		statPathSuccess();
+		
+		getPayload().onReceiveAction();
+	}
+	
+	private void statPathSuccess() throws MissingParcelDetailsException{
+		// Update path statistics
+		
+		
+		// Give each stop an "assist"
+		for(Node stop : getPath().getStops()){
+			if(stop instanceof RemoteNode){
+				((RemoteNode) stop).markAssist();
+			}
+		}
+	}
 
 	@Override
 	public boolean equals(Object o) {
