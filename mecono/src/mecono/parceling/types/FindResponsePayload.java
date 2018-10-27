@@ -69,7 +69,7 @@ public class FindResponsePayload extends ResponsePayload {
 	}
 
 	@Override
-	public PayloadType getParcelType() {
+	public PayloadType getPayloadType() {
 		return PayloadType.FIND_RESPONSE;
 	}
 

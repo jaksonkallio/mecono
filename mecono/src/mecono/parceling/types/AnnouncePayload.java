@@ -12,6 +12,7 @@ import mecono.parceling.BadPathException;
 import mecono.parceling.Parcel;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.Payload;
+import mecono.parceling.PayloadType;
 import mecono.protocol.BadProtocolException;
 
 /**
@@ -40,6 +41,10 @@ public class AnnouncePayload extends Payload {
 			//TODO: getMailbox().getOwner().nodeLog();
 		}
 
+	}
+	
+	public PayloadType getPayloadType(){
+		return PayloadType.ANNC;
 	}
 
 	private void setAnnounceChainFromHistory() throws BadProtocolException, MissingParcelDetailsException {

@@ -18,7 +18,7 @@ import org.json.JSONObject;
 public class DataPayload extends Payload {
 	
 	@Override
-	public PayloadType getParcelType() {
+	public PayloadType getPayloadType(){
 		return PayloadType.DATA;
 	}
 

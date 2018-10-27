@@ -20,6 +20,8 @@ public class Parcel implements MeconoSerializable {
 	public Parcel(Mailbox mailbox) {
 		this.mailbox = mailbox;
 		this.nonce = getMailbox().getParcelNonce();
+		generateUniqueID();
+		setOriginator(mailbox.getOwner());
 	}
 
 	// Gets the originator of a parcel
@@ -31,7 +33,7 @@ public class Parcel implements MeconoSerializable {
 		throw new MissingParcelDetailsException("Originator not set");
 	}
 	
-	public void setOriginator(Node originator) throws MissingParcelDetailsException {
+	public final void setOriginator(Node originator) {
 		this.originator = originator;
 	}
 
@@ -189,7 +191,9 @@ public class Parcel implements MeconoSerializable {
 		if (o instanceof Parcel) {
 			Parcel other = (Parcel) o;
 			try {
-				if (this.getDestination().equals(other.getDestination()) && this.getParcelType() == other.getParcelType() && this.getUniqueID().equals(other.getUniqueID())) {
+				if (this.getDestination().equals(other.getDestination())
+						&& this.getPayloadType() == other.getPayloadType()
+						&& this.getUniqueID().equals(other.getUniqueID())) {
 					return true;
 				}
 			}catch(MissingParcelDetailsException ex){
@@ -204,7 +208,7 @@ public class Parcel implements MeconoSerializable {
 	public String toString() {
 		String str = "";
 
-		str = getParcelType() + " Parcel ";
+		str = getPayloadType() + " Parcel ";
 
 		try {
 			str += "[ID: " + getUniqueID() + "]";
@@ -444,13 +448,15 @@ public class Parcel implements MeconoSerializable {
 	public boolean originatorIsSelf() throws MissingParcelDetailsException {
 		return getOriginator() != null && getOriginator().equals(mailbox.getOwner());
 	}
-
-	public PayloadType getParcelType() {
-		return PayloadType.UNKNOWN;
+	
+	public PayloadType getPayloadType() {
+		// TODO: This is a violation of abstraction
+		// Calling code should be consulting the payload, not the parcel
+		return getPayload().getPayloadType();
 	}
 
 	public String getParcelTypeString() {
-		return getParcelType().name();
+		return getPayloadType().name();
 	}
 
 	public Handshake getUponResponseAction() {
@@ -607,7 +613,7 @@ public class Parcel implements MeconoSerializable {
 		}
 
 		plaintext_payload.put("actual_path", actual_path);
-		plaintext_payload.put("parcel_type", getParcelType());
+		plaintext_payload.put("parcel_type", getPayloadType());
 		plaintext_payload.put("unique_id", getUniqueID());
 		plaintext_payload.put("content", getSerializedContent());
 		plaintext_payload.put("signature", "parcel signature here");

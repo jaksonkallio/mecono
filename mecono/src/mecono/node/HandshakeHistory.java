@@ -37,10 +37,8 @@ public class HandshakeHistory {
 	}
 
 	public void enqueueSend(Parcel parcel) {
-		if (parcel.validSend()) {
-			Handshake handshake = new Handshake(parcel);
-			enqueueSend(handshake);
-		}
+		Handshake handshake = new Handshake(parcel);
+		enqueueSend(handshake);
 	}
 
 	public int count(boolean has_response, PayloadType parcel_type) {
@@ -54,9 +52,9 @@ public class HandshakeHistory {
 		if (pending_list) {
 			status = pending;
 		}
-
+		
 		for (Handshake handshake : status) {
-			if (handshake.hasResponse() == has_response && (parcel_type == null || handshake.getTriggerParcel().getParcelType() == parcel_type)) {
+			if (handshake.hasResponse() == has_response && (parcel_type == null || handshake.getTriggerParcel().getPayload().getPayloadType() == parcel_type)) {
 				count++;
 			}
 		}
@@ -186,7 +184,7 @@ public class HandshakeHistory {
 				return true;
 			}
 		}
-
+		
 		return false;
 	}
 

@@ -15,7 +15,7 @@ import mecono.protocol.BadProtocolException;
 public class PingPayload extends Payload {
 
 	@Override
-	public PayloadType getParcelType() {
+	public PayloadType getPayloadType() {
 		return PayloadType.PING;
 	}
 

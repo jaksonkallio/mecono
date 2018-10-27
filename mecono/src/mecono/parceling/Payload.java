@@ -18,14 +18,14 @@ public abstract class Payload {
 		this.parcel = parcel;
 	}
 	
-	public PayloadType getParcelType(){
+	public PayloadType getPayloadType(){
 		return PayloadType.UNKNOWN;
 	}
 	
 	public JSONObject serialize() {
 		JSONObject serialized = new JSONObject();
 
-		serialized.put("parcel_type", Parcel.getParcelTypeCode(parcel.getParcelType()));
+		serialized.put("parcel_type", Parcel.getParcelTypeCode(parcel.getPayloadType()));
 		serialized.put("unique_id", parcel.getUniqueID());
 		serialized.put("content", serializeContent());
 

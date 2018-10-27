@@ -11,7 +11,7 @@ public class ParcelHistoryStats {
 
 	public void addParcelHistoryItem(Handshake handshake) throws MissingParcelDetailsException {
 		ParcelHistoryEntry entry = new ParcelHistoryEntry();
-		entry.type = handshake.getTriggerParcel().getParcelType();
+		entry.type = handshake.getTriggerParcel().getPayloadType();
 		entry.turnaround = handshake.getPing();
 		entry.time = handshake.getTriggerParcel().getTimeCreated();
 		entry.has_response = handshake.hasResponse();

@@ -11,7 +11,7 @@ import mecono.parceling.ResponsePayload;
 public class DataResponsePayload extends ResponsePayload {
 	
 	@Override
-	public PayloadType getParcelType() {
+	public PayloadType getPayloadType() {
 		return PayloadType.DATA_RESPONSE;
 	}
 }

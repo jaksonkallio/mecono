@@ -28,7 +28,7 @@ public class Handshake {
 	}
 
 	public void giveResponse(Parcel response_parcel) {
-		if (getResponseType() == response_parcel.getParcelType() && original_parcel.getUniqueID().equals(((ResponsePayload) response_parcel.getPayload()).getRespondedID())) {
+		if (getResponseType() == response_parcel.getPayloadType() && original_parcel.getUniqueID().equals(((ResponsePayload) response_parcel.getPayload()).getRespondedID())) {
 			this.response_parcel = response_parcel;
 			responded = true;
 			response_parcel.setTimeReceived();
@@ -73,7 +73,7 @@ public class Handshake {
 
 	public PayloadType getResponseType() {
 		if (responded) {
-			return response_parcel.getParcelType();
+			return response_parcel.getPayloadType();
 		} else {
 			return determineResponseType();
 		}
@@ -104,7 +104,7 @@ public class Handshake {
 	}
 
 	private PayloadType determineResponseType() {
-		switch (original_parcel.getParcelType()) {
+		switch (original_parcel.getPayloadType()) {
 			case PING:
 				return PayloadType.PING_RESPONSE;
 			case FIND:

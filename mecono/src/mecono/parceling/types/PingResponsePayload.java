@@ -30,7 +30,7 @@ public class PingResponsePayload extends ResponsePayload {
 	}
 
 	@Override
-	public PayloadType getParcelType() {
+	public PayloadType getPayloadType() {
 		return PayloadType.PING_RESPONSE;
 	}
 

@@ -75,7 +75,7 @@ public class FindPayload extends Payload {
 	}
 
 	@Override
-	public PayloadType getParcelType() {
+	public PayloadType getPayloadType() {
 		return PayloadType.FIND;
 	}
 
