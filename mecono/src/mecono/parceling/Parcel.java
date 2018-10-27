@@ -36,6 +36,17 @@ public class Parcel implements MeconoSerializable {
 	public final void setOriginator(Node originator) {
 		this.originator = originator;
 	}
+	
+	// "Duplicate" means originator, destination, and payload is the same
+	public boolean isDuplicate(Parcel parcel) throws MissingParcelDetailsException {
+		if(getOriginator().equals(parcel.getOriginator())
+				&& getDestination().equals(parcel.getDestination())
+				&& getPayload().equals(parcel.getPayload())){
+			return true;
+		}
+		
+		return false;
+	}
 
 	public void setPath(Path path) {
 		this.path = path;

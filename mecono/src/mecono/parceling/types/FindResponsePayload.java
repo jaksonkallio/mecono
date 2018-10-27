@@ -28,6 +28,16 @@ public class FindResponsePayload extends ResponsePayload {
 		setTargetAnswers(unserializeContent(serialized_target_answers));
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof FindResponsePayload) {
+			FindResponsePayload other = (FindResponsePayload) o;
+			return this.getTargetAnswers().equals(other.getTargetAnswers()) && super.equals(o);
+		}
+
+		return false;
+	}
+	
 	public ArrayList<Path> getTargetAnswers() {
 		return target_answers;
 	}

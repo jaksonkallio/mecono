@@ -26,11 +26,7 @@ public class DataPayload extends Payload {
 	public boolean equals(Object o) {
 		if (o instanceof DataPayload) {
 			DataPayload other = (DataPayload) o;
-			try {
-				return (other.getMessage().equals(this.getMessage()) && other.getParcel().getDestination().equals(this.getParcel().getDestination()) && other.getParcel().getOriginator().equals(this.getParcel().getOriginator()));
-			} catch (MissingParcelDetailsException ex) {
-				return false;
-			}
+			return this.getMessage().equals(other.getMessage());
 		}
 
 		return false;

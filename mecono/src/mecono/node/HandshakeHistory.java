@@ -180,8 +180,12 @@ public class HandshakeHistory {
 
 	private boolean alreadyPending(Parcel parcel) {
 		for (Handshake handshake : pending) {
-			if (handshake.getTriggerParcel().equals(parcel)) {
-				return true;
+			try {
+				if (handshake.getTriggerParcel().isDuplicate(parcel)) {
+					return true;
+				}
+			}catch(MissingParcelDetailsException ex){
+				
 			}
 		}
 		

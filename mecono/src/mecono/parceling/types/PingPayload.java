@@ -18,6 +18,16 @@ public class PingPayload extends Payload {
 	public PayloadType getPayloadType() {
 		return PayloadType.PING;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof PingPayload) {
+			// All PingPayloads are identical
+			return true;
+		}
+
+		return false;
+	}
 
 	@Override
 	public boolean requiresOnlinePath() {

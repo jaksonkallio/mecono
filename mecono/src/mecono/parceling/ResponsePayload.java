@@ -17,6 +17,16 @@ public class ResponsePayload extends Payload {
 		}
 	}
 	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof ResponsePayload) {
+			ResponsePayload other = (ResponsePayload) o;
+			return this.getRespondedID().equals(other.getRespondedID());
+		}
+
+		return false;
+	}
+	
 	public String getRespondedID() {
 		return respond_to_id;
 	}

@@ -28,6 +28,16 @@ public class PingResponsePayload extends ResponsePayload {
 			used_path.setPing(ping);
 		}
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof PingResponsePayload) {
+			// All DataResponsePayloads are identical
+			return super.equals(o);
+		}
+
+		return false;
+	}
 
 	@Override
 	public PayloadType getPayloadType() {

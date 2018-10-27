@@ -20,7 +20,7 @@ public class FindPayload extends Payload {
 	public boolean equals(Object o) {
 		if (o instanceof FindPayload) {
 			FindPayload other = (FindPayload) o;
-			return other.getTarget().equals(this.getTarget()) && super.equals(other);
+			return other.getTarget().equals(this.getTarget());
 		}
 
 		return false;
