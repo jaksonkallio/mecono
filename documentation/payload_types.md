@@ -1,4 +1,4 @@
-# Parcel Types
+# Payload Types
 * Ping
 	* Require Tested Path: **No**
 	* Resolve Unknown Path: **Yes**
