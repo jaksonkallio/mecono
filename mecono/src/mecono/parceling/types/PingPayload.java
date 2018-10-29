@@ -30,7 +30,7 @@ public class PingPayload extends Payload {
 	}
 
 	@Override
-	public boolean requiresOnlinePath() {
+	public boolean getRequireOnlinePath() {
 		return false;
 	}
 

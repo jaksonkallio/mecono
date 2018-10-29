@@ -80,12 +80,7 @@ public class FindPayload extends Payload {
 	}
 
 	@Override
-	public boolean consultWhenPathUnknown() {
-		return false;
-	}
-
-	@Override
-	public boolean requiresOnlinePath() {
+	public boolean getResolveUnknownPath(){
 		return false;
 	}
 

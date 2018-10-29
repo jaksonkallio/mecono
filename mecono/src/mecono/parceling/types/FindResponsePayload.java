@@ -106,10 +106,5 @@ public class FindResponsePayload extends ResponsePayload {
 		return unserialized_target_answers;
 	}
 
-	@Override
-	public boolean requiresOnlinePath() {
-		return false;
-	}
-
 	private ArrayList<Path> target_answers = new ArrayList<>();
 }

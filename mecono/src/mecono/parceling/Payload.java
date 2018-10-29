@@ -48,15 +48,11 @@ public abstract class Payload {
 		return parcel;
 	}
 	
-	public boolean consultWhenPathUnknown() {
+	public boolean getRequireOnlinePath() {
 		return true;
 	}
-
-	public boolean requiresOnlinePath() {
-		return getRequireOnlinePath();
-	}
 	
-	public boolean getRequireOnlinePath() {
+	public boolean getResolveUnknownPath(){
 		return true;
 	}
 	

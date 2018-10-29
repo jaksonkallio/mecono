@@ -234,7 +234,7 @@ public class Parcel implements MeconoSerializable {
 				} else {
 					str += path.getPath().toString();
 
-					if (getRequireOnlinePath() && !path.online()) {
+					if (getPayload().getRequireOnlinePath() && !path.online()) {
 						str += "[Path Offline]";
 					}
 				}
@@ -272,10 +272,6 @@ public class Parcel implements MeconoSerializable {
 		time_received = Protocol.getEpochMinute();
 	}
 
-	public boolean consultIfPathNotKnown() {
-		return true;
-	}
-
 	/**
 	 * Checks if this parcel has all the send prerequisites met.
 	 *
@@ -291,7 +287,7 @@ public class Parcel implements MeconoSerializable {
 			throw new BadProtocolException("Cannot send when transfer direction is not outbound");
 		}
 
-		if (getActualPath() == null || getOutboundActualPath() == null || (getRequireOnlinePath() && !getOutboundActualPath().online())) {
+		if (getActualPath() == null || getOutboundActualPath() == null || (getPayload().getRequireOnlinePath() && !getOutboundActualPath().online())) {
 			return false;
 		}
 
@@ -300,7 +296,7 @@ public class Parcel implements MeconoSerializable {
 
 	public boolean pathOnline() {
 		return getOutboundActualPath() != null
-				&& (!getRequireOnlinePath() || getOutboundActualPath().online());
+				&& (!getPayload().getRequireOnlinePath() || getOutboundActualPath().online());
 	}
 
 	public long getTimeReceived() {
@@ -639,14 +635,6 @@ public class Parcel implements MeconoSerializable {
 
 	public long getStaleTime() {
 		return 60000;
-	}
-
-	public boolean getRequireOnlinePath() {
-		return true;
-	}
-
-	public boolean getConsultUnknownPath() {
-		return true;
 	}
 	
 	public enum TransferDirection {

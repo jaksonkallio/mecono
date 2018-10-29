@@ -43,10 +43,21 @@ public class AnnouncePayload extends Payload {
 
 	}
 	
+	@Override
 	public PayloadType getPayloadType(){
 		return PayloadType.ANNC;
 	}
 
+	@Override
+	public boolean getResolveUnknownPath(){
+		return false;
+	}
+	
+	@Override
+	public boolean getRequireOnlinePath() {
+		return false;
+	}
+	
 	private void setAnnounceChainFromHistory() throws BadProtocolException, MissingParcelDetailsException {
 		// Verify that the last stop is us
 		if (!announce_chain.getLastStop().equals(getParcel().getMailbox().getOwner())) {

@@ -45,11 +45,6 @@ public class PingResponsePayload extends ResponsePayload {
 	}
 
 	@Override
-	public boolean requiresOnlinePath() {
-		return false;
-	}
-
-	@Override
 	public boolean getRequireOnlinePath() {
 		return false;
 	}
