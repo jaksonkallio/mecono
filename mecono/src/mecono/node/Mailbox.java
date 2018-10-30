@@ -1,15 +1,13 @@
 package mecono.node;
 
-import mecono.protocol.BadProtocolException;
-import mecono.parceling.ForeignParcel;
-import mecono.parceling.MissingParcelDetailsException;
-import mecono.parceling.Handshake;
-import mecono.parceling.Parcel;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
-import mecono.parceling.BadPathException;
+import mecono.parceling.Handshake;
+import mecono.parceling.MissingParcelDetailsException;
+import mecono.parceling.Parcel;
 import mecono.parceling.types.PingPayload;
+import mecono.protocol.BadProtocolException;
 import mecono.protocol.Protocol;
 import org.json.JSONObject;
 
@@ -67,8 +65,8 @@ public class Mailbox {
 	}
 
 	public void processForwardQueue() {
-		if (forward_queue.size() > 0) {
-			ForeignParcel parcel = forward_queue.poll();
+		if (outbound_queue.size() > 0) {
+			Parcel parcel = outbound_queue.poll();
 			try {
 				network_controller.sendParcel(parcel);
 			} catch (MissingParcelDetailsException | BadProtocolException ex) {
@@ -126,8 +124,8 @@ public class Mailbox {
 		}
 	}
 
-	public void enqueueForward(ForeignParcel foreign) {
-		forward_queue.offer(foreign);
+	public void enqueueOutbound(Parcel parcel) {
+		outbound_queue.offer(parcel);
 	}
 
 	public void pingPinnedNodes() {
@@ -165,7 +163,7 @@ public class Mailbox {
 	private final HandshakeHistory handshake_history = new HandshakeHistory(this);
 	private final NetworkController network_controller;
 	private final ArrayList<RemoteNode> pinned_nodes = new ArrayList<>();
-	private final Queue<ForeignParcel> forward_queue = new LinkedBlockingQueue<>(); // The forward queue is made up of foreign parcels ready to be sent.
+	private final Queue<Parcel> outbound_queue = new LinkedBlockingQueue<>(); // The forward queue is made up of foreign parcels ready to be sent.
 	private final Queue<JSONObject> inbound_queue = new LinkedBlockingQueue<>(); // The inbound queue is made up of received JSON objects that need to be processed
 	private final ParcelHistoryStats parcel_history_archive = new ParcelHistoryStats();
 	private long parcel_nonce_counter = 0;

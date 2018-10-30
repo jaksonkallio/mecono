@@ -3,15 +3,13 @@ package mecono.node;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import mecono.parceling.Parcel;
-import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.Handshake;
+import mecono.parceling.MissingParcelDetailsException;
+import mecono.parceling.Parcel;
 import mecono.parceling.PayloadType;
 import mecono.parceling.types.FindPayload;
 import mecono.parceling.types.PingPayload;
-import mecono.protocol.BadProtocolException;
 import mecono.protocol.Protocol;
-import mecono.protocol.UnknownResponsibilityException;
 
 /**
  * The Sent Parcel History is a complete archive of recently sent, or queued to
@@ -83,26 +81,22 @@ public class HandshakeHistory {
 				try {
 					// Second check consists of readiness based on the actual parcel metadata
 					if (original_parcel.pathKnown()) {
-						if (original_parcel.pathOnline()) {
-							// Send
-							try {
-								mailbox.enqueueForward(original_parcel.constructForeignParcel());
-								original_parcel.setUsedPath();
-								original_parcel.setIsSent();
-								original_parcel.setTimeSent();
-								pending.remove(send_cursor);
-								completed.add(handshake);
-								send_cursor = 0;
-							} catch (UnknownResponsibilityException | MissingParcelDetailsException | BadProtocolException ex) {
-								mailbox.getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Could not send parcel through network controller:", ex.getMessage());
-							}
+						if (original_parcel.pathOnline() || !original_parcel.getPayload().getRequireOnlinePath()) {
+							mailbox.enqueueOutbound(original_parcel);
+							original_parcel.setIsSent();
+							original_parcel.setTimeSent();
+							pending.remove(send_cursor);
+							completed.add(handshake);
+							send_cursor = 0;
 						} else {
 							// Ping the destination
 							pingPath(original_parcel.getActualPath());
 						}
 					} else {
-						// Consult for a path to the destination
-						consultPath(((RemoteNode) original_parcel.getDestination()));
+						if(original_parcel.getPayload().getResolveUnknownPath()){
+							// Consult for a path to the destination
+							consultPath(((RemoteNode) original_parcel.getDestination()));
+						}
 					}
 				} catch (MissingParcelDetailsException ex) {
 

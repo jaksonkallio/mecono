@@ -1,13 +1,9 @@
 package mecono.node;
 
-import mecono.protocol.BadProtocolException;
-import mecono.protocol.UnknownResponsibilityException;
-import mecono.parceling.Parcel;
-import mecono.parceling.ForeignParcel;
-import mecono.parceling.MissingParcelDetailsException;
-import java.util.ArrayList;
 import mecono.Mecono;
-import mecono.protocol.cse.SimNetwork;
+import mecono.parceling.MissingParcelDetailsException;
+import mecono.parceling.Parcel;
+import mecono.protocol.BadProtocolException;
 import org.json.JSONObject;
 
 /**
@@ -34,14 +30,14 @@ public class NetworkController {
 		// }
 	}
 
-	public void sendParcel(ForeignParcel parcel) throws MissingParcelDetailsException, BadProtocolException {
+	public void sendParcel(Parcel parcel) throws MissingParcelDetailsException, BadProtocolException {
 		//mailbox.getOwner().nodeLog(0, "In sendParcel");
 
 		// Serialize the parcel. Serialization includes an encryption process.
 		JSONObject serialized_parcel = parcel.serialize();
 
 		// Simulation of the network controller means that we call the receive method on the next nodes network controller.
-		RemoteNode remote_receiver = parcel.getNextNode();
+		RemoteNode remote_receiver = (RemoteNode) parcel.getNextNode();
 
 		if (remote_receiver != null) {
 			if (Mecono.simulated_network) {

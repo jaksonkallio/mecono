@@ -1,16 +1,15 @@
 package mecono.parceling;
 
 import java.util.ArrayList;
-import java.util.List;
 import mecono.node.CryptoManager;
-import mecono.protocol.BadProtocolException;
 import mecono.node.Mailbox;
 import mecono.node.Node;
 import mecono.node.Path;
 import mecono.node.PathStats;
-import mecono.protocol.Protocol;
 import mecono.node.RemoteNode;
 import mecono.node.SelfNode;
+import mecono.protocol.BadProtocolException;
+import mecono.protocol.Protocol;
 import mecono.protocol.UnknownResponsibilityException;
 import mecono.ui.UtilGUI;
 import org.json.*;
@@ -569,8 +568,13 @@ public class Parcel implements MeconoSerializable {
 	}
 
 	public void setIsSent() {
-		if (!isSent()) {
-			this.is_sent = true;
+		try {
+			if (!isSent()) {
+				this.is_sent = true;
+				this.used_path = getPath();
+			}
+		}catch(MissingParcelDetailsException ex){
+			this.used_path = null;
 		}
 	}
 
