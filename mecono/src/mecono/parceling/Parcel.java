@@ -242,7 +242,7 @@ public class Parcel implements MeconoSerializable {
 			if (getTransferDirection() == TransferDirection.OUTBOUND) {
 				str += "[Destination: " + getDestination().getAddress() + "]";
 
-				Path path = getOutboundActualPath();
+				Path path = getPath();
 
 				if (path == null) {
 					str += "[Unknown Path]";
@@ -286,34 +286,7 @@ public class Parcel implements MeconoSerializable {
 	public void updateReceivedTime() {
 		time_received = Protocol.getEpochMinute();
 	}
-
-	/**
-	 * Checks if this parcel has all the send prerequisites met.
-	 *
-	 * @return
-	 * @throws mecono.parceling.MissingParcelDetailsException
-	 * @throws mecono.protocol.BadProtocolException
-	 * @throws mecono.parceling.BadPathException
-	 */
-	public boolean readyToSend() throws MissingParcelDetailsException, BadProtocolException, BadPathException {
-		getActualPath();
-
-		if (getTransferDirection() != TransferDirection.OUTBOUND) {
-			throw new BadProtocolException("Cannot send when transfer direction is not outbound");
-		}
-
-		if (getActualPath() == null || getOutboundActualPath() == null || (getPayload().getRequireOnlinePath() && !getOutboundActualPath().online())) {
-			return false;
-		}
-
-		return true;
-	}
-
-	public boolean pathOnline() {
-		return getOutboundActualPath() != null
-				&& (!getPayload().getRequireOnlinePath() || getOutboundActualPath().online());
-	}
-
+	
 	public long getTimeReceived() {
 		return time_received;
 	}
@@ -428,8 +401,6 @@ public class Parcel implements MeconoSerializable {
 			}
 		}*/
 
-		parcel.setActualPath(Parcel.unserializeActualPath(payload_json.getJSONArray("actual_path"), relative_self));
-
 		return parcel;
 	}
 
@@ -441,19 +412,14 @@ public class Parcel implements MeconoSerializable {
 		throw new MissingParcelDetailsException("Missing destination");
 	}
 
-	public String getOutboundActualPathString() {
-		Path outbound_path = getOutboundActualPath();
-		if (outbound_path != null) {
-			return outbound_path.getNodeChain().toString();
-		}
-
-		return "unknown";
-	}
-
 	public String getPathOnlineString() {
-		Path outbound_path = getOutboundActualPath();
-		if (outbound_path != null) {
-			return UtilGUI.getBooleanString(outbound_path.online());
+		try {
+			Path outbound_path = getPath();
+			if (outbound_path != null) {
+				return UtilGUI.getBooleanString(outbound_path.online());
+			}
+		}catch(MissingParcelDetailsException ex){
+			
 		}
 
 		return "unknown";
@@ -543,7 +509,7 @@ public class Parcel implements MeconoSerializable {
 			StringBuilder message = new StringBuilder();
 			message.append(getNonce());
 			message.append(",");
-			message.append(path.serialize());
+			message.append(path.getNodeChain().serialize());
 			message.append(",");
 			message.append(getPayload().getEncryptedPayload());
 			signature = cm.sign(message.toString());
@@ -556,25 +522,6 @@ public class Parcel implements MeconoSerializable {
 		JSONObject json_content = new JSONObject();
 		json_content.put("data", "empty");
 		return json_content;
-	}
-
-	public ForeignParcel constructForeignParcel() throws UnknownResponsibilityException, BadProtocolException, MissingParcelDetailsException {
-		// We only want to construct foreign parcels if we are the originator
-		if (originatorIsSelf()) {
-			// Only construct the foreign parcel if the path is completely built.
-			if (pathKnown()) {
-				ForeignParcel outbound_foreign_parcel = new ForeignParcel(mailbox, getActualPath(), encryptAsPayload().toString());
-				// The path history will contain current node + next node
-				NodeChain new_path_history = getActualPath().getSubpath(0);
-				outbound_foreign_parcel.setNextNode((RemoteNode) getActualPath().getStop(1));
-				outbound_foreign_parcel.setPath(new_path_history);
-				return outbound_foreign_parcel;
-			} else {
-				throw new BadProtocolException("Cannot construct a foreign parcel without a path.");
-			}
-		} else {
-			throw new UnknownResponsibilityException("May only construct foreign nodes when the self node is the originator.");
-		}
 	}
 
 	public void setIsSent() {
@@ -590,25 +537,6 @@ public class Parcel implements MeconoSerializable {
 	public boolean pathKnown() throws MissingParcelDetailsException {
 		return (getTransferDirection() == TransferDirection.OUTBOUND && getPath() != null)
 				|| (getTransferDirection() == TransferDirection.INBOUND && getNodeChain() != null);
-	}
-
-	protected JSONObject encryptAsPayload() throws MissingParcelDetailsException {
-		JSONObject plaintext_payload = new JSONObject();
-		JSONArray actual_path = new JSONArray();
-		ArrayList<Node> stops = getActualPath().getStops();
-
-		for (Node stop : stops) {
-			actual_path.put(stop.getAddress());
-		}
-
-		plaintext_payload.put("actual_path", actual_path);
-		plaintext_payload.put("parcel_type", getPayloadType());
-		plaintext_payload.put("unique_id", getUniqueID());
-		plaintext_payload.put("content", getSerializedContent());
-		plaintext_payload.put("signature", "parcel signature here");
-
-		// TODO: Payload encryption operation.
-		return plaintext_payload;
 	}
 
 	public long getResendCooldown() {

@@ -30,7 +30,7 @@ public class HandshakeHistory {
 	public void enqueueSend(Handshake handshake) {
 		if (!alreadyPending(handshake.getTriggerParcel())) {
 			mailbox.getOwner().nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.COMMON, "Enqueued parcel for send", handshake.getTriggerParcel().toString());
-			pending.add(handshake);
+			history.add(handshake);
 		}
 	}
 
@@ -45,10 +45,10 @@ public class HandshakeHistory {
 
 	public int count(boolean has_response, boolean pending_list, PayloadType parcel_type) {
 		int count = 0;
-		List<Handshake> status = completed;
+		List<Handshake> status = history;
 
 		if (pending_list) {
-			status = pending;
+			status = getPendingParcels();
 		}
 		
 		for (Handshake handshake : status) {
@@ -68,52 +68,50 @@ public class HandshakeHistory {
 	}
 
 	public void attemptSend() {
-		if (send_cursor < pending.size()) {
-			Handshake handshake = pending.get(send_cursor);
+		if (send_cursor < history.size()) {
+			Handshake handshake = history.get(send_cursor);
 
 			// First check consists of readiness based on outbound information
-			// Must be unsent, must not be stale, and must be ready to resend
-			if (!handshake.isSent()
-					&& !handshake.isStale()
-					&& handshake.readyResend()) {
+			if (handshake.stale()) {
 				Parcel original_parcel = handshake.getTriggerParcel();
-
-				try {
-					// Second check consists of readiness based on the actual parcel metadata
-					if (original_parcel.pathKnown()) {
-						if (original_parcel.pathOnline() || !original_parcel.getPayload().getRequireOnlinePath()) {
-							mailbox.enqueueOutbound(original_parcel);
-							original_parcel.setIsSent();
-							original_parcel.setTimeSent();
-							pending.remove(send_cursor);
-							completed.add(handshake);
-							send_cursor = 0;
+				
+				if(handshake.getRetryCount() < original_parcel.getPayload().getMaxRetryCount() || original_parcel.getPayload().getRetryIndefinitely()){
+					try {
+						if (original_parcel.pathKnown()) {
+							if (original_parcel.getPath().online() || !original_parcel.getPayload().getRequireOnlinePath()) {
+								mailbox.enqueueOutbound(original_parcel);
+								handshake.sent();
+								send_cursor = 0;
+							} else {
+								// Ping the destination
+								pingPath(original_parcel.getPath());
+							}
 						} else {
-							// Ping the destination
-							pingPath(original_parcel.getActualPath());
+							if(original_parcel.getPayload().getResolveUnknownPath()){
+								// Consult for a path to the destination
+								consultPath(((RemoteNode) original_parcel.getDestination()));
+							}
 						}
-					} else {
-						if(original_parcel.getPayload().getResolveUnknownPath()){
-							// Consult for a path to the destination
-							consultPath(((RemoteNode) original_parcel.getDestination()));
-						}
-					}
-				} catch (MissingParcelDetailsException ex) {
+					} catch (MissingParcelDetailsException ex) {
 
+					}
+				}else{
+					history.remove(send_cursor);
+					getMailbox().getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Parcel "+original_parcel.getUniqueID()+" failed to send after several retries.");
 				}
 			}
 		}
 
 		// Increment the cursor
-		if (pending.size() > 0) {
-			send_cursor = (send_cursor + 1) % pending.size();
+		if (history.size() > 0) {
+			send_cursor = (send_cursor + 1) % history.size();
 		}
 	}
 	
 	// Find a handshake using a response parcel
 	public Handshake lookup(Parcel response) {
-		for (Handshake handshake : completed) {
-			if (handshake.getTriggerParcel().getUniqueID().equals(response.getUniqueID())) {
+		for (Handshake handshake : history) {
+			if (handshake.isSent() && handshake.getTriggerParcel().getUniqueID().equals(response.getUniqueID())) {
 				return handshake;
 			}
 		}
@@ -121,18 +119,32 @@ public class HandshakeHistory {
 		return null;
 	}
 
+	public Mailbox getMailbox(){
+		return mailbox;
+	}
+	
 	public List getPendingParcels() {
+		List<Handshake> pending = new ArrayList<>();
+		
+		for (Handshake handshake : history) {
+			if(!handshake.isSent()){
+				pending.add(handshake);
+			}
+		}
+		
 		return pending;
 	}
 
 	public String listPending() {
 		String construct = "No parcels in outbox.";
 
-		if (pending.size() > 0) {
+		if (history.size() > 0) {
 			construct = "";
 
-			for (Handshake handshake : pending) {
-				construct += "\n-- " + handshake.getTriggerParcel().toString();
+			for (Handshake handshake : history) {
+				if(!handshake.isSent()){
+					construct += "\n-- " + handshake.getTriggerParcel().toString();
+				}
 			}
 		}
 
@@ -140,14 +152,14 @@ public class HandshakeHistory {
 	}
 
 	public int getPendingCount() {
-		return pending.size();
+		return getPendingParcels().size();
 	}
 
-	private void pingPath(NodeChain path) {
+	private void pingPath(Path path) {
 		Parcel ping = new Parcel(mailbox);
 		PingPayload ping_payload = new PingPayload();
 		ping.setPayload(ping_payload);
-		ping.setDestination((RemoteNode) path.getLastStop());
+		ping.setDestination((RemoteNode) path.getNodeChain().getLastStop());
 		enqueueSend(ping);
 	}
 
@@ -173,9 +185,9 @@ public class HandshakeHistory {
 	}
 
 	private boolean alreadyPending(Parcel parcel) {
-		for (Handshake handshake : pending) {
+		for (Handshake handshake : history) {
 			try {
-				if (handshake.getTriggerParcel().isDuplicate(parcel)) {
+				if (!handshake.isSent() && handshake.getTriggerParcel().isDuplicate(parcel)) {
 					return true;
 				}
 			}catch(MissingParcelDetailsException ex){
@@ -187,7 +199,6 @@ public class HandshakeHistory {
 	}
 
 	private int send_cursor = 0;
-	private final List<Handshake> pending = new ArrayList<>();
-	private final List<Handshake> completed = new LinkedList<>();
+	private final List<Handshake> history = new ArrayList<>();
 	private final Mailbox mailbox;
 }

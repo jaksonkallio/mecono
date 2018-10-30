@@ -59,13 +59,13 @@ public class AnnouncePayload extends Payload {
 	}
 	
 	private void setAnnounceChainFromHistory() throws BadProtocolException, MissingParcelDetailsException {
-		// Verify that the last stop is us
+		/*// Verify that the last stop is us
 		if (!announce_chain.getLastStop().equals(getParcel().getMailbox().getOwner())) {
 			throw new BadProtocolException("Received announce parcel with an invalid last stop");
 		}
 
 		// TODO: Check signatures to verify that the path is signed by each node
-		announce_chain = new NodeChain(getParcel().getPath());
+		announce_chain = new NodeChain(getParcel().getPath());*/
 	}
 
 	private NodeChain getAnnounceChain() {

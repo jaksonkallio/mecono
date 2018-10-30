@@ -64,6 +64,11 @@ public class DataPayload extends Payload {
 		json_content = json_content.put("message", message);
 		return json_content;
 	}
+	
+	@Override
+	public boolean getRetryIndefinitely(){
+		return false;
+	}
 
 	public static final long RESEND_COOLDOWN = 10000;
 

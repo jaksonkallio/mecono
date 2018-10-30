@@ -12,7 +12,7 @@ import mecono.protocol.Protocol;
 public class Handshake {
 
 	public Handshake(Parcel original_parcel) {
-		this.original_parcel = original_parcel;
+		this.trigger_parcel = original_parcel;
 		this.original_time_sent = Protocol.getEpochMilliSecond();
 	}
 
@@ -27,40 +27,12 @@ public class Handshake {
 		return (this.getTriggerParcel().equals(other.getTriggerParcel()));
 	}
 
-	public void giveResponse(Parcel response_parcel) {
-		if (getResponseType() == response_parcel.getPayloadType() && original_parcel.getUniqueID().equals(((ResponsePayload) response_parcel.getPayload()).getRespondedID())) {
-			this.response_parcel = response_parcel;
-			responded = true;
-			response_parcel.setTimeReceived();
-		}
-	}
-
 	public Parcel getResponseParcel() {
 		return response_parcel;
 	}
 
-	/**
-	 * There are only a couple cases where action is required upon response.
-	 * Ping to determine the latency, and data to tell if a chunk has been sent
-	 * and doesn't need re-broadcast.
-	 */
-	public void runAction() {
-		if (responded) {
-			switch (getResponseType()) {
-				case PING_RESPONSE:
-					actionFromPing();
-					break;
-				case DATA_RESPONSE:
-					actionFromData();
-					break;
-				default:
-					break;
-			}
-		}
-	}
-
 	public Parcel getTriggerParcel() {
-		return original_parcel;
+		return trigger_parcel;
 	}
 
 	public long getPing() throws MissingParcelDetailsException {
@@ -68,7 +40,7 @@ public class Handshake {
 			throw new MissingParcelDetailsException("Cannot get ping, response wasn't received yet.");
 		}
 
-		return Math.max(0, (getResponseParcel().getTimeCreated() - original_time_sent));
+		return Math.max(0, (getTimeResponded() - getTimeSent()));
 	}
 
 	public PayloadType getResponseType() {
@@ -79,24 +51,12 @@ public class Handshake {
 		}
 	}
 
-	/**
-	 * What do do when a ping is responded to.
-	 */
-	private void actionFromPing() {
-		// TODO: Verify that the destination signed the original pallet
-		//original_parcel.getDestination().updateSuccessfulPing((int) (Protocol.getEpochSecond() - response_parcel.getTimeSent()));
-	}
-
-	private void actionFromData() {
-		// TODO: What to do after data was successfully received remotely
-	}
-
 	public boolean hasResponse() {
 		return getResponseParcel() != null;
 	}
 
 	public boolean isSent() {
-		return is_sent;
+		return sent;
 	}
 
 	public void updateLastSendAttempt() {
@@ -104,7 +64,7 @@ public class Handshake {
 	}
 
 	private PayloadType determineResponseType() {
-		switch (original_parcel.getPayloadType()) {
+		switch (trigger_parcel.getPayloadType()) {
 			case PING:
 				return PayloadType.PING_RESPONSE;
 			case FIND:
@@ -116,18 +76,54 @@ public class Handshake {
 		}
 	}
 
-	public boolean isStale() {
-		return (Protocol.elapsedMillis(original_time_sent) > original_parcel.getStaleTime());
+	public boolean stale() {
+		return (Protocol.elapsedMillis(original_time_sent) > trigger_parcel.getPayload().getStaleTime());
+	}
+	
+	// Sets the handshake as queued
+	public void created(){
+		time_created = Protocol.getEpochMilliSecond();
+	}
+	
+	public void responded(Parcel response_parcel){
+		if (getResponseType() == response_parcel.getPayloadType() && trigger_parcel.getUniqueID().equals(((ResponsePayload) response_parcel.getPayload()).getRespondedID())) {
+			this.response_parcel = response_parcel;
+			time_responded = Protocol.getEpochMilliSecond();
+			responded = true;
+		}
+	}
+	
+	// Sets the handshake as sent
+	public void sent(){
+		time_sent = Protocol.getEpochMilliSecond();
+		sent = true;
+		retries++;
+	}
+	
+	//public long getTimeQueued(){
+	//	return time_queued;
+	//}
+	
+	public long getTimeSent(){
+		return time_sent;
+	}
+	
+	public int getRetryCount(){
+		return retries;
+	}
+	
+	public long getTimeResponded(){
+		return time_responded;
 	}
 
-	public boolean readyResend() {
-		return (Protocol.elapsedMillis(last_send_attempt) > original_parcel.getResendCooldown());
-	}
-
-	private final Parcel original_parcel;
+	private final Parcel trigger_parcel;
 	private Parcel response_parcel;
 	private boolean responded = false;
-	private boolean is_sent = false;
+	private boolean sent = false;
 	private long last_send_attempt = 0;
 	private final long original_time_sent;
+	private long time_created; // Time the handshake was created and put in the pending parcel list
+	private long time_sent; // Time the parcel was sent onto the Mecono network
+	private long time_responded; // Time the handshake was given a response
+	private int retries;
 }

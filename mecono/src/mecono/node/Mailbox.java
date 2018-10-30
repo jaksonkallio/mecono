@@ -27,31 +27,20 @@ public class Mailbox {
 
 	public void receiveParcel(Parcel parcel) {
 		if (parcel != null) {
-			processParcel(parcel);
+			try {
+				// Do the required action as defined by the Parcel
+				// Parcel will call onReceiveAction for the Payload, and the specific action is different based on the Payload type
+				// onReceiveMetaAction hands off responsibility to the Parcel (transmission meta-data), then onReceiveAction is customized for the type of Payload (actual content)
+				// The two are separated because the Mailbox shouldn't be responsible for the contents/meta of a Parcel
+				parcel.onReceiveMetaAction();
+			} catch (MissingParcelDetailsException | BadProtocolException ex) {
+				getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Could not process received parcel", ex.getMessage());
+			}
 		}else{
 			getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Mailbox received null parcel from network controller");
 		}
 	}
 
-	public void processParcel(Parcel parcel) {
-		getOwner().nodeLog(SelfNode.ErrorStatus.INFO, SelfNode.LogLevel.COMMON, "Processing received destination parcel", parcel.toString());
-
-		try {
-			// Do the required action as defined by the Parcel
-			// Parcel will call onReceiveAction for the Payload, and the specific action is different based on the Payload type
-			// onReceiveMetaAction hands off responsibility to the Parcel (transmission meta-data), then onReceiveAction is customized for the type of Payload (actual content)
-			// The two are separated because the Mailbox shouldn't be responsible for the contents/meta of a Parcel
-			parcel.onReceiveMetaAction();
-		} catch (MissingParcelDetailsException | BadProtocolException ex) {
-			getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Could not process received parcel", ex.getMessage());
-		}
-	}
-
-	/**
-	 * Gets the owner of the mailbox.
-	 *
-	 * @return
-	 */
 	public SelfNode getOwner() {
 		return owner;
 	}
@@ -100,22 +89,6 @@ public class Mailbox {
 
 	public HandshakeHistory getHandshakeHistory() {
 		return handshake_history;
-	}
-
-	/**
-	 * Checks if there is an active signal out in the network that we are
-	 * expecting a response to. Used to protect against spamming the network.
-	 */
-	private boolean expectingResponse(Parcel parcel) {
-		for (Handshake existing_action : sent_parcels) {
-			Parcel original_parcel = existing_action.getTriggerParcel();
-
-			if (original_parcel.equals(parcel) && !existing_action.hasResponse() && Protocol.elapsedMillis(original_parcel.getTimeSent()) < original_parcel.getResendCooldown()) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	public void enqueueInbound(JSONObject serialized_parcel) {

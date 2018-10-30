@@ -56,5 +56,20 @@ public abstract class Payload {
 		return true;
 	}
 	
+	// Wait time for a response before the trigger parcel is considered stale
+	public long getStaleTime(){
+		return 30000;
+	}
+	
+	// Number of times to retry sending the parcel of this payload type after stale
+	public int getMaxRetryCount(){
+		return 10;
+	}
+	
+	// Whether there is a maximum number of retries
+	public boolean getRetryIndefinitely(){
+		return false;
+	}
+	
 	private Parcel parcel;
 }

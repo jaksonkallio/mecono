@@ -18,12 +18,12 @@ public class PingResponsePayload extends ResponsePayload {
 	public void onReceiveAction() throws BadProtocolException, MissingParcelDetailsException {
 		super.onReceiveAction();
 
-		Handshake sent_parcel = getParcel().getHandshake();
+		Handshake handshake = getParcel().getHandshake();
 
-		if (sent_parcel.hasResponse()) {
-			long ping = sent_parcel.getPing();
-			Parcel original_parcel = sent_parcel.getTriggerParcel();
-			Path used_path = original_parcel.getOutboundActualPath();
+		if (handshake.hasResponse()) {
+			long ping = handshake.getPing();
+			Parcel original_parcel = handshake.getTriggerParcel();
+			Path used_path = original_parcel.getPath();
 
 			used_path.setPing(ping);
 		}
