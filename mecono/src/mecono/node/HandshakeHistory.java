@@ -143,7 +143,7 @@ public class HandshakeHistory {
 		return pending.size();
 	}
 
-	private void pingPath(Path path) {
+	private void pingPath(NodeChain path) {
 		Parcel ping = new Parcel(mailbox);
 		PingPayload ping_payload = new PingPayload();
 		ping.setPayload(ping_payload);

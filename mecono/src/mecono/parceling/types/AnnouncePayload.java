@@ -6,7 +6,7 @@
 package mecono.parceling.types;
 
 import mecono.node.Neighbor;
-import mecono.node.Path;
+import mecono.node.NodeChain;
 import mecono.node.SelfNode;
 import mecono.parceling.BadPathException;
 import mecono.parceling.Parcel;
@@ -65,10 +65,10 @@ public class AnnouncePayload extends Payload {
 		}
 
 		// TODO: Check signatures to verify that the path is signed by each node
-		announce_chain = new Path(getParcel().getPath());
+		announce_chain = new NodeChain(getParcel().getPath());
 	}
 
-	private Path getAnnounceChain() {
+	private NodeChain getAnnounceChain() {
 		return announce_chain;
 	}
 
@@ -76,5 +76,5 @@ public class AnnouncePayload extends Payload {
 		return announce_chain.getPathLength();
 	}
 
-	private Path announce_chain;
+	private NodeChain announce_chain;
 }

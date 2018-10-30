@@ -1,7 +1,7 @@
 package mecono.parceling;
 
 import mecono.node.Mailbox;
-import mecono.node.Path;
+import mecono.node.NodeChain;
 import mecono.protocol.Protocol;
 
 /**

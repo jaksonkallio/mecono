@@ -1,7 +1,7 @@
 package mecono.parceling;
 
 import mecono.node.ParcelHistoryStats;
-import mecono.node.PathStats;
+import mecono.node.Path;
 import mecono.node.SelfNode;
 import mecono.protocol.BadProtocolException;
 
@@ -46,7 +46,7 @@ public class ResponsePayload extends Payload {
 			// - Update the response value in the parcel history archive
 			if (responding_to.hasResponse()) {
 				Parcel original_parcel = responding_to.getTriggerParcel();
-				PathStats path_used = original_parcel.getOutboundActualPath();
+				Path path_used = original_parcel.getOutboundActualPath();
 				path_used.success();
 				//ParcelHistoryArchive parcel_history_archive = getParcel().getMailbox().getParcelHistoryArchive();
 				//parcel_history_archive.markParcelResponded(original_parcel.getUniqueID(), getParcel());

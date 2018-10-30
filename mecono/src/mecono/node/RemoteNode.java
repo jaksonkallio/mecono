@@ -36,12 +36,12 @@ public class RemoteNode implements Node {
 		return adversarial;
 	}
 
-	public void learnPath(Path path, RemoteNode learned_from) throws BadPathException {
+	public void learnPath(NodeChain path, RemoteNode learned_from) throws BadPathException {
 		if (indexer.isNeighbor((RemoteNode) path.getStop(1)) && path.getStop(path.getPathLength() - 1).equals(this)) {
 			// If the first stop is the self node, and the last stop is this node, then store
 			if (!isPathKnown(path)) {
 				// If this path isn't already known
-				PathStats path_stats = new PathStats(path, indexer, learned_from);
+				Path path_stats = new Path(path, indexer, learned_from);
 				paths_to.add(path_stats);
 
 				// If this is the first learned path, we should ping this node
@@ -99,7 +99,7 @@ public class RemoteNode implements Node {
 		return paths_to.size();
 	}
 
-	public ArrayList<PathStats> getPathsTo() {
+	public ArrayList<Path> getPathsTo() {
 		return paths_to;
 	}
 
@@ -111,12 +111,12 @@ public class RemoteNode implements Node {
 		return ping;
 	}
 
-	public PathStats getIdealPath() {
+	public Path getIdealPath() {
 		if (indexer.isNeighbor(this)) {
 			ArrayList<Node> stops = new ArrayList<>();
 			stops.add(indexer);
 			stops.add(this);
-			Path direct_path = new Path(stops);
+			NodeChain direct_path = new NodeChain(stops);
 			try {
 				learnPath(direct_path, null);
 			} catch (BadPathException ex) {
@@ -134,9 +134,9 @@ public class RemoteNode implements Node {
 		}
 	}
 
-	private boolean isPathKnown(Path target) {
-		for (PathStats path : paths_to) {
-			if (path.getPath().equals(target)) {
+	private boolean isPathKnown(NodeChain target) {
+		for (Path path : paths_to) {
+			if (path.getNodeChain().equals(target)) {
 				//indexer.nodeLog(2, "Path already known", target.toString());
 				return true;
 			}
@@ -146,9 +146,9 @@ public class RemoteNode implements Node {
 	}
 
 	private void sortPaths() {
-		Collections.sort(paths_to, new Comparator<PathStats>() {
+		Collections.sort(paths_to, new Comparator<Path>() {
 			@Override
-			public int compare(PathStats path2, PathStats path1) {
+			public int compare(Path path2, Path path1) {
 
 				return (int) (1000 * (path2.reliability() - path1.reliability()));
 			}
@@ -156,7 +156,7 @@ public class RemoteNode implements Node {
 	}
 
 	public String getOnlineString() {
-		PathStats ideal_path = getIdealPath();
+		Path ideal_path = getIdealPath();
 
 		if (ideal_path != null) {
 			if (ideal_path.online()) {
@@ -178,7 +178,7 @@ public class RemoteNode implements Node {
 	}
 
 	public String getSuccessesString() {
-		PathStats ideal_path = getIdealPath();
+		Path ideal_path = getIdealPath();
 
 		if (ideal_path != null) {
 			return "" + ideal_path.successes();
@@ -188,7 +188,7 @@ public class RemoteNode implements Node {
 	}
 
 	public String getReliabilityString() {
-		PathStats ideal_path = getIdealPath();
+		Path ideal_path = getIdealPath();
 
 		if (ideal_path != null) {
 			return UtilGUI.formatPercentage(getIdealPath().reliability());
@@ -217,7 +217,7 @@ public class RemoteNode implements Node {
 	private int ping;
 	private long last_consulted; // Time of last consultation for a path
 	private int last_ping_time; // Time of the last ping, in minutes.
-	private final ArrayList<PathStats> paths_to = new ArrayList<>();
+	private final ArrayList<Path> paths_to = new ArrayList<>();
 	private final SelfNode indexer;
 	private int assists;
 }

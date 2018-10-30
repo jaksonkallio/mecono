@@ -1,7 +1,7 @@
 package mecono.parceling.types;
 
 import java.util.ArrayList;
-import mecono.node.Path;
+import mecono.node.NodeChain;
 import mecono.node.RemoteNode;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.Parcel;
@@ -53,7 +53,7 @@ public class FindPayload extends Payload {
 		parcel.setPayload(payload);
 		
 		payload.setRespondedID(getParcel().getUniqueID());
-		ArrayList<Path> available_paths = Path.convertToRawPaths(getTarget().getPathsTo());
+		ArrayList<NodeChain> available_paths = NodeChain.convertToRawPaths(getTarget().getPathsTo());
 		payload.setTargetAnswers(available_paths); // Set response to our answer
 		parcel.setDestination(originator); // Set the destination to the person that contacted us (a response)
 		getParcel().getMailbox().getHandshakeHistory().enqueueSend(parcel); // Send the response

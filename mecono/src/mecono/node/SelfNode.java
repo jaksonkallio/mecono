@@ -82,7 +82,7 @@ public class SelfNode implements Node {
 	 * @param extension
 	 * @param learned_from
 	 */
-	public void learnUsingPathExtension(Path extension, RemoteNode learned_from) {
+	public void learnUsingPathExtension(NodeChain extension, RemoteNode learned_from) {
 		/*
 		SelfNode knows path...
 		SN -> B -> C
@@ -90,10 +90,10 @@ public class SelfNode implements Node {
 		C -> D -> E -> F
 		SelfNode looks up "C" and all the paths to it. For each known path to C, we can learnPath(known_path + extension)
 		 */
-		ArrayList<PathStats> paths_to_responder = ((RemoteNode) extension.getStop(0)).getPathsTo();
-		for (PathStats path_stats : paths_to_responder) {
+		ArrayList<Path> paths_to_responder = ((RemoteNode) extension.getStop(0)).getPathsTo();
+		for (Path path_stats : paths_to_responder) {
 			try {
-				Path extended_path = new Path(path_stats.getPath(), extension.getSubpath(1, (extension.getPathLength() - 1)));
+				NodeChain extended_path = new NodeChain(path_stats.getNodeChain(), extension.getSubpath(1, (extension.getPathLength() - 1)));
 				nodeLog(ErrorStatus.INFO, LogLevel.VERBOSE, "Attempting to learn extended path", extended_path.toString());
 
 				learnPath(extended_path, learned_from);
@@ -196,7 +196,7 @@ public class SelfNode implements Node {
 	 * @param learned_from
 	 * @throws mecono.parceling.BadPathException
 	 */
-	public void learnPath(Path path, RemoteNode learned_from) throws BadPathException {
+	public void learnPath(NodeChain path, RemoteNode learned_from) throws BadPathException {
 		nodeLog(ErrorStatus.INFO, LogLevel.VERBOSE, "Learning path", path.toString());
 
 		// Learning a path is only useful if there are 2+ nodes
@@ -231,8 +231,8 @@ public class SelfNode implements Node {
 			learnOrganizedPath(path, learned_from);
 		} else {
 			try {
-				Path before = path.getSubpath(0, count);
-				Path after = path.getSubpath(count, (path.getPathLength() - 1));
+				NodeChain before = path.getSubpath(0, count);
+				NodeChain after = path.getSubpath(count, (path.getPathLength() - 1));
 				before.reverse();
 				learnOrganizedPath(before, learned_from);
 				learnOrganizedPath(after, learned_from);
@@ -242,7 +242,7 @@ public class SelfNode implements Node {
 		}
 	}
 
-	private void learnOrganizedPath(Path path, RemoteNode learned_from) throws BadPathException {
+	private void learnOrganizedPath(NodeChain path, RemoteNode learned_from) throws BadPathException {
 		/*
 		SelfNode -> B -> C -> D (Learn a path from SelfNode to D)
 		SelfNode -> B -> C

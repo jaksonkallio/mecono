@@ -1,37 +1,35 @@
 package mecono.node;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import mecono.parceling.BadPathException;
+import mecono.protocol.Protocol;
+import mecono.protocol.RNG;
 
 /**
+ * A container that holds statistics for a given path.
  *
  * @author jak
  */
 public class Path {
 
-	public Path(ArrayList<Node> stops) {
-		this.stops = stops;
+	public Path(NodeChain path, String identifier, SelfNode indexer, RemoteNode learned_from) throws BadPathException {
+		this.identifier = identifier;
+		this.indexer = indexer;
+
+		validateOutwardPath(path);
+		this.path = path;
+		this.learned_from = learned_from;
 	}
 
-	public Path(Path copy_path) {
-		this.stops = copy_path.getStops();
+	public Path(NodeChain path, SelfNode indexer, RemoteNode learned_from) throws BadPathException {
+		this(path, RNG.generateString(5), indexer, learned_from);
 	}
 
-	public Path(Path concat_path1, Path concat_path2) {
-		ArrayList<Node> stops_path1 = null;
-		ArrayList<Node> stops_path2 = null;
+	public Path(NodeChain path, SelfNode indexer) throws BadPathException {
+		this(path, indexer, null);
+	}
 
-		if (concat_path1 != null && concat_path2 != null) {
-			stops_path1 = new ArrayList<>(concat_path1.getStops());
-			stops_path2 = new ArrayList<>(concat_path2.getStops());
-
-			for (Node stop : stops_path2) {
-				stops_path1.add(stop);
-			}
-		}
-
-		this.stops = stops_path1;
+	public String identifier() {
+		return identifier;
 	}
 
 	@Override
@@ -39,192 +37,126 @@ public class Path {
 		if (o instanceof Path) {
 			Path other = (Path) o;
 
-			if (other.getPathLength() != this.getPathLength()) {
-				return false;
-			}
-
-			for (int i = 0; i < getPathLength(); i++) {
-				// If we find just one node out of place, paths are different
-				if (!this.getStop(i).equals(other.getStop(i))) {
-					return false;
-				}
-			}
-
-			return true;
+			return this.identifier().equals(other.identifier());
 		}
 
 		return false;
 	}
 
-	/**
-	 * Gets a specific stop in the path.
-	 *
-	 * @param i
-	 * @return
-	 */
-	public Node getStop(int i) {
-		return stops.get(i);
-	}
-
-	/**
-	 * Returns a list of the stops.
-	 *
-	 * @return
-	 */
-	public ArrayList<Node> getStops() {
-		return stops;
-	}
-
-	/**
-	 * Gets the number of stops in a path.
-	 *
-	 * @return
-	 */
-	public int getPathLength() {
-		return stops.size();
-	}
-
-	public Node getLastStop() {
-		return getStop(getPathLength() - 1);
-	}
-
-	/**
-	 * Gets a subpath between two stops, inclusive.
-	 *
-	 * @param start
-	 * @param end
-	 * @return Path Resulting subpath.
-	 */
-	public Path getSubpath(int start, int end) throws BadPathException {
-		ArrayList<Node> subpath_stops = new ArrayList<>();
-
-		if (start < 0) {
-			throw new BadPathException("Subpath starting below zero");
-		}
-
-		if (end >= getPathLength()) {
-			throw new BadPathException("Subpath ending after last node");
-		}
-
-		while (start <= end) {
-			subpath_stops.add(stops.get(start));
-			start++;
-		}
-
-		return new Path(subpath_stops);
-	}
-
-	public void reverse() {
-		Collections.reverse(stops);
-	}
-
-	/**
-	 * More specific use of getSubpath to only get the start of the path up to
-	 * the end value.
-	 *
-	 * @param end
-	 * @return
-	 */
-	public Path getSubpath(int end) {
-		try {
-			return getSubpath(0, end);
-		} catch (BadPathException ex) {
-			// TODO: Should never happen
-		}
-
-		return null;
-	}
-
-	public void addStop(Node node) {
-		stops.add(node);
-	}
-
-	/**
-	 * Finds the intermediate path. Path excluding origin and destination.
-	 *
-	 * @return
-	 */
-	public Path getIntermediatePath() {
-		try {
-			return this.getSubpath(1, this.getPathLength() - 2);
-		} catch (BadPathException ex) {
-			// TODO: Should never happen
-		}
-
-		return null;
-	}
-
-	public static Path unserialize(String ser_path, SelfNode owner) {
-		ArrayList<Node> path_nodes = new ArrayList<>();
-		for (String remote_node_address : ser_path.split("-")) {
-			path_nodes.add(owner.getMemoryController().loadRemoteNode(remote_node_address));
-		}
-		return new Path(path_nodes);
-	}
-
-	public String serialize() {
-		StringBuilder path_str = new StringBuilder();
-
-		for (Node node : getStops()) {
-			if (path_str.length() != 0) {
-				path_str.append("-");
-			}
-
-			path_str.append(node.getAddress());
-		}
-
-		return path_str.toString();
-	}
-
-	/**
-	 * Regenerates the serialized identifier.
-	 *
-	 * @return
-	 */
-	public String getIdentifier() {
-		// TODO: Use a proper hash of the address items instead.
-
-		String identifier = "";
-		int count = 0;
-
-		for (Node stop : stops) {
-			if (count > 0) {
-				identifier += ";";
-			}
-			identifier += count + "-" + stop.getAddress().substring(0, 4);
-			count++;
-		}
-
-		return identifier;
-	}
-
 	@Override
 	public String toString() {
-		StringBuilder construct = new StringBuilder();
-		ArrayList<Node> stops = getStops();
-		boolean first_added = false;
+		StringBuilder str = new StringBuilder();
+		str.append("Path [");
+		str.append(successes());
+		str.append(" success][");
+		str.append(failures());
+		str.append(" fail][");
+		str.append(getPing());
+		str.append(" ms]");
 
-		construct.append("[");
-		for (Node stop : stops) {
-			if (first_added) {
-				construct.append(" -> ");
-			}
-
-			construct.append(stop.getAddress());
-			first_added = true;
+		if (getLearnedFrom() != null) {
+			str.append("[Learned from: ");
+			str.append(getLearnedFrom().getAddress());
+			str.append("] ");
 		}
-		construct.append("]");
 
-		return construct.toString();
+		str.append(getNodeChain().toString());
+
+		return str.toString();
 	}
 
-	public static ArrayList<Path> convertToRawPaths(ArrayList<PathStats> outwards_paths) {
-		ArrayList<Path> paths_raw = new ArrayList<>();
-		for (PathStats outward_path : outwards_paths) {
-			paths_raw.add(outward_path.getPath());
-		}
-		return paths_raw;
+	public void markUsed() {
+		last_used = Protocol.getEpochSecond();
 	}
 
-	private final ArrayList<Node> stops;
+	public long getLastUse() {
+		return last_used;
+	}
+
+	public void success() {
+		successes++;
+		markUsed();
+	}
+
+	public void failure() {
+		failures++;
+	}
+
+	public int totalUses() {
+		return successes + failures;
+	}
+
+	public boolean online() {
+		return successes() > 0 && Protocol.elapsedSeconds(getLastUse()) <= PATH_TESTED_EXPIRY;
+	}
+
+	public int successes() {
+		return successes;
+	}
+
+	public int failures() {
+		return failures;
+	}
+
+	public void setPing(long ping) {
+		this.ping = ping;
+	}
+
+	public long getPing() {
+		return ping;
+	}
+
+	private void validateOutwardPath(NodeChain path) throws BadPathException {
+		if (path == null) {
+			throw new BadPathException("Path is null");
+		}
+
+		if (path.getPathLength() < 2) {
+			throw new BadPathException("Path " + path.toString() + " is less than two nodes");
+		}
+
+		if (!path.getStop(0).equals(indexer)) {
+			throw new BadPathException("Indexer is not first node in path " + path.toString());
+		}
+	}
+
+	public NodeChain getNodeChain() {
+		return path;
+	}
+
+	public RemoteNode getLearnedFrom() {
+		return learned_from;
+	}
+
+	public double reliability() {
+		double reliability = 0;
+
+		if (totalUses() >= 5) {
+			// Reliability bonus favors nodes that have had a lot of signals sent over them
+			// This gives frequently used paths some slack, and also allows them to improve their reliability over time (up to 100%)
+			// Example: if the PATH_RELIABILITY_BONUS == 2%, then for every 50 successes (50*0.02=1), they get another success added for the calculation.
+			reliability = (successes() * (1 + PATH_RELIABILITY_BONUS)) / totalUses();
+		} else {
+			// We need a good sample size (>5) before we can give a calculated reliability
+			// It's nice to give new paths a chance at success, so we temporarily bump up their reliability to 0.75 until they are tested.
+			reliability = 0.75;
+		}
+
+		// Reliability may never be greater than 100%
+		reliability = Math.min(reliability, 1.00);
+
+		return reliability;
+	}
+
+	public static final int PATH_TESTED_EXPIRY = 120; // X minutes since last use before path is marked as not online
+	public static final double PATH_RELIABILITY_BONUS = 0.05;
+
+	private final NodeChain path;
+	private int successes = 0;
+	private int failures = 0;
+	private long ping;
+	private final RemoteNode learned_from;
+	private long last_used = 0; // Epoch millis timestamp of last successful use
+	private final SelfNode indexer;
+	private final String identifier;
 }

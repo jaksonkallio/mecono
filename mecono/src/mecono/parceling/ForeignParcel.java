@@ -5,7 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import mecono.node.Mailbox;
 import mecono.node.Node;
-import mecono.node.Path;
+import mecono.node.NodeChain;
 import mecono.node.RemoteNode;
 import mecono.node.SelfNode;
 import mecono.node.SelfNode.ErrorStatus;
@@ -21,7 +21,7 @@ import org.json.JSONObject;
  */
 public class ForeignParcel extends Parcel {
 
-	public ForeignParcel(Mailbox mailbox, Path path, String payload) {
+	public ForeignParcel(Mailbox mailbox, NodeChain path, String payload) {
 		super(mailbox);
 		setPath(path);
 		this.payload = payload;
@@ -92,6 +92,6 @@ public class ForeignParcel extends Parcel {
 	}
 
 	private String payload;
-	private Path path;
+	private NodeChain path;
 	private RemoteNode next_node;
 }

@@ -130,7 +130,7 @@ public class Mailbox {
 
 	public void pingPinnedNodes() {
 		for (RemoteNode pinned : owner.getPinnedNodes()) {
-			PathStats ideal_path = pinned.getIdealPath();
+			Path ideal_path = pinned.getIdealPath();
 
 			if (ideal_path != null && !ideal_path.online()) {
 				Parcel parcel = new Parcel(this);

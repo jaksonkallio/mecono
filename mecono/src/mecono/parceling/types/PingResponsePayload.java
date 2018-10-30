@@ -1,6 +1,6 @@
 package mecono.parceling.types;
 
-import mecono.node.PathStats;
+import mecono.node.Path;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.PayloadType;
 import mecono.parceling.Handshake;
@@ -23,7 +23,7 @@ public class PingResponsePayload extends ResponsePayload {
 		if (sent_parcel.hasResponse()) {
 			long ping = sent_parcel.getPing();
 			Parcel original_parcel = sent_parcel.getTriggerParcel();
-			PathStats used_path = original_parcel.getOutboundActualPath();
+			Path used_path = original_parcel.getOutboundActualPath();
 
 			used_path.setPing(ping);
 		}
