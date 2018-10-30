@@ -75,6 +75,14 @@ public class NodeChain {
 		return stops;
 	}
 
+	public void assisted(){
+		for(Node stop : getStops()){
+			if(stop instanceof RemoteNode){
+				((RemoteNode) stop).markAssist();
+			}
+		}
+	}
+	
 	/**
 	 * Gets the number of stops in a path.
 	 *
