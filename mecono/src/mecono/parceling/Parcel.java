@@ -10,7 +10,6 @@ import mecono.node.RemoteNode;
 import mecono.node.SelfNode;
 import mecono.protocol.BadProtocolException;
 import mecono.protocol.Protocol;
-import mecono.protocol.UnknownResponsibilityException;
 import mecono.ui.UtilGUI;
 import org.json.*;
 
@@ -440,6 +439,7 @@ public class Parcel implements MeconoSerializable {
 	public PayloadType getPayloadType() {
 		// TODO: This is a violation of abstraction
 		// Calling code should be consulting the payload, not the parcel
+		// This function exists for backwards compatibility
 		return getPayload().getPayloadType();
 	}
 
@@ -507,6 +507,9 @@ public class Parcel implements MeconoSerializable {
 		if(getTransferDirection() == TransferDirection.OUTBOUND){
 			CryptoManager cm = getMailbox().getOwner().getCryptoManager();
 			StringBuilder message = new StringBuilder();
+			
+			// nonce,path,encrypted_payload
+			// 15049,A-B-C-D,0x00000000000
 			message.append(getNonce());
 			message.append(",");
 			message.append(path.getNodeChain().serialize());
@@ -516,12 +519,6 @@ public class Parcel implements MeconoSerializable {
 		}
 		
 		return signature;
-	}
-
-	public JSONObject getSerializedContent() {
-		JSONObject json_content = new JSONObject();
-		json_content.put("data", "empty");
-		return json_content;
 	}
 
 	public void setIsSent() {
