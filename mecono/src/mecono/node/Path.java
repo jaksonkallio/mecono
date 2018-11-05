@@ -129,7 +129,7 @@ public class Path {
 	}
 
 	public double reliability() {
-		double reliability = 0;
+		double reliability;
 
 		if (totalUses() >= 5) {
 			// Reliability bonus favors nodes that have had a lot of signals sent over them
