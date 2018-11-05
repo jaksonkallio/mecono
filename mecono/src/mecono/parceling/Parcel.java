@@ -17,7 +17,7 @@ public class Parcel implements MeconoSerializable {
 
 	public Parcel(Mailbox mailbox) {
 		this.mailbox = mailbox;
-		this.nonce = getMailbox().getParcelNonce();
+		setNonce();
 		generateUniqueID();
 		setOriginator(mailbox.getOwner());
 	}
@@ -119,6 +119,19 @@ public class Parcel implements MeconoSerializable {
 			getMailbox().getOwner().nodeLog(SelfNode.ErrorStatus.FAIL, SelfNode.LogLevel.COMMON, "Could not serialize parcel", ex.getMessage());
 		}
 		
+		return null;
+	}
+	
+	public static Parcel deserialize(JSONObject json, SelfNode self) {
+		Parcel constructed_parcel = new Parcel(self.getMailbox());
+		
+		try{
+			constructed_parcel.setNodeChain(NodeChain.unserialize(json.getString("chain"), self));
+			constructed_parcel.setNonce(json.getLong("nonce"));
+		
+		} catch(MissingParcelDetailsException ex) {
+			
+		}
 		return null;
 	}
 
@@ -265,11 +278,6 @@ public class Parcel implements MeconoSerializable {
 
 	public final Mailbox getMailbox() {
 		return mailbox;
-	}
-
-	@Override
-	public Parcel deserialize() {
-		return null;
 	}
 
 	private void generateUniqueID() {
@@ -503,6 +511,33 @@ public class Parcel implements MeconoSerializable {
 		return nonce;
 	}
 	
+	// This is used to set the nonce of non-outbound parcels
+	public void setNonce(long nonce){
+		try {
+			if(!isOutbound()){
+				this.nonce = nonce;
+			}
+		} catch(MissingParcelDetailsException ex) {
+			
+		}
+	}
+	
+	// This is used to set the nonce of outbound parcels
+	// Nonce to be used is gotten from the mailbox
+	public void setNonce(){
+		try {
+			if(isOutbound()){
+				this.nonce = getMailbox().getParcelNonce();
+			}
+		} catch(MissingParcelDetailsException ex) {
+			
+		}
+	}
+	
+	public boolean isOutbound() throws MissingParcelDetailsException {
+		return (getTransferDirection() == TransferDirection.OUTBOUND);
+	}
+	
 	public String getSignature() throws MissingParcelDetailsException {
 		if(getTransferDirection() == TransferDirection.OUTBOUND){
 			CryptoManager cm = getMailbox().getOwner().getCryptoManager();
@@ -561,5 +596,5 @@ public class Parcel implements MeconoSerializable {
 	private NodeChain node_chain;
 	private final Mailbox mailbox;
 	private Path path;
-	private final long nonce;
+	private long nonce;
 }

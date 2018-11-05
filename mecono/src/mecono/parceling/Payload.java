@@ -1,7 +1,5 @@
 package mecono.parceling;
 
-import mecono.node.Node;
-import mecono.node.RemoteNode;
 import mecono.protocol.BadProtocolException;
 import org.json.JSONObject;
 

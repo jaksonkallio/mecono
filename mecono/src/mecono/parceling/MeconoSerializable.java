@@ -8,5 +8,4 @@ import org.json.JSONObject;
  */
 public interface MeconoSerializable {
 	public JSONObject serialize();
-	public Object deserialize();
 }
