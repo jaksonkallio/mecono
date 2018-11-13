@@ -1,14 +1,12 @@
 package mecono.node;
 
-import mecono.protocol.Protocol;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Set;
 import mecono.parceling.BadPathException;
 import mecono.parceling.Parcel;
-import mecono.parceling.Parcel.TransferDirection;
 import mecono.parceling.types.PingPayload;
+import mecono.protocol.Protocol;
 import mecono.ui.UtilGUI;
 
 /**
@@ -209,7 +207,33 @@ public class RemoteNode implements Node {
 		return assists;
 	}
 
+	public long getSendSeqNum(){
+		return send_seq_num;
+	}
+	
+	public void incSendSeqNum(){
+		send_seq_num++;
+	}
+	
+	public boolean validRecvSeqNum(long recv_seq_num){
+		return recv_seq_num > min_recv_seq_num && !explicit_recv_seq_nums.contains(recv_seq_num);
+	}
+	
+	private void logRecvSeqNum(long recv_seq_num){
+		explicit_recv_seq_nums.add(recv_seq_num);
+		
+		if(explicit_recv_seq_nums.size() > MAX_EXPLICIT_RECV_SEQ_NUMS){
+			consolidateRecvSeqNums();
+		}
+	}
+	
+	private void consolidateRecvSeqNums(){
+		min_recv_seq_num = Collections.max(explicit_recv_seq_nums);
+		explicit_recv_seq_nums.clear();
+	}
+	
 	public final static long ONLINE_THRESHOLD = 30000;
+	public final static int MAX_EXPLICIT_RECV_SEQ_NUMS = 100;
 
 	private final String address;
 	private String label;
@@ -220,4 +244,7 @@ public class RemoteNode implements Node {
 	private final ArrayList<Path> paths_to = new ArrayList<>();
 	private final SelfNode indexer;
 	private int assists;
+	private long send_seq_num;
+	private long min_recv_seq_num;
+	private final ArrayList<Long> explicit_recv_seq_nums = new ArrayList<>();
 }
