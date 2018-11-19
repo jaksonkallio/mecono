@@ -3,6 +3,9 @@ package mecono.node;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.TreeSet;
 import mecono.parceling.BadPathException;
 import mecono.parceling.Parcel;
 import mecono.parceling.types.PingPayload;
@@ -228,8 +231,32 @@ public class RemoteNode implements Node {
 	}
 	
 	private void consolidateRecvSeqNums(){
-		min_recv_seq_num = Collections.max(explicit_recv_seq_nums);
-		explicit_recv_seq_nums.clear();
+		// Consolidate what we can without hurting efficiency
+		Iterator<Long> it = explicit_recv_seq_nums.iterator();
+		while(it.hasNext()){
+			long seq_num = it.next();
+		
+			if(seq_num <= min_recv_seq_num){
+				// If less than or equal to minimum, just remove it
+				it.remove();
+			}else if(seq_num == (min_recv_seq_num + 1)){
+				// A number directly above min, will advance the minimum forward by one
+				min_recv_seq_num = seq_num;
+				it.remove();
+			}else{
+				// If the seq_num is not <=min or ==min+1, then it is >min+1
+				// In this case, since the list is ordered, we will never find another value ==min+1 so we can break the while loop
+				break;
+			}
+		}
+		
+		// Reset the iterator
+		it = explicit_recv_seq_nums.iterator();
+		while(it.hasNext() && explicit_recv_seq_nums.size() > Math.floor(MAX_EXPLICIT_RECV_SEQ_NUMS / 2)){
+			// Remove the first element (lowest seq_num) in the list
+			it.next();
+			it.remove();
+		}
 	}
 	
 	public final static long ONLINE_THRESHOLD = 30000;
@@ -246,5 +273,5 @@ public class RemoteNode implements Node {
 	private int assists;
 	private long send_seq_num;
 	private long min_recv_seq_num;
-	private final ArrayList<Long> explicit_recv_seq_nums = new ArrayList<>();
+	private final TreeSet<Long> explicit_recv_seq_nums = new TreeSet<>();
 }
