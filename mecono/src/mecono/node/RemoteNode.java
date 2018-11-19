@@ -223,8 +223,14 @@ public class RemoteNode implements Node {
 	}
 	
 	private void logRecvSeqNum(long recv_seq_num){
-		explicit_recv_seq_nums.add(recv_seq_num);
+		if(recv_seq_num == (min_recv_seq_num + 1)){
+			// Increment the min instead of adding to the explicit seq nums array
+			min_recv_seq_num = recv_seq_num;
+		}else{
+			explicit_recv_seq_nums.add(recv_seq_num);
+		}
 		
+		// Consolidate if necessary
 		if(explicit_recv_seq_nums.size() > MAX_EXPLICIT_RECV_SEQ_NUMS){
 			consolidateRecvSeqNums();
 		}
