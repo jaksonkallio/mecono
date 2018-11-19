@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import mecono.protocol.cse.versions.*;
+import mecono.test.MeconoTester;
 
 /**
  *
@@ -18,6 +19,10 @@ public class Mecono extends Application {
 		Pane root = new Pane();
 
 		System.out.println("Mecono started");
+		
+		MeconoTester tester = new MeconoTester();
+		tester.test();
+		
 		if (sandbox) {
 			System.out.println("Running sandbox...");
 			sandbox();
