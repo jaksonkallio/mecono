@@ -3,12 +3,10 @@ package mecono.node;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
-import mecono.parceling.Handshake;
 import mecono.parceling.MissingParcelDetailsException;
 import mecono.parceling.Parcel;
 import mecono.parceling.types.PingPayload;
 import mecono.protocol.BadProtocolException;
-import mecono.protocol.Protocol;
 import org.json.JSONObject;
 
 /**
@@ -64,27 +62,12 @@ public class Mailbox {
 		}
 	}
 
-	public void pingPinnedNode(int i) {
-		if (pinned_nodes == null) {
-			return;
-		}
-
-		RemoteNode pinned_node = pinned_nodes.get(i);
-		if (Protocol.elapsedSeconds(pinned_node.getLastPinged()) >= getOwner().PINNED_NODE_PING_RATE) {
-			//pingRemote(pinned_node);
-		}
-	}
-
 	public int getPinnedNodeCount() {
 		return pinned_nodes.size();
 	}
 
 	public ParcelHistoryStats getParcelHistoryArchive() {
 		return parcel_history_archive;
-	}
-
-	public int getSentParcelCount() {
-		return sent_parcels.size();
 	}
 
 	public HandshakeHistory getHandshakeHistory() {
@@ -149,7 +132,6 @@ public class Mailbox {
 
 	private final SelfNode owner; // The selfnode that runs the mailbox
 	private final MailboxWorker worker;
-	private final ArrayList<Handshake> sent_parcels = new ArrayList<>();
 	private final HandshakeHistory handshake_history = new HandshakeHistory(this);
 	private final NetworkController network_controller;
 	private final ArrayList<RemoteNode> pinned_nodes = new ArrayList<>();
