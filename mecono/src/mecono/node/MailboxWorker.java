@@ -42,30 +42,12 @@ public class MailboxWorker implements Runnable {
 	@Override
 	public void run() {
 		working = true;
-		int[] counters = new int[3];
-		counters[0] = -1; // Outbox items
-		counters[1] = -1; // Sent parcel
-		counters[2] = -1; // Pinned nodes
-
-		HandshakeHistory handshakes = mailbox.getHandshakeHistory();
-
+		long delay = (long) (((int) (Math.random() * 50)) + 1000 * (1 - mailbox.getOwner().NODE_PERFORMANCE_MODIFIER));
+		
 		while (working) {
-			mailbox.pingPinnedNodes();
-			handshakes.attemptSend();
-			handshakes.prune();
-
-			if (counters[2] >= 0) {
-				mailbox.pingPinnedNode(counters[2]);
-				counters[2]--;
-			} else {
-				counters[2] = mailbox.getPinnedNodeCount() - 1;
-			}
-
-			mailbox.processInboundQueue();
-			mailbox.processForwardQueue();
+			mailbox.work();
 
 			try {
-				long delay = (long) (((int) (Math.random() * 50)) + 1000 * (1 - mailbox.getOwner().NODE_PERFORMANCE_MODIFIER));
 				Thread.sleep(delay);
 			} catch (InterruptedException ex) {
 				working = false;

@@ -1,14 +1,13 @@
 package mecono.protocol.cse;
 
-import mecono.ui.SimGUI;
-import mecono.node.SimSelfNode;
-import mecono.node.Neighbor;
-import mecono.node.RemoteNode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import mecono.node.HandshakeHistory;
-import mecono.node.ParcelHistoryStats;
+import mecono.node.Neighbor;
+import mecono.node.RemoteNode;
+import mecono.node.SimSelfNode;
 import mecono.parceling.PayloadType;
+import mecono.ui.SimGUI;
 
 /**
  *
@@ -96,7 +95,7 @@ public abstract class SimNetwork {
 		for (SimSelfNode node : getNodeSet()) {
 			sum += node.getMailbox().getHandshakeHistory().count(false, true, parcel_type);
 		}
-
+		
 		return sum;
 	}
 

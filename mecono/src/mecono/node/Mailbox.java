@@ -129,6 +129,23 @@ public class Mailbox {
 		parcel_nonce_counter++;
 		return parcel_nonce_counter;
 	}
+	
+	public void work(){
+		// Ping pinned nodes
+		pingPinnedNodes();
+
+		// Attempt to send parcels
+		getHandshakeHistory().attemptSend();
+
+		// Prune old handshakes
+		getHandshakeHistory().prune();
+
+		// Process inbound parcel queue
+		processInboundQueue();
+
+		// Process forward queue
+		processForwardQueue();
+	}
 
 	private final SelfNode owner; // The selfnode that runs the mailbox
 	private final MailboxWorker worker;
