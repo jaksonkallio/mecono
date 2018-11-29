@@ -116,7 +116,7 @@ public class Mailbox {
 	}
 
 	public void processInboundQueue() {
-		if (inbound_queue.size() > 0) {
+		if (!inbound_queue.isEmpty()) {
 			try {
 				receiveParcel(Parcel.unserialize(inbound_queue.poll(), getOwner()));
 			} catch (MissingParcelDetailsException | BadProtocolException ex) {
