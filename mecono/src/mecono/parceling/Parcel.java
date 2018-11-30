@@ -155,6 +155,8 @@ public class Parcel implements MeconoSerializable {
 		if(!((RemoteNode) parcel.getDestination()).validRecvSeqNum(parcel.getSeqNum())){
 			throw new BadProtocolException("Invalid sequence number");
 		}
+		
+		return parcel;
 	}
 
 	public static int getParcelTypeCode(PayloadType target) {
@@ -164,27 +166,6 @@ public class Parcel implements MeconoSerializable {
 			}
 		}
 		return -1;
-	}
-
-	public static PayloadType deserializePayloadType(String parcel_type) {
-		switch (parcel_type) {
-			case "PING":
-				return PayloadType.PING;
-			case "PING_RESPONSE":
-				return PayloadType.PING_RESPONSE;
-			case "FIND":
-				return PayloadType.FIND;
-			case "FIND_RESPONSE":
-				return PayloadType.FIND_RESPONSE;
-			case "DATA":
-				return PayloadType.DATA;
-			case "DATA_RECEIPT":
-				return PayloadType.DATA_RESPONSE;
-			case "ANNC":
-				return PayloadType.ANNC;
-			default:
-				return PayloadType.UNKNOWN;
-		}
 	}
 
 	public boolean validSend() {

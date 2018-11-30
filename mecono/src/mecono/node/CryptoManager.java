@@ -33,6 +33,11 @@ public class CryptoManager {
 		return true;
 	}
 	
+	public String decrypt(String message){
+		// TODO: Actual decryption
+		return message;
+	}
+	
 	public String sign(String message) {
 		try{
 			Signature dsa = Signature.getInstance("SHA1withECDSA");

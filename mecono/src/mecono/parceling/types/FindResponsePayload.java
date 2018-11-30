@@ -1,7 +1,6 @@
 package mecono.parceling.types;
 
 import java.util.ArrayList;
-import mecono.node.Mailbox;
 import mecono.node.NodeChain;
 import mecono.node.RemoteNode;
 import mecono.node.SelfNode;
@@ -100,7 +99,7 @@ public class FindResponsePayload extends ResponsePayload {
 		ArrayList<NodeChain> unserialized_target_answers = new ArrayList<>();
 
 		for (int i = 0; i < target_answers_json.length(); i++) {
-			unserialized_target_answers.add(NodeChain.unserialize(target_answers_json.getString(i), getParcel().getMailbox().getOwner()));
+			unserialized_target_answers.add(NodeChain.deserialize(target_answers_json.getString(i), getParcel().getMailbox().getOwner()));
 		}
 
 		return unserialized_target_answers;
