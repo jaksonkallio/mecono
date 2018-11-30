@@ -17,15 +17,15 @@ public class Parcel implements MeconoSerializable {
 
 	public Parcel(Mailbox mailbox) {
 		this.mailbox = mailbox;
-		setNonce();
+		Parcel.this.setSeqNum();
 		generateUniqueID();
 		setOriginator(mailbox.getOwner());
 	}
 
 	// Gets the originator of a parcel
 	public Node getOriginator() throws MissingParcelDetailsException {
-		if(originator != null){
-			return originator;
+		if(getNodeChain() != null){
+			return getNodeChain().getStop(0);
 		}
 		
 		throw new MissingParcelDetailsException("Originator not set");
@@ -88,10 +88,8 @@ public class Parcel implements MeconoSerializable {
 	}
 	
 	public void setNodeChain(NodeChain node_chain) throws MissingParcelDetailsException {
-		// If inbound, arbitrarily set the node_chain
-		if(getTransferDirection() == TransferDirection.INBOUND){
-			this.node_chain = node_chain;
-		}
+		// Arbitrarily set the node_chain
+		this.node_chain = node_chain;
 	}
 
 	public Node getNextNode() throws MissingParcelDetailsException {
@@ -110,7 +108,6 @@ public class Parcel implements MeconoSerializable {
 		
 		try {
 			parcel_json.put("chain", getNodeChain().serialize());
-			parcel_json.put("nonce", getNonce());
 			parcel_json.put("payload", getPayload().serialize());
 			parcel_json.put("signature", getSignature());
 			
@@ -122,17 +119,42 @@ public class Parcel implements MeconoSerializable {
 		return null;
 	}
 	
-	public static Parcel deserialize(JSONObject json, SelfNode self) {
-		Parcel constructed_parcel = new Parcel(self.getMailbox());
-		
-		try{
-			constructed_parcel.setNodeChain(NodeChain.unserialize(json.getString("chain"), self));
-			constructed_parcel.setNonce(json.getLong("nonce"));
-		
-		} catch(MissingParcelDetailsException ex) {
-			
+	public static Parcel deserialize(JSONObject parcel_json, SelfNode self) throws MissingParcelDetailsException, BadProtocolException {
+		if(!parcel_json.has("seq_num")){
+			throw new MissingParcelDetailsException("Missing sequence number");
 		}
-		return null;
+		
+		if(!parcel_json.has("chain")){
+			throw new MissingParcelDetailsException("Missing node chain");
+		}
+		
+		if(!parcel_json.has("payload")){
+			throw new MissingParcelDetailsException("Missing payload");
+		}
+		
+		if(!parcel_json.has("signature")){
+			throw new MissingParcelDetailsException("Missing signature");
+		}
+		
+		long seq_num = parcel_json.getLong("seq_num");
+		String payload_str = parcel_json.getString("payload");
+		String chain_str = parcel_json.getString("chain");
+		NodeChain chain = NodeChain.deserialize(chain_str, self);
+		
+		Parcel parcel = new Parcel(self.getMailbox());
+		parcel.setNodeChain(chain);
+		parcel.setSeqNum(seq_num);
+		
+		// Verify signature
+		if(!self.getCryptoManager().verifySig((payload_str + "," + chain_str), parcel.getOriginator())){
+			throw new BadProtocolException("Bad signature");
+		}
+
+		// Verify sequence number
+		// TODO: Possible TOCTOU exploit. If a thread logs a sequence number after a parcel with the same seq num is processed, replay attack possible.
+		if(!((RemoteNode) parcel.getDestination()).validRecvSeqNum(parcel.getSeqNum())){
+			throw new BadProtocolException("Invalid sequence number");
+		}
 	}
 
 	public static int getParcelTypeCode(PayloadType target) {
@@ -144,7 +166,7 @@ public class Parcel implements MeconoSerializable {
 		return -1;
 	}
 
-	public static PayloadType parseParcelType(String parcel_type) {
+	public static PayloadType deserializePayloadType(String parcel_type) {
 		switch (parcel_type) {
 			case "PING":
 				return PayloadType.PING;
@@ -301,16 +323,7 @@ public class Parcel implements MeconoSerializable {
 	public long getTimeSent() {
 		return time_sent;
 	}
-
-	/**
-	 * How long to wait for a response.
-	 *
-	 * @return
-	 */
-	public long getResponseWaitExpiry() {
-		return 600 * 1000l;
-	}
-
+	
 	public static NodeChain unserializeActualPath(JSONArray actual_path_json, SelfNode relative_self) throws BadProtocolException {
 		ArrayList<Node> stops = new ArrayList<>();
 		for (int i = 0; i < actual_path_json.length(); i++) {
@@ -349,7 +362,7 @@ public class Parcel implements MeconoSerializable {
 			throw new MissingParcelDetailsException("Missing content");
 		}
 
-		switch (parseParcelType(payload_json.getString("parcel_type"))) {
+		switch (deserializePayloadType(payload_json.getString("parcel_type"))) {
 			/*case PING:
 				parcel = new PingParcel(relative_self.getMailbox());
 				break;
@@ -412,8 +425,12 @@ public class Parcel implements MeconoSerializable {
 	}
 
 	public Node getDestination() throws MissingParcelDetailsException {
-		if(destination != null){
+		if(getTransferDirection() == TransferDirection.OUTBOUND && destination != null){
 			return destination;
+		}
+		
+		if(getNodeChain() != null){
+			return getNodeChain().getLastStop();
 		}
 		
 		throw new MissingParcelDetailsException("Missing destination");
@@ -507,31 +524,32 @@ public class Parcel implements MeconoSerializable {
 		this.unique_id = unique_id;
 	}
 	
-	public long getNonce(){
-		return nonce;
-	}
-	
-	// This is used to set the nonce of non-outbound parcels
-	public void setNonce(long nonce){
+	// This is used to set the sequence number of non-outbound parcels
+	public void setSeqNum(long seq_num){
 		try {
 			if(!isOutbound()){
-				this.nonce = nonce;
+				this.seq_num = seq_num;
 			}
 		} catch(MissingParcelDetailsException ex) {
 			
 		}
 	}
 	
-	// This is used to set the nonce of outbound parcels
-	// Nonce to be used is gotten from the mailbox
-	public void setNonce(){
+	// This is used to set the sequence number of outbound parcels
+	public void setSeqNum(){
 		try {
-			if(isOutbound()){
-				this.nonce = getMailbox().getParcelNonce();
+			if(isOutbound() && getDestination() != null){
+				RemoteNode destination = (RemoteNode) getDestination();
+				this.seq_num = destination.getSendSeqNum();
+				destination.incSendSeqNum();
 			}
 		} catch(MissingParcelDetailsException ex) {
 			
 		}
+	}
+	
+	public long getSeqNum(){
+		return seq_num;
 	}
 	
 	public boolean isOutbound() throws MissingParcelDetailsException {
@@ -543,10 +561,8 @@ public class Parcel implements MeconoSerializable {
 			CryptoManager cm = getMailbox().getOwner().getCryptoManager();
 			StringBuilder message = new StringBuilder();
 			
-			// nonce,path,encrypted_payload
-			// 15049,A-B-C-D,0x00000000000
-			message.append(getNonce());
-			message.append(",");
+			// chain,encrypted_payload
+			// A-B-C-D,0x00000000000
 			message.append(path.getNodeChain().serialize());
 			message.append(",");
 			message.append(getPayload().getEncryptedPayload());
@@ -596,5 +612,5 @@ public class Parcel implements MeconoSerializable {
 	private NodeChain node_chain;
 	private final Mailbox mailbox;
 	private Path path;
-	private long nonce;
+	private long seq_num;
 }

@@ -40,23 +40,15 @@ public class HandshakeHistory {
 	}
 
 	public int count(boolean has_response, PayloadType parcel_type) {
-		return count(has_response, false, parcel_type);
-	}
-
-	public int count(boolean has_response, boolean pending_list, PayloadType parcel_type) {
 		int count = 0;
 		List<Handshake> status = history;
-
-		if (pending_list) {
-			status = getPendingParcels();
-		}
 		
 		for (Handshake handshake : status) {
 			if (handshake.hasResponse() == has_response && (parcel_type == null || handshake.getTriggerParcel().getPayload().getPayloadType() == parcel_type)) {
 				count++;
 			}
 		}
-
+		
 		return count;
 	}
 
@@ -127,7 +119,7 @@ public class HandshakeHistory {
 		List<Handshake> pending = new ArrayList<>();
 		
 		for (Handshake handshake : history) {
-			if(!handshake.isSent()){
+			if(!handshake.hasResponse()){
 				pending.add(handshake);
 			}
 		}
@@ -142,7 +134,7 @@ public class HandshakeHistory {
 			construct = "";
 
 			for (Handshake handshake : history) {
-				if(!handshake.isSent()){
+				if(!handshake.hasResponse()){
 					construct += "\n-- " + handshake.getTriggerParcel().toString();
 				}
 			}
@@ -187,7 +179,7 @@ public class HandshakeHistory {
 	private boolean alreadyPending(Parcel parcel) {
 		for (Handshake handshake : history) {
 			try {
-				if (!handshake.isSent() && handshake.getTriggerParcel().isDuplicate(parcel)) {
+				if (!handshake.hasResponse() && handshake.getTriggerParcel().isDuplicate(parcel)) {
 					return true;
 				}
 			}catch(MissingParcelDetailsException ex){

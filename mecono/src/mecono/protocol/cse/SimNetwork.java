@@ -53,31 +53,8 @@ public abstract class SimNetwork {
 
 	protected abstract void initEnvironment();
 
-	public void refillSampleParcels() {
-	}
-
-	;
+	public void refillSampleParcels() {};
 	
-	/*public final void initializeRandomEnvironment() {
-		if (!initialized) {
-			generateSimSelfNodes(mesh_size);
-			generateRandomNeighborships();
-
-			for (int i = 0; i < 3; i++) {
-				SimSelfNode originator = members.get((int) (Math.random() * members.size()));
-				RemoteNode destination = originator.getMemoryController().loadRemoteNode(members.get((int) (Math.random() * members.size())).getAddress());
-				originator.sendDataParcel(destination, "test_message_" + i);
-			}
-
-			initialized = true;
-		}
-	}
-
-	public void generateSimSelfNodes(int count) {
-		for (int i = 0; i < count; i++) {
-			members.add(new SimSelfNode("n" + i, this));
-		}
-	}*/
 
 	public SimSelfNode getSelfNodeFromRemoteNode(RemoteNode target) {
 		for (SimSelfNode node : node_set) {
@@ -93,7 +70,7 @@ public abstract class SimNetwork {
 		int sum = 0;
 
 		for (SimSelfNode node : getNodeSet()) {
-			sum += node.getMailbox().getHandshakeHistory().count(false, true, parcel_type);
+			sum += node.getMailbox().getHandshakeHistory().count(false, parcel_type);
 		}
 		
 		return sum;
@@ -160,7 +137,6 @@ public abstract class SimNetwork {
 		}
 	}
 
-	// Simulation Preferences
 	protected final ArrayList<SimSelfNode> node_set = new ArrayList<>();
 	protected final ArrayList<ArrayList<Integer>> parcel_set = new ArrayList<>();
 	private SimGUI sim_gui;

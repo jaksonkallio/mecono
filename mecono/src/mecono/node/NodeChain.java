@@ -162,14 +162,6 @@ public class NodeChain {
 		return null;
 	}
 
-	public static NodeChain unserialize(String ser_path, SelfNode owner) {
-		ArrayList<Node> path_nodes = new ArrayList<>();
-		for (String remote_node_address : ser_path.split("-")) {
-			path_nodes.add(owner.getMemoryController().loadRemoteNode(remote_node_address));
-		}
-		return new NodeChain(path_nodes);
-	}
-
 	public String serialize() {
 		StringBuilder path_str = new StringBuilder();
 
@@ -182,6 +174,14 @@ public class NodeChain {
 		}
 
 		return path_str.toString();
+	}
+	
+	public static NodeChain deserialize(String chain_str, SelfNode self){
+		ArrayList<Node> path_nodes = new ArrayList<>();
+		for (String remote_node_address : chain_str.split("-")) {
+			path_nodes.add(self.getMemoryController().loadRemoteNode(remote_node_address));
+		}
+		return new NodeChain(path_nodes);
 	}
 
 	/**

@@ -56,7 +56,7 @@ public class Handshake {
 	}
 
 	public boolean isSent() {
-		return retries == 0;
+		return retries > 0;
 	}
 
 	private PayloadType determineResponseType() {
@@ -77,6 +77,7 @@ public class Handshake {
 	}
 	
 	public void responded(Parcel response_parcel){
+		System.out.println("responded");
 		if (getResponseType() == response_parcel.getPayloadType() && trigger_parcel.getUniqueID().equals(((ResponsePayload) response_parcel.getPayload()).getRespondedID())) {
 			this.response_parcel = response_parcel;
 			time_responded = Protocol.getEpochMilliSecond();

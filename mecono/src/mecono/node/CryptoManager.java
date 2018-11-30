@@ -28,6 +28,10 @@ public class CryptoManager {
 		return pub_key.toString();
 	}
 	
+	public boolean verifySig(String signature, Node node){
+		// TODO: Actually do a verification of the signature with the node's address
+		return true;
+	}
 	
 	public String sign(String message) {
 		try{

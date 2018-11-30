@@ -24,6 +24,7 @@ public abstract class Payload {
 		JSONObject serialized = new JSONObject();
 
 		serialized.put("parcel_type", Parcel.getParcelTypeCode(parcel.getPayloadType()));
+		serialized.put("seq", parcel.getSeqNum());
 		serialized.put("unique_id", parcel.getUniqueID());
 		serialized.put("content", serializeContent());
 
