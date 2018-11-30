@@ -72,7 +72,7 @@ public class HandshakeHistory {
 			Handshake handshake = history.get(send_cursor);
 
 			// First check consists of readiness based on outbound information
-			if (handshake.stale()) {
+			if (handshake.stale() || !handshake.isSent()) {
 				Parcel original_parcel = handshake.getTriggerParcel();
 				
 				if(handshake.getRetryCount() < original_parcel.getPayload().getMaxRetryCount() || original_parcel.getPayload().getRetryIndefinitely()){

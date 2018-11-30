@@ -13,7 +13,7 @@ public class Handshake {
 
 	public Handshake(Parcel original_parcel) {
 		this.trigger_parcel = original_parcel;
-		this.original_time_sent = Protocol.getEpochMilliSecond();
+		this.time_created = Protocol.getEpochMilliSecond();
 	}
 
 	@Override
@@ -56,11 +56,7 @@ public class Handshake {
 	}
 
 	public boolean isSent() {
-		return sent;
-	}
-
-	public void updateLastSendAttempt() {
-		last_send_attempt = Protocol.getEpochMilliSecond();
+		return retries == 0;
 	}
 
 	private PayloadType determineResponseType() {
@@ -77,12 +73,7 @@ public class Handshake {
 	}
 
 	public boolean stale() {
-		return (Protocol.elapsedMillis(original_time_sent) > trigger_parcel.getPayload().getStaleTime());
-	}
-	
-	// Sets the handshake as queued
-	public void created(){
-		time_created = Protocol.getEpochMilliSecond();
+		return (Protocol.elapsedMillis(getTimeSent()) > trigger_parcel.getPayload().getStaleTime());
 	}
 	
 	public void responded(Parcel response_parcel){
@@ -96,13 +87,8 @@ public class Handshake {
 	// Sets the handshake as sent
 	public void sent(){
 		time_sent = Protocol.getEpochMilliSecond();
-		sent = true;
 		retries++;
 	}
-	
-	//public long getTimeQueued(){
-	//	return time_queued;
-	//}
 	
 	public long getTimeSent(){
 		return time_sent;
@@ -119,10 +105,7 @@ public class Handshake {
 	private final Parcel trigger_parcel;
 	private Parcel response_parcel;
 	private boolean responded = false;
-	private boolean sent = false;
-	private long last_send_attempt = 0;
-	private final long original_time_sent;
-	private long time_created; // Time the handshake was created and put in the pending parcel list
+	private final long time_created; // Time the handshake was created and put in the pending parcel list
 	private long time_sent; // Time the parcel was sent onto the Mecono network
 	private long time_responded; // Time the handshake was given a response
 	private int retries;
