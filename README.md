@@ -2,6 +2,11 @@
 
 # Mecono: Decentralized Internet Access
 
+## February 2019, Important Update
+After years in school and working on this project, I've improved as a programmer and have a better understanding of what Mecono should be and how it should be implemented. As a result, I've decided to start over so that I can create the most elegant and clean code possible. All the work I've done previously can be found by [browsing the repository here](https://github.com/jaksonkallio/mecono/tree/9e12113ad7798c2e2e0c9147fdfe4f0ab3971d8e). I look forward to creating a better Mecono where every line, semi-colon, and algorithm is well thought-out!
+
+*Note: Mecono v2 is being built right here, in the same repo.*
+
 ## What is Mecono?
 
 **Me**sh-**Co**nnected **No**des
