@@ -5,10 +5,6 @@ public class Node {
 		this.address = address;
 	}
 	
-	public static Node generate(){
-		
-	}
-	
 	public String getAddressString(){
 		return address.getString() + '!' + coords.x + ',' + coords.y;
 	}
