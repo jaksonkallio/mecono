@@ -14,6 +14,12 @@ public class Connection {
 		return source;
 	}
 	
+	public double reliability(){
+		return successes / Math.max(1, total);
+	}
+	
 	private final Node source;
 	private final Node other;
+	private int successes;
+	private int total;
 }

@@ -43,19 +43,40 @@ public class Node {
 		return null;
 	}
 	
+	public void addConnection(Node other){
+		getConnections().add(new Connection(this, other));
+	}
+	
 	public Chain find(Node target) throws BadProtocolException {
 		Chain best_chain = null;
+		int squeeze = 10;
+
 		Set<SearchNode> checked = new HashSet<>();
 		Queue<SearchNode> check = new PriorityQueue<>();
 		
 		// Initial node is this node
 		check.offer(new SearchNode(null, this, (int)(getCoords().dist(target.getCoords()))));
 		
-		while(!check.isEmpty() && best_chain == null){
+		// While there are still SearchNodes to check AND the squeeze is greater than zero
+		while(!check.isEmpty() && squeeze > 0){
 			SearchNode curr_node = check.poll();
 			
 			if(curr_node.node.equals(target)){
-				best_chain = createChainFromSearchNode(curr_node);
+				Chain potential_chain = createChainFromSearchNode(curr_node);
+				
+				if(best_chain == null || potential_chain.reliability() > best_chain.reliability()){
+					best_chain = potential_chain;
+				}
+			}else{
+				// For each neighboring node to the current one
+				for(Connection curr_node_connection : curr_node.node.getConnections()){
+					// Create a new search node with the current as the parent
+					check.offer(new SearchNode(curr_node, curr_node_connection.getOther(), (int)(getCoords().dist(target.getCoords()))));
+				}
+			}
+			
+			if(best_chain != null){
+				squeeze--;
 			}
 		}
 		

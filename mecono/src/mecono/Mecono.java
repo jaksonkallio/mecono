@@ -2,7 +2,6 @@ package mecono;
 
 // Author: Jakson Kallio, 2019
 
-import java.security.NoSuchAlgorithmException;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
@@ -18,11 +17,8 @@ public class Mecono extends Application {
 		stage.setScene(scene);
 		stage.show();
 		
-		try {
-			Self self = Self.generate();
-		}catch(NoSuchAlgorithmException ex){
-			System.out.println("Could not generate self: " + ex.getMessage());
-		}
+		Sandbox sandbox = new Sandbox();
+		sandbox.start();
 	}
 
 	public static void main(String[] args) {
