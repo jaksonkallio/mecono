@@ -48,11 +48,30 @@ public class Node {
 		Set<SearchNode> checked = new HashSet<>();
 		Queue<SearchNode> check = new PriorityQueue<>();
 		
-		while(!check.isEmpty()){
+		// Initial node is this node
+		check.offer(new SearchNode(null, this, (int)(getCoords().dist(target.getCoords()))));
+		
+		while(!check.isEmpty() && best_chain == null){
+			SearchNode curr_node = check.poll();
 			
+			if(curr_node.node.equals(target)){
+				best_chain = createChainFromSearchNode(curr_node);
+			}
 		}
 		
 		return best_chain;
+	}
+	
+	private Chain createChainFromSearchNode(SearchNode last){
+		Chain chain = new Chain();
+		SearchNode curr = last;
+		
+		while(curr != null){
+			chain.addNode(0, curr.node);
+			curr = last.parent;
+		}
+		
+		return chain;
 	}
 	
 	private class SearchNode implements Comparable {
