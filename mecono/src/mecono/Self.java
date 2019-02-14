@@ -32,6 +32,10 @@ public class Self {
 		return new Self(pair);
 	}
 	
+	public Node getSelfNode(){
+		return self_node;
+	}
+	
 	public static final int KEY_LENGTH = 1024;
 	
 	private final Node self_node;
