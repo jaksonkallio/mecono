@@ -1,8 +1,8 @@
 package parcel;
 
-public class Data extends Parcel {
+public class Test extends Parcel {
 	@Override
 	public ParcelType getParcelType(){
-		return ParcelType.DATA;
+		return ParcelType.TEST;
 	}
 }
