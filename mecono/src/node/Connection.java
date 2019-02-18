@@ -5,7 +5,7 @@ import java.util.Set;
 
 public class Connection {
 	public Connection(Node n1, Node n2){
-		nodes = new HashSet<Node>();
+		nodes = new HashSet<>();
 		nodes.add(n1);
 		nodes.add(n2);
 	}

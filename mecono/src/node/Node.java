@@ -79,7 +79,7 @@ public class Node {
 				// For each neighboring node to the current one
 				for(Connection curr_node_connection : curr_node.node.getConnections()){
 					// Create a new search node with the current as the parent
-					check.offer(new SearchNode(curr_node, curr_node_connection.getOther(), target));
+					check.offer(new SearchNode(curr_node, curr_node_connection.getOther(curr_node.node), target));
 				}
 			}
 			
