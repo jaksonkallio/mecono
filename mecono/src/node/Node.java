@@ -35,7 +35,7 @@ public class Node {
 	
 	public Connection getConnection(Node other) {
 		for(Connection c : getConnections()){
-			if(c.getOther().equals(other)){
+			if(c.getOther(this).equals(other)){
 				return c;
 			}
 		}
@@ -44,7 +44,15 @@ public class Node {
 	}
 	
 	public void addConnection(Node other){
-		getConnections().add(new Connection(this, other));
+		Connection conn = new Connection(this, other);
+		
+		if(!getConnections().contains(conn)){
+			getConnections().add(conn);
+		}
+		
+		if(!other.getConnections().contains(conn)){
+			other.getConnections().add(conn);
+		}
 	}
 	
 	public Chain find(Node target) throws BadProtocolException {
