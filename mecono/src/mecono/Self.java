@@ -36,6 +36,10 @@ public class Self {
 		return self_node;
 	}
 	
+	public static long time(){
+		return System.currentTimeMillis();
+	}
+	
 	public static final int KEY_LENGTH = 1024;
 	
 	private final Node self_node;
