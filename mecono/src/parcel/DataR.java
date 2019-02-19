@@ -1,8 +1,8 @@
 package parcel;
 
-public class Find extends Trigger {
+public class DataR extends Response {
 	@Override
 	public ParcelType getParcelType(){
-		return ParcelType.FIND;
+		return ParcelType.DATAR;
 	}
 }
