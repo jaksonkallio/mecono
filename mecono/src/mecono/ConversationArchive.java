@@ -3,6 +3,7 @@ package mecono;
 import java.util.ArrayList;
 import java.util.List;
 import parcel.Parcel;
+import parcel.Response;
 
 public class ConversationArchive {
 	public ConversationArchive(){
@@ -16,8 +17,13 @@ public class ConversationArchive {
 		conversations.add(c);
 	}
 	
-	public void process(){
-		
+	public void process(Response parcel){
+		for(Conversation c : conversations){
+			if(c.trigger.isResponse(parcel)){
+				c.response = parcel;
+				c.time_responded = Self.time();
+			}
+		}
 	}
 	
 	private class Conversation {
