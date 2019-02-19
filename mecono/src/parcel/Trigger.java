@@ -1,5 +1,9 @@
 package parcel;
 
-public abstract class Trigger extends Parcel {
+import mecono.Self;
 
+public abstract class Trigger extends Parcel {
+	public Trigger(Self self){
+		super(self);
+	}
 }

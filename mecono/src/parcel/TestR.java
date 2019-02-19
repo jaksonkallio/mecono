@@ -1,6 +1,12 @@
 package parcel;
 
+import mecono.Self;
+
 public class TestR extends Response {
+	public TestR(Self self){
+		super(self);
+	}
+	
 	@Override
 	public ParcelType getParcelType(){
 		return ParcelType.TESTR;

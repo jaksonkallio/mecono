@@ -1,6 +1,12 @@
 package parcel;
 
+import mecono.Self;
+
 public abstract class Response extends Parcel {
+	public Response(Self self){
+		super(self);
+	}
+	
 	public String getTriggerID(){
 		return trigger_id;
 	}
