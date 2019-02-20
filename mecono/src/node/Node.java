@@ -45,8 +45,22 @@ public class Node implements MeconoSerializable {
 		return address;
 	}
 	
-	public void setLabel(String label){
-		this.label = label;
+	public void setAddress(String address){
+		if(getAddress() == null){
+			this.address = address;
+		}
+	}
+	
+	public void setBlurb(String blurb){
+		if(blurb.length() > MAX_BLURB_LENGTH){
+			blurb = blurb.substring(0, MAX_BLURB_LENGTH);
+		}
+		
+		this.blurb = blurb;
+	}
+	
+	public String getBlurb(){
+		return blurb;
 	}
 	
 	public GeoCoord getCoords(){
@@ -125,19 +139,50 @@ public class Node implements MeconoSerializable {
 		return serialize(true);
 	}
 	
+	public boolean emptyAddress(){
+		return getAddress() == null || getAddress().length() == 0;
+	}
+	
 	// In bootstrap mode several bits of "personalized" metadata are left out
 	public JSONObject serialize(boolean bootstrap) {
 		JSONObject node_json = new JSONObject();
 		node_json.put("address", getAddress());
 		node_json.put("coords", getCoords().serialize());
+		node_json.put("blurb", getBlurb());
 		
 		if(!bootstrap){
-			
+			node_json.put("send_count", send_count);
+			node_json.put("receive_count", receive_count);
+			node_json.put("last_test", last_test);
 		}
+	
+		return node_json;
 	}
 
-	public static MeconoSerializable deserialize(JSONObject json) {
+	public static MeconoSerializable deserialize(JSONObject json) throws BadSerializationException {
+		Node node = new Node();
 		
+		if(json.has("public_key")){
+			node.setPublicKey(json.getString("public_key"));
+		}
+		
+		if(json.has("address")){
+			node.setAddress(json.getString("address"));
+		}
+		
+		if(node.emptyAddress()){
+			throw new BadSerializationException("Unable to deserialize an address or public key");
+		}
+		
+		if(json.has("coords")){
+			node.setCoords((GeoCoord) GeoCoord.deserialize(json.getJSONObject("coords")));
+		}
+		
+		if(json.has("blurb")){
+			node.setBlurb(json.getString("blurb"));
+		}
+		
+		return node;
 	}
 	
 	private class SearchNode implements Comparable {
@@ -188,9 +233,14 @@ public class Node implements MeconoSerializable {
 		public final Node target;
 	}
 	
-	private String label;
+	public static final int MAX_BLURB_LENGTH = 100;
+	
+	private String blurb;
 	private String public_key;
 	private String address;
 	private final List<Connection> connections;
+	private int send_count;
+	private int receive_count;
+	private long last_test;
 	private GeoCoord coords;
 }
