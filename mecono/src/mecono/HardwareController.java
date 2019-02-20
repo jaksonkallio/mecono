@@ -24,7 +24,7 @@ public class HardwareController {
 			if(o instanceof PortConnection){
 				PortConnection other = (PortConnection) o;
 				
-				if(this.port == other.port && this.connection.equals(other.connection)){
+				if(this.port == other.port || this.connection.equals(other.connection)){
 					return true;
 				}
 			}
