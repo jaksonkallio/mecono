@@ -1,20 +1,48 @@
 package node;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
+import javax.xml.bind.DatatypeConverter;
+import mecono.MeconoSerializable;
+import org.json.JSONObject;
 
-public class Node {
-	public Node(Address address){
-		this.address = address;
+public class Node implements MeconoSerializable {
+	public Node(){
 		this.connections = new ArrayList<>();
 	}
 	
 	public String getAddressString(){
-		return address.getString() + '!' + coords.x + ',' + coords.y;
+		return getAddress() + '!' + coords.x + ',' + coords.y;
+	}
+	
+	public String getPublicKey(){
+		return public_key;
+	}
+	
+	public void setPublicKey(String public_key){
+		this.public_key = public_key;
+	}
+	
+	public String getAddress() {
+		if((address == null || address.length() == 0) && public_key != null){
+			// If the address is null or the length is zero, perform hash on the public key
+			try {
+				MessageDigest digest = MessageDigest.getInstance("SHA-256");
+	            byte[] hash = digest.digest(public_key.getBytes("UTF-8"));
+	            address = DatatypeConverter.printHexBinary(hash);
+			}catch(NoSuchAlgorithmException | UnsupportedEncodingException ex){
+				// TODO: node log
+			}
+		}
+		
+		return address;
 	}
 	
 	public void setLabel(String label){
@@ -90,6 +118,27 @@ public class Node {
 		
 		return best_chain;
 	}
+
+	@Override
+	public JSONObject serialize() {
+		// By default, we use bootstrap mode
+		return serialize(true);
+	}
+	
+	// In bootstrap mode several bits of "personalized" metadata are left out
+	public JSONObject serialize(boolean bootstrap) {
+		JSONObject node_json = new JSONObject();
+		node_json.put("address", getAddress());
+		node_json.put("coords", getCoords().serialize());
+		
+		if(!bootstrap){
+			
+		}
+	}
+
+	public static MeconoSerializable deserialize(JSONObject json) {
+		
+	}
 	
 	private class SearchNode implements Comparable {
 		public SearchNode(SearchNode parent, Node node, Node target){
@@ -140,7 +189,8 @@ public class Node {
 	}
 	
 	private String label;
-	private final Address address;
+	private String public_key;
+	private String address;
 	private final List<Connection> connections;
 	private GeoCoord coords;
 }

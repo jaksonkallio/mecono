@@ -5,13 +5,13 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import node.Address;
 import node.Node;
 
 public class Self {
 	public Self(KeyPair key_pair){
 		this.key_pair = key_pair;
-		this.self_node = new Node(new Address(this.key_pair.getPublic().toString()));
+		this.self_node = new Node();
+		this.self_node.setPublicKey(key_pair.getPublic().toString());
 	}
 	
 	public static Self generate() throws NoSuchAlgorithmException{
