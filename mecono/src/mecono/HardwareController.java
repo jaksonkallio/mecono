@@ -3,9 +3,14 @@ package mecono;
 import java.util.ArrayList;
 import java.util.List;
 import node.Connection;
+import node.InsufficientKnowledgeException;
+import node.Node;
+import org.json.JSONObject;
+import parcel.Parcel;
 
 public class HardwareController {
-	public HardwareController(){
+	public HardwareController(Self self){
+		this.self = self;
 		port_connections = new ArrayList<>();
 	}
 	
@@ -17,6 +22,24 @@ public class HardwareController {
 		if(!port_connections.contains(c)){
 			port_connections.add(c);
 		}
+	}
+	
+	public void send(JSONObject parcel, Node next) throws InsufficientKnowledgeException {
+		
+	}
+	
+	public void receive(JSONObject parcel){
+		self.receive(Parcel.deserialize(parcel));
+	}
+	
+	public int getPort(Node node){
+		for(PortConnection pc : port_connections){
+			if(pc.connection.getOther(self.getSelfNode()).equals(node)){
+				return pc.port;
+			}
+		}
+		
+		return -1;
 	}
 	
 	private class PortConnection {
@@ -36,5 +59,6 @@ public class HardwareController {
 		public Connection connection;
 	}
 
+	private final Self self;
 	private final List<PortConnection> port_connections;
 }

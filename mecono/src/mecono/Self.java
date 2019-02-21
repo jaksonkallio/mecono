@@ -5,12 +5,14 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.HashMap;
 import node.Node;
 
 public class Self {
 	public Self(KeyPair key_pair){
 		this.key_pair = key_pair;
 		this.self_node = new Node();
+		this.node_memory = new HashMap<>();
 		this.self_node.setPublicKey(key_pair.getPublic().toString());
 	}
 	
@@ -32,8 +34,20 @@ public class Self {
 		return new Self(pair);
 	}
 	
+	public void setHardwareController(HardwareController hc){
+		this.hc = hc;
+	}
+	
+	public HardwareController getHardwareController(){
+		return hc;
+	}
+	
 	public Node getSelfNode(){
 		return self_node;
+	}
+	
+	public Node lookupNode(String address){
+		return node_memory.get(address);
 	}
 	
 	public static long time(){
@@ -43,5 +57,7 @@ public class Self {
 	public static final int KEY_LENGTH = 1024;
 	
 	private final Node self_node;
+	private final HashMap<String, Node> node_memory;
+	private HardwareController hc;
 	private final KeyPair key_pair;
 }

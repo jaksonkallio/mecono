@@ -22,12 +22,34 @@ public class Node implements MeconoSerializable {
 		return getAddress() + '!' + coords.x + ',' + coords.y;
 	}
 	
+	public boolean equals(Object o){
+		if(o instanceof Node){
+			Node other = (Node) o;
+			
+			if(other.getAddress().equals(getAddress())){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public int hashCode(){
+		return getAddress().hashCode();
+	}
+	
 	public String getPublicKey(){
 		return public_key;
 	}
 	
 	public void setPublicKey(String public_key){
 		this.public_key = public_key;
+	}
+	
+	public static boolean validAddress(String address){
+		// TODO: valid address check
+		return true;
 	}
 	
 	public String getAddress() {
