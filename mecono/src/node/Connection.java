@@ -44,6 +44,14 @@ public class Connection {
 	public Set<Node> getNodes(){
 		return nodes;
 	}
+    
+    public void logSuccess(){
+        successes++;
+    }
+    
+    public void logUse(){
+        total++;
+    }
 	
 	private final Set<Node> nodes;
 	private int successes;

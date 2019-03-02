@@ -69,6 +69,18 @@ public class Chain implements MeconoSerializable {
         
         return conns;
     }
+    
+    public void logSuccess(){
+        for(Connection conn : getConnections()){
+            conn.logSuccess();
+        }
+    }
+    
+    public void logUse(){
+        for(Connection conn : getConnections()){
+            conn.logUse();
+        }
+    }
 	
 	@Override
 	public JSONObject serialize() {

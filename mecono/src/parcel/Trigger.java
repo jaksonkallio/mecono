@@ -14,13 +14,25 @@ public abstract class Trigger extends Terminus {
         time_responded = Util.time();
     }
     
-    public void responseAction(){
-        logSuccess();
+    public void response(){
+        getChain().logSuccess();
+    }
+
+    public void send(){
+        getChain().logUse();
+        time_sent = Util.time();
     }
     
-    public void logSuccess(){
-        Chain chain = getChain();
-        
+    public void enqueue(){
+        time_queued = Util.time();
+    }
+    
+    public boolean isSent(){
+        return time_sent != 0;
+    }
+    
+    public boolean isQueued(){
+        return time_queued != 0;
     }
     
     public boolean isResponse(Response response){
