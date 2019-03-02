@@ -2,6 +2,7 @@ package mecono;
 
 import java.util.ArrayList;
 import java.util.List;
+import node.BadSerializationException;
 import node.Connection;
 import node.InsufficientKnowledgeException;
 import node.Node;
@@ -28,8 +29,14 @@ public class HardwareController {
 		
 	}
 	
-	public void receive(JSONObject parcel){
-		self.receive(Parcel.deserialize(parcel));
+	public void receive(JSONObject json){
+        try {
+            Parcel parcel = Parcel.constructParcelType(json, self);
+            parcel.deserialize(json);
+            self.receive(parcel);
+        }catch(BadSerializationException ex){
+            self.log(ErrorLevel.ERROR, "Unable to deserialize parcel", ex.getMessage());
+        }
 	}
 	
 	public int getPort(Node node){

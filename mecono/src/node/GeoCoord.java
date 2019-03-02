@@ -8,6 +8,10 @@ public class GeoCoord implements MeconoSerializable {
 		this.x = x;
 		this.y = y;
 	}
+    
+    public GeoCoord(){
+        this(0, 0);
+    }
 	
 	public double dist(GeoCoord o){
 		return Math.sqrt(Math.pow(this.x - o.x, 2) + Math.pow(this.y - o.y, 2));
@@ -20,15 +24,17 @@ public class GeoCoord implements MeconoSerializable {
 		coords_json.put("y", y);
 		return coords_json;
 	}
-
-	public static MeconoSerializable deserialize(JSONObject json) throws BadSerializationException {
-		if(json.has("x") && json.has("y")){
-			return new GeoCoord(json.getInt("x"), json.getInt("y"));
-		}else{
-			throw new BadSerializationException("Missing x or y coordinates");
-		}
+    
+    @Override
+	public void deserialize(JSONObject json) throws BadSerializationException {
+        if(!json.has("x") || !json.has("y")){
+            throw new BadSerializationException("Missing x or y coordinates");
+        }
+        
+        x = json.getInt("x");
+        y = json.getInt("y");
 	}
 	
-	public final int x;
-	public final int y;
+	public int x;
+	public int y;
 }

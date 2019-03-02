@@ -14,18 +14,38 @@ public class Chain implements MeconoSerializable {
 	}
 	
 	public void addNode(Node node){
-		if(!nodes.contains(node)){
-			nodes.add(node);
+		if(!getNodes().contains(node)){
+			getNodes().add(node);
 		}
 	}
 	
 	public void addNode(int i, Node node){
-		nodes.add(i, node);
+		getNodes().add(i, node);
 	}
 	
 	public List<Node> getNodes(){
 		return nodes;
 	}
+    
+    public Node getNode(int i){
+        return getNodes().get(i);
+    }
+    
+    public Node getOriginNode(){
+        if(getNodes().size() > 0){
+            return getNodes().get(0);
+        }
+        
+        return null;
+    }
+    
+    public Node getDestinationNode(){
+        if(getNodes().size() > 0){
+            return getNodes().get(getNodes().size() - 1);
+        }
+        
+        return null;
+    }
 	
 	public double reliability(){
 		double reliability = 1.0;
@@ -61,8 +81,6 @@ public class Chain implements MeconoSerializable {
 		}else{
 			throw new BadSerializationException("No nodes to deserialize");
 		}
-		
-		return null;
 	}
 	
 	private final List<Node> nodes;

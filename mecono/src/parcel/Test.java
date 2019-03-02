@@ -1,6 +1,7 @@
 package parcel;
 
 import mecono.Self;
+import node.BadSerializationException;
 import org.json.JSONObject;
 
 public class Test extends Trigger {
@@ -8,7 +9,8 @@ public class Test extends Trigger {
 		super(self);
 	}
 	
-	public Parcel deserialize(JSONObject parcel_json){
+    @Override
+	public void deserialize(JSONObject parcel_json) throws BadSerializationException {
 		super.deserialize(parcel_json);
 	}
 	

@@ -11,10 +11,12 @@ import java.util.Queue;
 import java.util.Set;
 import javax.xml.bind.DatatypeConverter;
 import mecono.MeconoSerializable;
+import mecono.Self;
 import org.json.JSONObject;
 
 public class Node implements MeconoSerializable {
-	public Node(){
+	public Node(Self self){
+        this.self = self;
 		this.connections = new ArrayList<>();
 	}
 	
@@ -180,31 +182,30 @@ public class Node implements MeconoSerializable {
 	
 		return node_json;
 	}
-
-	public static MeconoSerializable deserialize(JSONObject json) throws BadSerializationException {
-		Node node = new Node();
-		
+    
+    @Override
+	public void deserialize(JSONObject json) throws BadSerializationException {
 		if(json.has("public_key")){
-			node.setPublicKey(json.getString("public_key"));
+			setPublicKey(json.getString("public_key"));
 		}
 		
 		if(json.has("address")){
-			node.setAddress(json.getString("address"));
+			setAddress(json.getString("address"));
 		}
 		
-		if(node.emptyAddress()){
+		if(emptyAddress()){
 			throw new BadSerializationException("Unable to deserialize an address or public key");
 		}
 		
 		if(json.has("coords")){
-			node.setCoords((GeoCoord) GeoCoord.deserialize(json.getJSONObject("coords")));
+            GeoCoord coords = new GeoCoord();
+            coords.deserialize(json.getJSONObject("coords"));
+			setCoords(coords);
 		}
 		
 		if(json.has("blurb")){
-			node.setBlurb(json.getString("blurb"));
-		}
-		
-		return node;
+			setBlurb(json.getString("blurb"));
+        }
 	}
 	
 	private class SearchNode implements Comparable {
@@ -230,7 +231,7 @@ public class Node implements MeconoSerializable {
 		}
 		
 		public Chain getChain(){
-			Chain chain = new Chain();
+			Chain chain = new Chain(self);
 			SearchNode curr = this;
 
 			while(curr != null){
@@ -265,4 +266,5 @@ public class Node implements MeconoSerializable {
 	private int receive_count;
 	private long last_test;
 	private GeoCoord coords;
+    private Self self;
 }
