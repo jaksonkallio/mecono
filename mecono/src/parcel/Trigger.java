@@ -2,6 +2,7 @@ package parcel;
 
 import mecono.Self;
 import mecono.Util;
+import node.Chain;
 
 public abstract class Trigger extends Terminus {
 	public Trigger(Self self){
@@ -14,6 +15,11 @@ public abstract class Trigger extends Terminus {
     }
     
     public void responseAction(){
+        logSuccess();
+    }
+    
+    public void logSuccess(){
+        Chain chain = getChain();
         
     }
     

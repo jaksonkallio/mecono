@@ -50,15 +50,25 @@ public class Chain implements MeconoSerializable {
 	public double reliability(){
 		double reliability = 1.0;
 		
-		for(int i = 0; i < nodes.size() - 1; i++){
-			Node curr = nodes.get(i);
-			Node next = nodes.get(i + 1);
-			
-			reliability = reliability * curr.getConnection(next).reliability();
+		for(Connection conn : getConnections()){
+			reliability *= conn.reliability();
 		}
 		
 		return reliability;
 	}
+    
+    public List<Connection> getConnections(){
+        List<Connection> conns = new ArrayList<>();
+        
+        for(int i = 0; i < nodes.size() - 1; i++){
+            Node curr = nodes.get(i);
+			Node next = nodes.get(i + 1);
+			
+			conns.add(curr.getConnection(next));
+        }
+        
+        return conns;
+    }
 	
 	@Override
 	public JSONObject serialize() {
