@@ -12,4 +12,9 @@ public class Foreign extends Parcel {
     public JSONObject serialize() {
         return null;
     }
+    
+    @Override
+    public void enqueueSend(){
+        getSelf().enqueueSend(this);
+    }
 }

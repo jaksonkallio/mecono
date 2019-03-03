@@ -23,7 +23,7 @@ public abstract class Response extends Terminus {
             // Lookup the trigger, give it this parcel
             Trigger trigger = getSelf().lookupTrigger(getTriggerID());
             trigger.setResponse(this);
-            trigger.response();
+            trigger.logResponse();
         }catch(InsufficientKnowledgeException ex){
             getSelf().log(ErrorLevel.ERROR, "Unable to process response: " + ex.getMessage());
         }

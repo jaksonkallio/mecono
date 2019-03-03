@@ -35,6 +35,8 @@ public abstract class Parcel implements MeconoSerializable {
     public Self getSelf(){
         return self;
     }
+
+    public abstract void enqueueSend();
     
     public static Parcel constructParcelType(String type_str, Self self) throws BadSerializationException {
         switch(type_str){

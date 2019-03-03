@@ -2,7 +2,6 @@ package parcel;
 
 import mecono.Self;
 import mecono.Util;
-import node.Chain;
 
 public abstract class Trigger extends Terminus {
 	public Trigger(Self self){
@@ -14,25 +13,26 @@ public abstract class Trigger extends Terminus {
         time_responded = Util.time();
     }
     
-    public void response(){
+    public void logResponse(){
         getChain().logSuccess();
     }
 
-    public void send(){
+    @Override
+    public void logSend(){
         getChain().logUse();
         time_sent = Util.time();
     }
     
-    public void enqueue(){
-        time_queued = Util.time();
-    }
-    
     public boolean isSent(){
-        return time_sent != 0;
+        return getTimeSent() != 0;
     }
     
-    public boolean isQueued(){
-        return time_queued != 0;
+    public long getTimeSent(){
+        return time_sent;
+    }
+    
+    public boolean isResponded(){
+        return time_responded != 0;
     }
     
     public boolean isResponse(Response response){
@@ -40,7 +40,7 @@ public abstract class Trigger extends Terminus {
 	}
     
     public Response response;
-    public long time_queued;
-    public long time_sent;
-    public long time_responded;
+    
+    private long time_sent;
+    private long time_responded;
 }
