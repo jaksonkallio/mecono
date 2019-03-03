@@ -41,9 +41,6 @@ public class Self {
 		priv_key = pair.getPrivate();
 		pub_key = pair.getPublic();
 		
-		System.out.println(priv_key.getEncoded());
-		System.out.println(pub_key.getEncoded());
-		
 		return new Self(pair);
 	}
 	

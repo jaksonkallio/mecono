@@ -8,17 +8,17 @@ public class SimHardwareController extends HardwareController {
 		super(self);
 	}
 	
-	public void setSandbox(Sandbox sandbox){
-		this.sandbox = sandbox;
+	public void setVirtualEnvironment(VirtualEnvironment ve){
+		this.ve = ve;
 	}
 	
-	public Sandbox getSandbox(){
-		return sandbox;
+	public VirtualEnvironment getVirtualEnvironment(){
+		return ve;
 	}
 	
 	@Override
 	public void send(JSONObject parcel, Node next){
-		HardwareController next_hc = getSandbox().lookupHardware(next);
+		HardwareController next_hc = getVirtualEnvironment().lookupHardware(next);
 		
 		if(next_hc != null && next_hc instanceof SimHardwareController){
 			next_hc = (SimHardwareController) next_hc;
@@ -26,5 +26,5 @@ public class SimHardwareController extends HardwareController {
 		}
 	}
 	
-	private Sandbox sandbox;
+	private VirtualEnvironment ve;
 }

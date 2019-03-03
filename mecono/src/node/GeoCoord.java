@@ -18,6 +18,11 @@ public class GeoCoord implements MeconoSerializable {
 	}
 	
 	@Override
+	public String toString(){
+		return x+","+y;
+	}
+	
+	@Override
 	public JSONObject serialize() {
 		JSONObject coords_json = new JSONObject();
 		coords_json.put("x", x);
