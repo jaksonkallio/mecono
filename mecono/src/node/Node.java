@@ -98,6 +98,16 @@ public class Node implements MeconoSerializable {
 	public List<Connection> getConnections(){
 		return connections;
 	}
+    
+    public List<Node> getNeighbors(){
+        List<Node> results = new ArrayList<>();
+        
+        for(Connection conn : getConnections()){
+            results.add(conn.getOther(this));
+        }
+        
+        return results;
+    }
 	
 	public Connection getConnection(Node other) {
 		for(Connection c : getConnections()){

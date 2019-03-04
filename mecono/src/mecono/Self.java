@@ -28,6 +28,24 @@ public class Self {
         this.send_queue = new ArrayList<>();
         this.forward_queue = new LinkedBlockingQueue<>();
 	}
+    
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof Self){
+            Self other = (Self) o;
+            
+            if(getSelfNode().equals(other.getSelfNode())){
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    @Override
+    public int hashCode(){
+        return getSelfNode().hashCode();
+    }
 	
 	public static Self generate() throws NoSuchAlgorithmException{
 		KeyPairGenerator key_gen;
@@ -57,7 +75,15 @@ public class Self {
 	}
 	
 	public Node lookupNode(String address){
-		return node_memory.get(address);
+        if(node_memory.containsKey(address)){
+            return node_memory.get(address);
+        }
+        
+        Node new_node = new Node(this);
+        new_node.setAddress(address);
+        node_memory.put(new_node.getAddress(), new_node);
+        
+        return new_node;
 	}
 	
 	public static long time(){

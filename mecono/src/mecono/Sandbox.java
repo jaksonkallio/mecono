@@ -4,7 +4,8 @@ public class Sandbox {
 	public void start(){
 		System.out.println("Starting sandbox");
 		VirtualEnvironment ve = new VirtualEnvironment();
-		ve.runSim(25);
+		ve.runSim(100);
 		ve.printSelfList();
+        ve.printBFS();
 	}
 }

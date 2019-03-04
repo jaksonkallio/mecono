@@ -18,7 +18,7 @@ public class SimHardwareController extends HardwareController {
 	
 	@Override
 	public void send(JSONObject parcel, Node next){
-		HardwareController next_hc = getVirtualEnvironment().lookupHardware(next);
+		HardwareController next_hc = getVirtualEnvironment().lookupSelf(next.getAddress()).getHardwareController();
 		
 		if(next_hc != null && next_hc instanceof SimHardwareController){
 			next_hc = (SimHardwareController) next_hc;

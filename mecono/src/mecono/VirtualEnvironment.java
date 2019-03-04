@@ -3,9 +3,13 @@ package mecono;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
 import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 import node.GeoCoord;
 import node.Node;
@@ -43,30 +47,60 @@ public class VirtualEnvironment {
 				
 				while(!prox_nodes.isEmpty()){
 					ProximityNode prox = prox_nodes.poll();
-					self.getSelfNode().addConnection(prox.self.getSelfNode());
-					System.out.println("added, dist: "+prox.dist);
+					self.getSelfNode().addConnection(self.lookupNode(prox.self.getSelfNode().getAddress()));
 				}
 			}
 		} catch(NoSuchAlgorithmException ex) {
 			System.out.println("Cannot run simulation: " + ex.getMessage());
 		}
 	}
+    
+    public void printBFS(){
+        if(self_list.size() > 0){
+            printBFS(self_list.get(self_list.size() / 2));
+        }
+    }
+    
+    public void printBFS(Self self){
+        Queue<Self> check = new LinkedBlockingQueue<>();
+        Set<Self> checked = new HashSet<>();
+        check.offer(self);
+        int n = 0;
+        
+        while(!check.isEmpty()){
+            Self curr = check.poll();
+            
+            if(checked.contains(curr)){
+               continue; 
+            }
+            
+            for(Node neighbor : curr.getSelfNode().getNeighbors()){
+                check.offer(lookupSelf(neighbor.getAddress()));
+            }
+            
+            checked.add(curr);
+            n++;
+        }
+        
+        System.out.println("Networked nodes: " + n);
+        System.out.println("Orphaned nodes: " + n);
+    }
 	
 	public void printSelfList(){
 		for(int i = 0; i < self_list.size(); i++){
 			System.out.println(i + " @ " + self_list.get(i).getSelfNode().getCoords().toString());
 		}
-	}
-	
-	public HardwareController lookupHardware(Node node){
-		for(Self self : self_list){
-			if(self.getSelfNode().equals(node)){
-				return self.getHardwareController();
-			}
-		}
-		
-		return null;
-	}
+    }
+    
+    public Self lookupSelf(String address){
+        for(Self self : self_list){
+            if(self.getSelfNode().getAddress().equals(address)){
+                return self;
+            }
+        }
+        
+        return null;
+    }
 	
 	private Queue<ProximityNode> getProximityNodes(Self center, int k){
 		Queue<ProximityNode> results = new PriorityBlockingQueue<>(k, Collections.reverseOrder());
@@ -104,7 +138,13 @@ public class VirtualEnvironment {
 		public Self self;
 		public double dist;
 	}
+    
+    public int getNodeCount(){
+        return node_count;
+    }
 	
+    public void 
+    
 	private final static long RNG_SEED = 444555666;
 	
 	private final List<Self> self_list;
