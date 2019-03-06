@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import node.BadProtocolException;
+import node.Chain;
 import node.InsufficientKnowledgeException;
 import node.Node;
 import parcel.Foreign;
@@ -93,7 +94,7 @@ public class Self {
 	}
     
     public void receive(Parcel parcel){
-        parcel.process();
+        parcel.receive();
     }
     
     public Trigger lookupTrigger(String id) throws InsufficientKnowledgeException {
@@ -103,6 +104,10 @@ public class Self {
         
         throw new InsufficientKnowledgeException("Unrecognized trigger parcel");
     }
+	
+	public void learn(Chain chain){
+		
+	}
     
     public void work(){
         if(Util.timeElapsed(last_cleanup) > CLEANUP_INTERVAL){

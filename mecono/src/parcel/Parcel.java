@@ -28,8 +28,8 @@ public abstract class Parcel implements MeconoSerializable {
 		return chain;
 	}
 	
-	public void process(){
-		
+	public void receive(){
+		getSelf().learn(getChain());
 	}
     
     public Self getSelf(){
