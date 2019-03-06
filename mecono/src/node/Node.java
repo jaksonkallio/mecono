@@ -131,6 +131,14 @@ public class Node implements MeconoSerializable {
 		}
 	}
 	
+	public void findMe(){
+		
+	}
+	
+	public void consult(Node target){
+		
+	}
+	
 	public Chain find(Node target) throws BadProtocolException {
 		Chain best_chain = null;
 		int squeeze = 10;

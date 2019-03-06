@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
+import node.BadProtocolException;
 import node.InsufficientKnowledgeException;
 import node.Node;
 import parcel.Foreign;
@@ -113,14 +114,34 @@ public class Self {
     
     public void processSendQueue(){
         for(Terminus parcel : send_queue){
-            if(parcel.ready()){
-                try {
-                    getHardwareController().send(parcel.serialize(), self_node);
-                    parcel.logSend();
-                }catch(InsufficientKnowledgeException ex){
-                    log(ErrorLevel.ERROR, "Cannot send parcel despite being ready", ex.getMessage());
-                }
-            }
+			try {
+				// Check if we have a destination
+				if(parcel.getDestination() == null){
+					continue;
+				}
+
+				// Check if the chain is non-null
+				if(parcel.getChain() == null){
+					// If null, try to find a chain
+					parcel.setChain(getSelfNode().find(parcel.getDestination()));
+					
+					// If still null, consult some friends for network information
+					if(parcel.getChain() == null){
+						parcel.getDestination().findMe();
+					}
+				}
+				
+				// Make sure the chain is online
+				if(!parcel.getChain().online()){
+					// Not online, test the chain
+					parcel.getChain().test();
+				}
+				
+				getHardwareController().send(parcel.serialize(), self_node);
+				parcel.logSend();
+			}catch(InsufficientKnowledgeException | BadProtocolException ex){
+				log(ErrorLevel.ERROR, "Cannot send parcel", ex.getMessage());
+			}
         }
     }
     
@@ -145,8 +166,16 @@ public class Self {
         forward_queue.offer(parcel);
     }
     
-    public void enqueueSend(Terminus parcel){
-        send_queue.add(parcel);
+    public void enqueueSend(Terminus send_parcel){
+		if(send_parcel instanceof Trigger){
+			for(Terminus parcel : send_queue){
+				if(parcel.isDuplicate(send_parcel)){
+					return;
+				}
+			}
+		}
+		
+        send_queue.add(send_parcel);
     }
     
     private void pruneTriggerHistory(){

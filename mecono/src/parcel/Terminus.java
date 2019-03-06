@@ -2,6 +2,7 @@ package parcel;
 
 import mecono.Self;
 import mecono.Util;
+import node.Node;
 import org.json.JSONObject;
 
 public abstract class Terminus extends Parcel {
@@ -13,6 +14,19 @@ public abstract class Terminus extends Parcel {
     
     public String getID(){
 		return "ABCD";
+	}
+	
+	@Override
+	public boolean isDuplicate(Parcel o){
+		if(o instanceof Terminus){
+			Terminus other = (Terminus) o;
+			
+			if(getParcelType() == other.getParcelType()){
+				return true;
+			}
+		}
+		
+		return false;
 	}
     
     public boolean ready(){
@@ -39,6 +53,15 @@ public abstract class Terminus extends Parcel {
     public void logQueue(){
         time_queued = Util.time();
     }
+	
+	public Node getDestination(){
+		if(getChain() == null || getChain().empty()){
+			return destination;
+		}
+		
+		return getChain().getDestinationNode();
+	}
     
     private long time_queued;
+	private Node destination;
 }

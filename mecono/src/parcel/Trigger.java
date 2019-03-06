@@ -14,7 +14,7 @@ public abstract class Trigger extends Terminus {
     }
     
     public void logResponse(){
-        getChain().logSuccess();
+        getChain().logSuccess(getTimeResponded() - getTimeSent());
     }
 
     @Override
@@ -30,6 +30,10 @@ public abstract class Trigger extends Terminus {
     public long getTimeSent(){
         return time_sent;
     }
+	
+	public long getTimeResponded(){
+		return time_responded;
+	}
     
     public boolean isResponded(){
         return time_responded != 0;

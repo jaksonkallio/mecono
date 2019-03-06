@@ -39,6 +39,10 @@ public class Chain implements MeconoSerializable {
         return null;
     }
     
+	public boolean empty(){
+		return getNodes().isEmpty();
+	}
+	
     public Node getDestinationNode(){
         if(getNodes().size() > 0){
             return getNodes().get(getNodes().size() - 1);
@@ -69,10 +73,16 @@ public class Chain implements MeconoSerializable {
         
         return conns;
     }
+	
+	public void test(){
+		
+	}
     
-    public void logSuccess(){
-        for(Connection conn : getConnections()){
-            conn.logSuccess();
+    public void logSuccess(long ping){
+		long avg_ping_per_connection = ping / getConnections().size();
+        
+		for(Connection conn : getConnections()){
+            conn.logSuccess(avg_ping_per_connection);
         }
     }
     
@@ -81,6 +91,16 @@ public class Chain implements MeconoSerializable {
             conn.logUse();
         }
     }
+	
+	public boolean online(){
+		for(Connection conn : getConnections()){
+			if(!conn.online()){
+				return false;
+			}
+		}
+		
+		return true;
+	}
 	
 	@Override
 	public JSONObject serialize() {

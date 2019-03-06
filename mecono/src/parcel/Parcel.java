@@ -35,6 +35,10 @@ public abstract class Parcel implements MeconoSerializable {
     public Self getSelf(){
         return self;
     }
+	
+	public boolean isDuplicate(Parcel other){
+		return true;
+	}
 
     public abstract void enqueueSend();
     
