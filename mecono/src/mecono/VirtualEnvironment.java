@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 import node.GeoCoord;
@@ -20,14 +19,14 @@ public class VirtualEnvironment {
 		rng = new Random(RNG_SEED);
 	}
 	
-	public void runSim(int n){
-		int side_count = (int) Math.ceil(Math.sqrt(n));
+	public void runSim(){
+		int side_count = (int) Math.ceil(Math.sqrt(getNodeCount()));
 		int spacing_variance = base_spacing / 2;
 		
 		try {
 			for(int x = 0; x < side_count; x++){
 				for(int y = 0; y < side_count; y++){
-					if(self_list.size() < n){
+					if(self_list.size() < getNodeCount()){
 						Self new_self = Self.generate();
 						int new_x = (x + 1) * base_spacing;
 						int new_y = (y + 1) * base_spacing;
@@ -83,7 +82,7 @@ public class VirtualEnvironment {
         }
         
         System.out.println("Networked nodes: " + n);
-        System.out.println("Orphaned nodes: " + n);
+        System.out.println("Orphaned nodes: " + (getNodeCount() - n));
     }
 	
 	public void printSelfList(){
@@ -143,10 +142,13 @@ public class VirtualEnvironment {
         return node_count;
     }
 	
-    public void 
+    public void setNodeCount(int node_count){
+		this.node_count = node_count;
+	}
     
 	private final static long RNG_SEED = 444555666;
 	
+	private int node_count;
 	private final List<Self> self_list;
 	private final int base_spacing = 20;
 	private final int neighbor_count = 3;
