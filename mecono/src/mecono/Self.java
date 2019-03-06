@@ -180,7 +180,19 @@ public class Self {
         send_queue.add(send_parcel);
     }
 	
+	public void addFriend(Node node){
+		if(!friends.contains(node)){
+			friends.add(node);
+		}
+	}
+	
 	public List<Node> getFriends(){
+		List<Node> results = new ArrayList<>(friends);
+		
+		for(Node neighbor : getSelfNode().getNeighbors()){
+			results.add(neighbor);
+		}
+		
 		return friends;
 	}
     
