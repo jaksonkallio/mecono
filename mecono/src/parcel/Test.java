@@ -10,27 +10,6 @@ public class Test extends Trigger {
 		super(self);
 	}
 	
-	public void setTarget(Node target){
-		this.target = target;
-	}
-	
-	public Node getTarget(){
-		return target;
-	}
-	
-	@Override
-	public boolean isDuplicate(Parcel o){
-		if(o instanceof Test){
-			Test other = (Test) o;
-			
-			if(getTarget().equals(other.getTarget())){
-				return super.isDuplicate(o);
-			}
-		}
-		
-		return false;
-	}
-	
     @Override
 	public void deserialize(JSONObject parcel_json) throws BadSerializationException {
 		super.deserialize(parcel_json);

@@ -61,6 +61,10 @@ public abstract class Terminus extends Parcel {
 		
 		return getChain().getDestinationNode();
 	}
+	
+	public void setDestination(Node destination){
+		this.destination = destination;
+	}
     
     private long time_queued;
 	private Node destination;

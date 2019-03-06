@@ -13,6 +13,7 @@ import javax.xml.bind.DatatypeConverter;
 import mecono.MeconoSerializable;
 import mecono.Self;
 import org.json.JSONObject;
+import parcel.Find;
 
 public class Node implements MeconoSerializable {
 	public Node(Self self){
@@ -136,7 +137,11 @@ public class Node implements MeconoSerializable {
 	}
 	
 	public void consult(Node target){
+		Find find = new Find(self);
+		find.setTarget(target);
+		find.setDestination(this);
 		
+		self.enqueueSend(find);
 	}
 	
 	public Chain find(Node target) throws BadProtocolException {

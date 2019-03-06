@@ -167,6 +167,7 @@ public class Self {
     }
     
     public void enqueueSend(Terminus send_parcel){
+		// Duplicates only matter if we are sending trigger parcels
 		if(send_parcel instanceof Trigger){
 			for(Terminus parcel : send_queue){
 				if(parcel.isDuplicate(send_parcel)){
