@@ -28,6 +28,7 @@ public class Self {
 		this.self_node.setPublicKey(key_pair.getPublic().toString());
         this.send_queue = new ArrayList<>();
         this.forward_queue = new LinkedBlockingQueue<>();
+		this.friends = new ArrayList<>();
 	}
     
     @Override
@@ -158,7 +159,7 @@ public class Self {
     }
     
     private void cleanup(){
-        last_cleanup = Util.time();
+        last_cleanup = Self.time();
         pruneTriggerHistory();
     }
     
@@ -178,6 +179,10 @@ public class Self {
 		
         send_queue.add(send_parcel);
     }
+	
+	public List<Node> getFriends(){
+		return friends;
+	}
     
     private void pruneTriggerHistory(){
         for(Map.Entry<String, Trigger> entry : triggers.entrySet()) {
@@ -197,6 +202,7 @@ public class Self {
     
 	private final Node self_node;
 	private final HashMap<String, Node> node_memory;
+	private final List<Node> friends;
     private final HashMap<String, Trigger> triggers;
     private final List<Terminus> send_queue;
     private final Queue<Foreign> forward_queue;

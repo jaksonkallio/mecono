@@ -51,7 +51,7 @@ public abstract class Terminus extends Parcel {
     }
     
     public void logQueue(){
-        time_queued = Util.time();
+        time_queued = Self.time();
     }
 	
 	public Node getDestination(){

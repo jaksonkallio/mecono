@@ -133,7 +133,9 @@ public class Node implements MeconoSerializable {
 	}
 	
 	public void findMe(){
-		
+		for(Node friend : self.getFriends()){
+			friend.consult(this);
+		}
 	}
 	
 	public void consult(Node target){

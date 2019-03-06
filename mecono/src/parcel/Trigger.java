@@ -10,7 +10,7 @@ public abstract class Trigger extends Terminus {
     
     public void setResponse(Response response){
         this.response = response;
-        time_responded = Util.time();
+        time_responded = Self.time();
     }
     
     public void logResponse(){
@@ -20,7 +20,7 @@ public abstract class Trigger extends Terminus {
     @Override
     public void logSend(){
         getChain().logUse();
-        time_sent = Util.time();
+        time_sent = Self.time();
     }
     
     public boolean isSent(){

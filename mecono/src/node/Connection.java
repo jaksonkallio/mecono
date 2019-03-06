@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
+import mecono.Self;
 import mecono.Util;
 
 public class Connection {
@@ -77,7 +78,7 @@ public class Connection {
 	}
     
     public void logUse(){
-		last_use = Util.time();
+		last_use = Self.time();
         total++;
     }
 	
