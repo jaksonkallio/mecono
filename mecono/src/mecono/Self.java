@@ -155,6 +155,10 @@ public class Self {
         
     }
     
+    public HashMap<String, Node> getNodeMemory(){
+        return node_memory;
+    }
+    
     public void log(ErrorLevel error_level, String message, String detail){
         log(error_level, message + ": " + detail);
     }
