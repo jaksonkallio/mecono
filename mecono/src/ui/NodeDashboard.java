@@ -5,6 +5,8 @@ import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
@@ -37,6 +39,9 @@ public class NodeDashboard extends Stage {
         
         HBox button_container = new HBox();
         print_outbox_button = new Button("View Outbox");
+        print_outbox_button.setOnAction((ActionEvent e) -> {
+            self.printOutbox();
+        });
         button_container.getChildren().add(print_outbox_button);
         
         main_container.getChildren().addAll(node_log, button_container);

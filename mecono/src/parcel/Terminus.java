@@ -47,7 +47,11 @@ public abstract class Terminus extends Parcel {
     }
     
     public boolean isQueued(){
-        return time_queued != 0;
+        return getTimeQueued() != 0;
+    }
+    
+    public long getTimeQueued(){
+        return time_queued;
     }
     
     public void logQueue(){

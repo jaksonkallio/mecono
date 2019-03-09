@@ -30,6 +30,7 @@ public class Self {
         this.send_queue = new ArrayList<>();
         this.forward_queue = new LinkedBlockingQueue<>();
 		this.friends = new ArrayList<>();
+        this.node_log = new LinkedBlockingQueue<>();
 	}
     
     @Override
@@ -160,11 +161,24 @@ public class Self {
     }
     
     public void log(ErrorLevel error_level, String message, String detail){
-        log(error_level, message + ": " + detail);
+        log(0, error_level, message + ": " + detail);
     }
     
     public void log(ErrorLevel error_level, String message){
-        System.out.println("[" + error_level.name() + "] " + message);
+        log(0, error_level, message);
+    }
+    
+    public void log(int indent, ErrorLevel error_level, String message){
+        String construct = "";
+        
+        for(int i = 0; i < indent; i++){
+            construct += "  ";
+        }
+        
+        construct += "[" + error_level.name() + "] " + message;
+        
+        System.out.println(construct);
+        node_log.offer(construct);
     }
     
     private void cleanup(){
@@ -205,6 +219,16 @@ public class Self {
 		return friends;
 	}
     
+    public void printOutbox(){
+        log(ErrorLevel.INFO, "Outbox");
+        log(1, ErrorLevel.INFO, "Count: " + send_queue.size());
+        log(1, ErrorLevel.INFO, "List:");
+        for(int i = 0; i < send_queue.size() && i < 20; i++){
+            Terminus parcel = send_queue.get(i);
+            log(2, ErrorLevel.INFO, parcel.getID() + " " + parcel.getParcelType().name() + " " + Util.fuzzyTime(Util.timeElapsed(parcel.getTimeQueued())));
+        }
+    }
+    
     private void pruneTriggerHistory(){
         for(Map.Entry<String, Trigger> entry : triggers.entrySet()) {
             String key = entry.getKey();
@@ -225,6 +249,7 @@ public class Self {
 	private final HashMap<String, Node> node_memory;
 	private final List<Node> friends;
     private final HashMap<String, Trigger> triggers;
+    private final Queue<String> node_log;
     private final List<Terminus> send_queue;
     private final Queue<Foreign> forward_queue;
 	private HardwareController hc;
