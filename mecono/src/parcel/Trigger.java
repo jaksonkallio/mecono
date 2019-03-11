@@ -9,7 +9,7 @@ public abstract class Trigger extends Terminus {
 	}
     
 	public final void genID(){
-		setID(""+getSelf().rng.nextInt());
+		setID(""+getSelf().genRandomString(PARCEL_ID_LEN));
 	}
 	
     public void setResponse(Response response){
@@ -46,6 +46,8 @@ public abstract class Trigger extends Terminus {
     public boolean isResponse(Response response){
 		return getID().equals(response.getTriggerID());
 	}
+	
+	public static final short PARCEL_ID_LEN = 5;
 	
     public Response response;
     

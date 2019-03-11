@@ -16,8 +16,13 @@ public class NodeDashboard extends Stage {
 		this.self = self;
 		setTitle("Node Dashboard");
         constructMainContainer();
+		this.self.addNodeDashboardListener(this);
 		setScene(new Scene(main_container, 500, 500));
 		show();
+	}
+	
+	public void appendNodeLog(String message){
+		node_log.appendText(message + "\n");
 	}
     
     private void constructMainContainer(){
@@ -27,6 +32,7 @@ public class NodeDashboard extends Stage {
         node_log.setPrefRowCount(20);
         node_log.setWrapText(false);
         node_log.setEditable(false);
+		node_log.setStyle("-fx-font-family: 'monospaced';");
         
         HBox button_container = new HBox();
         print_outbox_button = new Button("View Outbox");

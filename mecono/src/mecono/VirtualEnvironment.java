@@ -65,7 +65,7 @@ public class VirtualEnvironment {
 					Data parcel = new Data(self);
 					parcel.setDestination(self.lookupNode(self_list.get((int)(rng.nextDouble() * self_list.size())).getSelfNode().getAddress()));
 					parcel.setMessage("Hello, this is message #" + n);
-					self.enqueueSend(parcel);
+					parcel.enqueueSend();
 					n++;
 				}
 			}

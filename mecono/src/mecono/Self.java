@@ -20,6 +20,7 @@ import parcel.Foreign;
 import parcel.Parcel;
 import parcel.Terminus;
 import parcel.Trigger;
+import ui.NodeDashboard;
 
 public class Self {
 	public Self(KeyPair key_pair){
@@ -201,14 +202,21 @@ public class Self {
     public void log(int indent, ErrorLevel error_level, String message){
         String construct = "";
         
-        for(int i = 0; i < indent; i++){
+        construct += "[" + error_level.name() + "] ";
+		
+		for(int i = 0; i < indent; i++){
             construct += "  ";
         }
-        
-        construct += "[" + error_level.name() + "] " + message;
+		
+		construct += message;
         
         System.out.println(construct);
+		nd.appendNodeLog(construct);
         node_log.offer(construct);
+		
+		while(node_log.size() > 1000){
+			node_log.remove();
+		}
     }
     
     private void cleanup(){
@@ -259,6 +267,10 @@ public class Self {
         }
     }
     
+	public void addNodeDashboardListener(NodeDashboard nd){
+		this.nd = nd;
+	}
+	
     private void pruneTriggerHistory(){
         for(Map.Entry<String, Trigger> entry : triggers.entrySet()) {
             String key = entry.getKey();
@@ -288,5 +300,6 @@ public class Self {
 	private HardwareController hc;
 	private final KeyPair key_pair;
     private long last_cleanup;
+	private NodeDashboard nd;
 	private String internal_address; // Internal addresses are used for internal identification, much like an internal IP address
 }
