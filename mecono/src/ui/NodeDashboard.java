@@ -1,23 +1,14 @@
 package ui;
 
-import java.util.Timer;
-import java.util.TimerTask;
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mecono.Self;
-import node.Node;
 
 public class NodeDashboard extends Stage {
 
@@ -25,7 +16,7 @@ public class NodeDashboard extends Stage {
 		this.self = self;
 		setTitle("Node Dashboard");
         constructMainContainer();
-		setScene(new Scene(main_container, 800, 400));
+		setScene(new Scene(main_container, 500, 500));
 		show();
 	}
     

@@ -11,4 +11,10 @@ public class Data extends Trigger {
 	public ParcelType getParcelType(){
 		return ParcelType.DATA;
 	}
+	
+	public void setMessage(String message){
+		this.message = message;
+	}
+	
+	private String message;
 }

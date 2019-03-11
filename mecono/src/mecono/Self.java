@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
 import node.BadProtocolException;
 import node.Chain;
@@ -31,8 +32,37 @@ public class Self {
         this.forward_queue = new LinkedBlockingQueue<>();
 		this.friends = new ArrayList<>();
         this.node_log = new LinkedBlockingQueue<>();
+		this.rng = new Random();
+		genInternalAddress();
 	}
     
+	public String genRandomString(int k){
+		char[] text = new char[k];
+
+		for (int i = 0; i < k; i++) {
+			text[i] = HEX_CHARS[rng.nextInt(HEX_CHARS.length)];
+		}
+
+		return new String(text);
+	}
+	
+	public final void genInternalAddress(){
+		setInternalAddress(genRandomString(INTERNAL_ADDRESS_LEN));
+	}
+	
+	public void setInternalAddress(String internal_address){
+		this.internal_address = internal_address;
+	}
+	
+	public String getInternalAddress(){
+		return internal_address;
+	}
+	
+	@Override
+	public String toString(){
+		return getInternalAddress() + " @ " + getSelfNode().getCoords().toString();
+	}
+	
     @Override
     public boolean equals(Object o){
         if(o instanceof Self){
@@ -244,7 +274,10 @@ public class Self {
 	public static final int KEY_LENGTH = 1024;
     public static final long MAX_RESPONSE_WAIT = 120000; // 2 minutes
     public static final long CLEANUP_INTERVAL = 30000; // 30 seconds
-    
+	public static final short INTERNAL_ADDRESS_LEN = 4;
+	public static final char[] HEX_CHARS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+	
+	public final Random rng;
 	private final Node self_node;
 	private final HashMap<String, Node> node_memory;
 	private final List<Node> friends;
@@ -255,4 +288,5 @@ public class Self {
 	private HardwareController hc;
 	private final KeyPair key_pair;
     private long last_cleanup;
+	private String internal_address; // Internal addresses are used for internal identification, much like an internal IP address
 }

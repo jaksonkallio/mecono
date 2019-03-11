@@ -12,6 +12,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 import node.GeoCoord;
 import node.Node;
+import parcel.Data;
 
 public class VirtualEnvironment {
 	public VirtualEnvironment(){
@@ -19,10 +20,15 @@ public class VirtualEnvironment {
 		rng = new Random(RNG_SEED);
 	}
 	
+	public List<Self> getSelfList(){
+		return self_list;
+	}
+	
 	public void runSim(){
 		int side_count = (int) Math.ceil(Math.sqrt(getNodeCount()));
 		int spacing_variance = base_spacing / 2;
 		
+		// Create nodes
 		try {
 			for(int x = 0; x < side_count; x++){
 				for(int y = 0; y < side_count; y++){
@@ -41,12 +47,26 @@ public class VirtualEnvironment {
 				}
 			}
 			
+			// Create neighborships
 			for(Self self : self_list){
 				Queue<ProximityNode> prox_nodes = getProximityNodes(self, neighbor_count);
 				
 				while(!prox_nodes.isEmpty()){
 					ProximityNode prox = prox_nodes.poll();
 					self.getSelfNode().addConnection(self.lookupNode(prox.self.getSelfNode().getAddress()));
+				}
+			}
+			
+			// Create parcels
+			int n = 0;
+			for(Self self : self_list){
+				// Create a number of parcels to randomly selected destinations for each self node
+				for(int i = 0; i < sample_parcel_count; i++){
+					Data parcel = new Data(self);
+					parcel.setDestination(self.lookupNode(self_list.get((int)(rng.nextDouble() * self_list.size())).getSelfNode().getAddress()));
+					parcel.setMessage("Hello, this is message #" + n);
+					self.enqueueSend(parcel);
+					n++;
 				}
 			}
 		} catch(NoSuchAlgorithmException ex) {
@@ -151,6 +171,7 @@ public class VirtualEnvironment {
 	private int node_count;
 	private final List<Self> self_list;
 	private final int base_spacing = 20;
+	private final int sample_parcel_count = 20;
 	private final int neighbor_count = 3;
 	private final Random rng;
 }

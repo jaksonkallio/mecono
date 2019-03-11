@@ -1,13 +1,17 @@
 package parcel;
 
 import mecono.Self;
-import mecono.Util;
 
 public abstract class Trigger extends Terminus {
 	public Trigger(Self self){
 		super(self);
+		genID();
 	}
     
+	public final void genID(){
+		setID(""+getSelf().rng.nextInt());
+	}
+	
     public void setResponse(Response response){
         this.response = response;
         time_responded = Self.time();
@@ -42,7 +46,7 @@ public abstract class Trigger extends Terminus {
     public boolean isResponse(Response response){
 		return getID().equals(response.getTriggerID());
 	}
-    
+	
     public Response response;
     
     private long time_sent;

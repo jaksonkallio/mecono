@@ -1,7 +1,6 @@
 package parcel;
 
 import mecono.Self;
-import mecono.Util;
 import node.Node;
 import org.json.JSONObject;
 
@@ -13,7 +12,11 @@ public abstract class Terminus extends Parcel {
     public abstract ParcelType getParcelType();
     
     public String getID(){
-		return "ABCD";
+		return id;
+	}
+	
+	public void setID(String id){
+		this.id = id;
 	}
 	
 	@Override
@@ -72,4 +75,5 @@ public abstract class Terminus extends Parcel {
     
     private long time_queued;
 	private Node destination;
+	private String id;
 }
