@@ -18,6 +18,12 @@ public class Mecono extends Application {
 		ve_ui = new VirtualEnvironmentUI(ve);
 		ve_ui.show();
 	}
+	
+	@Override
+	public void stop(){
+		System.out.println("Mecono stopping");
+		ve.stopSim();
+	}
 
 	public static void main(String[] args) {
 		launch(args);

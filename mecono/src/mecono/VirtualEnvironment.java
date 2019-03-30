@@ -18,6 +18,7 @@ public class VirtualEnvironment {
 	public VirtualEnvironment(){
 		self_list = new ArrayList<>();
 		rng = new Random(RNG_SEED);
+		ve_worker = new VEWorker();
 	}
 	
 	public List<Self> getSelfList(){
@@ -69,11 +70,17 @@ public class VirtualEnvironment {
 					n++;
 				}
 			}
+			
+			ve_worker.start();
 		} catch(NoSuchAlgorithmException ex) {
 			System.out.println("Cannot run simulation: " + ex.getMessage());
 		}
 	}
-    
+	
+	public void stopSim(){
+		ve_worker.stop();
+	}
+	
     public void printBFS(){
         if(self_list.size() > 0){
             printBFS(self_list.get(self_list.size() / 2));
@@ -165,9 +172,49 @@ public class VirtualEnvironment {
     public void setNodeCount(int node_count){
 		this.node_count = node_count;
 	}
+	
+	private class VEWorker implements Runnable {
+		
+		public VEWorker(){
+			this.t = new Thread(this);
+		}
+		
+		public void start() {
+			t.start();
+		}
+		
+		public void stop(){
+			working = false;
+		}
+
+		@Override
+		public void run() {
+			System.out.println("Started VE worker");
+			working = true;
+			
+			try {
+				while(working){
+					for(Self self : self_list){
+						self.work();
+					}
+
+					System.out.println("VEWorker: did work loop");
+					Thread.sleep(1000);
+				}
+			}catch(InterruptedException ex){
+				System.out.println("VEWorker interrupted.");
+			}
+			
+			System.out.println("Stopped VE worker");
+		}
+		
+		boolean working;
+		private final Thread t;
+	}
     
 	private final static long RNG_SEED = 444555666;
 	
+	private final VEWorker ve_worker;
 	private int node_count;
 	private final List<Self> self_list;
 	private final int base_spacing = 20;

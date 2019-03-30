@@ -89,6 +89,10 @@ public class Node implements MeconoSerializable {
 	}
 	
 	public GeoCoord getCoords(){
+		if(coords == null){
+			setCoords(new GeoCoord(0, 0));
+		}
+		
 		return coords;
 	}
 	
@@ -159,6 +163,7 @@ public class Node implements MeconoSerializable {
 		// While there are still SearchNodes to check AND the squeeze is greater than zero
 		while(!check.isEmpty() && squeeze > 0){
 			SearchNode curr_node = check.poll();
+			checked.add(curr_node);
 			
 			if(curr_node.node.equals(target)){
 				Chain potential_chain = curr_node.getChain();
@@ -169,8 +174,13 @@ public class Node implements MeconoSerializable {
 			}else{
 				// For each neighboring node to the current one
 				for(Connection curr_node_connection : curr_node.node.getConnections()){
-					// Create a new search node with the current as the parent
-					check.offer(new SearchNode(curr_node, curr_node_connection.getOther(curr_node.node), target));
+					SearchNode new_search_node = new SearchNode(curr_node, curr_node_connection.getOther(curr_node.node), target);
+					
+					// Don't get stuck in cyclic graph
+					if(!checked.contains(new_search_node)){
+						// Create a new search node with the current as the parent
+						check.offer(new_search_node);
+					}
 				}
 			}
 			
@@ -246,6 +256,17 @@ public class Node implements MeconoSerializable {
 		}
 		
 		@Override
+		public boolean equals(Object o){
+			if(o instanceof SearchNode){
+				SearchNode other = (SearchNode) o;
+				
+				return other.hashCode() == this.hashCode();
+			}
+		
+			return false;
+		}
+		
+		@Override
 		public int compareTo(Object o){
 			if(o instanceof SearchNode){
 				SearchNode other = (SearchNode) o;
@@ -268,6 +289,10 @@ public class Node implements MeconoSerializable {
 		}
 		
 		private int getCost(){
+			if(node == null || target == null){
+				return Integer.MAX_VALUE;
+			}
+			
 			Chain chain = getChain();
 			double fail_rate = 1.0 - chain.reliability();
 			double distance = node.getCoords().dist(target.getCoords());

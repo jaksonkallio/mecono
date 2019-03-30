@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
+import node.AdjacencyList;
 import node.BadProtocolException;
 import node.Chain;
 import node.InsufficientKnowledgeException;
@@ -34,6 +35,7 @@ public class Self {
 		this.friends = new ArrayList<>();
         this.node_log = new LinkedBlockingQueue<>();
 		this.rng = new Random();
+		this.hc = new HardwareController(this);
 		genInternalAddress();
 	}
     
@@ -140,6 +142,10 @@ public class Self {
 	public void learn(Chain chain){
 		
 	}
+	
+	public void learn(AdjacencyList adj_list){
+	
+	}
     
     public void work(){
         if(Util.timeElapsed(last_cleanup) > CLEANUP_INTERVAL){
@@ -147,7 +153,7 @@ public class Self {
         }
         
         processSendQueue();
-        processForwardQueue();
+		processForwardQueue();
     }
     
     public void processSendQueue(){
@@ -162,17 +168,19 @@ public class Self {
 				if(parcel.getChain() == null){
 					// If null, try to find a chain
 					parcel.setChain(getSelfNode().find(parcel.getDestination()));
-					
-					// If still null, consult some friends for network information
-					if(parcel.getChain() == null){
-						parcel.getDestination().findMe();
-					}
+				}
+				
+				// If still null, consult some friends for network information
+				if(parcel.getChain() == null){
+					parcel.getDestination().findMe();
+					continue;
 				}
 				
 				// Make sure the chain is online
 				if(!parcel.getChain().online()){
 					// Not online, test the chain
 					parcel.getChain().test();
+					continue;
 				}
 				
 				getHardwareController().send(parcel.serialize(), self_node);
