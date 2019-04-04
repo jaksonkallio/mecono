@@ -25,7 +25,10 @@ public class Find extends Trigger {
 	public void receive(){
 		super.receive();
 		
-		Node target
+		FindR new_response = new FindR(getSelf());
+		new_response.setKnowledge(getSelf().getGroup(getTarget(), KNOWLEDGE_GROUP_SIZE));
+		setResponse(new_response);
+		new_response.enqueueSend();
 	}
 	
 	@Override
@@ -40,6 +43,8 @@ public class Find extends Trigger {
 		
 		return false;
 	}
+	
+	public static final int KNOWLEDGE_GROUP_SIZE = 100;
 	
 	private Node target;
 }
