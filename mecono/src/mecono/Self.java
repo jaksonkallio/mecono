@@ -140,11 +140,25 @@ public class Self {
     }
 	
 	public void learn(Chain chain){
+		Node prev = null;
 		
+		for(Node node : chain.getNodes()){
+			if(prev == null){
+				continue;
+			}
+			
+			prev.addConnection(node);
+			
+			prev = node;
+		}
 	}
 	
 	public void learn(AdjacencyList adj_list){
-	
+		for(AdjacencyList.AdjacencyItem adjacency_item : adj_list.adjacency_items){
+			for(Node target : adjacency_item.targets){
+				adjacency_item.source.addConnection(target);
+			}
+		}
 	}
     
     public void work(){

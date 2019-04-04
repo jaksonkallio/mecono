@@ -9,8 +9,8 @@ public class AdjacencyList {
 	}
 	
 	public class AdjacencyItem {
-		public String source_address;
-		public List<String> target_addresses = new ArrayList<>();
+		public Node source;
+		public List<Node> targets = new ArrayList<>();
 	}
 	
 	public List<AdjacencyItem> adjacency_items;
