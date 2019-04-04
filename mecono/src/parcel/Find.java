@@ -22,6 +22,13 @@ public class Find extends Trigger {
 	}
 	
 	@Override
+	public void receive(){
+		super.receive();
+		
+		Node target
+	}
+	
+	@Override
 	public boolean isDuplicate(Parcel o){
 		if(o instanceof Find){
 			Find other = (Find) o;

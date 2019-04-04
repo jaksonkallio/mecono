@@ -19,6 +19,8 @@ public abstract class Response extends Terminus {
     
     @Override
     public void receive(){
+		super.receive();
+		
         try {
             // Lookup the trigger, give it this parcel
             Trigger trigger = getSelf().lookupTrigger(getTriggerID());

@@ -160,7 +160,34 @@ public class Self {
 			}
 		}
 	}
-    
+	
+	public AdjacencyList getGroup(Node start, int size){
+		AdjacencyList adj_list = new AdjacencyList();
+		Queue<Node> check = new LinkedBlockingQueue<>();
+		List<Node> group = new ArrayList<>();
+		
+		check.add(start);
+		
+		while(!check.isEmpty() && group.size() < size){
+			Node curr = check.poll();
+			group.add(curr);
+			
+			for(Node child : curr.getNeighbors()){
+				if(!check.contains(child) && !group.contains(child)){
+					check.offer(child);
+				}
+			}
+		}
+		
+		for(Node node : group){
+			for(Node neighbor : node.getNeighbors()){
+				adj_list.addConnection(node, neighbor);
+			}
+		}
+		
+		return adj_list;
+	}
+	
     public void work(){
         if(Util.timeElapsed(last_cleanup) > CLEANUP_INTERVAL){
             cleanup();
@@ -310,6 +337,7 @@ public class Self {
     public static final long CLEANUP_INTERVAL = 30000; // 30 seconds
 	public static final short INTERNAL_ADDRESS_LEN = 4;
 	public static final char[] HEX_CHARS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+	public static final int LOCAL_GROUP_RADIUS = 4;
 	
 	public final Random rng;
 	private final Node self_node;
