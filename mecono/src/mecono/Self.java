@@ -29,7 +29,7 @@ public class Self {
 		this.self_node = new Node(this);
 		this.node_memory = new HashMap<>();
         this.triggers = new HashMap<>();
-		this.self_node.setPublicKey(key_pair.getPublic().toString());
+		this.self_node.setPublicKey(key_pair.getPublic());
         this.send_queue = new ArrayList<>();
         this.forward_queue = new LinkedBlockingQueue<>();
 		this.friends = new ArrayList<>();
@@ -128,6 +128,7 @@ public class Self {
 	}
     
     public void receive(Parcel parcel){
+        log(ErrorLevel.OK, "Received", parcel.toString());
         parcel.receive();
     }
     
@@ -260,7 +261,11 @@ public class Self {
 		construct += message;
         
         System.out.println(construct);
-		nd.appendNodeLog(construct);
+        
+        if(nd != null){
+            nd.appendNodeLog(construct);
+        }
+        
         node_log.offer(construct);
 		
 		while(node_log.size() > 1000){
@@ -287,6 +292,8 @@ public class Self {
 			}
 		}
 		
+        log(ErrorLevel.OK, "Enqueued", send_parcel.toString());
+        
         send_queue.add(send_parcel);
     }
 	

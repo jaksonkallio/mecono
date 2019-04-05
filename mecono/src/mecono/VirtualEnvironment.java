@@ -198,7 +198,6 @@ public class VirtualEnvironment {
 						self.work();
 					}
 
-					System.out.println("VEWorker: did work loop");
 					Thread.sleep(1000);
 				}
 			}catch(InterruptedException ex){

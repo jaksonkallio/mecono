@@ -9,6 +9,25 @@ public abstract class Terminus extends Parcel {
         super(self);
     }
     
+    @Override
+    public String toString(){
+        StringBuilder str = new StringBuilder();
+        
+        str.append("#");
+        str.append(getID());
+        str.append(" is ");
+        str.append(getParcelType().name());
+        str.append(" to ");
+        str.append(getDestination().getTrimmedAddress());
+        
+        if(getChain() != null){
+            str.append(" via ");
+            str.append(getChain().toString());
+        }
+        
+        return str.toString();
+    }
+    
     public abstract ParcelType getParcelType();
     
     public String getID(){

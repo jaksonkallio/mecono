@@ -1,8 +1,13 @@
 package node;
 
 import java.io.UnsupportedEncodingException;
+import java.security.KeyFactory;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -10,8 +15,10 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 import javax.xml.bind.DatatypeConverter;
+import mecono.ErrorLevel;
 import mecono.MeconoSerializable;
 import mecono.Self;
+import mecono.Util;
 import org.json.JSONObject;
 import parcel.Find;
 
@@ -42,11 +49,11 @@ public class Node implements MeconoSerializable {
 		return getAddress().hashCode();
 	}
 	
-	public String getPublicKey(){
+	public PublicKey getPublicKey(){
 		return public_key;
 	}
 	
-	public void setPublicKey(String public_key){
+	public void setPublicKey(PublicKey public_key){
 		this.public_key = public_key;
 	}
 	
@@ -56,24 +63,20 @@ public class Node implements MeconoSerializable {
 	}
 	
 	public String getAddress() {
-		if((address == null || address.length() == 0) && public_key != null){
-			// If the address is null or the length is zero, perform hash on the public key
-			try {
-				MessageDigest digest = MessageDigest.getInstance("SHA-256");
-	            byte[] hash = digest.digest(public_key.getBytes("UTF-8"));
-	            address = DatatypeConverter.printHexBinary(hash);
-			}catch(NoSuchAlgorithmException | UnsupportedEncodingException ex){
-				// TODO: node log
-			}
-		}
-		
-		return address;
+        return Util.bytesToHex(getPublicKey().getEncoded());
 	}
+    
+    public String getTrimmedAddress(){
+        return getAddress().substring(58, 61)+"*"+getAddress().substring(getAddress().length() - 13, getAddress().length() - 10);
+    }
 	
 	public void setAddress(String address){
-		if(getAddress() == null){
-			this.address = address;
-		}
+        try {
+            PublicKey new_public_key = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(Util.hexStringToByteArray(address)));
+            setPublicKey(new_public_key);
+        }catch(InvalidKeySpecException | NoSuchAlgorithmException ex){
+            self.log(ErrorLevel.ERROR, "Could not set address of node", ex.getMessage());
+        }
 	}
 	
 	public void setBlurb(String blurb){
@@ -146,8 +149,7 @@ public class Node implements MeconoSerializable {
 		Find find = new Find(self);
 		find.setTarget(target);
 		find.setDestination(this);
-		
-		self.enqueueSend(find);
+		find.enqueueSend();
 	}
 	
 	public Chain find(Node target) throws BadProtocolException {
@@ -220,10 +222,6 @@ public class Node implements MeconoSerializable {
     
     @Override
 	public void deserialize(JSONObject json) throws BadSerializationException {
-		if(json.has("public_key")){
-			setPublicKey(json.getString("public_key"));
-		}
-		
 		if(json.has("address")){
 			setAddress(json.getString("address"));
 		}
@@ -309,7 +307,7 @@ public class Node implements MeconoSerializable {
 	public static final int MAX_BLURB_LENGTH = 100;
 	
 	private String blurb;
-	private String public_key;
+	private PublicKey public_key;
 	private String address;
 	private final List<Connection> connections;
 	private int send_count;
