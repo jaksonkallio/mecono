@@ -16,32 +16,32 @@ public class Util {
         
         if(elapsed >= 31536000){
             fuzzy = (int) elapsed / 31536000;
-            label = "year";
+            label = "y";
         }else if(elapsed >= 2592000){
             fuzzy = (int) elapsed / 2592000;
-            label = "month";
+            label = "mo";
         }else if(elapsed >= 604800){
             fuzzy = (int) elapsed / 604800;
-            label = "week";
+            label = "w";
         }else if(elapsed >= 86400){
             fuzzy = (int) elapsed / 86400;
-            label = "day";
+            label = "d";
         }else if(elapsed >= 3600){
             fuzzy = (int) elapsed / 3600;
-            label = "hour";
+            label = "h";
         }else if(elapsed >= 60){
             fuzzy = (int) elapsed / 86400;
-            label = "minute";
+            label = "m";
         }else{
             fuzzy = (int) elapsed;
-            label = "second";
+            label = "s";
         }
         
-        if(fuzzy > 1){
+        /*if(fuzzy > 1){
             label += "s";
-        }
+        }*/
         
-        return fuzzy + " " + label; 
+        return fuzzy + label; 
     }
     
     public static String bytesToHex(byte[] bytes) {

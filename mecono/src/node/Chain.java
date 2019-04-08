@@ -75,7 +75,7 @@ public class Chain implements MeconoSerializable {
     }
 	
 	public void test(){
-		
+		getDestinationNode().test();
 	}
     
     public void logSuccess(long ping){

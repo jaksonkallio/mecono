@@ -19,6 +19,21 @@ public class Test extends Trigger {
 	public ParcelType getParcelType(){
 		return ParcelType.TEST;
 	}
+    
+    @Override
+	public void receive(){
+		super.receive();
+        
+        TestR new_response = new TestR(getSelf());
+        new_response.setDestination(getChain().getOriginNode());
+		setResponse(new_response);
+		new_response.enqueueSend();
+    }
+    
+    @Override
+    public boolean requireOnlineChain(){
+        return false;
+    }
 	
 	private Node target;
 }

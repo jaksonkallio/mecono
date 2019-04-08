@@ -21,6 +21,7 @@ import mecono.Self;
 import mecono.Util;
 import org.json.JSONObject;
 import parcel.Find;
+import parcel.Test;
 
 public class Node implements MeconoSerializable {
 	public Node(Self self){
@@ -144,6 +145,12 @@ public class Node implements MeconoSerializable {
 			friend.consult(this);
 		}
 	}
+    
+    public void test(){
+        Test test = new Test(self);
+		test.setDestination(this);
+		test.enqueueSend();
+    }
 	
 	public void consult(Node target){
 		Find find = new Find(self);

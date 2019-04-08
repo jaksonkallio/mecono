@@ -33,6 +33,14 @@ public abstract class Terminus extends Parcel {
     public String getID(){
 		return id;
 	}
+    
+    public boolean isSent(){
+        return getTimeSent() != 0;
+    }
+    
+    public long getTimeSent(){
+        return time_sent;
+    }
 	
 	public void setID(String id){
 		this.id = id;
@@ -55,7 +63,9 @@ public abstract class Terminus extends Parcel {
         return true;
     }
     
-    public void logSend(){};
+    public void logSend(){
+        time_sent = Self.time();
+    }
     
     @Override
     public JSONObject serialize(){
@@ -92,6 +102,11 @@ public abstract class Terminus extends Parcel {
 		this.destination = destination;
 	}
     
+    public boolean requireOnlineChain(){
+        return true;
+    }
+    
+    private long time_sent;
     private long time_queued;
 	private Node destination;
 	private String id;

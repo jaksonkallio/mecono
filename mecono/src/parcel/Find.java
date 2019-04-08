@@ -26,6 +26,7 @@ public class Find extends Trigger {
 		super.receive();
 		
 		FindR new_response = new FindR(getSelf());
+        new_response.setDestination(getChain().getOriginNode());
 		new_response.setKnowledge(getSelf().getGroup(getTarget(), KNOWLEDGE_GROUP_SIZE));
 		setResponse(new_response);
 		new_response.enqueueSend();

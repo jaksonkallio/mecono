@@ -63,8 +63,9 @@ public class Self {
 	
 	@Override
 	public String toString(){
-		return getInternalAddress() + " @ " + getSelfNode().getCoords().toString();
-	}
+		//return getInternalAddress() + " @ " + getSelfNode().getCoords().toString();
+        return getSelfNode().getTrimmedAddress();
+    }
 	
     @Override
     public boolean equals(Object o){
@@ -199,7 +200,9 @@ public class Self {
     }
     
     public void processSendQueue(){
-        for(Terminus parcel : send_queue){
+        for(int i = 0; i < send_queue.size(); i++){
+            Terminus parcel = send_queue.get(i);
+            
 			try {
 				// Check if we have a destination
 				if(parcel.getDestination() == null){
@@ -252,6 +255,7 @@ public class Self {
     public void log(int indent, ErrorLevel error_level, String message){
         String construct = "";
         
+        construct += "[" + getSelfNode().getTrimmedAddress() + "]";
         construct += "[" + error_level.name() + "] ";
 		
 		for(int i = 0; i < indent; i++){
@@ -276,6 +280,7 @@ public class Self {
     private void cleanup(){
         last_cleanup = Self.time();
         pruneTriggerHistory();
+        pruneSendHistory();
     }
     
     public void enqueueSend(Foreign parcel){
@@ -310,14 +315,14 @@ public class Self {
 			results.add(neighbor);
 		}
 		
-		return friends;
+		return results;
 	}
     
     public void printOutbox(){
         log(ErrorLevel.INFO, "Outbox");
         log(1, ErrorLevel.INFO, "Count: " + send_queue.size());
         log(1, ErrorLevel.INFO, "List:");
-        for(int i = 0; i < send_queue.size() && i < 20; i++){
+        for(int i = 0; i < send_queue.size() && i < 100; i++){
             Terminus parcel = send_queue.get(i);
             log(2, ErrorLevel.INFO, parcel.getID() + " " + parcel.getParcelType().name() + " " + Util.fuzzyTime(Util.timeElapsed(parcel.getTimeQueued())));
         }
@@ -335,6 +340,14 @@ public class Self {
             // If the trigger has response or we're tired of waiting for a response
             if(trigger.isResponded() || (trigger.isSent() && Util.timeElapsed(trigger.getTimeSent()) > MAX_RESPONSE_WAIT)){
                 triggers.remove(entry.getKey());
+            }
+        }
+    }
+    
+    private void pruneSendHistory(){
+        for(int i = (send_queue.size() - 1); i >= 0; i--){
+            if(send_queue.get(i).isSent() && Util.timeElapsed(send_queue.get(i).getTimeSent()) > MAX_RESPONSE_WAIT){
+                send_queue.remove(i);
             }
         }
     }

@@ -23,16 +23,9 @@ public abstract class Trigger extends Terminus {
 
     @Override
     public void logSend(){
+        super.logSend();
+        
         getChain().logUse();
-        time_sent = Self.time();
-    }
-    
-    public boolean isSent(){
-        return getTimeSent() != 0;
-    }
-    
-    public long getTimeSent(){
-        return time_sent;
     }
 	
 	public long getTimeResponded(){
@@ -51,6 +44,5 @@ public abstract class Trigger extends Terminus {
 	
     public Response response;
     
-    private long time_sent;
     private long time_responded;
 }
