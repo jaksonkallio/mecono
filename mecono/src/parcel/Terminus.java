@@ -68,11 +68,6 @@ public abstract class Terminus extends Parcel {
     }
     
     @Override
-    public JSONObject serialize(){
-        return null;
-    }
-    
-    @Override
     public void enqueueSend(){
         getSelf().enqueueSend(this);
         logQueue();

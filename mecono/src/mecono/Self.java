@@ -20,6 +20,7 @@ import node.Node;
 import parcel.Foreign;
 import parcel.Parcel;
 import parcel.Terminus;
+import parcel.Test;
 import parcel.Trigger;
 import ui.NodeDashboard;
 
@@ -34,7 +35,6 @@ public class Self {
 		this.friends = new ArrayList<>();
         this.node_log = new LinkedBlockingQueue<>();
 		this.rng = new Random();
-		this.hc = new HardwareController(this);
 		this.node_database = new NodeDatabase(this);
 		genInternalAddress();
 	}
@@ -214,16 +214,33 @@ public class Self {
 				}
 				
 				// Make sure the chain is online
-				if(!parcel.getChain().online()){
+				if(parcel.requireOnlineChain() && !parcel.getChain().online()){
 					// Not online, test the chain
 					parcel.getChain().test();
 					continue;
 				}
 				
-				getHardwareController().send(parcel.serialize(), self_node);
+				Node next_node = parcel.getChain().getNext();
+				if(next_node == null){
+					send_queue.remove(i);
+					throw new BadProtocolException("Could not determine a next node in parcel chain");
+				}
+				
+				getHardwareController().send(parcel.serialize(), next_node);
 				parcel.logSend();
-			}catch(InsufficientKnowledgeException | BadProtocolException ex){
+				
+				// If this parcel is a trigger, we'll want to keep track to look out for a response
+				if(parcel instanceof Trigger){
+					addTriggerHistory((Trigger) parcel);
+				}
+				
+				// Remove it from the send queue
+				send_queue.remove(i);
+				
+				log(ErrorLevel.OK, "Parcel sent", parcel.toString());
+			}catch(BadProtocolException ex){
 				log(ErrorLevel.ERROR, "Cannot send parcel", ex.getMessage());
+				break;
 			}
         }
     }
@@ -279,6 +296,10 @@ public class Self {
         forward_queue.offer(parcel);
     }
     
+	public void addTriggerHistory(Trigger trigger){
+		triggers.put(trigger.getID(), trigger);
+	}
+	
     public void enqueueSend(Terminus send_parcel){
 		// Duplicates only matter if we are sending trigger parcels
 		if(send_parcel instanceof Trigger){

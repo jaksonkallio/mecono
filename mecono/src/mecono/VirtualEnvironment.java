@@ -35,6 +35,9 @@ public class VirtualEnvironment {
 				for(int y = 0; y < side_count; y++){
 					if(self_list.size() < getNodeCount()){
 						Self new_self = Self.generate();
+						SimHardwareController new_hc = new SimHardwareController(new_self);
+						new_hc.setVirtualEnvironment(this);
+						new_self.setHardwareController(new_hc);
 						int new_x = (x + 1) * base_spacing;
 						int new_y = (y + 1) * base_spacing;
 						new_x += spacing_variance * rng.nextDouble() - (spacing_variance / 2);

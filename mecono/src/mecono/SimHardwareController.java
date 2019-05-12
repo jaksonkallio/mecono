@@ -1,5 +1,6 @@
 package mecono;
 
+import node.BadProtocolException;
 import node.Node;
 import org.json.JSONObject;
 
@@ -17,13 +18,19 @@ public class SimHardwareController extends HardwareController {
 	}
 	
 	@Override
-	public void send(JSONObject parcel, Node next){
+	public void send(JSONObject parcel, Node next) throws BadProtocolException {
 		HardwareController next_hc = getVirtualEnvironment().lookupSelf(next.getAddress()).getHardwareController();
 		
-		if(next_hc != null && next_hc instanceof SimHardwareController){
-			next_hc = (SimHardwareController) next_hc;
-			next_hc.receive(parcel);
+		if(next_hc == null){
+			throw new BadProtocolException("Next simulated hardware controller unknown");
 		}
+
+		if(!(next_hc instanceof SimHardwareController)){
+			throw new BadProtocolException("Next hardware network controller is not simulated");
+		}
+
+		next_hc = (SimHardwareController) next_hc;
+		next_hc.receive(parcel);
 	}
 	
 	private VirtualEnvironment ve;

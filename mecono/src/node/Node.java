@@ -156,9 +156,6 @@ public class Node implements MeconoSerializable {
 	}
 	
 	public Chain find(Node target) throws BadProtocolException {
-		Chain best_chain = null;
-		int squeeze = 10;
-
 		Set<SearchNode> checked = new HashSet<>();
 		Queue<SearchNode> check = new PriorityQueue<>();
 		
@@ -166,16 +163,13 @@ public class Node implements MeconoSerializable {
 		check.offer(new SearchNode(null, this, target));
 		
 		// While there are still SearchNodes to check AND the squeeze is greater than zero
-		while(!check.isEmpty() && squeeze > 0){
+		while(!check.isEmpty()){
 			SearchNode curr_node = check.poll();
 			checked.add(curr_node);
 			
+			
 			if(curr_node.node.equals(target)){
-				Chain potential_chain = curr_node.getChain();
-				
-				if(best_chain == null || potential_chain.reliability() > best_chain.reliability()){
-					best_chain = potential_chain;
-				}
+				return curr_node.getChain();
 			}else{
 				// For each neighboring node to the current one
 				for(Connection curr_node_connection : curr_node.node.getConnections()){
@@ -188,13 +182,9 @@ public class Node implements MeconoSerializable {
 					}
 				}
 			}
-			
-			if(best_chain != null){
-				squeeze--;
-			}
 		}
 		
-		return best_chain;
+		return null;
 	}
 
 	@Override
@@ -295,10 +285,14 @@ public class Node implements MeconoSerializable {
 			}
 			
 			Chain chain = getChain();
+			double current_distance = getChain().getGeoLength();
 			double fail_rate = 1.0 - chain.reliability();
-			double distance = node.getCoords().dist(target.getCoords());
+			double next_distance = node.getCoords().dist(target.getCoords());
+			double total_distance = current_distance + next_distance;
 			
-			return (int)(distance * fail_rate);
+			// cost = distance + distance * fail_rate
+			
+			return (int)(total_distance * (1 + fail_rate));
 			
 		}
 		

@@ -13,6 +13,43 @@ public class Chain implements MeconoSerializable {
 		this.self = self;
 	}
 	
+	public Node getNext(){
+		boolean found = false;
+		
+		for(Node node : getNodes()){
+			if(found){
+				return node;
+			}
+			
+			if(node.equals(self.getSelfNode())){
+				found = true;
+			}
+		}
+		
+		return null;
+	}
+	
+	@Override
+	public String toString(){
+		StringBuilder str = new StringBuilder();
+		boolean first = false;
+		
+		str.append("[");
+		for(Node node : getNodes()){
+			if(!first){
+				first = true;
+			}else{
+				str.append(",");
+			}
+			
+			str.append(node.getTrimmedAddress());
+		}
+		
+		str.append("]");
+		
+		return str.toString();
+	}
+	
 	public void addNode(Node node){
 		if(!getNodes().contains(node)){
 			getNodes().add(node);
@@ -50,6 +87,16 @@ public class Chain implements MeconoSerializable {
         
         return null;
     }
+	
+	public double getGeoLength(){
+		double sum = 0;
+		
+		for(int i = 1; i < getNodes().size(); i++){
+			sum += getNode(i - 1).getCoords().dist(getNode(i).getCoords());
+		}
+		
+		return sum;
+	}
 	
 	public double reliability(){
 		double reliability = 1.0;

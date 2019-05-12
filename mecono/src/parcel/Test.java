@@ -16,6 +16,18 @@ public class Test extends Trigger {
 	}
 	
 	@Override
+    public JSONObject serialize(){
+        JSONObject parcel_json = super.serialize();
+		JSONObject content_json = new JSONObject();
+		
+		parcel_json.put("content", content_json);
+		
+		System.out.println(parcel_json.toString());
+		
+		return parcel_json;
+    }
+	
+	@Override
 	public ParcelType getParcelType(){
 		return ParcelType.TEST;
 	}

@@ -2,6 +2,7 @@ package mecono;
 
 import java.util.ArrayList;
 import java.util.List;
+import node.BadProtocolException;
 import node.BadSerializationException;
 import node.Connection;
 import node.InsufficientKnowledgeException;
@@ -25,12 +26,13 @@ public class HardwareController {
 		}
 	}
 	
-	public void send(JSONObject parcel, Node next) throws InsufficientKnowledgeException {
+	public void send(JSONObject parcel, Node next)  throws BadProtocolException  {
 		
 	}
 	
 	public void receive(JSONObject json){
         try {
+			System.out.println("received parcel");
             Parcel parcel = Parcel.constructParcelType(json, self);
             parcel.deserialize(json);
             self.receive(parcel);
@@ -47,6 +49,10 @@ public class HardwareController {
 		}
 		
 		return -1;
+	}
+	
+	protected Self getSelf(){
+		return self;
 	}
 	
 	private class PortConnection {

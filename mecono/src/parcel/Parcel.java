@@ -20,6 +20,16 @@ public abstract class Parcel implements MeconoSerializable {
 		}
 	}
 	
+	@Override
+	public JSONObject serialize(){
+		JSONObject parcel_json = new JSONObject();
+		JSONObject chain_json = getChain().serialize();
+		
+		parcel_json.put("chain", chain_json);
+		
+		return parcel_json;
+	}
+	
 	public void setChain(Chain chain){
 		this.chain = chain;
 	}
