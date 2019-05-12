@@ -114,7 +114,7 @@ public class Chain implements MeconoSerializable {
 			
 			for(int i = 0; i < nodes.length(); i++){
 				String pubkey = nodes.getString(i);
-				Node node = self.lookupNode(pubkey);
+				Node node = self.getNodeDatabase().getNode(pubkey);
 				
 				if(node != null){
 					addNode(node);

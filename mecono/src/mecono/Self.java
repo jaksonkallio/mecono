@@ -27,7 +27,6 @@ public class Self {
 	public Self(KeyPair key_pair){
 		this.key_pair = key_pair;
 		this.self_node = new Node(this);
-		this.node_memory = new HashMap<>();
         this.triggers = new HashMap<>();
 		this.self_node.setPublicKey(key_pair.getPublic());
         this.send_queue = new ArrayList<>();
@@ -36,6 +35,7 @@ public class Self {
         this.node_log = new LinkedBlockingQueue<>();
 		this.rng = new Random();
 		this.hc = new HardwareController(this);
+		this.node_database = new NodeDatabase(this);
 		genInternalAddress();
 	}
     
@@ -112,18 +112,6 @@ public class Self {
 		return self_node;
 	}
 	
-	public Node lookupNode(String address){
-        if(node_memory.containsKey(address)){
-            return node_memory.get(address);
-        }
-        
-        Node new_node = new Node(this);
-        new_node.setAddress(address);
-        node_memory.put(new_node.getAddress(), new_node);
-        
-        return new_node;
-	}
-	
 	public static long time(){
 		return System.currentTimeMillis();
 	}
@@ -198,6 +186,10 @@ public class Self {
         processSendQueue();
 		processForwardQueue();
     }
+	
+	public NodeDatabase getNodeDatabase(){
+		return node_database;
+	}
     
     public void processSendQueue(){
         for(int i = 0; i < send_queue.size(); i++){
@@ -240,9 +232,9 @@ public class Self {
         
     }
     
-    public HashMap<String, Node> getNodeMemory(){
+    /*public HashMap<String, Node> getNodeMemory(){
         return node_memory;
-    }
+    }*/
     
     public void log(ErrorLevel error_level, String message, String detail){
         log(0, error_level, message + ": " + detail);
@@ -360,8 +352,8 @@ public class Self {
 	public static final int LOCAL_GROUP_RADIUS = 4;
 	
 	public final Random rng;
+	private final NodeDatabase node_database;
 	private final Node self_node;
-	private final HashMap<String, Node> node_memory;
 	private final List<Node> friends;
     private final HashMap<String, Trigger> triggers;
     private final Queue<String> node_log;

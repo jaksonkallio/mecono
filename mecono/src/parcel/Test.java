@@ -35,5 +35,16 @@ public class Test extends Trigger {
         return false;
     }
 	
+	@Override
+	public boolean isDuplicate(Parcel o){
+		if(o instanceof Test){
+			Test other = (Test) o;
+			
+			return super.isDuplicate(o) && this.getDestination().equals(other.getDestination());
+		}
+		
+		return false;
+	}
+	
 	private Node target;
 }

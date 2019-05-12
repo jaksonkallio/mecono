@@ -54,7 +54,7 @@ public class VirtualEnvironment {
 				
 				while(!prox_nodes.isEmpty()){
 					ProximityNode prox = prox_nodes.poll();
-					self.getSelfNode().addConnection(self.lookupNode(prox.self.getSelfNode().getAddress()));
+					self.getSelfNode().addConnection(self.getNodeDatabase().getNode(prox.self.getSelfNode().getAddress()));
 				}
 			}
 			
@@ -64,7 +64,7 @@ public class VirtualEnvironment {
 				// Create a number of parcels to randomly selected destinations for each self node
 				for(int i = 0; i < sample_parcel_count; i++){
 					Data parcel = new Data(self);
-					parcel.setDestination(self.lookupNode(self_list.get((int)(rng.nextDouble() * self_list.size())).getSelfNode().getAddress()));
+					parcel.setDestination(self.getNodeDatabase().getNode(self_list.get((int)(rng.nextDouble() * self_list.size())).getSelfNode().getAddress()));
 					parcel.setMessage("Hello, this is message #" + n);
 					parcel.enqueueSend();
 					n++;
