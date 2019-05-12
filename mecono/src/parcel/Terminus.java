@@ -3,18 +3,31 @@ package parcel;
 import mecono.Self;
 import node.Node;
 import org.json.JSONObject;
+import static parcel.Trigger.PARCEL_ID_LEN;
 
 public abstract class Terminus extends Parcel {
     public Terminus(Self self){
         super(self);
+		genID();
     }
+	
+	public final void genID() {
+		setID("" + getSelf().genRandomString(PARCEL_ID_LEN));
+	}
     
     @Override
     public String toString(){
         StringBuilder str = new StringBuilder();
         
-        str.append("#");
-        str.append(getID());
+		str.append("#");
+		str.append(getID());
+			
+		if(this instanceof Response){
+			str.append(" (Trigger #");
+			str.append(((Response) this).getTriggerID());
+			str.append(")");
+		}
+        
         str.append(" is ");
         str.append(getParcelType().name());
         str.append(" to ");

@@ -151,7 +151,16 @@ public class Chain implements MeconoSerializable {
 	
 	@Override
 	public JSONObject serialize() {
-		return null;
+		JSONObject nodes_json = new JSONObject();
+		JSONArray nodes_array = new JSONArray();
+		
+		for(Node node : getNodes()){
+			nodes_array.put(node.getAddress());
+		}
+		
+		nodes_json.put("nodes", nodes_array);
+		
+		return nodes_json;
 	}
 
 	@Override

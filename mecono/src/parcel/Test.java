@@ -19,7 +19,8 @@ public class Test extends Trigger {
     public JSONObject serialize(){
         JSONObject parcel_json = super.serialize();
 		JSONObject content_json = new JSONObject();
-		
+	
+		content_json.put("type", getParcelType().name());
 		parcel_json.put("content", content_json);
 		
 		System.out.println(parcel_json.toString());
@@ -37,6 +38,7 @@ public class Test extends Trigger {
 		super.receive();
         
         TestR new_response = new TestR(getSelf());
+		new_response.setTriggerID(getID());
         new_response.setDestination(getChain().getOriginNode());
 		setResponse(new_response);
 		new_response.enqueueSend();

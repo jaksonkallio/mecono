@@ -6,11 +6,6 @@ public abstract class Trigger extends Terminus {
 
 	public Trigger(Self self) {
 		super(self);
-		genID();
-	}
-
-	public final void genID() {
-		setID("" + getSelf().genRandomString(PARCEL_ID_LEN));
 	}
 
 	public void setResponse(Response response) {

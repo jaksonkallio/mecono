@@ -32,7 +32,7 @@ public class HardwareController {
 	
 	public void receive(JSONObject json){
         try {
-			System.out.println("received parcel");
+			System.out.println(json);
             Parcel parcel = Parcel.constructParcelType(json, self);
             parcel.deserialize(json);
             self.receive(parcel);

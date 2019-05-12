@@ -31,6 +31,7 @@ public class Data extends Trigger {
         JSONObject parcel_json = super.serialize();
 		JSONObject content_json = new JSONObject();
 		
+		content_json.put("type", getParcelType().name());
 		content_json.put("message", getMessage());
 		content_json.put("series_identifier", getSeriesIdentifier());
 		content_json.put("series_position", getSeriesPosition());

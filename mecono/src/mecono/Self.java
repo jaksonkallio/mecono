@@ -303,8 +303,19 @@ public class Self {
     public void enqueueSend(Terminus send_parcel){
 		// Duplicates only matter if we are sending trigger parcels
 		if(send_parcel instanceof Trigger){
+			// Check the send queue
 			for(Terminus parcel : send_queue){
 				if(parcel.isDuplicate(send_parcel)){
+					return;
+				}
+			}
+			
+			// Check the trigger history
+			for(Map.Entry<String, Trigger> entry : triggers.entrySet()) {
+				String key = entry.getKey();
+				Trigger trigger = entry.getValue();
+
+				if(trigger.isDuplicate(send_parcel)){
 					return;
 				}
 			}
