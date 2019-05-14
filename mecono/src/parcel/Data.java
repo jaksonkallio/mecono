@@ -29,17 +29,12 @@ public class Data extends Trigger {
 	@Override
     public JSONObject serialize(){
         JSONObject parcel_json = super.serialize();
-		JSONObject content_json = new JSONObject();
+		JSONObject content_json = parcel_json.getJSONObject("content");
 		
-		content_json.put("type", getParcelType().name());
 		content_json.put("message", getMessage());
 		content_json.put("series_identifier", getSeriesIdentifier());
 		content_json.put("series_position", getSeriesPosition());
 		content_json.put("series_count", getSeriesCount());
-		
-		parcel_json.put("content", content_json);
-		
-		System.out.println(parcel_json.toString());
 		
 		return parcel_json;
     }

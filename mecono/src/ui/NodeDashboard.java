@@ -40,11 +40,18 @@ public class NodeDashboard extends Stage {
             self.printOutbox();
         });
         button_container.getChildren().add(print_outbox_button);
+		
+		print_nodes_button = new Button("View Nodes");
+        print_nodes_button.setOnAction((ActionEvent e) -> {
+            self.printNodes();
+        });
+        button_container.getChildren().add(print_nodes_button);
         
         main_container.getChildren().addAll(node_log, button_container);
     }
     
     private Button print_outbox_button;
+	private Button print_nodes_button;
     private TextArea node_log;
     private Pane main_container;
     private final Self self;

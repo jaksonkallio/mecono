@@ -1,7 +1,9 @@
 package parcel;
 
+import mecono.ErrorLevel;
 import mecono.MeconoSerializable;
 import mecono.Self;
+import node.BadProtocolException;
 import node.BadSerializationException;
 import node.Chain;
 import org.json.JSONObject;
@@ -38,7 +40,8 @@ public abstract class Parcel implements MeconoSerializable {
 		return chain;
 	}
 	
-	public void receive(){
+	public void receive() throws BadProtocolException {
+		getSelf().log(ErrorLevel.OK, "Received", toString());
 		getSelf().learn(getChain());
 	}
     

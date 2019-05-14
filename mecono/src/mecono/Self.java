@@ -116,9 +116,12 @@ public class Self {
 		return System.currentTimeMillis();
 	}
     
-    public void receive(Parcel parcel){
-        log(ErrorLevel.OK, "Received", parcel.toString());
-        parcel.receive();
+    public void receive(Parcel parcel) {
+		try {
+			parcel.receive();
+		} catch(BadProtocolException ex){
+			log(ErrorLevel.ERROR, "Could not receive parcel", ex.getMessage());
+		}
     }
     
     public Trigger lookupTrigger(String id) throws InsufficientKnowledgeException {
@@ -352,20 +355,45 @@ public class Self {
         }
     }
     
+	public void printNodes(){
+		log(ErrorLevel.INFO, "Nodes");
+        log(1, ErrorLevel.INFO, "Count: " + node_database.getNodeKnowledgeCount());
+        log(1, ErrorLevel.INFO, "List:");
+		
+		Node[] top_nodes = node_database.getTopNodes(10);
+		
+        for(int i = 0; i < top_nodes.length; i++){
+            Node node = top_nodes[i];
+			
+			if(node == null){
+				continue;
+			}
+			
+            log(2, ErrorLevel.INFO, node.toString());
+        }
+	}
+	
 	public void addNodeDashboardListener(NodeDashboard nd){
 		this.nd = nd;
 	}
 	
     private void pruneTriggerHistory(){
+		ArrayList<String> keys_to_remove = new ArrayList<>();
+		
         for(Map.Entry<String, Trigger> entry : triggers.entrySet()) {
             String key = entry.getKey();
             Trigger trigger = entry.getValue();
             
             // If the trigger has response or we're tired of waiting for a response
             if(trigger.isResponded() || (trigger.isSent() && Util.timeElapsed(trigger.getTimeSent()) > MAX_RESPONSE_WAIT)){
-                triggers.remove(entry.getKey());
+                
+				keys_to_remove.add(key);
             }
         }
+		
+		for(String key : keys_to_remove){
+			triggers.remove(key);
+		}
     }
     
     private void pruneSendHistory(){

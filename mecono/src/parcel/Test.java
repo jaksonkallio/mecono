@@ -1,6 +1,7 @@
 package parcel;
 
 import mecono.Self;
+import node.BadProtocolException;
 import node.BadSerializationException;
 import node.Node;
 import org.json.JSONObject;
@@ -18,12 +19,6 @@ public class Test extends Trigger {
 	@Override
     public JSONObject serialize(){
         JSONObject parcel_json = super.serialize();
-		JSONObject content_json = new JSONObject();
-	
-		content_json.put("type", getParcelType().name());
-		parcel_json.put("content", content_json);
-		
-		System.out.println(parcel_json.toString());
 		
 		return parcel_json;
     }
@@ -34,7 +29,7 @@ public class Test extends Trigger {
 	}
     
     @Override
-	public void receive(){
+	public void receive() throws BadProtocolException {
 		super.receive();
         
         TestR new_response = new TestR(getSelf());

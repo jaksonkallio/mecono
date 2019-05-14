@@ -2,6 +2,8 @@ package parcel;
 
 import mecono.Self;
 import node.AdjacencyList;
+import node.BadProtocolException;
+import org.json.JSONObject;
 
 public class FindR extends Response {
 	public FindR(Self self){
@@ -19,7 +21,17 @@ public class FindR extends Response {
 	}
 	
 	@Override
-	public void receive(){
+	public JSONObject serialize(){
+		JSONObject parcel_json = super.serialize();
+		JSONObject content_json = parcel_json.getJSONObject("content");
+		
+		content_json.put("target_group", getKnowledge().serialize());
+				
+		return parcel_json;
+	}
+	
+	@Override
+	public void receive() throws BadProtocolException {
 		super.receive();
 	}
 	

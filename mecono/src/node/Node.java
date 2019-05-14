@@ -29,6 +29,11 @@ public class Node implements MeconoSerializable {
 		return getAddress() + '!' + coords.x + ',' + coords.y;
 	}
 	
+	@Override
+	public String toString(){
+		return getTrimmedAddress() + " Send Count: " + getSendCount();
+	}
+	
 	public boolean equals(Object o){
 		if(o instanceof Node){
 			Node other = (Node) o;
@@ -185,6 +190,14 @@ public class Node implements MeconoSerializable {
 		}
 		
 		return null;
+	}
+	
+	public void incSendCount(){
+		send_count++;
+	}
+	
+	public int getSendCount(){
+		return send_count;
 	}
 
 	@Override

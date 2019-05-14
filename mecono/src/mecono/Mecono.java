@@ -4,9 +4,7 @@ package mecono;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import ui.VirtualEnvironmentUI;
 
 public class Mecono extends Application {
@@ -21,18 +19,7 @@ public class Mecono extends Application {
 		ve_ui = new VirtualEnvironmentUI(ve);
 		ve_ui.show();
 		
-		ve_ui.setOnCloseRequest(new EventHandler<WindowEvent>() {
-			@Override
-			public void handle(WindowEvent event) {
-				Platform.runLater(new Runnable() {
-
-					@Override
-					public void run() {
-						Platform.exit();
-					}
-				});
-			}
-		});
+		ve_ui.setOnHidden(e -> Platform.exit());
 	}
 	
 	@Override

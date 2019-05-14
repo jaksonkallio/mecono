@@ -1,6 +1,7 @@
 package parcel;
 
 import mecono.Self;
+import node.BadSerializationException;
 import node.Node;
 import org.json.JSONObject;
 import static parcel.Trigger.PARCEL_ID_LEN;
@@ -78,6 +79,7 @@ public abstract class Terminus extends Parcel {
     
     public void logSend(){
         time_sent = Self.time();
+		getDestination().incSendCount();
     }
     
     @Override
@@ -108,6 +110,27 @@ public abstract class Terminus extends Parcel {
 	
 	public void setDestination(Node destination){
 		this.destination = destination;
+	}
+	
+	@Override
+	public JSONObject serialize(){
+		JSONObject parcel_json = super.serialize();
+		JSONObject content_json = new JSONObject();
+	
+		content_json.put("type", getParcelType().name());
+		content_json.put("id", getID());
+		
+		parcel_json.put("content", content_json);
+		
+		return parcel_json;
+	}
+	
+	@Override
+	public void deserialize(JSONObject parcel_json) throws BadSerializationException {
+		super.deserialize(parcel_json);
+		
+		JSONObject content_json = parcel_json.getJSONObject("content");
+		setID(content_json.getString("id"));
 	}
     
     public boolean requireOnlineChain(){

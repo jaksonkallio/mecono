@@ -200,8 +200,8 @@ public class VirtualEnvironment {
 					for(Self self : self_list){
 						self.work();
 					}
-
-					Thread.sleep(1000);
+					
+					Thread.sleep(3000);
 				}
 			}catch(InterruptedException ex){
 				System.out.println("VEWorker interrupted.");
