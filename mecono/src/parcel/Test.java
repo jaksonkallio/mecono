@@ -3,7 +3,7 @@ package parcel;
 import mecono.Self;
 import node.BadProtocolException;
 import node.BadSerializationException;
-import node.Node;
+import node.MNode;
 import org.json.JSONObject;
 
 public class Test extends Trigger {
@@ -55,5 +55,5 @@ public class Test extends Trigger {
 		return false;
 	}
 	
-	private Node target;
+	private MNode target;
 }

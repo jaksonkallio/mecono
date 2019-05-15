@@ -3,7 +3,7 @@ package parcel;
 import mecono.Self;
 import node.BadProtocolException;
 import node.BadSerializationException;
-import node.Node;
+import node.MNode;
 import org.json.JSONObject;
 
 public class Find extends Trigger {
@@ -16,11 +16,11 @@ public class Find extends Trigger {
 		return ParcelType.FIND;
 	}
 	
-	public void setTarget(Node target){
+	public void setTarget(MNode target){
 		this.target = target;
 	}
 	
-	public Node getTarget(){
+	public MNode getTarget(){
 		return target;
 	}
 	
@@ -57,7 +57,7 @@ public class Find extends Trigger {
 		FindR new_response = new FindR(getSelf());
 		new_response.setTriggerID(getID());
         new_response.setDestination(getChain().getOriginNode());
-		new_response.setKnowledge(getSelf().getGroup(getTarget(), KNOWLEDGE_GROUP_SIZE));
+		new_response.setKnowledge(getSelf().getSelfNode().getGroup(KNOWLEDGE_GROUP_SIZE));
 		setResponse(new_response);
 		new_response.enqueueSend();
 	}
@@ -77,5 +77,5 @@ public class Find extends Trigger {
 	
 	public static final int KNOWLEDGE_GROUP_SIZE = 100;
 	
-	private Node target;
+	private MNode target;
 }

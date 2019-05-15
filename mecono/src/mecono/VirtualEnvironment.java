@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 import node.GeoCoord;
-import node.Node;
+import node.MNode;
 import parcel.Data;
 
 public class VirtualEnvironment {
@@ -103,7 +103,7 @@ public class VirtualEnvironment {
                continue; 
             }
             
-            for(Node neighbor : curr.getSelfNode().getNeighbors()){
+            for(MNode neighbor : curr.getSelfNode().getNeighbors()){
                 check.offer(lookupSelf(neighbor.getAddress()));
             }
             

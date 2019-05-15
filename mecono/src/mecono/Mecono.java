@@ -10,7 +10,7 @@ import ui.VirtualEnvironmentUI;
 public class Mecono extends Application {
 	
 	@Override
-	public void start(Stage stage) {
+	public void start(Stage stage) {	
 		ve = new VirtualEnvironment();
 		ve.setNodeCount(100);
 		ve.runSim();

@@ -1,7 +1,7 @@
 package mecono;
 
 import node.BadProtocolException;
-import node.Node;
+import node.MNode;
 import org.json.JSONObject;
 
 public class SimHardwareController extends HardwareController {
@@ -18,7 +18,7 @@ public class SimHardwareController extends HardwareController {
 	}
 	
 	@Override
-	public void send(JSONObject parcel, Node next) throws BadProtocolException {
+	public void send(JSONObject parcel, MNode next) throws BadProtocolException {
 		HardwareController next_hc = getVirtualEnvironment().lookupSelf(next.getAddress()).getHardwareController();
 		
 		if(next_hc == null){

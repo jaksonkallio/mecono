@@ -2,7 +2,7 @@ package parcel;
 
 import mecono.Self;
 import node.BadSerializationException;
-import node.Node;
+import node.MNode;
 import org.json.JSONObject;
 import static parcel.Trigger.PARCEL_ID_LEN;
 
@@ -100,7 +100,7 @@ public abstract class Terminus extends Parcel {
         time_queued = Self.time();
     }
 	
-	public Node getDestination(){
+	public MNode getDestination(){
 		if(getChain() == null || getChain().empty()){
 			return destination;
 		}
@@ -108,7 +108,7 @@ public abstract class Terminus extends Parcel {
 		return getChain().getDestinationNode();
 	}
 	
-	public void setDestination(Node destination){
+	public void setDestination(MNode destination){
 		this.destination = destination;
 	}
 	
@@ -139,6 +139,6 @@ public abstract class Terminus extends Parcel {
     
     private long time_sent;
     private long time_queued;
-	private Node destination;
+	private MNode destination;
 	private String id;
 }

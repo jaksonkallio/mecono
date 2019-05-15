@@ -6,7 +6,7 @@ import node.BadProtocolException;
 import node.BadSerializationException;
 import node.Connection;
 import node.InsufficientKnowledgeException;
-import node.Node;
+import node.MNode;
 import org.json.JSONObject;
 import parcel.Parcel;
 
@@ -26,7 +26,7 @@ public class HardwareController {
 		}
 	}
 	
-	public void send(JSONObject parcel, Node next)  throws BadProtocolException  {
+	public void send(JSONObject parcel, MNode next)  throws BadProtocolException  {
 		
 	}
 	
@@ -40,7 +40,7 @@ public class HardwareController {
         }
 	}
 	
-	public int getPort(Node node){
+	public int getPort(MNode node){
 		for(PortConnection pc : port_connections){
 			if(pc.connection.getOther(self.getSelfNode()).equals(node)){
 				return pc.port;

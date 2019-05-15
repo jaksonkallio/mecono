@@ -16,7 +16,7 @@ import node.AdjacencyList;
 import node.BadProtocolException;
 import node.Chain;
 import node.InsufficientKnowledgeException;
-import node.Node;
+import node.MNode;
 import parcel.Foreign;
 import parcel.Parcel;
 import parcel.Terminus;
@@ -27,7 +27,7 @@ import ui.NodeDashboard;
 public class Self {
 	public Self(KeyPair key_pair){
 		this.key_pair = key_pair;
-		this.self_node = new Node(this);
+		this.self_node = new MNode(this);
         this.triggers = new HashMap<>();
 		this.self_node.setPublicKey(key_pair.getPublic());
         this.send_queue = new ArrayList<>();
@@ -108,7 +108,7 @@ public class Self {
 		return hc;
 	}
 	
-	public Node getSelfNode(){
+	public MNode getSelfNode(){
 		return self_node;
 	}
 	
@@ -133,9 +133,9 @@ public class Self {
     }
 	
 	public void learn(Chain chain){
-		Node prev = null;
+		MNode prev = null;
 		
-		for(Node node : chain.getNodes()){
+		for(MNode node : chain.getNodes()){
 			if(prev == null){
 				continue;
 			}
@@ -148,37 +148,10 @@ public class Self {
 	
 	public void learn(AdjacencyList adj_list){
 		for(AdjacencyList.AdjacencyItem adjacency_item : adj_list.adjacency_items){
-			for(Node target : adjacency_item.targets){
+			for(MNode target : adjacency_item.targets){
 				adjacency_item.source.addConnection(target);
 			}
 		}
-	}
-	
-	public AdjacencyList getGroup(Node start, int size){
-		AdjacencyList adj_list = new AdjacencyList();
-		Queue<Node> check = new LinkedBlockingQueue<>();
-		List<Node> group = new ArrayList<>();
-		
-		check.add(start);
-		
-		while(!check.isEmpty() && group.size() < size){
-			Node curr = check.poll();
-			group.add(curr);
-			
-			for(Node child : curr.getNeighbors()){
-				if(!check.contains(child) && !group.contains(child)){
-					check.offer(child);
-				}
-			}
-		}
-		
-		for(Node node : group){
-			for(Node neighbor : node.getNeighbors()){
-				adj_list.addConnection(node, neighbor);
-			}
-		}
-		
-		return adj_list;
 	}
 	
     public void work(){
@@ -223,7 +196,7 @@ public class Self {
 					continue;
 				}
 				
-				Node next_node = parcel.getChain().getNext();
+				MNode next_node = parcel.getChain().getNext();
 				if(next_node == null){
 					send_queue.remove(i);
 					throw new BadProtocolException("Could not determine a next node in parcel chain");
@@ -329,16 +302,16 @@ public class Self {
         send_queue.add(send_parcel);
     }
 	
-	public void addFriend(Node node){
+	public void addFriend(MNode node){
 		if(!friends.contains(node)){
 			friends.add(node);
 		}
 	}
 	
-	public List<Node> getFriends(){
-		List<Node> results = new ArrayList<>(friends);
+	public List<MNode> getFriends(){
+		List<MNode> results = new ArrayList<>(friends);
 		
-		for(Node neighbor : getSelfNode().getNeighbors()){
+		for(MNode neighbor : getSelfNode().getNeighbors()){
 			results.add(neighbor);
 		}
 		
@@ -360,10 +333,10 @@ public class Self {
         log(1, ErrorLevel.INFO, "Count: " + node_database.getNodeKnowledgeCount());
         log(1, ErrorLevel.INFO, "List:");
 		
-		Node[] top_nodes = node_database.getTopNodes(10);
+		MNode[] top_nodes = node_database.getTopNodes(10);
 		
         for(int i = 0; i < top_nodes.length; i++){
-            Node node = top_nodes[i];
+            MNode node = top_nodes[i];
 			
 			if(node == null){
 				continue;
@@ -413,8 +386,8 @@ public class Self {
 	
 	public final Random rng;
 	private final NodeDatabase node_database;
-	private final Node self_node;
-	private final List<Node> friends;
+	private final MNode self_node;
+	private final List<MNode> friends;
     private final HashMap<String, Trigger> triggers;
     private final Queue<String> node_log;
     private final List<Terminus> send_queue;

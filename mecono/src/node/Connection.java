@@ -6,9 +6,10 @@ import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 import mecono.Self;
 import mecono.Util;
+import static parcel.Trigger.PARCEL_ID_LEN;
 
 public class Connection {
-	public Connection(Node n1, Node n2){
+	public Connection(MNode n1, MNode n2){
 		nodes = new HashSet<>();
 		nodes.add(n1);
 		nodes.add(n2);
@@ -20,7 +21,7 @@ public class Connection {
 		if(o instanceof Connection){
 			Connection other = (Connection) o;
 			
-			for(Node other_node : other.getNodes()){
+			for(MNode other_node : other.getNodes()){
 				if(!getNodes().contains(other_node)){
 					return false;
 				}
@@ -32,8 +33,8 @@ public class Connection {
 		return false;
 	}
 	
-	public Node getOther(Node source){
-		for(Node other : getNodes()){
+	public MNode getOther(MNode source){
+		for(MNode other : getNodes()){
 			if(!other.equals(source)){
 				return other;
 			}
@@ -46,7 +47,7 @@ public class Connection {
 		return successes / Math.max(1, total);
 	}
 	
-	public Set<Node> getNodes(){
+	public Set<MNode> getNodes(){
 		return nodes;
 	}
     
@@ -77,6 +78,10 @@ public class Connection {
 		return Util.timeElapsed(last_use) < ONLINE_THRESHOLD;
 	}
     
+	public long elapsedLastUse(){
+		return Util.timeElapsed(last_use);
+	}
+	
     public void logUse(){
 		last_use = Self.time();
         total++;
@@ -85,7 +90,8 @@ public class Connection {
 	public static final long ONLINE_THRESHOLD = 120000;
 	public static final int PING_SAMPLE_SIZE = 20;
 	
-	private final Set<Node> nodes;
+	private final Set<MNode> nodes;
+	private String id;
 	private int successes;
 	private int total;
 	private long last_use;

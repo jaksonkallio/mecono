@@ -11,6 +11,8 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import mecono.Self;
 import mecono.VirtualEnvironment;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.implementations.SingleGraph;
 
 public class VirtualEnvironmentUI extends Stage {
 	public VirtualEnvironmentUI(VirtualEnvironment ve) {

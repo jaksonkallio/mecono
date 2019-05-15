@@ -1,0 +1,21 @@
+node {
+	shape: box;
+	fill-color: black;
+	text-padding: 10px;
+	text-background-mode: rounded-box;
+	text-background-color: #34495e;
+	text-color: #ffffff;
+}
+
+node.self {
+	fill-color: #3498db;
+	text-background-color: #3498db;
+}
+
+edge {
+	shape: cubic-curve;
+	fill-mode: dyn-plain;
+	fill-color: #000000, #27AE60;
+	stroke-mode: plain;
+	size: 3px;
+}

@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
 import static mecono.Self.MAX_RESPONSE_WAIT;
-import node.Node;
+import node.MNode;
 import parcel.Trigger;
 
 
@@ -20,25 +20,25 @@ public class NodeDatabase {
 		node_memory = new HashMap<>();
 	}
 	
-	public Node getNode(String address){
+	public MNode getNode(String address){
 		if(node_memory.containsKey(address)){
             return node_memory.get(address);
         }
         
-		Node new_node= new Node(self);
+		MNode new_node= new MNode(self);
         new_node.setAddress(address);
         node_memory.put(new_node.getAddress(), new_node);
         
         return new_node;
 	}
 	
-	public Node[] getTopNodes(int k){
+	public MNode[] getTopNodes(int k){
 		k = Math.max(1, k);
-		Node[] top_nodes = new Node[k+1];
+		MNode[] top_nodes = new MNode[k+1];
 		
-		for(Map.Entry<String, Node> entry : node_memory.entrySet()) {
+		for(Map.Entry<String, MNode> entry : node_memory.entrySet()) {
             String key = entry.getKey();
-            Node node = entry.getValue();
+            MNode node = entry.getValue();
 			
 			top_nodes[k] = node;
 			
@@ -56,11 +56,11 @@ public class NodeDatabase {
 	private final Self self;
 	
 	// Nodes organized by address string
-	private final HashMap<String, Node> node_memory;
+	private final HashMap<String, MNode> node_memory;
 	
-	public class SortByUseCount implements Comparator<Node> {
+	public class SortByUseCount implements Comparator<MNode> {
 		@Override
-		public int compare(Node a, Node b) {
+		public int compare(MNode a, MNode b) {
 			if(a == null){
 				return 1;
 			}

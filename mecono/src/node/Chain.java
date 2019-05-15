@@ -13,10 +13,10 @@ public class Chain implements MeconoSerializable {
 		this.self = self;
 	}
 	
-	public Node getNext(){
+	public MNode getNext(){
 		boolean found = false;
 		
-		for(Node node : getNodes()){
+		for(MNode node : getNodes()){
 			if(found){
 				return node;
 			}
@@ -35,7 +35,7 @@ public class Chain implements MeconoSerializable {
 		boolean first = false;
 		
 		str.append("[");
-		for(Node node : getNodes()){
+		for(MNode node : getNodes()){
 			if(!first){
 				first = true;
 			}else{
@@ -50,25 +50,25 @@ public class Chain implements MeconoSerializable {
 		return str.toString();
 	}
 	
-	public void addNode(Node node){
+	public void addNode(MNode node){
 		if(!getNodes().contains(node)){
 			getNodes().add(node);
 		}
 	}
 	
-	public void addNode(int i, Node node){
+	public void addNode(int i, MNode node){
 		getNodes().add(i, node);
 	}
 	
-	public List<Node> getNodes(){
+	public List<MNode> getNodes(){
 		return nodes;
 	}
     
-    public Node getNode(int i){
+    public MNode getNode(int i){
         return getNodes().get(i);
     }
     
-    public Node getOriginNode(){
+    public MNode getOriginNode(){
         if(getNodes().size() > 0){
             return getNodes().get(0);
         }
@@ -80,7 +80,7 @@ public class Chain implements MeconoSerializable {
 		return getNodes().isEmpty();
 	}
 	
-    public Node getDestinationNode(){
+    public MNode getDestinationNode(){
         if(getNodes().size() > 0){
             return getNodes().get(getNodes().size() - 1);
         }
@@ -112,8 +112,8 @@ public class Chain implements MeconoSerializable {
         List<Connection> conns = new ArrayList<>();
         
         for(int i = 0; i < nodes.size() - 1; i++){
-            Node curr = nodes.get(i);
-			Node next = nodes.get(i + 1);
+            MNode curr = nodes.get(i);
+			MNode next = nodes.get(i + 1);
 			
 			conns.add(curr.getConnection(next));
         }
@@ -154,7 +154,7 @@ public class Chain implements MeconoSerializable {
 		JSONObject nodes_json = new JSONObject();
 		JSONArray nodes_array = new JSONArray();
 		
-		for(Node node : getNodes()){
+		for(MNode node : getNodes()){
 			nodes_array.put(node.getAddress());
 		}
 		
@@ -170,7 +170,7 @@ public class Chain implements MeconoSerializable {
 			
 			for(int i = 0; i < nodes.length(); i++){
 				String pubkey = nodes.getString(i);
-				Node node = self.getNodeDatabase().getNode(pubkey);
+				MNode node = self.getNodeDatabase().getNode(pubkey);
 				
 				if(node != null){
 					addNode(node);
@@ -181,6 +181,6 @@ public class Chain implements MeconoSerializable {
 		}
 	}
 	
-	private final List<Node> nodes;
+	private final List<MNode> nodes;
 	private final Self self;
 }
