@@ -160,8 +160,13 @@ public class Self {
         }
         
         processSendQueue();
-		processForwardQueue();
-    }
+		
+		try {
+			processForwardQueue();
+		}catch(BadProtocolException ex){
+			log(ErrorLevel.ERROR, "Could not process forwarding queue", ex.getMessage());
+		}
+	}
 	
 	public NodeDatabase getNodeDatabase(){
 		return node_database;
@@ -196,22 +201,9 @@ public class Self {
 					continue;
 				}
 				
-				MNode next_node = parcel.getChain().getNext();
-				if(next_node == null){
-					send_queue.remove(i);
-					throw new BadProtocolException("Could not determine a next node in parcel chain");
-				}
-				
-				getHardwareController().send(parcel.serialize(), next_node);
-				parcel.logSend();
-				
-				// If this parcel is a trigger, we'll want to keep track to look out for a response
-				if(parcel instanceof Trigger){
-					addTriggerHistory((Trigger) parcel);
-				}
-				
 				// Remove it from the send queue
 				send_queue.remove(i);
+				forward_queue.offer(parcel);
 				
 				log(ErrorLevel.OK, "Parcel sent", parcel.toString());
 			}catch(BadProtocolException ex){
@@ -221,8 +213,22 @@ public class Self {
         }
     }
     
-    public void processForwardQueue(){
-        
+    public void processForwardQueue() throws BadProtocolException {
+        while(forward_queue.size() > 0){
+			Parcel parcel = forward_queue.poll();
+			
+			MNode next_node = parcel.getChain().getNext();
+			if(next_node == null){
+				throw new BadProtocolException("Could not determine a next node in parcel chain");
+			}
+
+			getHardwareController().send(parcel.serialize(), next_node);
+			
+			if(parcel instanceof Trigger){
+				((Trigger) parcel).logSend();
+				addTriggerHistory((Trigger) parcel);
+			}
+		}
     }
     
     /*public HashMap<String, Node> getNodeMemory(){
@@ -391,7 +397,7 @@ public class Self {
     private final HashMap<String, Trigger> triggers;
     private final Queue<String> node_log;
     private final List<Terminus> send_queue;
-    private final Queue<Foreign> forward_queue;
+    private final Queue<Parcel> forward_queue;
 	private HardwareController hc;
 	private final KeyPair key_pair;
     private long last_cleanup;

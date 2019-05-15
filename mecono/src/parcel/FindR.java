@@ -3,11 +3,22 @@ package parcel;
 import mecono.Self;
 import node.AdjacencyList;
 import node.BadProtocolException;
+import node.BadSerializationException;
 import org.json.JSONObject;
 
 public class FindR extends Response {
 	public FindR(Self self){
 		super(self);
+	}
+	
+	@Override
+	public void deserialize(JSONObject parcel_json) throws BadSerializationException {
+		super.deserialize(parcel_json);
+		
+		JSONObject content_json = parcel_json.getJSONObject("content");
+		AdjacencyList des_knowledge = new AdjacencyList(getSelf());
+		des_knowledge.deserialize(content_json.getJSONObject("knowledge"));
+		setKnowledge(des_knowledge);
 	}
 	
 	@Override
@@ -25,7 +36,7 @@ public class FindR extends Response {
 		JSONObject parcel_json = super.serialize();
 		JSONObject content_json = parcel_json.getJSONObject("content");
 		
-		content_json.put("target_group", getKnowledge().serialize());
+		content_json.put("knowledge", getKnowledge().serialize());
 				
 		return parcel_json;
 	}
@@ -33,6 +44,7 @@ public class FindR extends Response {
 	@Override
 	public void receive() throws BadProtocolException {
 		super.receive();
+		getSelf().learn(getKnowledge());
 	}
 	
 	public AdjacencyList getKnowledge(){

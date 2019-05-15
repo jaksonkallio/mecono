@@ -131,15 +131,26 @@ public class MNode implements MeconoSerializable {
 	}
 	
 	public void addConnection(MNode other){
+		boolean added = false;
 		Connection conn = new Connection(this, other);
 		
 		if(!getConnections().contains(conn)){
 			getConnections().add(conn);
+			added = true;
 		}
 		
 		if(!other.getConnections().contains(conn)){
 			other.getConnections().add(conn);
+			added = true;
 		}
+		
+		if(added){
+			getSelf().log(ErrorLevel.OK, "Learned connection", this.getTrimmedAddress() + " <--> " + other.getTrimmedAddress());
+		}
+	}
+	
+	public Self getSelf(){
+		return self;
 	}
 	
 	public void findMe(){
@@ -249,7 +260,7 @@ public class MNode implements MeconoSerializable {
 	}
 	
 	public AdjacencyList getGroup(int size){
-		AdjacencyList adj_list = new AdjacencyList();
+		AdjacencyList adj_list = new AdjacencyList(self);
 		Queue<MNode> check = new LinkedBlockingQueue<>();
 		List<MNode> group = new ArrayList<>();
 		

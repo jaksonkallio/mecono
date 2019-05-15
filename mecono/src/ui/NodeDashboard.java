@@ -44,7 +44,12 @@ public class NodeDashboard extends Stage {
 		graph.addAttribute("ui.stylesheet", "url('./assets/graph_visualize_style.css')");
 
 		for(AdjacencyItem item : knowledge){
-			Node n1 = graph.addNode(item.source.getTrimmedAddress());
+			Node n1 = graph.getNode(item.source.getTrimmedAddress());
+				
+			if(n1 == null){
+				n1 = graph.addNode(item.source.getTrimmedAddress());
+			}
+			
 			n1.addAttribute("ui.label", item.source.getTrimmedAddress());
 			
 			if(item.source.equals(self.getSelfNode())){
@@ -52,7 +57,12 @@ public class NodeDashboard extends Stage {
 			}
 			
 			for(MNode target : item.targets){
-				Node n2 = graph.addNode(target.getTrimmedAddress());
+				Node n2 = graph.getNode(target.getTrimmedAddress());
+				
+				if(n2 == null){
+					n2 = graph.addNode(target.getTrimmedAddress());
+				}
+				
 				n2.addAttribute("ui.label", target.getTrimmedAddress());
 				
 				Edge e = graph.addEdge(self.genRandomString(5), item.source.getTrimmedAddress(), target.getTrimmedAddress());

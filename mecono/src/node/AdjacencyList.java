@@ -4,18 +4,32 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import mecono.MeconoSerializable;
+import mecono.Self;
 import node.AdjacencyList.AdjacencyItem;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class AdjacencyList implements MeconoSerializable, Iterable<AdjacencyItem> {
-	public AdjacencyList(){
+	public AdjacencyList(Self self){
 		adjacency_items = new ArrayList<>();
+		this.self = self;
 	}
 	
 	@Override
 	public void deserialize(JSONObject adj_list_json){
+		JSONArray adj_list_array_json = adj_list_json.getJSONArray("adj_list");
 		
+		for(Object adj_list_item_ob : adj_list_array_json){
+			JSONObject adj_list_item = (JSONObject) adj_list_item_ob;
+			String source_address = adj_list_item.getString("source");
+			JSONArray targets_json = adj_list_item.getJSONArray("targets");
+			
+			for(Object adj_list_item_target_ob : targets_json){
+				String target_address = (String) adj_list_item_target_ob;
+				
+				addConnection(getSelf().getNodeDatabase().getNode(source_address), getSelf().getNodeDatabase().getNode(target_address));
+			}
+		}
 	}
 	
 	@Override
@@ -104,6 +118,10 @@ public class AdjacencyList implements MeconoSerializable, Iterable<AdjacencyItem
 			adjacency_items.add(new_adj_item);
 		}
 	}
+	
+	public Self getSelf(){
+		return self;
+	}
 
 	@Override
 	public Iterator<AdjacencyItem> iterator() {
@@ -137,4 +155,5 @@ public class AdjacencyList implements MeconoSerializable, Iterable<AdjacencyItem
 	}
 	
 	public List<AdjacencyItem> adjacency_items;
+	private final Self self;
 }

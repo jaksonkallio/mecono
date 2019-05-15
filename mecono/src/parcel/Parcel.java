@@ -86,7 +86,7 @@ public abstract class Parcel implements MeconoSerializable {
             if(!json.has("content")){
                 throw new BadSerializationException("Terminus parcel missing content");
             }
-            
+			
             // TODO: decryption routine here
             
             JSONObject content = json.getJSONObject("content");
