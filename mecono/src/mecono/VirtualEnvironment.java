@@ -201,7 +201,7 @@ public class VirtualEnvironment {
 						self.work();
 					}
 					
-					Thread.sleep(3000);
+					Thread.sleep(500);
 				}
 			}catch(InterruptedException ex){
 				System.out.println("VEWorker interrupted.");

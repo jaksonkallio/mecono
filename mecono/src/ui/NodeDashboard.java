@@ -42,6 +42,8 @@ public class NodeDashboard extends Stage {
 		System.err.println(knowledge.toString());
 		
 		graph.addAttribute("ui.stylesheet", "url('./assets/graph_visualize_style.css')");
+		graph.setAttribute("ui.antialias");
+		graph.setAttribute("ui.quality");
 
 		for(AdjacencyItem item : knowledge){
 			Node n1 = graph.getNode(item.source.getTrimmedAddress());
@@ -72,6 +74,7 @@ public class NodeDashboard extends Stage {
 					long elapsed_last_use = e_conn.elapsedLastUse();
 					double recent = Math.max(0, (1 - (elapsed_last_use / Connection.ONLINE_THRESHOLD)));
 					e.setAttribute("ui.color", recent);
+					e.addAttribute("ui.label", "Rel: " + e_conn.getSuccesses() + " ("+((int)(e_conn.reliability()*100))+"%), Ping: "+e_conn.getPing()+"ms");
 				}
 			}
 		}

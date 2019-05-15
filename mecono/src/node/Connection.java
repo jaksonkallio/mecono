@@ -44,7 +44,7 @@ public class Connection {
 	}
 	
 	public double reliability(){
-		return successes / Math.max(1, total);
+		return (successes / Math.max(1.0, total));
 	}
 	
 	public Set<MNode> getNodes(){
@@ -65,6 +65,10 @@ public class Connection {
 	}
 	
 	public long getPing(){
+		if(ping_samples.isEmpty()){
+			return -1;
+		}
+		
 		long sum = 0;
 		
 		for(Long ping : ping_samples){
@@ -86,6 +90,10 @@ public class Connection {
 		last_use = Self.time();
         total++;
     }
+	
+	public int getSuccesses(){
+		return successes;
+	}
 	
 	public static final long ONLINE_THRESHOLD = 120000;
 	public static final int PING_SAMPLE_SIZE = 20;

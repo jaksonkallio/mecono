@@ -13,8 +13,10 @@ node.self {
 }
 
 edge {
-	shape: cubic-curve;
 	fill-mode: dyn-plain;
+	text-background-mode: rounded-box;
+	text-background-color: #FFFFFF;
+	text-padding: 5px;
 	fill-color: #000000, #27AE60;
 	stroke-mode: plain;
 	size: 3px;
