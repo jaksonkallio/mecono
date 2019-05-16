@@ -1,0 +1,14 @@
+{
+  "name": "mwebserver",
+  "version": "1.0.0",
+  "description": "Serves webpages hosted on nodes in the Mecono network.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
