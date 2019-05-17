@@ -15,12 +15,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 import node.AdjacencyList;
 import node.BadProtocolException;
 import node.Chain;
+import node.Connection;
 import node.InsufficientKnowledgeException;
 import node.MNode;
 import parcel.Foreign;
 import parcel.Parcel;
 import parcel.Terminus;
-import parcel.Test;
 import parcel.Trigger;
 import ui.NodeDashboard;
 
@@ -159,8 +159,8 @@ public class Self {
             cleanup();
         }
 		
-		if(Util.timeElapsed(last_local_rescan) > LOCAL_RESCAN_INTERVAL){
-            localRescan();
+		if(Util.timeElapsed(last_ping_local_group) > PING_LOCAL_GROUP_INTERVAL){
+            pingLocalGroup();
         }
         
         processSendQueue();
@@ -235,10 +235,12 @@ public class Self {
 		}
     }
     
-	public void localRescan(){
-		last_local_rescan = Self.time();
+	public void pingLocalGroup(){
+		last_ping_local_group = Self.time();
 		
-		// TODO: For each node in local vicinity, do a "FIND" parcel to expand the edges of our knowledge
+		for(MNode local_node : getSelfNode().getGroup().getNodeList()){
+			local_node.findMe();
+		}
 	}
 	
     public void log(ErrorLevel error_level, String message, String detail){
@@ -392,7 +394,7 @@ public class Self {
 	public static final int KEY_LENGTH = 1024;
     public static final long MAX_RESPONSE_WAIT = 120000; // 2 minutes
     public static final long CLEANUP_INTERVAL = 30000; // 30 seconds
-	public static final long LOCAL_RESCAN_INTERVAL = 120000; // 2 minutes
+	public static final long PING_LOCAL_GROUP_INTERVAL = (long)(Connection.ONLINE_THRESHOLD * 0.90); // Use the online threshold, minus a little bit to preemptively ping connections
 	public static final short INTERNAL_ADDRESS_LEN = 4;
 	public static final char[] HEX_CHARS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 	public static final int LOCAL_GROUP_RADIUS = 4;
@@ -408,7 +410,7 @@ public class Self {
 	private HardwareController hc;
 	private final KeyPair key_pair;
     private long last_cleanup;
-	private long last_local_rescan;
+	private long last_ping_local_group;
 	private NodeDashboard nd;
 	private String internal_address; // Internal addresses are used for internal identification, much like an internal IP address
 }

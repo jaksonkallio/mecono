@@ -32,6 +32,24 @@ public class AdjacencyList implements MeconoSerializable, Iterable<AdjacencyItem
 		}
 	}
 	
+	public List<MNode> getNodeList(){
+		List<MNode> node_list = new ArrayList<>();
+		
+		for(AdjacencyItem item: this){
+			if(!node_list.contains(item.source)){
+				node_list.add(item.source);
+			}
+			
+			for(MNode target : item.targets){
+				if(!node_list.contains(target)){
+					node_list.add(target);
+				}
+			}
+		}
+		
+		return node_list;
+	}
+	
 	@Override
 	public JSONObject serialize(){
 		JSONArray adj_list_array_json = new JSONArray();

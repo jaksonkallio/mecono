@@ -259,6 +259,10 @@ public class MNode implements MeconoSerializable {
         }
 	}
 	
+	public AdjacencyList getGroup(){
+		return getGroup(LOCAL_GROUP_SIZE);
+	}
+	
 	public AdjacencyList getGroup(int size){
 		AdjacencyList adj_list = new AdjacencyList(self);
 		Queue<MNode> check = new LinkedBlockingQueue<>();
@@ -354,6 +358,7 @@ public class MNode implements MeconoSerializable {
 	}
 	
 	public static final int MAX_BLURB_LENGTH = 100;
+	public static final int LOCAL_GROUP_SIZE = 30;
 	
 	private String blurb;
 	private PublicKey public_key;

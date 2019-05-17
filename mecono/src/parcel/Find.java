@@ -75,7 +75,7 @@ public class Find extends Trigger {
 		return false;
 	}
 	
-	public static final int KNOWLEDGE_GROUP_SIZE = 100;
+	public static final int KNOWLEDGE_GROUP_SIZE = 30;
 	
 	private MNode target;
 }
