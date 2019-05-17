@@ -158,6 +158,10 @@ public class Self {
         if(Util.timeElapsed(last_cleanup) > CLEANUP_INTERVAL){
             cleanup();
         }
+		
+		if(Util.timeElapsed(last_local_rescan) > LOCAL_RESCAN_INTERVAL){
+            localRescan();
+        }
         
         processSendQueue();
 		
@@ -231,10 +235,12 @@ public class Self {
 		}
     }
     
-    /*public HashMap<String, Node> getNodeMemory(){
-        return node_memory;
-    }*/
-    
+	public void localRescan(){
+		last_local_rescan = Self.time();
+		
+		// TODO: For each node in local vicinity, do a "FIND" parcel to expand the edges of our knowledge
+	}
+	
     public void log(ErrorLevel error_level, String message, String detail){
         log(0, error_level, message + ": " + detail);
     }
@@ -386,6 +392,7 @@ public class Self {
 	public static final int KEY_LENGTH = 1024;
     public static final long MAX_RESPONSE_WAIT = 120000; // 2 minutes
     public static final long CLEANUP_INTERVAL = 30000; // 30 seconds
+	public static final long LOCAL_RESCAN_INTERVAL = 120000; // 2 minutes
 	public static final short INTERNAL_ADDRESS_LEN = 4;
 	public static final char[] HEX_CHARS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 	public static final int LOCAL_GROUP_RADIUS = 4;
@@ -401,6 +408,7 @@ public class Self {
 	private HardwareController hc;
 	private final KeyPair key_pair;
     private long last_cleanup;
+	private long last_local_rescan;
 	private NodeDashboard nd;
 	private String internal_address; // Internal addresses are used for internal identification, much like an internal IP address
 }
