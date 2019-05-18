@@ -31,8 +31,9 @@ public class Data extends Trigger {
         JSONObject parcel_json = super.serialize();
 		JSONObject content_json = parcel_json.getJSONObject("content");
 		
-		content_json.put("message", getMessage());
-		content_json.put("series_identifier", getSeriesIdentifier());
+		content_json.put("payload", getPayloadHex());
+		content_json.put("port", getPort());
+		content_json.put("series_identifier", getSeriesID());
 		content_json.put("series_position", getSeriesPosition());
 		content_json.put("series_count", getSeriesCount());
 		
@@ -43,21 +44,64 @@ public class Data extends Trigger {
 		this.message = message;
 	}
 	
-	public int getSeriesIdentifier(){
-		return 0;
+	public int getSeriesID(){
+		return series_id;
+	}
+	
+	public void setSeriesID(int series_id){
+		this.series_id = series_id;
+	}
+	
+	public void setSeriesPosition(int serial){
+		this.serial = serial;
 	}
 	
 	public int getSeriesPosition(){
-		return 0;
+		return serial;
 	}
 	
 	public int getSeriesCount(){
-		return 1;
+		return series_count;
+	}
+	
+	public void setSeriesCount(int series_count){
+		this.series_count = series_count;
 	}
 	
 	public String getMessage(){
 		return message;
 	}
 	
+	public byte[] getPayload(){
+		return payload;
+	}
+	
+	public String getPayloadHex(){
+		StringBuilder hex = new StringBuilder();
+		
+		for (byte b : getPayload()) {
+			hex.append(String.format("%02X ", b));
+		}
+		
+		return hex.toString();
+	}
+	
+	public void setPayload(byte[] payload){
+		this.payload = payload;
+	}
+	
+	public int getPort(){
+		return port;
+	}
+	
+	public void setPort(int port){
+		this.port = port;
+	}
+	
 	private String message;
+	private byte[] payload;
+	private int serial;
+	private int series_count;
+	private int series_id;
+	private int port;
 }

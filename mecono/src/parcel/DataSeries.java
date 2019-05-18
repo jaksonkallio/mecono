@@ -1,14 +1,18 @@
 package parcel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.PriorityQueue;
 import mecono.Self;
+import node.BadProtocolException;
+import node.MNode;
 
 public class DataSeries {
 	public DataSeries(Self self){
 		this.self = self;
 		completed = new ArrayList<>();
-		series_partitions = new ArrayList<>();
+		series_partitions = new PriorityQueue<>();
 	}
 	
 	public void setByteData(byte[] bytes){
@@ -16,7 +20,7 @@ public class DataSeries {
 		byte[] partition_bytes = null;
 		
 		while(byte_index < bytes.length){
-			if(byte_index % BYTES_PER_DATA_PARCEL == 0){
+			if(byte_index % BYTES_PER_DATA_PARCEL == 0 || byte_index == (bytes.length - 1)){
 				if(byte_index > 0){
 					addContentPartition(partition_bytes);
 				}
@@ -26,14 +30,30 @@ public class DataSeries {
 			
 			partition_bytes[byte_index % BYTES_PER_DATA_PARCEL] = bytes[byte_index];
 		}
+	}
+	
+	public void send(MNode destination, int app_port) throws BadProtocolException {
+		if(series_partitions.isEmpty()){
+			throw new BadProtocolException("There are no data partitions in the series");
+		}
 		
-		if(byte_index % BYTES_PER_DATA_PARCEL != 0 && partition_bytes != null){
-			addContentPartition(partition_bytes);
+		for(DataPartition dp : series_partitions){
+			Data parcel = new Data(self);
+			parcel.setDestination(destination);
+			parcel.setPayload(dp.bytes);
+			parcel.setSeriesID(getDataSeriesID());
+			parcel.setSeriesCount(series_partitions.size());
+			parcel.setSeriesPosition(dp.serial);
+			parcel.setPort(0);
+			parcel.enqueueSend();
 		}
 	}
 	
 	private void addContentPartition(byte[] partition_bytes){
-		series_partitions.add(partition_bytes);
+		DataPartition dp = new DataPartition();
+		dp.bytes = partition_bytes;
+		dp.serial = series_partitions.size();
+		series_partitions.offer(dp);
 	}
 	
 	public int getSeriesCount(){
@@ -79,6 +99,8 @@ public class DataSeries {
 			new_range.end = serial;
 			completed.add(new_range);
 		}
+		
+		Collections.sort(completed);
 	}
 	
 	public double getProgress(){
@@ -113,13 +135,38 @@ public class DataSeries {
 	
 	public static final int BYTES_PER_DATA_PARCEL = 2048;
 	
-	private class CompletionRange {
+	private class CompletionRange implements Comparable {
 		public int start;
 		public int end;
+		
+		@Override
+		public int compareTo(Object o) {
+			if(o instanceof CompletionRange){
+				CompletionRange other = (CompletionRange) o;
+				return (this.start - other.start);
+			}
+			
+			return Integer.MAX_VALUE;
+		}
+	}
+	
+	private class DataPartition implements Comparable {
+		public byte[] bytes;
+		public int serial;
+
+		@Override
+		public int compareTo(Object o) {
+			if(o instanceof DataPartition){
+				DataPartition other = (DataPartition) o;
+				return (this.serial - other.serial);
+			}
+			
+			return Integer.MAX_VALUE;
+		}
 	}
 	
 	private final List<CompletionRange> completed;
-	private List<byte[]> series_partitions;
+	private PriorityQueue<DataPartition> series_partitions;
 	private final Self self;
 	private int data_series_id;
 }
