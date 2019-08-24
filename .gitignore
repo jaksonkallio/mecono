@@ -4,4 +4,11 @@ mecono/dist
 mecono/manifest.mf
 mecono/nbproject
 mecono/data
-mwebserver/node_modules
+/bin/
+.classpath
+.project
+**/node_modules/
+**/package.lock
+/node-imp/db/
+/target/
+**/.DS_STORE

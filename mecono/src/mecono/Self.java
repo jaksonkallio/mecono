@@ -22,7 +22,6 @@ import parcel.Foreign;
 import parcel.Parcel;
 import parcel.Terminus;
 import parcel.Trigger;
-import ui.NodeDashboard;
 
 public class Self {
 	public Self(KeyPair key_pair){
@@ -265,10 +264,6 @@ public class Self {
         
         System.out.println(construct);
         
-        if(nd != null){
-            nd.appendNodeLog(construct);
-        }
-        
         node_log.offer(construct);
 		
 		while(node_log.size() > 1000){
@@ -360,10 +355,6 @@ public class Self {
         }
 	}
 	
-	public void addNodeDashboardListener(NodeDashboard nd){
-		this.nd = nd;
-	}
-	
     private void pruneTriggerHistory(){
 		ArrayList<String> keys_to_remove = new ArrayList<>();
 		
@@ -411,6 +402,5 @@ public class Self {
 	private final KeyPair key_pair;
     private long last_cleanup;
 	private long last_ping_local_group;
-	private NodeDashboard nd;
 	private String internal_address; // Internal addresses are used for internal identification, much like an internal IP address
 }
