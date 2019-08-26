@@ -99,7 +99,7 @@ public class Data extends Trigger {
 	}
 	
 	private String message;
-	private byte[] payload;
+	private byte[] payload = new byte[0];
 	private int serial;
 	private int series_count;
 	private int series_id;

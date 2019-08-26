@@ -216,6 +216,10 @@ public class Self {
         }
     }
     
+    public List<Terminus> getSendQueue(){
+    	return send_queue;
+    }
+    
     public void processForwardQueue() throws BadProtocolException {
         while(forward_queue.size() > 0){
 			Parcel parcel = forward_queue.poll();
